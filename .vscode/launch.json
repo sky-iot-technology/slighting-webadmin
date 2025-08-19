@@ -1,0 +1,69 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Next.js: debug server-side",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: debug client-side",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/src"
+    },
+    {
+      "name": "Next.js: debug full stack",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm dev",
+      "cwd": "${workspaceFolder}",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      },
+      "env": {
+        "NEXT_PUBLIC_SENTRY_DISABLED": "true"
+      }
+    },
+    {
+      "name": "Next.js: build",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm build",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: start production",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm start",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: lint",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm lint",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: lint fix",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm lint:fix",
+      "cwd": "${workspaceFolder}"
+    },
+    {
+      "name": "Next.js: format",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "pnpm format",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}
