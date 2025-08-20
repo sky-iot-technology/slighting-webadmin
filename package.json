@@ -1,13 +1,14 @@
 {
-  "name": "next-shadcn-dashboard-starter",
+  "name": "next-starter-template",
   "version": "1.0.0",
   "private": true,
-  "author": {
-    "name": "Kiran",
-    "url": "https://github.com/Kiranism"
-  },
+  "author": {},
   "scripts": {
     "dev": "next dev --turbopack",
+    "dev:webpack": "next dev",
+    "dev:turbo": "next dev --turbopack",
+    "dev:turbo:fast": "next dev --turbopack --turbo",
+    "dev:turbo:debug": "next dev --turbopack --turbo --debug",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

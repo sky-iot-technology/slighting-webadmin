@@ -103,7 +103,22 @@ git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
 - Add the required environment variables to the `.env.local` file.
 - `pnpm run dev`
 
-##### Environment Configuration Setup
+## Development Scripts
+
+This project includes multiple development scripts to accommodate different use cases:
+
+- **`pnpm run dev`** - Uses Turbopack for faster development builds (recommended for most development)
+- **`pnpm run dev:webpack`** - Uses Webpack (useful when you need Sentry error tracking during development)
+
+> [!NOTE]
+> **Turbopack vs Webpack**: 
+> - Turbopack provides faster development builds but is not compatible with Sentry's Webpack plugin
+> - Webpack is slower but fully compatible with all plugins including Sentry
+> - The configuration automatically detects Turbopack usage and disables Sentry to prevent warnings
+
+📖 **For detailed Turbopack configuration, see [TURBOPACK.md](./TURBOPACK.md)**
+
+## Environment Configuration Setup
 
 To configure the environment for this project, refer to the `env.example.txt` file. This file contains the necessary environment variables required for authentication and error tracking.
 

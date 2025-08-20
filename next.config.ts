@@ -12,13 +12,32 @@ const baseConfig: NextConfig = {
       }
     ]
   },
-  transpilePackages: ['geist']
+  transpilePackages: ['geist'],
+
+  // Enable Turbopack features
+  turbopack: {
+    // Enable rules for better development experience
+    rules: {
+      '*.svg': {
+        loaders: ['@svgr/webpack'],
+        as: '*.js'
+      }
+    },
+    resolveAlias: {
+      underscore: 'lodash'
+    },
+    resolveExtensions: ['.mdx', '.tsx', '.ts', '.jsx', '.js', '.json']
+  }
 };
 
 let configWithPlugins = baseConfig;
 
+// Check if we're using Turbopack (development with --turbopack flag)
+const isUsingTurbopack = process.argv.includes('--turbopack');
+
 // Conditionally enable Sentry configuration
-if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED) {
+// Disable Sentry when using Turbopack to avoid Webpack configuration warnings
+if (!process.env.NEXT_PUBLIC_SENTRY_DISABLED && !isUsingTurbopack) {
   configWithPlugins = withSentryConfig(configWithPlugins, {
     // For all available options, see:
     // https://www.npmjs.com/package/@sentry/webpack-plugin#options
