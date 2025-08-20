@@ -57,6 +57,14 @@ export const navItems: NavItem[] = [
     shortcut: ['k', 'k'],
     isActive: false,
     items: [] // No child items
+  },
+  {
+    title: 'Styleguide',
+    url: '/styleguide',
+    icon: 'palette',
+    shortcut: ['s', 's'],
+    isActive: false,
+    items: [] // No child items
   }
 ];
 

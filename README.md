@@ -46,6 +46,7 @@ _If you are looking for a Tanstack start dashboard template, here is the [repo](
 | [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)     | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
 | [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
 | [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)           | A centralized error page that captures and displays errors across the application. Integrated with **Sentry** to log errors, provide detailed reports, and enable replay functionality for better debugging. |
+| [Styleguide](/styleguide)                                                  | Complete showcase of all available UI components with examples, documentation, and interactive demos.                                                                                                                                                                     |
 
 ## Feature based organization
 
