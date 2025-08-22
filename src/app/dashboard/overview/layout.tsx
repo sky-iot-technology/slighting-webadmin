@@ -1,5 +1,5 @@
-import PageContainer from '@/components/layout/page-container';
-import { Badge } from '@/components/ui/badge';
+import PageContainer from '@/ui/components/layout/page-container';
+import { Badge } from '@/ui/components/ui/badge';
 import {
   Card,
   CardHeader,
@@ -7,7 +7,7 @@ import {
   CardDescription,
   CardAction,
   CardFooter
-} from '@/components/ui/card';
+} from '@/ui/components/ui/card';
 import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 import React from 'react';
 

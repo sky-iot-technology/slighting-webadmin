@@ -1,8 +1,8 @@
-import PageContainer from '@/components/layout/page-container';
-import { buttonVariants } from '@/components/ui/button';
-import { Heading } from '@/components/ui/heading';
-import { Separator } from '@/components/ui/separator';
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton';
+import PageContainer from '@/ui/components/layout/page-container';
+import { buttonVariants } from '@/ui/components/ui/button';
+import { Heading } from '@/ui/components/ui/heading';
+import { Separator } from '@/ui/components/ui/separator';
+import { DataTableSkeleton } from '@/ui/components/ui/table/data-table-skeleton';
 import ProductListingPage from '@/features/products/components/product-listing';
 import { searchParamsCache, serialize } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';

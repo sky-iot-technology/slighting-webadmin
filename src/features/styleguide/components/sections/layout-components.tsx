@@ -1,24 +1,24 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
+} from '@/ui/components/ui/card';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
-} from '@/components/ui/collapsible';
+} from '@/ui/components/ui/collapsible';
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup
-} from '@/components/ui/resizable';
-import { Separator } from '@/components/ui/separator';
+} from '@/ui/components/ui/resizable';
+import { Separator } from '@/ui/components/ui/separator';
 import { ChevronDown, ChevronRight, Code, GripVertical } from 'lucide-react';
 import { useState } from 'react';
 

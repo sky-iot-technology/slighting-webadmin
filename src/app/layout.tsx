@@ -1,7 +1,7 @@
-import Providers from '@/components/layout/providers';
-import { Toaster } from '@/components/ui/sonner';
+import Providers from '@/ui/components/layout/providers';
+import { Toaster } from '@/ui/components/ui/sonner';
 import { fontVariables } from '@/lib/font';
-import ThemeProvider from '@/components/layout/ThemeToggle/theme-provider';
+import ThemeProvider from '@/ui/components/layout/ThemeToggle/theme-provider';
 import { cn } from '@/lib/utils';
 import type { Metadata, Viewport } from 'next';
 import { cookies } from 'next/headers';

@@ -1,9 +1,8 @@
 'use client';
 
-import { DataTable } from '@/components/ui/table/data-table';
-import { DataTableToolbar } from '@/components/ui/table/data-table-toolbar';
-
-import { useDataTable } from '@/hooks/use-data-table';
+import { DataTable } from '@/ui/components/ui/table/data-table';
+import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import { useDataTable } from '@/core/shared/hooks/use-data-table';
 
 import { ColumnDef } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';

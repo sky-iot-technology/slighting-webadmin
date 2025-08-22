@@ -1,19 +1,19 @@
 'use client';
 
-import { AspectRatio } from '@/components/ui/aspect-ratio';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { AspectRatio } from '@/ui/components/ui/aspect-ratio';
+import { Avatar, AvatarFallback, AvatarImage } from '@/ui/components/ui/avatar';
+import { Badge } from '@/ui/components/ui/badge';
+import { Button } from '@/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Heading } from '@/components/ui/heading';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
+} from '@/ui/components/ui/card';
+import { Heading } from '@/ui/components/ui/heading';
+import { Separator } from '@/ui/components/ui/separator';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 import { Code } from 'lucide-react';
 
 export function BasicComponents() {

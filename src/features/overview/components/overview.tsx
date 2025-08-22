@@ -1,5 +1,5 @@
-import PageContainer from '@/components/layout/page-container';
-import { Button } from '@/components/ui/button';
+import PageContainer from '@/ui/components/layout/page-container';
+import { Button } from '@/ui/components/ui/button';
 import {
   Card,
   CardDescription,
@@ -7,14 +7,14 @@ import {
   CardHeader,
   CardTitle,
   CardAction
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/ui/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/components/ui/tabs';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
 import { RecentSales } from './recent-sales';
 import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/ui/components/ui/badge';
 
 export default function OverViewPage() {
   return (

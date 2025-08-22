@@ -1,7 +1,7 @@
 import { createParser } from 'nuqs/server';
 import { z } from 'zod';
 
-import { dataTableConfig } from '@/config/data-table';
+import { dataTableConfig } from '@/core/shared/config/data-table';
 
 import type {
   ExtendedColumnFilter,

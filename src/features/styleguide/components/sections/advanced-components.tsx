@@ -5,16 +5,16 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger
-} from '@/components/ui/accordion';
-import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
+} from '@/ui/components/ui/accordion';
+import { Button } from '@/ui/components/ui/button';
+import { Calendar } from '@/ui/components/ui/calendar';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
+} from '@/ui/components/ui/card';
 import {
   Drawer,
   DrawerClose,
@@ -24,12 +24,12 @@ import {
   DrawerHeader,
   DrawerTitle,
   DrawerTrigger
-} from '@/components/ui/drawer';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Modal } from '@/components/ui/modal';
-import { Toggle } from '@/components/ui/toggle';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+} from '@/ui/components/ui/drawer';
+import { Input } from '@/ui/components/ui/input';
+import { Label } from '@/ui/components/ui/label';
+import { Modal } from '@/ui/components/ui/modal';
+import { Toggle } from '@/ui/components/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@/ui/components/ui/toggle-group';
 import {
   AlignCenter,
   AlignJustify,

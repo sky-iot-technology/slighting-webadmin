@@ -5,7 +5,7 @@ import type {
 } from '@/types/data-table';
 import type { Column } from '@tanstack/react-table';
 
-import { dataTableConfig } from '@/config/data-table';
+import { dataTableConfig } from '@/core/shared/config/data-table';
 
 export function getCommonPinningStyles<TData>({
   column,

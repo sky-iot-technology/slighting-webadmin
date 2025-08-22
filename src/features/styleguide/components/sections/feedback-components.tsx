@@ -6,8 +6,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+} from '@/ui/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/ui/components/ui/alert';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,11 +18,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger
-} from '@/components/ui/alert-dialog';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+} from '@/ui/components/ui/alert-dialog';
+import { Progress } from '@/ui/components/ui/progress';
+import { Badge } from '@/ui/components/ui/badge';
+import { Button } from '@/ui/components/ui/button';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 import {
   Code,
   AlertCircle,

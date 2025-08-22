@@ -1,16 +1,16 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
+import { Badge } from '@/ui/components/ui/badge';
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+} from '@/ui/components/ui/card';
+import { Input } from '@/ui/components/ui/input';
+import { ScrollArea } from '@/ui/components/ui/scroll-area';
+import { Separator } from '@/ui/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/ui/components/ui/tabs';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 
@@ -20,7 +20,7 @@ import { FeedbackComponents } from './components/sections/feedback-components';
 import { FormComponents } from './components/sections/form-components';
 import { LayoutComponents } from './components/sections/layout-components';
 import { OverlayComponents } from './components/sections/overlay-components';
-import PageContainer from '@/components/layout/page-container';
+import PageContainer from '@/ui/components/layout/page-container';
 import { NavigationComponents } from './components/sections/navigation-components';
 import { AdvancedComponents } from './components/sections/advanced-components';
 

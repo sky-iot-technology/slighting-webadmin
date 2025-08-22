@@ -7,9 +7,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+} from '@/ui/components/ui/card';
+import { Button } from '@/ui/components/ui/button';
+import { Separator } from '@/ui/components/ui/separator';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,7 +17,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator
-} from '@/components/ui/breadcrumb';
+} from '@/ui/components/ui/breadcrumb';
 import {
   Menubar,
   MenubarContent,
@@ -26,7 +26,7 @@ import {
   MenubarSeparator,
   MenubarShortcut,
   MenubarTrigger
-} from '@/components/ui/menubar';
+} from '@/ui/components/ui/menubar';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -35,7 +35,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle
-} from '@/components/ui/navigation-menu';
+} from '@/ui/components/ui/navigation-menu';
 import {
   Pagination,
   PaginationContent,
@@ -44,7 +44,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious
-} from '@/components/ui/pagination';
+} from '@/ui/components/ui/pagination';
 import {
   Sidebar,
   SidebarContent,
@@ -61,7 +61,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
   SidebarTrigger
-} from '@/components/ui/sidebar';
+} from '@/ui/components/ui/sidebar';
 import {
   Code,
   ChevronRight,

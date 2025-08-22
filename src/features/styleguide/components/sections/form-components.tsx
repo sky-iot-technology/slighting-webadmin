@@ -1,14 +1,14 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { Button } from '@/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
+} from '@/ui/components/ui/card';
+import { Checkbox } from '@/ui/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -17,27 +17,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+} from '@/ui/components/ui/form';
+import { Input } from '@/ui/components/ui/input';
+import { Label } from '@/ui/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/ui/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select';
-import { Slider } from '@/components/ui/slider';
-import { Switch } from '@/components/ui/switch';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/ui/components/ui/select';
+import { Slider } from '@/ui/components/ui/slider';
+import { Switch } from '@/ui/components/ui/switch';
+import { Textarea } from '@/ui/components/ui/textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Code, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Toggle } from '@/components/ui/toggle';
-import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Toggle } from '@/ui/components/ui/toggle';
+import { ToggleGroup, ToggleGroupItem } from '@/ui/components/ui/toggle-group';
 import {
   Bold,
   Italic,

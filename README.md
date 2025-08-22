@@ -19,7 +19,7 @@ This is a starter template using the following stack:
 - Language - [TypeScript](https://www.typescriptlang.org)
 - Auth - [Clerk](https://go.clerk.com/ILdYhn7)
 - Error tracking - [<picture><img alt="Sentry" src="public/assets/sentry.svg">
-        </picture>](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)
+  </picture>](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)
 - Styling - [Tailwind CSS v4](https://tailwindcss.com)
 - Components - [Shadcn-ui](https://ui.shadcn.com)
 - Schema Validations - [Zod](https://zod.dev)
@@ -31,72 +31,72 @@ This is a starter template using the following stack:
 - Linting - [ESLint](https://eslint.org)
 - Pre-commit Hooks - [Husky](https://typicode.github.io/husky/)
 - Formatting - [Prettier](https://prettier.io)
+- **Architecture - Domain-Driven Design (DDD) with TanStack Query integration**
 
 _If you are looking for a Tanstack start dashboard template, here is the [repo](https://git.new/tanstack-start-dashboard)._
 
+## Project Structure
+
+This project follows a **Domain-Driven Design (DDD)** architecture pattern for better maintainability and scalability:
+
+```
+src/
+├── app/                    # Next.js App Router pages
+├── ui/                     # Reusable UI components
+│   ├── components/         # Shared components (layout, navigation, etc.)
+│   │   ├── ui/            # Shadcn-ui components
+│   │   ├── layout/        # Layout components
+│   │   ├── providers/     # Context providers
+│   │   └── ...            # Other shared components
+│   └── business/          # Business-specific UI components
+├── core/                   # Core business logic and shared utilities
+│   ├── domains/           # Business domains
+│   │   ├── products/      # Product domain (types, API, hooks)
+│   │   ├── auth/          # Authentication domain
+│   │   ├── users/         # User management domain
+│   │   ├── sales/         # Sales domain
+│   │   └── overview/      # Dashboard overview domain
+│   └── shared/            # Shared utilities and services
+│       ├── api/           # API client infrastructure
+│       ├── query/         # TanStack Query configuration
+│       ├── types/         # Shared TypeScript types
+│       └── utils/         # Utility functions
+├── features/               # Feature-specific components
+│   ├── products/          # Product management features
+│   ├── auth/              # Authentication features
+│   ├── overview/          # Dashboard overview features
+│   └── ...                # Other features
+├── lib/                    # Utility libraries
+└── types/                  # Global type definitions
+```
+
+**Key Benefits:**
+- **Separation of Concerns**: Business logic separated from UI components
+- **Domain-Driven Design**: Each business domain is self-contained
+- **Type Safety**: Strong TypeScript support throughout
+- **Scalability**: Easy to add new domains and features
+- **Maintainability**: Clear organization and consistent patterns
+
 ## Pages
 
-| Pages                                                                                 | Specifications                                                                                                                                                                                                                                                          |
-| :------------------------------------------------------------------------------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Signup / Signin](https://go.clerk.com/ILdYhn7)      | Authentication with **Clerk** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
-| [Dashboard (Overview)](https://shadcn-dashboard.kiranism.dev/dashboard)    | Cards with Recharts graphs for analytics. Parallel routes in the overview sections feature independent loading, error handling, and isolated component rendering. |
-| [Product](https://shadcn-dashboard.kiranism.dev/dashboard/product)         | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
-| [Product/new](https://shadcn-dashboard.kiranism.dev/dashboard/product/new) | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
-| [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)         | Clerk's full-featured account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
-| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)     | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
-| [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)      | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
-| [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree)           | A centralized error page that captures and displays errors across the application. Integrated with **Sentry** to log errors, provide detailed reports, and enable replay functionality for better debugging. |
-| [Styleguide](/styleguide)                                                  | Complete showcase of all available UI components with examples, documentation, and interactive demos.                                                                                                                                                                     |
-
-## Feature based organization
-
-```plaintext
-src/
-├── app/ # Next.js App Router directory
-│ ├── (auth)/ # Auth route group
-│ │ ├── (signin)/
-│ ├── (dashboard)/ # Dashboard route group
-│ │ ├── layout.tsx
-│ │ ├── loading.tsx
-│ │ └── page.tsx
-│ └── api/ # API routes
-│
-├── components/ # Shared components
-│ ├── ui/ # UI components (buttons, inputs, etc.)
-│ └── layout/ # Layout components (header, sidebar, etc.)
-│
-├── features/ # Feature-based modules
-│ ├── feature/
-│ │ ├── components/ # Feature-specific components
-│ │ ├── actions/ # Server actions
-│ │ ├── schemas/ # Form validation schemas
-│ │ └── utils/ # Feature-specific utilities
-│ │
-├── lib/ # Core utilities and configurations
-│ ├── auth/ # Auth configuration
-│ ├── db/ # Database utilities
-│ └── utils/ # Shared utilities
-│
-├── hooks/ # Custom hooks
-│ └── use-debounce.ts
-│
-├── stores/ # Zustand stores
-│ └── dashboard-store.ts
-│
-└── types/ # TypeScript types
-└── index.ts
-```
+| Pages                                                                                                                                                                  | Specifications                                                                                                                                                                                                                                                          |
+| :--------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Signup / Signin](https://go.clerk.com/ILdYhn7)                                                                                                                        | Authentication with **Clerk** provides secure authentication and user management with multiple sign-in options including passwordless authentication, social logins, and enterprise SSO - all designed to enhance security while delivering a seamless user experience. |
+| [Dashboard (Overview)](https://shadcn-dashboard.kiranism.dev/dashboard)                                                                                                | Cards with Recharts graphs for analytics. Parallel routes in the overview sections feature independent loading, error handling, and isolated component rendering.                                                                                                       |
+| [Product](https://shadcn-dashboard.kiranism.dev/dashboard/product)                                                                                                     | Tanstack tables with server side searching, filter, pagination by Nuqs which is a Type-safe search params state manager in nextjs                                                                                                                                       |
+| [Product/new](https://shadcn-dashboard.kiranism.dev/dashboard/product/new)                                                                                             | A Product Form with shadcn form (react-hook-form + zod).                                                                                                                                                                                                                |
+| [Profile](https://shadcn-dashboard.kiranism.dev/dashboard/profile)                                                                                                     | Clerk's full-featured account management UI that allows users to manage their profile and security settings                                                                                                                                                             |
+| [Kanban Board](https://shadcn-dashboard.kiranism.dev/dashboard/kanban)                                                                                                 | A Drag n Drop task management board with dnd-kit and zustand to persist state locally.                                                                                                                                                                                  |
+| [Not Found](https://shadcn-dashboard.kiranism.dev/dashboard/notfound)                                                                                                  | Not Found Page Added in the root level                                                                                                                                                                                                                                  |
+| [Global Error](https://sentry.io/for/nextjs/?utm_source=github&utm_medium=paid-community&utm_campaign=general-fy26q2-nextjs&utm_content=github-banner-project-tryfree) | A centralized error page that captures and displays errors across the application. Integrated with **Sentry** to log errors, provide detailed reports, and enable replay functionality for better debugging.                                                            |
+| [Styleguide](/styleguide)                                                                                                                                              | Complete showcase of all available UI components with examples, documentation, and interactive demos.                                                                                                                                                                   |
 
 ## Getting Started
 
 > [!NOTE]  
 > We are using **Next 15** with **React 19**, follow these steps:
 
-Clone the repo:
-
-```
-git clone https://github.com/Kiranism/next-shadcn-dashboard-starter.git
-```
+Clone the repo: 
 
 - `pnpm install` ( we have legacy-peer-deps=true added in the .npmrc)
 - Create a `.env.local` file by copying the example environment file:
@@ -111,21 +111,11 @@ This project includes multiple development scripts to accommodate different use 
 - **`pnpm run dev`** - Uses Turbopack for faster development builds (recommended for most development)
 - **`pnpm run dev:webpack`** - Uses Webpack (useful when you need Sentry error tracking during development)
 
-> [!NOTE]
-> **Turbopack vs Webpack**: 
-> - Turbopack provides faster development builds but is not compatible with Sentry's Webpack plugin
-> - Webpack is slower but fully compatible with all plugins including Sentry
-> - The configuration automatically detects Turbopack usage and disables Sentry to prevent warnings
-
-📖 **For detailed Turbopack configuration, see [TURBOPACK.md](./TURBOPACK.md)**
 
 ## Environment Configuration Setup
 
 To configure the environment for this project, refer to the `env.example.txt` file. This file contains the necessary environment variables required for authentication and error tracking.
 
 You should now be able to access the application at http://localhost:3000.
-
-> [!WARNING]
-> After cloning or forking the repository, be cautious when pulling or syncing with the latest changes, as this may result in breaking conflicts.
 
 Cheers! 🥂

@@ -1,8 +1,8 @@
 'use client';
 
-import { FileUploader } from '@/components/file-uploader';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FileUploader } from '@/ui/components/file-uploader';
+import { Button } from '@/ui/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/ui/components/ui/card';
 import {
   Form,
   FormControl,
@@ -10,17 +10,17 @@ import {
   FormItem,
   FormLabel,
   FormMessage
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from '@/ui/components/ui/form';
+import { Input } from '@/ui/components/ui/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { Product } from '@/constants/mock-api';
+} from '@/ui/components/ui/select';
+import { Textarea } from '@/ui/components/ui/textarea';
+import { Product } from '@/core/shared/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';

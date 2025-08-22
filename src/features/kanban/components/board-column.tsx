@@ -5,11 +5,11 @@ import { CSS } from '@dnd-kit/utilities';
 import { cva } from 'class-variance-authority';
 import { IconGripVertical } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/ui/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/ui/components/ui/card';
 import { ColumnActions } from './column-action';
 import { TaskCard } from './task-card';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import { ScrollArea, ScrollBar } from '@/ui/components/ui/scroll-area';
 
 export interface Column {
   id: UniqueIdentifier;

@@ -7,10 +7,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle
-} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '@/ui/components/ui/card';
+import { Button } from '@/ui/components/ui/button';
+import { Input } from '@/ui/components/ui/input';
+import { Label } from '@/ui/components/ui/label';
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger
-} from '@/components/ui/dialog';
+} from '@/ui/components/ui/dialog';
 import {
   Sheet,
   SheetContent,
@@ -27,23 +27,23 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger
-} from '@/components/ui/sheet';
+} from '@/ui/components/ui/sheet';
 import {
   Popover,
   PopoverContent,
   PopoverTrigger
-} from '@/components/ui/popover';
+} from '@/ui/components/ui/popover';
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger
-} from '@/components/ui/hover-card';
+} from '@/ui/components/ui/hover-card';
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger
-} from '@/components/ui/tooltip';
+} from '@/ui/components/ui/tooltip';
 import {
   Command,
   CommandEmpty,
@@ -51,7 +51,7 @@ import {
   CommandInput,
   CommandItem,
   CommandList
-} from '@/components/ui/command';
+} from '@/ui/components/ui/command';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,7 +59,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+} from '@/ui/components/ui/dropdown-menu';
 import {
   ContextMenu,
   ContextMenuContent,
@@ -67,7 +67,7 @@ import {
   ContextMenuLabel,
   ContextMenuSeparator,
   ContextMenuTrigger
-} from '@/components/ui/context-menu';
+} from '@/ui/components/ui/context-menu';
 import {
   Code,
   Settings,
