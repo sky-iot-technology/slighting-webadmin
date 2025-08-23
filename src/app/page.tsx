@@ -1,9 +1,15 @@
+import { checkServerAuth } from '@/core/shared/utils/server-auth';
 import { redirect } from 'next/navigation';
 
 export default async function Page() {
-  // For now, we'll redirect to sign-in
-  // In a real app, you would check authentication here
-  // You can implement server-side session checking or JWT verification
-  
-  redirect('/auth/sign-in');
+  // Check authentication status
+  const auth = await checkServerAuth();
+
+  if (auth.isAuthenticated) {
+    // User is authenticated, redirect to dashboard
+    redirect('/dashboard/overview');
+  } else {
+    // User is not authenticated, redirect to sign-in
+    redirect('/auth/sign-in');
+  }
 }

@@ -5,7 +5,7 @@ export const cookieUtils = {
     const sameSite = process.env.NEXT_PUBLIC_COOKIE_SAMESITE as 'strict' | 'lax' | 'none' || 'strict';
     
     // Access token - short lived (15 minutes)
-    document.cookie = `access_token=${accessToken}; path=/; max-age=900; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
+    document.cookie = `access_token=${accessToken}; path=/; max-age=30000; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
     
     // Refresh token - longer lived (7 days)
     document.cookie = `refresh_token=${refreshToken}; path=/; max-age=604800; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;

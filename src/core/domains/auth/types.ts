@@ -15,15 +15,20 @@ export interface LoginCredentials {
     refresh_token: string;
   }
   
-  export interface User {
+  export interface User{
     id: string;
-    username: string;
-    email?: string;
-    name?: string;
-    role: number;
-    createdAt?: string;
-    updatedAt?: string;
-  }
+    first_name: string;
+    last_name: string;
+    status: string;
+    role: string;
+    credentials: {
+        username: string
+    },
+    email: string;
+    created_at: string;
+    updated_at: string;
+    updated_by: string;
+}
   
   export interface ProfileUpdateData {
     name?: string;
