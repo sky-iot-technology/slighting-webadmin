@@ -1,5 +1,6 @@
 import type { AxiosRequestConfig } from 'axios';
 import { BaseApiClient } from '@/core/shared/api/base';
+import { cookieUtils } from '@/core/shared/utils/cookies';
 
 export class AuthenticatedApiClient extends BaseApiClient {
   constructor(config?: AxiosRequestConfig) {
@@ -11,9 +12,13 @@ export class AuthenticatedApiClient extends BaseApiClient {
     // Request interceptor for authenticated requests
     this.client.interceptors.request.use(
       async (config) => {
-        const token = this.getAuthToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        const apiConfig = config as any;
+        // Only add auth token if not an external API call
+        if (!apiConfig.externalApi) {
+          const token = this.getAuthToken();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
         return config;
       },
@@ -27,8 +32,26 @@ export class AuthenticatedApiClient extends BaseApiClient {
       (response) => response,
       async (error) => {
         if (error.response?.status === 401) {
-          // Handle unauthorized access
-          this.handleUnauthorized();
+          // Try to refresh token automatically
+          try {
+            const refreshToken = cookieUtils.getRefreshToken();
+            if (refreshToken) {
+              // Import authApi here to avoid circular dependency
+              const { authApi } = await import('@/core/domains/auth/api');
+              const newTokens = await authApi.refreshToken(refreshToken);
+              
+              // Retry the original request with new token
+              const originalRequest = error.config;
+              originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
+              return this.client(originalRequest);
+            }
+          } catch (refreshError) {
+            // Refresh failed, clear cookies and redirect to login
+            cookieUtils.clearAuthCookies();
+            if (typeof window !== 'undefined') {
+              window.location.href = '/auth/sign-in';
+            }
+          }
         }
         return Promise.reject(error);
       }
@@ -37,23 +60,17 @@ export class AuthenticatedApiClient extends BaseApiClient {
 
   protected getAuthToken(): string | null {
     if (typeof window !== 'undefined') {
-      return localStorage.getItem('auth_token');
+      try {
+        // Read token from cookies instead of localStorage
+        return document.cookie
+          .split('; ')
+          .find(row => row.startsWith('access_token='))
+          ?.split('=')[1] || null;
+      } catch {
+        return null;
+      }
     }
     return null;
-  }
-
-  private handleUnauthorized(): void {
-    // Clear auth token and redirect to login
-    if (typeof window === 'undefined') {
-      return;
-    }
-    try {
-      localStorage.removeItem('auth_token');
-      // You can add redirect logic here or use your auth service
-      window.location.href = '/auth/sign-in';
-    } catch {
-      // Handle localStorage access errors
-    }
   }
 
   // Public methods that use the authenticated client

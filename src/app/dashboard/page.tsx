@@ -1,12 +1,9 @@
-import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 
 export default async function Dashboard() {
-  const { userId } = await auth();
-
-  if (!userId) {
-    return redirect('/auth/sign-in');
-  } else {
-    redirect('/dashboard/overview');
-  }
+  // For now, we'll redirect to overview
+  // In a real app, you would check authentication here
+  // You can implement server-side session checking or JWT verification
+  
+  redirect('/dashboard/overview');
 }

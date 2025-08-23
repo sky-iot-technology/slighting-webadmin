@@ -11,6 +11,7 @@ const baseTimeout = 30000;
 
 export interface ApiRequestConfig extends AxiosRequestConfig {
   isAdmin?: boolean;
+  externalApi?: boolean; // Flag to indicate if this is an external API call
 }
 
 export abstract class BaseApiClient {
@@ -47,10 +48,13 @@ export abstract class BaseApiClient {
     // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
-        // Add auth token if available
-        const token = this.getAuthToken();
-        if (token) {
-          config.headers.Authorization = `Bearer ${token}`;
+        // Add auth token if available and not an external API call
+        const apiConfig = config as any;
+        if (!apiConfig.externalApi) {
+          const token = this.getAuthToken();
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
         }
         return config;
       },
@@ -73,8 +77,13 @@ export abstract class BaseApiClient {
     if (typeof window === 'undefined') {
       return null;
     }
+    
+    // Read token from cookies instead of localStorage
     try {
-      return localStorage.getItem('auth_token');
+      return document.cookie
+        .split('; ')
+        .find(row => row.startsWith('access_token='))
+        ?.split('=')[1] || null;
     } catch {
       return null;
     }

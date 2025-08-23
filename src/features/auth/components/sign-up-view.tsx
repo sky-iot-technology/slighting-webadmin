@@ -1,10 +1,10 @@
 import { buttonVariants } from '@/ui/components/ui/button';
 import { cn } from '@/lib/utils';
-import { SignUp as ClerkSignUpForm } from '@clerk/nextjs';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
 import { IconStar } from '@tabler/icons-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
+import { SignUpForm } from './sign-up-form';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -15,45 +15,63 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
   return (
     <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
       <Link
-        href='/examples/authentication'
+        href='/auth/sign-in'
         className={cn(
           buttonVariants({ variant: 'ghost' }),
           'absolute top-4 right-4 hidden md:top-8 md:right-8'
         )}
       >
-        Sign Up
+        Đăng nhập
       </Link>
+      
+      {/* Left side - Background image */}
       <div className='bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r'>
-        <div className='absolute inset-0 bg-zinc-900' />
-        <div className='relative z-20 flex items-center text-lg font-medium'>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            viewBox='0 0 24 24'
-            fill='none'
-            stroke='currentColor'
-            strokeWidth='2'
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            className='mr-2 h-6 w-6'
-          >
-            <path d='M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3' />
-          </svg>
-          Logo
+        <div className='absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900'>
+          {/* City street background - using CSS gradients to simulate the design */}
+          <div className='absolute inset-0 opacity-20'>
+            <div className='h-full w-full bg-[radial-gradient(circle_at_20%_50%,rgba(120,119,198,0.3),transparent_50%),radial-gradient(circle_at_80%_20%,rgba(255,119,198,0.3),transparent_50%),radial-gradient(circle_at_40%_80%,rgba(120,219,255,0.3),transparent_50%)]'></div>
+          </div>
+          
+          {/* Street lights effect */}
+          <div className='absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-yellow-200/20 to-transparent'></div>
+          
+          {/* Moon */}
+          <div className='absolute top-8 left-8 w-16 h-16 bg-yellow-200/30 rounded-full blur-sm'></div>
         </div>
+        
+        <div className='relative z-20 flex items-center text-lg font-medium'>
+          <div className='w-8 h-8 bg-gradient-to-br from-purple-400 to-blue-500 rounded-lg flex items-center justify-center mr-3'>
+            <svg
+              className='w-5 h-5 text-white'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={2}
+                d='M13 10V3L4 14h7v7l9-11h-7z'
+              />
+            </svg>
+          </div>
+          Citisys
+        </div>
+        
         <div className='relative z-20 mt-auto'>
           <blockquote className='space-y-2'>
             <p className='text-lg'>
-              &ldquo;This starter template has saved me countless hours of work
-              and helped me deliver projects to my clients faster than ever
-              before.&rdquo;
+              &ldquo;Hệ thống quản lý hiện đại, an toàn và dễ sử dụng cho doanh nghiệp của bạn.&rdquo;
             </p>
-            <footer className='text-sm'>Random Dude</footer>
+            <footer className='text-sm'>Citisys Team</footer>
           </blockquote>
         </div>
       </div>
-      <div className='flex h-full items-center justify-center p-4 lg:p-8'>
+      
+      {/* Right side - Sign up form */}
+      <div className='flex h-full items-center justify-center p-4 lg:p-8 bg-gradient-to-b from-white to-blue-50'>
         <div className='flex w-full max-w-md flex-col items-center justify-center space-y-6'>
-          {/* github link  */}
+          {/* github link */}
           <Link
             className={cn('group inline-flex hover:text-yellow-200')}
             target='_blank'
@@ -71,25 +89,23 @@ export default function SignUpViewPage({ stars }: { stars: number }) {
               <span className='font-display font-medium'>{stars}</span>
             </div>
           </Link>
-          <ClerkSignUpForm
-            initialValues={{
-              emailAddress: 'your_mail+clerk_test@example.com'
-            }}
-          />
+          
+          <SignUpForm />
+
           <p className='text-muted-foreground px-8 text-center text-sm'>
-            By clicking continue, you agree to our{' '}
+            Bằng việc tiếp tục, bạn đồng ý với{' '}
             <Link
               href='/terms'
               className='hover:text-primary underline underline-offset-4'
             >
-              Terms of Service
+              Điều khoản sử dụng
             </Link>{' '}
-            and{' '}
+            và{' '}
             <Link
               href='/privacy'
               className='hover:text-primary underline underline-offset-4'
             >
-              Privacy Policy
+              Chính sách bảo mật
             </Link>
             .
           </p>
