@@ -1,11 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Eye, EyeOff } from 'lucide-react';
+import { loginSchema, useLogin, type LoginFormData } from '@/core/domains/auth';
 import { Button } from '@/ui/components/ui/button';
-import { Input } from '@/ui/components/ui/input';
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import {
   Form,
@@ -15,15 +11,15 @@ import {
   FormLabel,
   FormMessage
 } from '@/ui/components/ui/form';
-import { loginSchema, type LoginFormData } from '@/core/domains/auth';
-import { useLogin } from '@/core/domains/auth';
-import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
 import { Heading } from '@/ui/components/ui/heading';
+import { Input } from '@/ui/components/ui/input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 export function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const router = useRouter();
   const loginMutation = useLogin();
 
   const form = useForm<LoginFormData>({

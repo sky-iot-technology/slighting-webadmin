@@ -30,11 +30,11 @@ export function useLogin() {
         const user = await authApi.getCurrentUser(data.access_token);
         setUser(user);
         setTokens(data.access_token, data.refresh_token);
-        setLoading(false);
         
         queryClient.setQueryData(authKeys.user(), user);
         toast.success('Đăng nhập thành công!');
         router.push('/dashboard/overview');
+        setLoading(false);
       } catch (error) {
         setLoading(false);
         setError('Failed to fetch user profile');
