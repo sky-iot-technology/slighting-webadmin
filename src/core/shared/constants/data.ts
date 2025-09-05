@@ -14,6 +14,14 @@ export type Product = {
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
+    title: 'Dashboard2',
+    url: '/dashboard/overview2',
+    icon: 'dashboard',
+    isActive: false,
+    shortcut: ['d', 'd'],
+    items: [] // Empty array as there are no child items for Dashboard
+  },
+  {
     title: 'Dashboard',
     url: '/dashboard/overview',
     icon: 'dashboard',
@@ -63,6 +71,14 @@ export const navItems: NavItem[] = [
     url: '/styleguide',
     icon: 'palette',
     shortcut: ['s', 's'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Role',
+    url: '/dashboard/role',
+    icon: 'role',
+    shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
   }

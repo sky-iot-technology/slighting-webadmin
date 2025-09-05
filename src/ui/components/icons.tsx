@@ -31,8 +31,10 @@ import {
   IconX,
   IconLayoutKanban,
   IconBrandGithub,
-  IconPalette
+  IconPalette,
+  IconShieldCheck
 } from '@tabler/icons-react';
+import Image from 'next/image';
 
 export type Icon = React.ComponentType<IconProps>;
 
@@ -68,5 +70,15 @@ export const Icons = {
   github: IconBrandGithub,
   twitter: IconBrandTwitter,
   check: IconCheck,
-  palette: IconPalette
+  palette: IconPalette,
+  maintenance: () => (
+    <Image
+      src={'/assets/icons/maintenance.svg'}
+      alt='maintenance'
+      width={24}
+      height={24}
+      className='dark:invert'
+    />
+  ),
+  role: IconShieldCheck
 };
