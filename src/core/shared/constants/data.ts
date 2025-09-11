@@ -29,10 +29,11 @@ export const navItems: NavItem[] = [
     shortcut: ['d', 'd'],
     items: [] // Empty array as there are no child items for Dashboard
   },
+
   {
-    title: 'Product',
-    url: '/dashboard/product',
-    icon: 'product',
+    title: 'Map',
+    url: '/dashboard/map',
+    icon: 'map',
     shortcut: ['p', 'p'],
     isActive: false,
     items: [] // No child items
@@ -71,6 +72,14 @@ export const navItems: NavItem[] = [
     url: '/styleguide',
     icon: 'palette',
     shortcut: ['s', 's'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
+    title: 'Product',
+    url: '/dashboard/product',
+    icon: 'product',
+    shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items
   },

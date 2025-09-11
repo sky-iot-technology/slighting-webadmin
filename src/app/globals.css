@@ -44,6 +44,23 @@
   --card-primary: oklch(0.9749 0.0117 239.9);
   --card-success: oklch(0.9834 0.0215 149.72);
   --card-title: oklch(0.2168 0.0109 260.68);
+  --map-title: oklch(0.4194 0.1224 253.18);
+  --map-background: oklch(0.6243 0.2036 255.76 / 5.1%);
+  --map-lightcontrol-header: oklch(0.5172 0.1034 230.31);
+  --map-active-badge: oklch(0.9821 0.0318 140.99);
+  --map-inactive-badge: oklch(0.9642 0 0);
+  --map-text-success-badge: oklch(0.5874 0.1885 144.32);
+  --map-range-slider-active: oklch(0.6807 0.1459 240.61);
+  --map-track-slider-active: oklch(0.8964 0.0492 234.19);
+  --map-range-slider-inactive: oklch(0.8881 0.0123 247.97);
+  --map-control-button-success: oklch(0.632 0.2074 141.48);
+  --map-control-button-destructive: oklch(0.5994 0.1994 24.12);
+  --map-control-button-danger: oklch(0.8088 0.170358 75.3501);
+  --map-gradient-start: oklch(0.93 0.077 85.91);
+  --map-gradient-end: oklch(0.9489 0.0291 233.59);
+  --map-button-graph: oklch(0.952 0.016 253.9);
+  --map-button-today-start: oklch(0.6651 0.1824 252.76);
+  --map-button-today-end: oklch(0.2811 0.0865 252.93);
 }
 
 .dark {
@@ -127,6 +144,19 @@
   --shadow-danger: 0 4px 4px 0 oklch(0.336 0.1375 28.52 / 25.1%);
   --shadow-simple: 0 4px 4px 0 oklch(0.3138 0.128763 29.2339 / 25.1%);
   --shadow-pie-chart: 0 4px 4px 0 oklch(0.3263 0.0962 254.58 / 25.1%);
+  --color-map-title: var(--map-title);
+  --color-map-background: var(--map-background);
+  --color-map-lightControl-header: var(--map-lightcontrol-header);
+  --color-active-badge: var(--map-active-badge);
+  --color-inactive-badge: var(--map-inactive-badge);
+  --color-success-badge-text: var(--map-text-success-badge);
+  --color-map-range-slider-active: var(--map-range-slider-active);
+  --color-map-track-slider-active: var(--map-track-slider-active);
+  --color-map-range-slider-inactive: var(--map-range-slider-inactive);
+  --color-map-control-button-success: var(--map-control-button-success);
+  --color-map-control-button-destructive: var(--map-control-button-destructive);
+  --color-map-control-button-danger: var(--map-control-button-danger);
+  --color-map-button-graph: var(--map-button-graph);
 }
 
 @layer base {

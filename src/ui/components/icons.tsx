@@ -80,5 +80,14 @@ export const Icons = {
       className='dark:invert'
     />
   ),
+  map: () => (
+    <Image
+      src={'/assets/icons/map.svg'}
+      alt='map'
+      width={24}
+      height={24}
+      className='dark:invert'
+    />
+  ),
   role: IconShieldCheck
 };
