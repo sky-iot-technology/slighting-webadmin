@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import ReactMapGL, {
+import MapController, {
   NavigationControl,
   ScaleControl
 } from '@goongmaps/goong-map-react';
@@ -39,7 +39,7 @@ export default function GoongMap() {
 
   return (
     <div className='h-[500px] w-full'>
-      <ReactMapGL
+      <MapController
         latitude={16.10165433114301}
         longitude={106.44921943985075}
         zoom={5}
@@ -52,7 +52,7 @@ export default function GoongMap() {
       >
         <NavigationControl {...navigationControlProps} />
         <ScaleControl {...scaleControlProps} />
-      </ReactMapGL>
+      </MapController>
     </div>
   );
 }
