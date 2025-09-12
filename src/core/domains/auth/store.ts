@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>()(
       },
 
       get isAuthenticated() {
-        return get().user !== null && get().accessToken !== null;
+        return get()?.user !== null && get()?.accessToken !== null;
       }
     }),
     { name: 'auth-store' }

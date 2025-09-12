@@ -1,10 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import MapController, {
+import ReactMapGL, {
   NavigationControl,
   ScaleControl
 } from '@goongmaps/goong-map-react';
+import { useCallback } from 'react';
 
 export default function GoongMap() {
   const accessToken = process.env.NEXT_PUBLIC_API_KEY_GOONGMAP as string;
@@ -19,8 +19,6 @@ export default function GoongMap() {
   const scaleControlProps = {
     style: { bottom: 36, left: 0, padding: '10px' }
   };
-
-  console.log('typeof accessToken:', typeof accessToken);
 
   if (!accessToken) {
     return (
@@ -39,7 +37,7 @@ export default function GoongMap() {
 
   return (
     <div className='h-[500px] w-full'>
-      <MapController
+      <ReactMapGL
         latitude={16.10165433114301}
         longitude={106.44921943985075}
         zoom={5}
@@ -47,12 +45,13 @@ export default function GoongMap() {
         height='100%'
         goongApiAccessToken={accessToken}
         mapStyle='https://tiles.goong.io/assets/goong_light_v2.json'
-        getCursor={(state) => 'dsadasdsa'}
+        getCursor={handleGetCursor}
+        touchAction='auto'
         onResize={() => {}}
       >
         <NavigationControl {...navigationControlProps} />
         <ScaleControl {...scaleControlProps} />
-      </MapController>
+      </ReactMapGL>
     </div>
   );
 }

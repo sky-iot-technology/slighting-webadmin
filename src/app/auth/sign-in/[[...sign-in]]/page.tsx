@@ -1,4 +1,5 @@
 import SignInViewPage from '@/features/auth/components/sign-in-view';
+import GoongMap from '@/features/map/components/goong-map';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -7,5 +8,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Page() {
+  return <GoongMap />;
   return <SignInViewPage />;
 }
