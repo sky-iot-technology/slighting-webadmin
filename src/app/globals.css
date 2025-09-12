@@ -2,6 +2,8 @@
 
 @import 'tw-animate-css';
 
+@import '@goongmaps/goong-js/dist/goong-js.css';
+
 @custom-variant dark (&:is(.dark *));
 
 @import './theme.css';
