@@ -123,8 +123,8 @@ export function BrightnessGraph() {
         </div>
       </CardHeader>
 
-      <CardContent className='px-2'>
-        <ResponsiveContainer width='100%' height={360}>
+      <CardContent className='h-[200px] overflow-y-auto px-2'>
+        <ResponsiveContainer width='100%' height='100%'>
           <ComposedChart data={chartData}>
             <Tooltip content={<CustomTooltip />} cursor={false} />
             <Legend

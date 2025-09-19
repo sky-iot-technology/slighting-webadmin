@@ -1,58 +1,186 @@
 'use client';
 
 import ReactMapGL, {
-  Marker,
-  NavigationControl,
+  FlyToInterpolator,
+  MapEvent,
+  MapRef,
   ScaleControl,
-  ViewportProps
+  ViewportProps,
+  WebMercatorViewport
 } from '@goongmaps/goong-map-react';
-import { useCallback, useRef, useState } from 'react';
+import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import MapMarker from './map-marker';
+import { Device } from '../../../core/domains/devices/types';
+import {
+  mapControllerProps,
+  navigationControlProps,
+  scaleControlProps
+} from '../config/map-controls';
+import CabinetInfoPanel from './cabinet_info_panel';
+import { useMapResize } from '../hooks/useMapResize';
+import { useMapLayers } from '../hooks/useMapLayers';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
-type CursorState = {
-  isHovering: boolean;
-  isDragging: boolean;
-  isRotating?: boolean;
-  inTransition?: boolean;
-};
+
+const devices: Device[] = [
+  {
+    id: '1',
+    name: 'Quận 1',
+    longitude: 106.700981,
+    latitude: 10.776889,
+    online: true
+  },
+  {
+    id: '2',
+    name: 'Quận 3',
+    longitude: 106.686722,
+    latitude: 10.78402,
+    online: false
+  },
+  {
+    id: '3',
+    name: 'Quận 5',
+    longitude: 106.668331,
+    latitude: 10.754459,
+    online: true
+  },
+  {
+    id: '4',
+    name: 'Quận 7',
+    longitude: 106.721752,
+    latitude: 10.737622,
+    online: false
+  },
+  {
+    id: '5',
+    name: 'Quận 10',
+    longitude: 106.668511,
+    latitude: 10.774236,
+    online: true
+  },
+  {
+    id: '6',
+    name: 'Quận 11',
+    longitude: 106.650104,
+    latitude: 10.762622,
+    online: false
+  },
+  {
+    id: '7',
+    name: 'Quận 12',
+    longitude: 106.635085,
+    latitude: 10.85945,
+    online: true
+  },
+  {
+    id: '8',
+    name: 'Bình Thạnh',
+    longitude: 106.713066,
+    latitude: 10.801465,
+    online: false
+  },
+  {
+    id: '9',
+    name: 'Phú Nhuận',
+    longitude: 106.678337,
+    latitude: 10.797256,
+    online: true
+  },
+  {
+    id: '10',
+    name: 'Tân Bình',
+    longitude: 106.652709,
+    latitude: 10.80194,
+    online: false
+  },
+  {
+    id: '11',
+    name: 'Tân Phú',
+    longitude: 106.635944,
+    latitude: 10.790051,
+    online: true
+  },
+  {
+    id: '12',
+    name: 'Gò Vấp',
+    longitude: 106.665497,
+    latitude: 10.83874,
+    online: false
+  },
+  {
+    id: '13',
+    name: 'Thủ Đức',
+    longitude: 106.760292,
+    latitude: 10.849345,
+    online: true
+  },
+  {
+    id: '14',
+    name: 'Bình Tân',
+    longitude: 106.606689,
+    latitude: 10.765976,
+    online: false
+  },
+  {
+    id: '15',
+    name: 'Nhà Bè',
+    longitude: 106.739349,
+    latitude: 10.695496,
+    online: true
+  },
+  {
+    id: '16',
+    name: 'Hóc Môn',
+    longitude: 106.590614,
+    latitude: 10.89158,
+    online: false
+  },
+  {
+    id: '17',
+    name: 'Củ Chi',
+    longitude: 106.495056,
+    latitude: 11.00644,
+    online: true
+  },
+  {
+    id: '18',
+    name: 'Bình Chánh',
+    longitude: 106.543121,
+    latitude: 10.71331,
+    online: false
+  },
+  {
+    id: '19',
+    name: 'Cần Giờ',
+    longitude: 106.954346,
+    latitude: 10.41667,
+    online: true
+  },
+  {
+    id: '20',
+    name: 'Quận 4',
+    longitude: 106.706562,
+    latitude: 10.764366,
+    online: false
+  }
+  // { id: '21', name: 'New York - Times Square', longitude: -73.985130, latitude: 40.758896, online: true },
+];
 
 export default function GoongMap() {
-  const navigationControlProps = {
-    style: {
-      top: 0,
-      right: 0,
-      padding: '10px'
-    }
-  };
-
-  const scaleControlProps = {
-    style: { bottom: 36, left: 0, padding: '10px' }
-  };
-
-  const mapControllerProps = {
-    goongApiAccessToken: process.env.NEXT_PUBLIC_API_KEY_GOONGMAP,
-
-    clickRadius: 20,
-    center: [0, 0],
-    width: '100%',
-    height: '100%',
-    touchAction: 'auto'
-  };
-
   const [mapStyle, setmapStyle] = useState(mapStyleDefault);
-  const [viewport, setViewport] = useState<ViewportProps>({
-    latitude: 10.7805152,
-    longitude: 106.7075194,
-    zoom: 14,
-    bearing: 0,
-    pitch: 0
-  });
-  const currrentOptions = useRef<ViewportProps | null>(null);
+  const [transitionDuration, setTransitionDuration] = useState(1000);
+  const [viewport, setViewport] = useState<ViewportProps>({});
+  const currrentOptions = useRef<ViewportProps>(null);
   const [isScrollZoom, setisScrollZoom] = useState(true);
+  const [popupInfo, setPopupInfo] = useState<Device | null>(null);
+  const [initialized, setInitialized] = useState(false);
+
+  const mapRef = useRef<MapRef | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+
   const handleGetCursor = useCallback(
-    ({ isHovering, isDragging }: CursorState) =>
-      isDragging ? 'grabbing' : isHovering ? 'pointer' : 'default',
+    ({ isHovering, isDragging }: any) =>
+      isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab',
     []
   );
 
@@ -63,62 +191,132 @@ export default function GoongMap() {
   const onChangeView = (options: ViewportProps) => {
     currrentOptions.current = options;
     setViewport((pre) => ({ ...pre, ...options }));
+    setTransitionDuration(0);
   };
+
+  // const flyToMarker = useCallback((device: Device) => {
+  //   const vp = new WebMercatorViewport({
+  //     ...viewport,
+  //     width: window.innerWidth,
+  //     height: window.innerHeight,
+  //   })
+  //   const {longitude, latitude, zoom} = vp.fitBounds(
+  //     [
+  //       [device.longitude - 0.01, device.latitude - 0.01],
+  //       [device.longitude + 0.01, device.latitude + 0.01],
+  //     ],
+  //     { padding: 40 }
+  //   )
+
+  //   setViewport({
+  //     ...viewport,
+  //     longitude,
+  //     latitude,
+  //     zoom,
+  //     transitionInterpolator: new FlyToInterpolator(),
+  //     transitionEasing: (t) => t * (2 - t),
+  //   });
+  //   setTransitionDuration(500)
+  // }, [viewport, setViewport])
+
+  const onClick = (event: MapEvent) => {
+    if (!event.features?.length) return;
+
+    const map = mapRef.current?.getMap();
+    if (!map || !map.getLayer('devices-unclustered')) return;
+
+    const feature = event.features[0];
+
+    if (feature.layer.id === 'devices-unclustered') {
+      const deviceData = feature.properties;
+      setPopupInfo(deviceData);
+      setisScrollZoom(false);
+
+      setViewport({
+        ...viewport,
+        longitude: deviceData.longitude,
+        latitude: deviceData.latitude,
+        zoom: 16,
+        transitionInterpolator: new FlyToInterpolator(),
+        transitionEasing: (t) => t * (2 - t)
+      });
+      setTransitionDuration(1000);
+    }
+  };
+
+  useEffect(() => {
+    if (!initialized && devices.length > 0) {
+      const longs = devices
+        .filter((x) => x.longitude && x.latitude)
+        .map((x) => x.longitude);
+      const lats = devices
+        .filter((x) => x.longitude && x.latitude)
+        .map((x) => x.latitude);
+      const { longitude, latitude, zoom } = new WebMercatorViewport({
+        width: window.innerWidth,
+        height: window.innerHeight
+      })?.fitBounds(
+        [
+          [Math.min(...longs), Math.min(...lats)],
+          [Math.max(...longs), Math.max(...lats)]
+        ],
+        {
+          padding: 100
+        }
+      );
+      setViewport((pre) => ({
+        ...pre,
+        longitude,
+        latitude,
+        zoom,
+        transitionInterpolator: new FlyToInterpolator()
+      }));
+      setTransitionDuration(1000);
+      setInitialized(true);
+    }
+  }, [devices, initialized, viewport]);
+
+  useMapLayers(mapRef, devices);
+  useMapResize(mapContainerRef, setViewport);
 
   return (
     <div
-      className='relative w-full flex-1'
-      style={{ width: '100%', height: '400px' }}
+      ref={mapContainerRef}
+      className='relative h-full w-full overflow-x-hidden overflow-y-auto'
     >
       <ReactMapGL
         {...mapControllerProps}
         {...viewport}
+        interactiveLayerIds={
+          mapRef.current?.getMap().getLayer('devices-clusters')
+            ? ['devices-clusters', 'devices-unclustered']
+            : []
+        }
+        ref={mapRef}
         mapStyle={mapStyle}
         getCursor={handleGetCursor}
         onViewportChange={handleViewportChange}
         scrollZoom={isScrollZoom}
-        onResize={() => {}}
-        onClick={() => {
+        transitionDuration={transitionDuration}
+        onClick={(e) => {
           setisScrollZoom(true);
+          setPopupInfo(null);
+          onClick(e);
         }}
-        attributionControl={false}
-        transitionDuration={0}
-        onTransitionStart={() => {}}
-        reuseMaps={true}
       >
-        <Marker longitude={-73.9385} latitude={40.6643}>
-          <div
-            style={{
-              background: 'red',
-              width: 20,
-              height: 20,
-              borderRadius: '50%',
-              border: '2px solid white',
-              boxShadow: '0 0 10px rgba(0,0,0,0.5)'
-            }}
-          />
-        </Marker>
-
-        <Marker longitude={-118.4108} latitude={34.0194}>
-          <div
-            style={{
-              background: 'blue',
-              width: 25,
-              height: 25,
-              borderRadius: '50%',
-              border: '2px solid white',
-              boxShadow: '0 0 10px rgba(0,0,0,0.5)'
-            }}
-          />
-        </Marker>
-
-        <NavigationControl
-          {...navigationControlProps}
-          showCompass={true}
-          showZoom={true}
-        />
+        {/* <MapMarker data={devices} onClick={(device) => {
+          setPopupInfo(device)
+          setisScrollZoom(false)
+          flyToMarker(device)
+        }}/> */}
+        {/* <NavigationControl {...navigationControlProps} showCompass={true} showZoom={true}/> */}
         <ScaleControl {...scaleControlProps} />
       </ReactMapGL>
+      {popupInfo && (
+        <div className='absolute top-[35px] right-1.5'>
+          <CabinetInfoPanel onOpenChange={() => setPopupInfo(null)} />
+        </div>
+      )}
     </div>
   );
 }

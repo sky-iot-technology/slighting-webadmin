@@ -81,7 +81,7 @@ export default function Overview2({
 
         <div>{simple_stats}</div>
 
-        <div className='mr-[22px] ml-[28px] grid grid-cols-1 gap-6 md:grid-cols-2'>
+        <div className='mr-[22px] mb-[26px] ml-[28px] grid grid-cols-1 gap-6 md:grid-cols-2'>
           <div className='col-span-1'>{circle_stats}</div>
           <div className='col-span-1'>{alert_stats}</div>
         </div>
