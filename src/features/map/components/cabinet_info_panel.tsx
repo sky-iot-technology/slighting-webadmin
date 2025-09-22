@@ -27,17 +27,19 @@ type InfoModalProps = {
 
 export default function CabinetInfoPanel(props: InfoModalProps) {
   // if (!props.open) return null;
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
+  };
+
+  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.currentTarget.style.setProperty('--scrollbar-thumb-color', 'transparent');
+  };
+
   return (
     <div
-      onMouseEnter={(e) => {
-        e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.setProperty(
-          '--scrollbar-thumb-color',
-          'transparent'
-        );
-      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={`bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent`}
     >
       <div className='bg-background sticky top-0 z-10'>
@@ -45,7 +47,12 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
           <div className='relative flex-shrink-0'>
             <Avatar className='h-[50px] w-[50px]'>
               <div className='bg-muted flex h-full w-full items-center justify-center rounded-full'>
-                <IconDeviceImacBolt className='text-muted-foreground h-7 w-7' />
+                <Image
+                  src={'/assets/icons/device.svg'}
+                  alt='search'
+                  width={27.6}
+                  height={27.6}
+                />
               </div>
             </Avatar>
             <span className='border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 bg-green-500' />
@@ -120,9 +127,9 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
 
         <TabsContent
           value='operation'
-          className='bg-map-background flex flex-col gap-1.5 pt-1.5 pr-[5px] pl-1.5 [&_[data-slot=card]]:shadow-none [&_span]:py-1'
+          className='bg-map-background flex flex-col gap-1.5 pt-1.5 pr-[5px] pl-1.5 [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none [&_span]:py-1'
         >
-          <Card className='@container/card gap-0 rounded-lg p-0 px-[15px]'>
+          <Card className='@container/card gap-0 rounded-lg border-none p-0 px-[15px]'>
             <CardHeader className='gap-0 p-0 pr-[5px] pb-[4px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 Thông Tin Vận Hành
@@ -213,7 +220,7 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
 
         <TabsContent
           value='info'
-          className='flex h-full flex-col gap-1.5 overflow-y-auto pt-1.5 pr-[7px] pl-[9px] [&_[data-slot=card]]:shadow-none'
+          className='flex h-full flex-col gap-1.5 overflow-y-auto pt-1.5 pr-[7px] pl-[9px] [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none'
         >
           <Card className='bg-map-background @container/card gap-0 rounded-lg p-0'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>

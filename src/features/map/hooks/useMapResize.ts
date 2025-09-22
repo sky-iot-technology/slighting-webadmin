@@ -4,20 +4,25 @@ export const useMapResize = (
   mapContainerRef: React.RefObject<HTMLDivElement | null>,
   setViewport: any
 ) => {
-  if (mapContainerRef) {
-    useEffect(() => {
-      const handleResize = () => {
+  useEffect(() => {
+    if (!mapContainerRef.current) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
         setViewport((prev: any) => ({
           ...prev,
-          width: mapContainerRef.current?.offsetWidth,
-          height: mapContainerRef.current?.offsetHeight
+          width: entry.contentRect.width,
+          height: entry.contentRect.height
         }));
-      };
+      }
+    });
 
-      window.addEventListener('resize', handleResize);
-      handleResize();
+    resizeObserver.observe(mapContainerRef.current);
 
-      return () => window.removeEventListener('resize', handleResize);
-    }, [mapContainerRef, setViewport]);
-  }
+    return () => {
+      if (mapContainerRef.current) {
+        resizeObserver.unobserve(mapContainerRef.current);
+      }
+    };
+  }, [mapContainerRef, setViewport]);
 };

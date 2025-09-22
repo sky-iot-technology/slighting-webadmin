@@ -28,7 +28,7 @@ export const useMapLayers = (
         }
 
         map.loadImage(
-          '/assets/icons/cabinet-online.png',
+          '/assets/images/cabinet-online.png',
           (error: any, onlineImage: any) => {
             if (error || !onlineImage) {
               console.error('Error loading image:', error);
@@ -38,7 +38,7 @@ export const useMapLayers = (
             console.log('cabinet-online loaded successfully');
 
             map.loadImage(
-              '/assets/icons/cabinet-offline.png',
+              '/assets/images/cabinet-offline.png',
               (error: any, offlineImage: any) => {
                 if (error || !offlineImage) {
                   console.error('Error loading offline image:', error);

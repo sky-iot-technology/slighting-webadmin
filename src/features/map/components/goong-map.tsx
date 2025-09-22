@@ -291,7 +291,7 @@ export default function GoongMap() {
   return (
     <div
       ref={mapContainerRef}
-      className='relative h-full w-full overflow-x-hidden overflow-y-auto'
+      className='relative h-[calc(100dvh-52px)] w-full overflow-x-hidden overflow-y-auto'
     >
       <ReactMapGL
         {...mapControllerProps}
@@ -324,7 +324,7 @@ export default function GoongMap() {
       <div className='absolute top-[15px] left-[9px]'>
         <div className='bg-map-filter flex rounded-lg px-1 py-1'>
           <Select>
-            <SelectTrigger className='bg-background mr-0.5 !h-[30px] w-[217px] text-xs'>
+            <SelectTrigger className='bg-background mr-0.5 !h-[26px] w-[160px] text-xs sm:!h-[28px] sm:w-[180px] md:!h-[30px] md:w-[217px]'>
               <SelectValue placeholder='Select a country' />
             </SelectTrigger>
             <SelectContent defaultValue={'hcm'}>
@@ -335,7 +335,7 @@ export default function GoongMap() {
             </SelectContent>
           </Select>
 
-          <div className='relative ml-0.5 h-[30px] w-[217px] rounded-md text-xs'>
+          <div className='relative ml-0.5 h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]'>
             <Image
               src={'/assets/icons/search.svg'}
               alt='search'
@@ -352,7 +352,7 @@ export default function GoongMap() {
       </div>
 
       {popupInfo && (
-        <div className='absolute top-[35px] right-1.5'>
+        <div className='absolute top-[34px] right-1.5'>
           <CabinetInfoPanel onOpenChange={() => setPopupInfo(null)} />
         </div>
       )}
