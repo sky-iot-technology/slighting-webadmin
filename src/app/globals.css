@@ -63,6 +63,7 @@
   --map-button-graph: oklch(0.952 0.016 253.9);
   --map-button-today-start: oklch(0.6651 0.1824 252.76);
   --map-button-today-end: oklch(0.2811 0.0865 252.93);
+  --map-filter: oklch(0.7718 0.1403 232.74);
 }
 
 .dark {
@@ -159,6 +160,7 @@
   --color-map-control-button-destructive: var(--map-control-button-destructive);
   --color-map-control-button-danger: var(--map-control-button-danger);
   --color-map-button-graph: var(--map-button-graph);
+  --color-map-filter: var(--map-filter);
 }
 
 @layer base {

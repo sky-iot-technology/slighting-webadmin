@@ -19,6 +19,15 @@ import {
 import CabinetInfoPanel from './cabinet_info_panel';
 import { useMapResize } from '../hooks/useMapResize';
 import { useMapLayers } from '../hooks/useMapLayers';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/ui/components/ui/select';
+import { Search } from 'lucide-react';
+import Image from 'next/image';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
 
@@ -312,6 +321,36 @@ export default function GoongMap() {
         {/* <NavigationControl {...navigationControlProps} showCompass={true} showZoom={true}/> */}
         <ScaleControl {...scaleControlProps} />
       </ReactMapGL>
+      <div className='absolute top-[15px] left-[9px]'>
+        <div className='bg-map-filter flex rounded-lg px-1 py-1'>
+          <Select>
+            <SelectTrigger className='bg-background mr-0.5 !h-[30px] w-[217px] text-xs'>
+              <SelectValue placeholder='Select a country' />
+            </SelectTrigger>
+            <SelectContent defaultValue={'hcm'}>
+              <SelectItem value='hcm'>Hồ Chí Minh</SelectItem>
+              <SelectItem value='hn'>Hà nội</SelectItem>
+              <SelectItem value='hue'>Huế</SelectItem>
+              <SelectItem value='daklak'>Đắt Lắk</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <div className='relative ml-0.5 h-[30px] w-[217px] rounded-md text-xs'>
+            <Image
+              src={'/assets/icons/search.svg'}
+              alt='search'
+              width={12}
+              height={12}
+              className='text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2 transform'
+            />
+            <input
+              placeholder='Tìm kiếm khu vực & thiết bị'
+              className='border-input bg-background text-foreground placeholder:text-muted-foreground h-full w-full rounded-md border pr-3 pl-7 focus:ring-0 focus:outline-none'
+            />
+          </div>
+        </div>
+      </div>
+
       {popupInfo && (
         <div className='absolute top-[35px] right-1.5'>
           <CabinetInfoPanel onOpenChange={() => setPopupInfo(null)} />

@@ -28,7 +28,18 @@ type InfoModalProps = {
 export default function CabinetInfoPanel(props: InfoModalProps) {
   // if (!props.open) return null;
   return (
-    <div className='bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px]'>
+    <div
+      onMouseEnter={(e) => {
+        e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.setProperty(
+          '--scrollbar-thumb-color',
+          'transparent'
+        );
+      }}
+      className={`bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent`}
+    >
       <div className='bg-background sticky top-0 z-10'>
         <div className='my-2 ml-[20px] flex h-[67px] items-center gap-2.5'>
           <div className='relative flex-shrink-0'>
