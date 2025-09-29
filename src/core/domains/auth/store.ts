@@ -8,6 +8,7 @@ interface AuthState {
   refreshToken: string | null;
   isLoading: boolean;
   error: string | null;
+  domainId: string | null;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -18,7 +19,7 @@ interface AuthState {
   setError: (error: string | null) => void;
   clearAuth: () => void;
   updateUser: (updates: Partial<User>) => void;
-
+  setDomainId: (domainId: string) => void;
   // Computed
   get isAuthenticated(): boolean;
 }
@@ -31,6 +32,7 @@ export const useAuthStore = create<AuthState>()(
       refreshToken: null,
       isLoading: true,
       error: null,
+      domainId: null,
 
       setUser: (user) => set({ user }),
       setTokens: (accessToken, refreshToken) =>
@@ -40,7 +42,13 @@ export const useAuthStore = create<AuthState>()(
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
       clearAuth: () =>
-        set({ user: null, accessToken: null, refreshToken: null, error: null }),
+        set({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          error: null,
+          domainId: null
+        }),
 
       updateUser: (updates) => {
         const currentUser = get().user;
@@ -54,6 +62,7 @@ export const useAuthStore = create<AuthState>()(
           });
         }
       },
+      setDomainId: (domainId) => set({ domainId }),
 
       get isAuthenticated() {
         return get()?.user !== null && get()?.accessToken !== null;

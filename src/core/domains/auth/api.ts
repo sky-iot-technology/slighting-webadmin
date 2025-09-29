@@ -9,7 +9,8 @@ import {
   SignupCredentials,
   AuthResponse,
   User,
-  ProfileUpdateData
+  ProfileUpdateData,
+  DomainsResponse
 } from './types';
 
 export const authApi = {
@@ -29,6 +30,12 @@ export const authApi = {
     // Note: The provided API doesn't have a signup endpoint
     // This is a placeholder - you'll need to implement this based on your backend
     throw new Error('Signup endpoint not available in current API');
+  },
+
+  async getDomain(): Promise<string> {
+    const response = await publicApi.get<DomainsResponse>(`/domains`);
+
+    return response.domains[1].id;
   },
 
   async getCurrentUser(token: string): Promise<User> {

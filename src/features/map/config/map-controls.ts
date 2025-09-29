@@ -14,7 +14,7 @@ export const mapControllerProps = {
   goongApiAccessToken: process.env.NEXT_PUBLIC_API_KEY_GOONGMAP,
   width: '100%',
   height: '100%',
-  touchAction: 'auto',
+  touchAction: 'none',
   attributionControl: false,
   reuseMaps: true,
   onResize: () => {},

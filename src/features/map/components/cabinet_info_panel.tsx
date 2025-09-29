@@ -20,13 +20,16 @@ import { IconDeviceImacBolt, IconX } from '@tabler/icons-react';
 import Image from 'next/image';
 import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
+import { Device, useGetDeviceById } from '@/core/domains/devices';
 
 type InfoModalProps = {
+  id: number | string;
   onOpenChange: (v: boolean) => void;
 };
 
 export default function CabinetInfoPanel(props: InfoModalProps) {
-  // if (!props.open) return null;
+  const { data, isLoading } = useGetDeviceById(props.id);
+  if (!data) return null;
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
@@ -35,6 +38,10 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
   const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.setProperty('--scrollbar-thumb-color', 'transparent');
   };
+
+  if (isLoading) {
+    return <div className='rounded-lg bg-white p-4 shadow-lg'>Đang tải...</div>;
+  }
 
   return (
     <div
@@ -55,14 +62,16 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
                 />
               </div>
             </Avatar>
-            <span className='border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 bg-green-500' />
+            <span
+              className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.device_info.online ? 'bg-map-control-button-success' : 'bg-foreground'}`}
+            />
           </div>
           <div className='mr-auto flex flex-col items-start'>
             <p className='text-map-title text-base leading-[30px] font-extrabold'>
-              Thiết bị 936
+              {data.name}
             </p>
             <p className='text-muted-foreground text-xs leading-5'>
-              8378927482936
+              {data.device_info.serial_number}
             </p>
           </div>
           <div className='mr-[16px] justify-center'>
@@ -232,19 +241,21 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
               <div className='pr-[5px] [&_span]:py-1'>
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
                   <span className='text-foreground'>Vĩ độ:</span>
-                  <span className='text-foreground font-medium'>10.832945</span>
+                  <span className='text-foreground font-medium'>
+                    {data.device_info.lat}
+                  </span>
                 </div>
 
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
                   <span className='text-foreground'>Kinh độ:</span>
                   <span className='text-foreground font-medium'>
-                    106.7338941
+                    {data.device_info.lon}
                   </span>
                 </div>
               </div>
             </CardContent>
             <CardContent className='mx-1.5 mb-1.5 p-0'>
-              <LightControl />
+              <LightControl device={data} />
             </CardContent>
           </Card>
 
@@ -264,19 +275,15 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
                 <div className='flex items-center justify-between'>
                   <span>RSSI:</span>
                   <div className='flex items-center justify-center gap-1'>
-                    {/* <Image src={"/assets/icons/wifiGood.svg"} alt="wifiGood" width={13.13} height={9.84} className="h-[21px] w-[21px] pb-1"/>
-                                            <span className="font-medium text-map-control-button-success">Tốt</span> */}
-                    {/* <Image src={"/assets/icons/wifiMedium.svg"} alt="wifiMedium" width={13.13} height={9.84} className="h-5 w-5"/>
-                                            <span className="font-medium text-map-control-button-danger">Trung bình</span> */}
                     <Image
-                      src={'/assets/icons/wifiWeak.svg'}
+                      src={`/assets/icons/wifi-${data.device_info.optional.rssi}.svg`}
                       alt='wifiWeak'
                       width={13.13}
                       height={9.84}
-                      className='h-5 w-5'
+                      className='mb-1 h-5 w-5'
                     />
                     <span className='text-map-control-button-destructive font-medium'>
-                      Yếu
+                      {data.device_info.optional.rssi}
                     </span>
                   </div>
                 </div>

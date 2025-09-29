@@ -1,6 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import { BaseApiClient } from '@/core/shared/api/base';
 import { cookieUtils } from '@/core/shared/utils/cookies';
+import { useAuthStore } from '@/core/domains/auth';
 
 export class AuthenticatedApiClient extends BaseApiClient {
   constructor(config?: AxiosRequestConfig) {
@@ -18,6 +19,10 @@ export class AuthenticatedApiClient extends BaseApiClient {
           const token = this.getAuthToken();
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+            const { domainId } = useAuthStore.getState();
+            if (domainId && !config.url?.startsWith('/users')) {
+              config.url = `${domainId}${config.url}`;
+            }
           }
         }
         return config;
@@ -39,7 +44,7 @@ export class AuthenticatedApiClient extends BaseApiClient {
               // Import authApi here to avoid circular dependency
               const { authApi } = await import('@/core/domains/auth/api');
               const newTokens = await authApi.refreshToken(refreshToken);
-              
+
               // Retry the original request with new token
               const originalRequest = error.config;
               originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
@@ -62,10 +67,12 @@ export class AuthenticatedApiClient extends BaseApiClient {
     if (typeof window !== 'undefined') {
       try {
         // Read token from cookies instead of localStorage
-        return document.cookie
-          .split('; ')
-          .find(row => row.startsWith('access_token='))
-          ?.split('=')[1] || null;
+        return (
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('access_token='))
+            ?.split('=')[1] || null
+        );
       } catch {
         return null;
       }

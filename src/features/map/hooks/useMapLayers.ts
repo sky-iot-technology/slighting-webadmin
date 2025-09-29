@@ -1,7 +1,7 @@
 import { Device } from '@/core/domains/devices/types';
 import { MapRef } from '@goongmaps/goong-map-react';
 import type { Map as MapboxMap } from 'mapbox-gl';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   clusterCountLayer,
   clusterLayer,
@@ -13,125 +13,169 @@ export const useMapLayers = (
   mapRef: React.RefObject<MapRef | null>,
   devices: Device[]
 ) => {
+  // useEffect(() => {
+  //   const map: MapboxMap | undefined = mapRef.current?.getMap();
+  //   if (!map) return;
+
+  //   console.log('data update', devices);
+  //   const initializeMap = () => {
+
+  //     try {
+  //       loadIcons(map);
+
+  //       //add source devices
+  //       console.log("Updating devices on map", devices.length);
+  //       const devicesGeoJSON = createDeivcesGeoJSON(devices);
+  //       if (map.getSource('devices-source')) {
+  //         (map.getSource('devices-source') as any).setData(devicesGeoJSON);
+  //         console.log("Updated existing devices-source with", devices.length);
+  //       } else {
+  //         //add new source
+  //         console.log("Adding new devices-source with", devices.length);
+  //         map.addSource('devices-source', {
+  //           type: 'geojson',
+  //           data: devicesGeoJSON,
+  //           cluster: true,
+  //           clusterMaxZoom: 30,
+  //           clusterRadius: 50
+  //         });
+  //         //add layers
+  //         if (!map.getLayer('devices-clusters')) {
+  //           map.addLayer(clusterLayer as any);
+  //         }
+  //         if (!map.getLayer('devices-cluster-count')) {
+  //           map.addLayer(clusterCountLayer as any);
+  //         }
+  //         if (!map.getLayer('devices-unclustered')) {
+  //           map.addLayer(unclusteredPointLayer as any);
+  //         }
+  //       }
+  //       setTimeout(() => {
+  //         if (map.style) {
+  //           map.triggerRepaint();
+  //         }
+  //       }, 100);
+  //     } catch (error) {
+  //       console.error('Error in loadIcons:', error);
+  //     }
+  //   };
+
+  //   if (map.isStyleLoaded()) {
+  //     initializeMap();
+  //   } else {
+  //     map.once('load', initializeMap);
+  //   }
+
+  //   return () => {
+  //     map?.off("load", initializeMap);
+  //   };
+  // }, [devices, mapRef]);
+
   useEffect(() => {
-    const map: MapboxMap | undefined = mapRef.current?.getMap();
+    const map = mapRef.current?.getMap();
     if (!map) return;
 
-    const initializeMap = () => {
+    console.log(
+      '🔄 useMapLayers effect running with',
+      devices.length,
+      'devices'
+    );
+    console.log('🗺️ Map style loaded:', map.isStyleLoaded());
+
+    const updateMapData = () => {
       try {
-        //1. Load Icon
-        if (map.hasImage('cabinet-online')) {
-          map.removeImage('cabinet-online');
+        loadIcons(map);
+
+        const devicesGeoJSON = createDeivcesGeoJSON(devices);
+        console.log('📊 GeoJSON features:', devicesGeoJSON.features.length);
+
+        const existingSource = map.getSource('devices-source') as any;
+        if (existingSource) {
+          existingSource.setData(devicesGeoJSON);
+          console.log(
+            '🔄 Updated existing source with',
+            devices.length,
+            'devices'
+          );
+        } else {
+          //if not exists
+          map.addSource('devices-source', {
+            type: 'geojson',
+            data: devicesGeoJSON,
+            cluster: true,
+            clusterMaxZoom: 30,
+            clusterRadius: 50
+          });
+
+          map.addLayer(clusterLayer as any);
+          map.addLayer(clusterCountLayer as any);
+          map.addLayer(unclusteredPointLayer as any);
+
+          console.log(
+            '✅ Created new source and layers with',
+            devices.length,
+            'devices'
+          );
         }
-        if (map.hasImage('cabinet-offline')) {
-          map.removeImage('cabinet-offline');
-        }
-
-        map.loadImage(
-          '/assets/images/cabinet-online.png',
-          (error: any, onlineImage: any) => {
-            if (error || !onlineImage) {
-              console.error('Error loading image:', error);
-              return;
-            }
-            map.addImage('cabinet-online', onlineImage);
-            console.log('cabinet-online loaded successfully');
-
-            map.loadImage(
-              '/assets/images/cabinet-offline.png',
-              (error: any, offlineImage: any) => {
-                if (error || !offlineImage) {
-                  console.error('Error loading offline image:', error);
-                  return;
-                }
-                map.addImage('cabinet-offline', offlineImage);
-                console.log('cabinet-offline loaded successfully');
-              }
-            );
-
-            //add source devices
-            const devicesGeoJSON = createDeivcesGeoJSON(devices);
-            if (map.getSource('devices-source')) {
-              (map.getSource('devices-source') as any).setData(devicesGeoJSON);
-            } else {
-              //add new source
-              map.addSource('devices-source', {
-                type: 'geojson',
-                data: devicesGeoJSON,
-                cluster: true,
-                clusterMaxZoom: 30,
-                clusterRadius: 50
-              });
-              //add layers
-              if (!map.getLayer('devices-clusters')) {
-                map.addLayer(clusterLayer as any);
-              }
-              if (!map.getLayer('devices-cluster-count')) {
-                map.addLayer(clusterCountLayer as any);
-              }
-              if (!map.getLayer('devices-unclustered')) {
-                map.addLayer(unclusteredPointLayer as any);
-              }
-            }
-
-            setTimeout(() => {
-              if (map.style) {
-                map.triggerRepaint();
-              }
-            }, 100);
-          }
-        );
+        // Force map update
+        setTimeout(() => {
+          map.triggerRepaint();
+          console.log('🎨 Map repainted');
+        }, 100);
       } catch (error) {
-        console.error('Error in loadIcons:', error);
+        console.error('❌ Error in initializeMap:', error);
       }
     };
 
     if (map.isStyleLoaded()) {
-      initializeMap();
+      console.log('✅ Map is ready, updating immediately');
+      // Dùng setTimeout để tránh race condition
+      setTimeout(updateMapData, 0);
     } else {
-      map.once('load', initializeMap); // Sử dụng once thay vì on
+      console.log('⏳ Map not ready, setting up load listener');
+
+      // Sử dụng 'once' để tránh memory leak, và thêm fallback timeout
+      const loadHandler = () => {
+        console.log('🗺️ Map load event fired');
+        updateMapData();
+      };
+
+      map.once('load', loadHandler);
+
+      // Fallback: Nếu sau 2s mà load event không fire, thử chạy anyway
+      const fallbackTimeout = setTimeout(() => {
+        console.log('⏰ Fallback: Load event timeout, trying to update anyway');
+        map.off('load', loadHandler); // Remove listener để tránh chạy 2 lần
+        // if (map.isStyleLoaded()) {
+        //   updateMapData();
+        // }
+        updateMapData();
+      }, 2000);
+
+      return () => {
+        clearTimeout(fallbackTimeout);
+        map.off('load', loadHandler);
+      };
     }
-
-    return () => {
-      if (map) {
-        map.off('load', initializeMap);
-        const layersToRemove = [
-          'devices-clusters',
-          'devices-cluster-count',
-          'devices-unclustered'
-        ];
-
-        layersToRemove.forEach((layerId) => {
-          try {
-            if (map.getLayer(layerId)) {
-              map.removeLayer(layerId);
-            }
-          } catch (error) {
-            console.debug(`Layer ${layerId} already removed`);
-          }
-        });
-
-        const sourcesToRemove = ['devices-source'];
-        sourcesToRemove.forEach((sourceId) => {
-          try {
-            if (map.getSource(sourceId)) {
-              map.removeSource(sourceId);
-            }
-          } catch (error) {
-            console.debug(`Source ${sourceId} already removed`);
-          }
-        });
-      }
-      const imagesToRemove = ['cabinet-online', 'cabinet-offline'];
-      imagesToRemove.forEach((imageId) => {
-        try {
-          if (map.hasImage(imageId)) {
-            map.removeImage(imageId);
-          }
-        } catch (error) {
-          console.debug(`Image ${imageId} already removed`);
-        }
-      });
-    };
   }, [devices, mapRef]);
+};
+
+const loadIcons = (map: MapboxMap) => {
+  const load = (id: string, url: string) => {
+    if (map.hasImage(id)) return;
+
+    map.loadImage(url, (error, image) => {
+      if (error || !image) {
+        console.error(`Error loading ${id}:`, error);
+        return;
+      }
+      if (!map.hasImage(id)) {
+        map.addImage(id, image);
+        console.log(`${id} loaded successfully`);
+      }
+    });
+  };
+
+  load('cabinet-online', '/assets/images/cabinet-online.png');
+  load('cabinet-offline', '/assets/images/cabinet-offline.png');
 };

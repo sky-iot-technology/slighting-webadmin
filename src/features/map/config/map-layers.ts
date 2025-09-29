@@ -1,21 +1,24 @@
-import { Device } from '@/core/domains/devices/types';
+import { Device, DeviceFeatureProps } from '@/core/domains/devices/types';
 import type { FeatureCollection, Feature, Point } from 'geojson';
 import { LayerProps } from '@goongmaps/goong-map-react';
 
 export const createDeivcesGeoJSON = (
   devices: Device[]
-): FeatureCollection<Point, Device> => {
+): FeatureCollection<Point, DeviceFeatureProps> => {
   return {
     type: 'FeatureCollection',
     features: devices.map(
-      (device): Feature<Point, Device> => ({
+      (device): Feature<Point, DeviceFeatureProps> => ({
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [device.longitude, device.latitude]
+          coordinates: [device.device_info.lon, device.device_info.lat]
         },
         properties: {
-          ...device
+          id: device.id,
+          lon: device.device_info.lon,
+          lat: device.device_info.lat,
+          online: device.device_info.online
         }
       })
     )

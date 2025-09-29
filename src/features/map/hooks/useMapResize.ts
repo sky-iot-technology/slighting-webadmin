@@ -6,7 +6,6 @@ export const useMapResize = (
 ) => {
   useEffect(() => {
     if (!mapContainerRef.current) return;
-
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         setViewport((prev: any) => ({
@@ -16,7 +15,6 @@ export const useMapResize = (
         }));
       }
     });
-
     resizeObserver.observe(mapContainerRef.current);
 
     return () => {
@@ -24,5 +22,5 @@ export const useMapResize = (
         resizeObserver.unobserve(mapContainerRef.current);
       }
     };
-  }, [mapContainerRef, setViewport]);
+  }, [mapContainerRef.current, setViewport]);
 };
