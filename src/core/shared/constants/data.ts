@@ -39,6 +39,14 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
+    title: 'Calendar',
+    url: '/dashboard/calendar',
+    icon: 'calendar',
+    shortcut: ['p', 'p'],
+    isActive: false,
+    items: [] // No child items
+  },
+  {
     title: 'Account',
     url: '#', // Placeholder as there is no direct link for the parent
     icon: 'billing',

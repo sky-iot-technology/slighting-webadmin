@@ -1,4 +1,3 @@
-import PageContainer from '@/ui/components/layout/page-container';
 import { Avatar } from '@/ui/components/ui/avatar';
 import { Button } from '@/ui/components/ui/button';
 import {
@@ -21,6 +20,7 @@ import Image from 'next/image';
 import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
 import { Device, useGetDeviceById } from '@/core/domains/devices';
+import { diffTimeHMS, getSensorAttributes } from '../helper';
 
 type InfoModalProps = {
   id: number | string;
@@ -30,6 +30,8 @@ type InfoModalProps = {
 export default function CabinetInfoPanel(props: InfoModalProps) {
   const { data, isLoading } = useGetDeviceById(props.id);
   if (!data) return null;
+  const sensorAttrs = getSensorAttributes(data);
+  const time = diffTimeHMS(data.updated_at);
 
   const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
     e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
@@ -269,7 +271,9 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
                   <span>Loại kết nối:</span>
-                  <span className='font-medium'>Viettel</span>
+                  <span className='font-medium'>
+                    {data.device_info.optional.network_operator}
+                  </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
@@ -282,15 +286,12 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
                       height={9.84}
                       className='mb-1 h-5 w-5'
                     />
-                    <span className='text-map-control-button-destructive font-medium'>
-                      {data.device_info.optional.rssi}
-                    </span>
                   </div>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span>Lần cuối online:</span>
-                  <span className='font-medium'>2 phút trước</span>
+                  <span className='font-medium'>{time} phút trước</span>
                 </div>
               </div>
             </CardContent>
@@ -306,12 +307,14 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
                   <span>Điện áp tiêu thụ (kWh):</span>
-                  <span className='font-medium'>80</span>
+                  <span className='font-medium'>{sensorAttrs?.electric}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span>Nhiệt độ (°C):</span>
-                  <span className='font-medium'>28</span>
+                  <span className='font-medium'>
+                    {sensorAttrs?.temperature}
+                  </span>
                 </div>
               </div>
             </CardContent>

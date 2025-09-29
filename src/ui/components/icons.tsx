@@ -84,10 +84,19 @@ export const Icons = {
     <Image
       src={'/assets/icons/map.svg'}
       alt='map'
-      width={24}
-      height={24}
+      width={14}
+      height={14}
       className='dark:invert'
     />
   ),
-  role: IconShieldCheck
+  role: IconShieldCheck,
+  calendar: () => (
+    <Image
+      src={'/assets/icons/calendar.svg'}
+      alt='calendar'
+      width={13}
+      height={13}
+      className='dark:invert'
+    />
+  )
 };
