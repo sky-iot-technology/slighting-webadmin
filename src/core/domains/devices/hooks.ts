@@ -86,26 +86,6 @@ export const useTurnOnOffLight = (
   return useMutation<DeviceExecuteResponse, Error, DeviceTurnOnOffRequest>({
     mutationFn: (data) => devicesApi.turnOnOffLight(data),
     onSuccess: (data, variables, context) => {
-      // queryClient.setQueryData<Device>(
-      //     [DEVICES_QUERY_KEY, 'detail', variables.device_id],
-      //     (old) => {
-      //         if (!old) return old;
-      //         return {
-      //             ...old,
-      //             devices: old.devices.map((sub) =>
-      //                 sub.device_id === variables.devices[0] ?
-      //                     {
-      //                         ...sub,
-      //                         last_state: {
-      //                             ...(sub.last_state ?? {}),
-      //                             on: variables.status,
-      //                         },
-      //                     } : sub
-      //             )
-      //         }
-      //     }
-      // );
-
       toast.success('Request sent successfully!');
       options?.onSuccess?.(data, variables, context);
     },
@@ -142,6 +122,7 @@ export const useSetBrightnessLight = (
 
 export const useQueryStatus = (
   requestId: string,
+  // deviceId: string,
   onStopped: (reason: string) => void,
   options?: Omit<
     UseQueryOptions<
@@ -155,7 +136,7 @@ export const useQueryStatus = (
 ) => {
   const queryClient = useQueryClient();
   let attempt = useRef(0);
-  const MAX_ATTEMPTS = 5;
+  const MAX_ATTEMPTS = 10;
 
   useEffect(() => {
     attempt.current = 0;
@@ -169,9 +150,8 @@ export const useQueryStatus = (
   >({
     queryKey: ['light-request', requestId],
     queryFn: async () => {
-      attempt.current++;
       const result = await devicesApi.getRequestById(requestId);
-      console.log(result);
+      attempt.current++;
       if (result.status === 'completed') {
         const clientId = result.result.client_id;
         result.result.devices.forEach((device) => {
@@ -198,12 +178,6 @@ export const useQueryStatus = (
             );
           }
         });
-        const cached = queryClient.getQueryData<Device>([
-          DEVICES_QUERY_KEY,
-          'detail',
-          clientId
-        ]);
-        console.log('📦 Cached device:', cached);
       }
       return result;
     },
@@ -219,7 +193,6 @@ export const useQueryStatus = (
         onStopped?.('timeout');
         return false;
       }
-      console.log('status:', status, 'attempt:', attempt.current);
       return 500;
     },
     gcTime: 0,

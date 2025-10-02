@@ -18,54 +18,44 @@ import {
 import CabinetInfoPanel from './cabinet_info_panel';
 import { useMapResize } from '../hooks/useMapResize';
 import { useMapLayers } from '../hooks/useMapLayers';
-import { useGetDevices } from '@/core/domains/devices';
+import { Device, useGetDevices } from '@/core/domains/devices';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import MapFilter from './map-filter';
 import { useGetGroups } from '@/core/domains/groups';
+import { Loader2 } from 'lucide-react';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
+type SelectedRegion = { id: string; name: string } | null;
 
-export default function GoongMap() {
-  const [mapStyle, setmapStyle] = useState(mapStyleDefault);
+type GoongMapProps = {
+  selectedRegion: SelectedRegion;
+  devices: any[];
+  isLoading: boolean;
+  isFetching: boolean;
+  selectedDevice: { device: Device | null; ts: number } | null;
+};
+
+export default function GoongMap({
+  selectedRegion,
+  devices,
+  isLoading,
+  isFetching,
+  selectedDevice
+}: GoongMapProps) {
+  const [mapStyle, setMapStyle] = useState(mapStyleDefault);
   const [transitionDuration, setTransitionDuration] = useState(1000);
-  const [viewport, setViewport] = useState<ViewportProps>();
-  const [lastViewport, setLastViewport] = useState<ViewportProps>();
-
-  const [isScrollZoom, setisScrollZoom] = useState(true);
+  const [viewport, setViewport] = useState<ViewportProps>({
+    longitude: 106.700981,
+    latitude: 10.776889,
+    zoom: 5
+  });
+  const [lastViewport, setLastViewport] = useState<ViewportProps>({});
+  const [isScrollZoom, setIsScrollZoom] = useState(true);
   const [popupInfo, setPopupInfo] = useState<number | string | null>(null);
   const [needsInitialization, setNeedsInitialization] = useState(true);
 
   const mapRef = useRef<MapRef | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const [selectedRegion, setSelectedRegion] = useState<string>();
-
-  const { data, isLoading, isFetching, error } = useGetDevices(
-    { group: selectedRegion },
-    { enabled: !!selectedRegion }
-  );
-
-  const devices = data?.devices ?? [];
-
-  const {
-    data: regions,
-    isLoading: isRegionsLoading,
-    error: regionError
-  } = useGetGroups({
-    root_group: true
-  });
-
-  useEffect(() => {
-    if (regions?.groups?.length && !selectedRegion) {
-      setSelectedRegion(String(regions.groups[1].id));
-    }
-  }, [selectedRegion, regions]);
-
-  const handleRegionChange = useCallback((regionId: string) => {
-    setPopupInfo(null);
-    setSelectedRegion(regionId);
-    setNeedsInitialization(true);
-  }, []);
 
   const handleGetCursor = useCallback(
     ({ isHovering, isDragging }: any) =>
@@ -74,38 +64,25 @@ export default function GoongMap() {
   );
 
   const handleViewportChange = useCallback((options: ViewportProps) => {
-    onChangeView(options);
+    setViewport((prev) => ({ ...prev, ...options }));
+    setTransitionDuration(0);
   }, []);
 
-  const onChangeView = (options: ViewportProps) => {
-    setViewport((pre) => ({ ...pre, ...options }));
-    setTransitionDuration(0);
-  };
+  const flyToDevice = useCallback((id: string, lon: number, lat: number) => {
+    if (!lon || !lat) return;
 
-  // const flyToMarker = useCallback((device: Device) => {
-  //   const vp = new WebMercatorViewport({
-  //     ...viewport,
-  //     width: window.innerWidth,
-  //     height: window.innerHeight,
-  //   })
-  //   const {longitude, latitude, zoom} = vp.fitBounds(
-  //     [
-  //       [device.longitude - 0.01, device.latitude - 0.01],
-  //       [device.longitude + 0.01, device.latitude + 0.01],
-  //     ],
-  //     { padding: 40 }
-  //   )
+    setPopupInfo(id);
+    setIsScrollZoom(false);
 
-  //   setViewport({
-  //     ...viewport,
-  //     longitude,
-  //     latitude,
-  //     zoom,
-  //     transitionInterpolator: new FlyToInterpolator(),
-  //     transitionEasing: (t) => t * (2 - t),
-  //   });
-  //   setTransitionDuration(500)
-  // }, [viewport, setViewport])
+    setViewport((prev) => ({
+      ...prev,
+      longitude: lon,
+      latitude: lat,
+      zoom: 16,
+      transitionInterpolator: new FlyToInterpolator({ speed: 1.4 })
+    }));
+    setTransitionDuration(600);
+  }, []);
 
   const onClick = (event: MapEvent) => {
     if (!event.features?.length) return;
@@ -114,29 +91,27 @@ export default function GoongMap() {
     if (!map || !map.getLayer('devices-unclustered')) return;
 
     const feature = event.features[0];
-
     if (feature.layer.id === 'devices-unclustered') {
-      const deviceData = feature.properties;
-
-      setPopupInfo(deviceData.id);
-      setisScrollZoom(false);
-
-      setViewport({
-        ...viewport,
-        longitude: deviceData.lon,
-        latitude: deviceData.lat,
-        zoom: 16,
-        transitionInterpolator: new FlyToInterpolator()
-      });
-      setTransitionDuration(1000);
+      const { id, lon, lat } = feature.properties;
+      flyToDevice(id, lon, lat);
     }
   };
 
   useEffect(() => {
-    if (needsInitialization && devices.length > 0 && !isLoading) {
+    if (
+      needsInitialization &&
+      !isLoading &&
+      !isFetching &&
+      devices.length > 0
+    ) {
       const devicesWithCoords = devices.filter(
-        (x) => x.device_info.lon && x.device_info.lat
+        (x) => x.device_info?.lon && x.device_info?.lat
       );
+
+      if (devicesWithCoords.length === 0) {
+        setNeedsInitialization(false);
+        return;
+      }
 
       const longs = devicesWithCoords.map((x) => x.device_info.lon);
       const lats = devicesWithCoords.map((x) => x.device_info.lat);
@@ -144,7 +119,7 @@ export default function GoongMap() {
       const { longitude, latitude, zoom } = new WebMercatorViewport({
         width: window.innerWidth,
         height: window.innerHeight
-      })?.fitBounds(
+      }).fitBounds(
         [
           [Math.min(...longs), Math.min(...lats)],
           [Math.max(...longs), Math.max(...lats)]
@@ -161,36 +136,44 @@ export default function GoongMap() {
         transitionInterpolator: new FlyToInterpolator(),
         transitionEasing: (t) => t
       };
-      setViewport((pre) => ({
-        ...pre,
+
+      setViewport((prev) => ({
+        ...prev,
         ...newViewport
       }));
-      setLastViewport((pre) => ({
-        ...pre,
+      setLastViewport((prev) => ({
+        ...prev,
         ...newViewport
       }));
       setTransitionDuration(1000);
       setNeedsInitialization(false);
+    } else if (
+      needsInitialization &&
+      !isLoading &&
+      !isFetching &&
+      devices.length === 0
+    ) {
+      setNeedsInitialization(false);
     }
-  }, [devices, needsInitialization, isLoading]);
+  }, [devices, needsInitialization, isLoading, isFetching]);
+
+  useEffect(() => {
+    if (selectedRegion) {
+      setNeedsInitialization(true);
+    }
+  }, [selectedRegion]);
+
+  useEffect(() => {
+    if (selectedDevice?.device) {
+      const { lon, lat } = selectedDevice.device.device_info ?? {};
+      if (lon && lat) {
+        flyToDevice(String(selectedDevice.device.id), lon, lat);
+      }
+    }
+  }, [selectedDevice, flyToDevice]);
 
   useMapLayers(mapRef, devices);
   useMapResize(mapContainerRef, setViewport);
-
-  if (isLoading || isRegionsLoading) {
-    return (
-      <div className='relative h-[calc(100dvh-52px)] w-full overflow-hidden'>
-        <Skeleton className='h-full w-full rounded-none' />
-        <div className='absolute top-[15px] left-[9px]'>
-          <div className='bg-map-filter flex rounded-lg px-1 py-1'>
-            <Skeleton className='bg-background mr-0.5 h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]' />
-
-            <Skeleton className='relative ml-0.5 h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]' />
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -212,28 +195,35 @@ export default function GoongMap() {
         scrollZoom={isScrollZoom}
         transitionDuration={transitionDuration}
         onClick={(e) => {
-          setisScrollZoom(true);
+          setIsScrollZoom(true);
           setPopupInfo(null);
           onClick(e);
         }}
       >
-        {/* <MapMarker data={devices} onClick={(device) => {
-          setPopupInfo(device)
-          setisScrollZoom(false)
-          flyToMarker(device)
-        }}/> */}
-        {/* <NavigationControl {...navigationControlProps} showCompass={true} showZoom={true}/> */}
         <ScaleControl {...scaleControlProps} />
       </ReactMapGL>
 
-      <MapFilter
-        groups={regions?.groups}
-        selected={selectedRegion}
-        onRegionChange={handleRegionChange}
-      />
+      {(isLoading || isFetching) && (
+        <div className='animate-fade-in absolute top-4 right-4 z-10'>
+          <div className='flex items-center gap-2 rounded-md bg-white p-2 shadow-md'>
+            <Loader2 className='text-primary h-6 w-6 animate-spin' />
+            <span className='text-primary text-sm'>Đang tải thiết bị...</span>
+          </div>
+        </div>
+      )}
+
+      {devices.length === 0 && !isLoading && !isFetching && (
+        <div className='animate-fade-in absolute top-4 right-4 z-10'>
+          <div className='rounded-md bg-white p-2 shadow-md'>
+            <span className='text-sm text-gray-700'>
+              Không có thiết bị trong khu vực này
+            </span>
+          </div>
+        </div>
+      )}
 
       {popupInfo && (
-        <div className='absolute top-[34px] right-1.5'>
+        <div className='absolute top-[34px] right-1.5 z-10'>
           <CabinetInfoPanel
             id={popupInfo}
             onOpenChange={() => {

@@ -106,7 +106,7 @@ export interface DeviceFeatureProps {
   id: string | number;
   lon: number;
   lat: number;
-  online: boolean;
+  online: string;
 }
 
 type Execution =

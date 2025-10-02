@@ -1,6 +1,6 @@
 'use client';
-import GoongMap from '@/features/map/components/goong-map';
+import MapContainer from '@/features/map/components/map-container';
 
 export default function Page() {
-  return <GoongMap />;
+  return <MapContainer />;
 }

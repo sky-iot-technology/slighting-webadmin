@@ -36,3 +36,37 @@ export interface groupMetadata {
   long?: number;
   zoom?: number;
 }
+
+export interface GetGroupsHierarchyParamsDto {
+  level?: number;
+  tree?: boolean;
+}
+
+export interface GroupNode {
+  id: string;
+  domain_id: string;
+  parent_id?: string;
+  name: string;
+  description?: string;
+  metadata?: groupMetadata;
+  level: number;
+  path: string;
+  created_at: string;
+  updated_at: string;
+  updated_by?: string;
+  status: 'enabled' | 'disabled';
+
+  children?: GroupNode[];
+}
+
+export interface GetGroupsHierarchyResponseDto {
+  level: number;
+  direction: number;
+  groups: GroupNode[];
+}
+
+export type RegionNode = {
+  id: string;
+  name: string;
+  children?: RegionNode[];
+};

@@ -21,13 +21,15 @@ import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
 import { Device, useGetDeviceById } from '@/core/domains/devices';
 import { diffTimeHMS, getSensorAttributes } from '../helper';
+import React from 'react';
+import CustomScrollbar from '@/ui/components/custom-scrollbar';
 
 type InfoModalProps = {
   id: number | string;
   onOpenChange: (v: boolean) => void;
 };
 
-export default function CabinetInfoPanel(props: InfoModalProps) {
+function CabinetInfoPanel(props: InfoModalProps) {
   const { data, isLoading } = useGetDeviceById(props.id);
   if (!data) return null;
   const sensorAttrs = getSensorAttributes(data);
@@ -46,11 +48,7 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
   }
 
   return (
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      className={`bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent`}
-    >
+    <CustomScrollbar className='bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px]'>
       <div className='bg-background sticky top-0 z-10'>
         <div className='my-2 ml-[20px] flex h-[67px] items-center gap-2.5'>
           <div className='relative flex-shrink-0'>
@@ -65,7 +63,8 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
               </div>
             </Avatar>
             <span
-              className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.device_info.online ? 'bg-map-control-button-success' : 'bg-foreground'}`}
+              className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.warning && data.warning.trim() !== '' ? 'bg-map-control-button-danger' : data.device_info.online ? 'bg-map-control-button-success' : 'bg-map-control-button-destructive'} `}
+              // className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.device_info.online ? 'bg-map-control-button-success' : 'bg-foreground'}`}
             />
           </div>
           <div className='mr-auto flex flex-col items-start'>
@@ -323,6 +322,13 @@ export default function CabinetInfoPanel(props: InfoModalProps) {
           <BrightnessGraph />
         </TabsContent>
       </Tabs>
-    </div>
+    </CustomScrollbar>
   );
 }
+
+export default React.memo(CabinetInfoPanel, (prevProps, nextProps) => {
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.onOpenChange === nextProps.onOpenChange
+  );
+});
