@@ -2,7 +2,11 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { authApi } from './api';
-import { type LoginCredentials, type SignupCredentials, type User } from './types';
+import {
+  type LoginCredentials,
+  type SignupCredentials,
+  type User
+} from './types';
 import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 
@@ -10,13 +14,14 @@ import { cookieUtils } from '@/core/shared/utils/cookies';
 export const authKeys = {
   all: ['auth'] as const,
   user: () => [...authKeys.all, 'user'] as const,
-  tokens: () => [...authKeys.all, 'tokens'] as const,
+  tokens: () => [...authKeys.all, 'tokens'] as const
 };
 
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { setUser, setTokens, setLoading, setError } = useAuthStore();
+  const { setUser, setTokens, setLoading, setError, setDomainId } =
+    useAuthStore();
 
   return useMutation({
     mutationFn: authApi.login,
@@ -30,7 +35,11 @@ export function useLogin() {
         const user = await authApi.getCurrentUser(data.access_token);
         setUser(user);
         setTokens(data.access_token, data.refresh_token);
-        
+
+        //Set DomainId for request
+        const domainId = await authApi.getDomain();
+        setDomainId(domainId);
+
         queryClient.setQueryData(authKeys.user(), user);
         toast.success('Đăng nhập thành công!');
         router.push('/dashboard/overview');
@@ -38,14 +47,16 @@ export function useLogin() {
       } catch (error) {
         setLoading(false);
         setError('Failed to fetch user profile');
-        toast.error('Đăng nhập thành công nhưng không thể lấy thông tin người dùng');
+        toast.error(
+          'Đăng nhập thành công nhưng không thể lấy thông tin người dùng'
+        );
       }
     },
     onError: (error: Error) => {
       setLoading(false);
       setError(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
       toast.error(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
-    },
+    }
   });
 }
 
@@ -70,7 +81,7 @@ export function useSignup() {
       setLoading(false);
       setError(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
       toast.error(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
-    },
+    }
   });
 }
 
@@ -99,7 +110,7 @@ export function useLogout() {
       queryClient.clear();
       toast.success('Đăng xuất thành công!');
       router.push('/auth/sign-in');
-    },
+    }
   });
 }
 
@@ -108,8 +119,13 @@ export function useUpdateProfile() {
   const { updateUser, setLoading, setError, accessToken } = useAuthStore();
 
   return useMutation({
-    mutationFn: ({ userId, updates }: { userId: string; updates: Partial<User> }) =>
-      authApi.updateProfile(accessToken || '', userId, updates),
+    mutationFn: ({
+      userId,
+      updates
+    }: {
+      userId: string;
+      updates: Partial<User>;
+    }) => authApi.updateProfile(accessToken || '', userId, updates),
     onMutate: () => {
       setLoading(true);
       setError(null);
@@ -122,9 +138,13 @@ export function useUpdateProfile() {
     },
     onError: (error: Error) => {
       setLoading(false);
-      setError(error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.');
-      toast.error(error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.');
-    },
+      setError(
+        error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
+      );
+      toast.error(
+        error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
+      );
+    }
   });
 }
 
@@ -135,8 +155,8 @@ export function useCurrentUser() {
     queryKey: authKeys.user(),
     queryFn: () => authApi.getCurrentUser(accessToken || ''),
     staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10,   // 10 minutes
-    enabled: !!accessToken,    // Only fetch if we have a token
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    enabled: !!accessToken // Only fetch if we have a token
   });
 }
 
@@ -150,7 +170,7 @@ export function useRefreshToken() {
     },
     onError: (error: Error) => {
       setError(error.message || 'Token refresh failed');
-    },
+    }
   });
 }
 
@@ -160,6 +180,6 @@ export function useAuth() {
     user: state.user,
     isAuthenticated: state.isAuthenticated,
     isLoading: state.isLoading,
-    error: state.error,
+    error: state.error
   }));
 }

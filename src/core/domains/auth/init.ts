@@ -21,11 +21,12 @@ export function useAuthInit() {
           // Try to get current user with the access token
           try {
             const user = await authApi.getCurrentUser(accessToken);
-            //get Domain Id for request
-            const domainId = await authApi.getDomain();
-            setDomainId(domainId);
             setUser(user);
             setTokens(accessToken, refreshToken);
+
+            //Set DomainId for request
+            const domainId = await authApi.getDomain();
+            setDomainId(domainId);
           } catch (error: any) {
             // If access token is expired, try to refresh
             if (error.status === 401) {

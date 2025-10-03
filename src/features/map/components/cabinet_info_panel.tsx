@@ -3,8 +3,6 @@ import { Button } from '@/ui/components/ui/button';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/ui/components/ui/card';
@@ -15,13 +13,13 @@ import {
   TabsList,
   TabsTrigger
 } from '@/ui/components/ui/tabs';
-import { IconDeviceImacBolt, IconX } from '@tabler/icons-react';
+import { IconX } from '@tabler/icons-react';
 import Image from 'next/image';
 import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
-import { Device, useGetDeviceById } from '@/core/domains/devices';
+import { useGetDeviceById } from '@/core/domains/devices';
 import { diffTimeHMS, getSensorAttributes } from '../helper';
-import React from 'react';
+import React, { useEffect } from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 
 type InfoModalProps = {
@@ -34,14 +32,6 @@ function CabinetInfoPanel(props: InfoModalProps) {
   if (!data) return null;
   const sensorAttrs = getSensorAttributes(data);
   const time = diffTimeHMS(data.updated_at);
-
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
-  };
-
-  const handleMouseLeave = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.currentTarget.style.setProperty('--scrollbar-thumb-color', 'transparent');
-  };
 
   if (isLoading) {
     return <div className='rounded-lg bg-white p-4 shadow-lg'>Đang tải...</div>;
