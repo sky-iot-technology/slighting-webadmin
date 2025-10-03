@@ -45,7 +45,7 @@ export function RegionTree({
   classname = 'text-xs [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent',
   width,
   height,
-  indent,
+  indent = 25,
   rowHeight,
   paddingTop,
   overscanCount

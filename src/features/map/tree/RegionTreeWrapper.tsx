@@ -25,7 +25,7 @@ export function RegionTreeWrapper({
       containerClassName='w-[217px] h-[171px] box-border pl-2'
       width={209}
       height={171}
-      indent={10}
+      indent={25}
       rowHeight={36}
       overscanCount={1}
       paddingTop={10}
