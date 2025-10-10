@@ -1,5 +1,7 @@
 'use client';
 
+import CalendarPage from '@/features/calendar/components/calendar-page';
+
 export default function Page() {
-  return <div>dsadsadsa</div>;
+  return <CalendarPage />;
 }

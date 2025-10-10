@@ -1,3 +1,13 @@
+import { CalendarTable } from '@/features/calendar/components/calendar-tables';
+import { columns } from '@/features/calendar/components/calendar-tables/columns';
+import { calendars } from '@/features/calendar/components/fake';
+
 export default function page() {
-  return <div>dsadsads</div>;
+  return (
+    <CalendarTable
+      data={calendars}
+      totalItems={calendars.length}
+      columns={columns}
+    />
+  );
 }

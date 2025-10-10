@@ -64,6 +64,17 @@
   --map-button-today-start: oklch(0.6651 0.1824 252.76);
   --map-button-today-end: oklch(0.2811 0.0865 252.93);
   --map-filter: oklch(0.7718 0.1403 232.74);
+  --calendar-gray: oklch(0.8853 0 0 / 30.2%);
+  --tree-hover: oklch(0.9672 0 0);
+  --tree-select: oklch(0.9348 0.0328 248.18);
+  --calendar-red: oklch(0.6281 0.2575 29.01);
+  --calendar-blue: oklch(0.6807 0.1459 240.61);
+  --calendar-gray: oklch(0.8105 0.0134 266.68);
+  --calendar-green: oklch(0.7728 0.1864 147.63);
+  --calendar-radio-gray: oklch(0.9089 0.0075 260.73);
+  --calendar-radio-green: oklch(0.704 0.22749 144.107);
+  --calendar-time-hover: oklch(0.9046 0.0293 163.17);
+  --calendar-table-children: oklch(0.9889 0.0058 239.82);
 }
 
 .dark {
@@ -161,6 +172,17 @@
   --color-map-control-button-danger: var(--map-control-button-danger);
   --color-map-button-graph: var(--map-button-graph);
   --color-map-filter: var(--map-filter);
+  --color-calender-gray: var(--calendar-gray);
+  --color-tree-hover: var(--tree-hover);
+  --color-tree-select: var(--tree-select);
+  --color-calendar-red: var(--calendar-red);
+  --color-calendar-blue: var(--calendar-blue);
+  --color-calendar-gray: var(--calendar-gray);
+  --color-calendar-green: var(--calendar-green);
+  --color-calendar-radio-gray: var(--calendar-radio-gray);
+  --color-calendar-radio-green: var(--calendar-radio-green);
+  --color-calendar-time-hover: var(--calendar-time-hover);
+  --color-calendar-table-children: var(--calendar-table-children);
 }
 
 @layer base {

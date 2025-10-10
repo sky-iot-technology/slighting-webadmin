@@ -134,9 +134,8 @@ export function DataTableDateFilter<TData>({
         : 'Select date range';
 
       return (
-        <span className='flex items-center gap-2'>
-          <span>{title}</span>
-          {hasSelectedDates && (
+        hasSelectedDates && (
+          <span className='flex items-center gap-2'>
             <>
               <Separator
                 orientation='vertical'
@@ -144,8 +143,20 @@ export function DataTableDateFilter<TData>({
               />
               <span>{dateText}</span>
             </>
-          )}
-        </span>
+          </span>
+        )
+        // <span className='flex items-center gap-2'>
+        //   <span>{title}</span>
+        //   {hasSelectedDates && (
+        //     <>
+        //       <Separator
+        //         orientation='vertical'
+        //         className='mx-0.5 data-[orientation=vertical]:h-4'
+        //       />
+        //       <span>{dateText}</span>
+        //     </>
+        //   )}
+        // </span>
       );
     }
 

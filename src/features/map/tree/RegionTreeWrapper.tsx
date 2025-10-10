@@ -17,18 +17,17 @@ export function RegionTreeWrapper({
 }: RegionTreeProps) {
   return (
     <RegionTree
-      renderNode='icon'
+      renderNode='default'
       data={data}
       onSelect={onSelect}
       onToggle={onToggle}
       selectedId={selectedId}
-      containerClassName='w-[217px] h-[171px] box-border pl-2'
-      width={209}
+      width={'100%'}
       height={171}
-      indent={25}
+      indent={30}
       rowHeight={36}
       overscanCount={1}
-      paddingTop={10}
+      paddingTop={4}
     />
   );
 }

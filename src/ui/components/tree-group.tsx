@@ -20,13 +20,13 @@ type RegionTreeProps = {
       ) => ReactNode)
     | 'default'
     | 'icon';
-  containerClassName?: string;
   classname?: string;
-  width?: number;
+  width?: number | string;
   height?: number;
   indent?: number;
   rowHeight?: number;
   paddingTop?: number;
+  padding?: number;
   overscanCount?: number;
 };
 
@@ -41,34 +41,33 @@ export function RegionTree({
   onToggle,
   selectedId,
   renderNode = DefaultNode,
-  containerClassName = 'w-[217px] h-[171px] box-border pl-2',
   classname = 'text-xs [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent',
-  width,
+  width = '100%',
   height,
   indent = 25,
   rowHeight,
   paddingTop,
+  padding,
   overscanCount
 }: RegionTreeProps) {
   const renderFn =
     typeof renderNode === 'string' ? nodeRenderers[renderNode] : renderNode;
 
   return (
-    <div className={containerClassName}>
-      <Tree
-        data={data}
-        openByDefault={false}
-        width={width}
-        height={height}
-        indent={indent}
-        rowHeight={rowHeight}
-        overscanCount={overscanCount}
-        paddingTop={paddingTop}
-        className={classname}
-      >
-        {(props) => renderFn({ ...props, onSelect, onToggle, selectedId })}
-      </Tree>
-    </div>
+    <Tree
+      data={data}
+      openByDefault={false}
+      width={width}
+      height={height}
+      indent={indent}
+      rowHeight={rowHeight}
+      overscanCount={overscanCount}
+      paddingTop={paddingTop}
+      padding={padding}
+      className={classname}
+    >
+      {(props) => renderFn({ ...props, onSelect, onToggle, selectedId })}
+    </Tree>
   );
 }
 
@@ -89,13 +88,16 @@ function DefaultNode({
   const isSelected = node.data.id === selectedId;
   return (
     <div
-      style={{ ...style, maxWidth: '209px' }}
+      style={{
+        ...style,
+        paddingLeft: node.level === 0 ? 8 : style.paddingLeft
+      }}
       ref={dragHandle}
-      className={`flex w-full items-center gap-1 rounded px-2 py-1`}
+      className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded-md px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
     >
-      {!node.isLeaf && (
+      {!node.isLeaf ? (
         <span
-          className='cursor-pointer select-none'
+          className='w-[12px] cursor-pointer select-none'
           onClick={() => {
             node.toggle();
             onToggle(node.data);
@@ -105,24 +107,24 @@ function DefaultNode({
             <Image
               src={`/assets/icons/chevronDown.svg`}
               alt='chevronDown'
-              width={12}
-              height={12}
-              className='h-3 w-3'
+              width={9}
+              height={9}
             />
           ) : (
             <Image
               src={`/assets/icons/chevronRight.svg`}
               alt='chevronRight'
-              width={12}
-              height={12}
-              className='h-3 w-3'
+              width={4.5}
+              height={8.25}
             />
           )}
         </span>
+      ) : (
+        <span className='inline-block h-[9px] w-3' />
       )}
       <button
         type='button'
-        className={`cursor-pointer appearance-none truncate text-left ${isSelected ? 'font-bold' : 'hover:bg-primary/10'}`}
+        className={`flex-1 cursor-pointer appearance-none truncate text-left`}
         onClick={() => onSelect({ id: node.data.id, name: node.data.name })}
       >
         {node.data.name}
@@ -158,13 +160,16 @@ function IconNode({
 
   return (
     <div
-      style={{ ...style, maxWidth: '209px' }}
+      style={{
+        ...style,
+        paddingLeft: node.level === 0 ? 8 : style.paddingLeft
+      }}
       ref={dragHandle}
-      className={`flex w-full items-center gap-1 rounded px-2 py-1`}
+      className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
     >
-      {!node.isLeaf && (
+      {!node.isLeaf ? (
         <span
-          className='cursor-pointer select-none'
+          className='w-[12px] cursor-pointer select-none'
           onClick={() => {
             node.toggle();
             onToggle(node.data);
@@ -174,24 +179,24 @@ function IconNode({
             <Image
               src={`/assets/icons/chevronDown.svg`}
               alt='chevronDown'
-              width={12}
-              height={12}
-              className='h-3 w-3'
+              width={9}
+              height={9}
             />
           ) : (
             <Image
               src={`/assets/icons/chevronRight.svg`}
               alt='chevronRight'
-              width={12}
-              height={12}
-              className='h-3 w-3'
+              width={4.5}
+              height={8.25}
             />
           )}
         </span>
+      ) : (
+        <span className='inline-block h-[9px] w-3' />
       )}
       <button
         type='button'
-        className={`flex cursor-pointer appearance-none items-center gap-1 truncate text-left ${isSelected ? 'font-bold' : 'hover:bg-primary/10'}`}
+        className={`flex flex-1 cursor-pointer appearance-none items-center gap-1 truncate text-left`}
         onClick={() => onSelect({ id: node.data.id, name: node.data.name })}
       >
         <Image

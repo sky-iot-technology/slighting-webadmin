@@ -261,7 +261,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 <div className='flex items-center justify-between'>
                   <span>Loại kết nối:</span>
                   <span className='font-medium'>
-                    {data.device_info.optional.network_operator}
+                    {data.device_info.optional.net_mode}
                   </span>
                 </div>
 
@@ -280,7 +280,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
 
                 <div className='flex items-center justify-between'>
                   <span>Lần cuối online:</span>
-                  <span className='font-medium'>{time} phút trước</span>
+                  <span className='font-medium'>{time}</span>
                 </div>
               </div>
             </CardContent>

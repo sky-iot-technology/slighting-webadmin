@@ -11,15 +11,18 @@ import { Button } from '@/ui/components/ui/button';
 import { Input } from '@/ui/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { AnimatedSearchInput } from './animated-search-input';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
+  actions?: React.ReactNode;
 }
 
 export function DataTableToolbar<TData>({
   table,
   children,
   className,
+  actions,
   ...props
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -43,7 +46,7 @@ export function DataTableToolbar<TData>({
       )}
       {...props}
     >
-      <div className='flex flex-1 flex-wrap items-center gap-2'>
+      <div className='flex flex-1 flex-wrap items-center justify-end gap-2'>
         {columns.map((column) => (
           <DataTableToolbarFilter key={column.id} column={column} />
         ))}
@@ -61,8 +64,9 @@ export function DataTableToolbar<TData>({
         )}
       </div>
       <div className='flex items-center gap-2'>
+        {actions}
         {children}
-        <DataTableViewOptions table={table} />
+        {/* <DataTableViewOptions table={table} /> */}
       </div>
     </div>
   );
@@ -82,14 +86,18 @@ function DataTableToolbarFilter<TData>({
 
       switch (columnMeta.variant) {
         case 'text':
+          //Not filter yet just UI
           return (
-            <Input
-              placeholder={columnMeta.placeholder ?? columnMeta.label}
-              value={(column.getFilterValue() as string) ?? ''}
-              onChange={(event) => column.setFilterValue(event.target.value)}
-              className='h-8 w-40 lg:w-56'
-            />
+            <AnimatedSearchInput column={column} columnMeta={columnMeta} />
           );
+        // return (
+        //   <Input
+        //     placeholder={columnMeta.placeholder ?? columnMeta.label}
+        //     value={(column.getFilterValue() as string) ?? ''}
+        //     onChange={(event) => column.setFilterValue(event.target.value)}
+        //     className='h-8 w-40 lg:w-56 rounded-md'
+        //   />
+        // );
 
         case 'number':
           return (

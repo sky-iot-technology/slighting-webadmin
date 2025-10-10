@@ -16,6 +16,7 @@ import {
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  getExpandedRowModel,
   useReactTable
 } from '@tanstack/react-table';
 import {
@@ -287,6 +288,11 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
+
+    getExpandedRowModel: getExpandedRowModel(),
+    getSubRows: (row: any) => row.children ?? [],
+    getRowCanExpand: (row: any) => !!row.original.children?.length,
+
     manualPagination: true,
     manualSorting: true,
     manualFiltering: true

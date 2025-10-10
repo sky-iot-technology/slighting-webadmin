@@ -108,13 +108,13 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
         <div className='bg-popover animate-fade-in absolute z-10 mt-0.5 w-[160px] rounded-md border shadow-md sm:w-[180px] md:w-[217px]'>
           <ul className='p-1'>
             <li
-              className='hover:bg-primary cursor-pointer rounded-md px-3 py-2 hover:text-white'
+              className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'deviceName' ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
               onClick={() => handleTypeChange('deviceName')}
             >
               Tên thiết bị
             </li>
             <li
-              className='hover:bg-primary cursor-pointer rounded-md px-3 py-2 hover:text-white'
+              className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'macAddress' ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
               onClick={() => handleTypeChange('macAddress')}
             >
               MAC address
@@ -130,7 +130,7 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
             results.map((d) => (
               <li
                 key={d.id}
-                className='hover:bg-primary/10 cursor-pointer px-3.5 py-1.5'
+                className='hover:bg-tree-hover cursor-pointer px-3.5 py-1.5'
                 onClick={() => {
                   setQuery(
                     searchType === 'deviceName' ? d.name : d.device_info.imei
