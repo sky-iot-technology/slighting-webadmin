@@ -8,6 +8,7 @@ import { CalendarTable } from './calendar-tables';
 import { ColumnDef } from '@tanstack/react-table';
 import { Calendar, useGetCalendars } from '@/core/domains/calendars';
 import { useSearchParams } from 'next/navigation';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 
 export const sampleRegions: RegionNode[] = [
   {
@@ -67,13 +68,12 @@ export default function CalendarPage() {
   const filters = {
     page: page ? parseInt(page.toString()) : undefined,
     limit: pageLimit ? parseInt(pageLimit.toString()) : undefined,
-    ...(search && { search })
+    ...(search && { name: search })
   };
 
-  const { data, isLoading, isError, refetch } = useGetCalendars(filters);
+  const { data, isLoading, error, refetch } = useGetCalendars(filters);
 
   const calendars = data?.calendars ?? [];
-
   useEffect(() => {
     if (!containerRef.current) return;
     const observer = new ResizeObserver(([entry]) => {
@@ -81,7 +81,36 @@ export default function CalendarPage() {
     });
     observer.observe(containerRef.current);
     return () => observer.disconnect();
-  }, []);
+  }, [isLoading, error]);
+
+  if (isLoading) {
+    return (
+      <div className='space-y-4'>
+        <Skeleton className='h-8 w-48' />
+        <Skeleton className='h-4 w-96' />
+        <div className='space-y-2'>
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className='h-16 w-full' />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className='flex h-64 items-center justify-center'>
+        <div className='text-center'>
+          <h3 className='text-destructive text-lg font-semibold'>
+            Error loading products
+          </h3>
+          <p className='text-muted-foreground text-sm'>
+            {error.message || 'Something went wrong'}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>

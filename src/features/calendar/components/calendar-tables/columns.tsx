@@ -62,6 +62,7 @@ export const columns: ColumnDef<Calendar>[] = [
     enableHiding: false
   },
   {
+    id: 'name',
     accessorKey: 'name',
     header: 'Tên lịch',
     cell: ({ row }) => <div>{row.getValue('name')}</div>,
@@ -126,12 +127,14 @@ export const columns: ColumnDef<Calendar>[] = [
     }
   },
   {
+    id: 'endDate',
     accessorKey: 'endDate',
     header: 'Ngày kết thúc',
     cell: ({ row }) => {
       const date = new Date(row.getValue('endDate') as string);
       return <div>{date.toLocaleDateString('vi-VN')}</div>;
-    }
+    },
+    enableColumnFilter: true
   },
   {
     accessorKey: 'createdDate',

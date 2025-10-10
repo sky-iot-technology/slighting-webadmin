@@ -16,8 +16,8 @@ import { cn } from '@/lib/utils';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;
+  totalRows: number;
   actionBar?: React.ReactNode;
-
   wrapperClassName?: string; // For table + pagination
   tableContainerClassName?: string; //For scroll
   tableClassName?: string; //For table
@@ -33,6 +33,7 @@ export function DataTable<TData>({
   actionBar,
   children,
   className,
+  totalRows,
   wrapperClassName,
   tableContainerClassName,
   tableClassName,
@@ -137,7 +138,7 @@ export function DataTable<TData>({
           </div>
         </div>
         <div className={cn('flex flex-col gap-2.5', paginationClassName)}>
-          <DataTablePagination table={table} />
+          <DataTablePagination table={table} totalRows={totalRows} />
           {actionBar &&
             table.getFilteredSelectedRowModel().rows.length > 0 &&
             actionBar}

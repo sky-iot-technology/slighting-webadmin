@@ -37,7 +37,8 @@ export function CalendarRangePicker({
   const [singleDate, setSingleDate] = React.useState<Date | undefined>(() => {
     if (mode === 'single') {
       if (!value) return undefined;
-      if (value instanceof Date) return value;
+      if (value instanceof Date) {
+      }
       // Nếu là DateRange, lấy ngày từ
       return (value as DateRange)?.from;
     }

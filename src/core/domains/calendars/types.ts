@@ -17,6 +17,7 @@ export interface Calendar {
 }
 
 export interface GetCalendarsParamsDto extends QueryParams {
+  name?: string;
   type?: CalendarType;
   status?: CalendarStatus;
   from?: string;

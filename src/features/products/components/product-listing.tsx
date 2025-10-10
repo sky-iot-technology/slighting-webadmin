@@ -22,7 +22,6 @@ export default function ProductListingPage({}: ProductListingPage) {
     ...(search && { search }),
     ...(categories && { categories: categories.split(',').filter(Boolean) })
   };
-
   const { data, isLoading, error } = useGetProducts(filters);
 
   if (isLoading) {

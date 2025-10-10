@@ -28,8 +28,8 @@ export const calendarApi = {
     }
 
     // 3️⃣ Lọc theo từ khóa tìm kiếm (name)
-    if (params?.search) {
-      const search = params.search.toLowerCase();
+    if (params?.name) {
+      const search = params.name.toLowerCase();
       data = data.filter((c) => c.name.toLowerCase().includes(search));
     }
 

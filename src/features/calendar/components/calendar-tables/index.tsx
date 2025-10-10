@@ -42,6 +42,7 @@ export function CalendarTable<TData, TValue>({
   return (
     <DataTable
       table={table}
+      totalRows={totalItems}
       className='bg-calender-gray'
       wrapperClassName='mx-1 mt-1 rounded-[4px]'
       tableContainerClassName='border-none'

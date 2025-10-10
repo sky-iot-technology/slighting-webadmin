@@ -86,7 +86,6 @@ function DataTableToolbarFilter<TData>({
 
       switch (columnMeta.variant) {
         case 'text':
-          //Not filter yet just UI
           return (
             <AnimatedSearchInput column={column} columnMeta={columnMeta} />
           );
@@ -135,7 +134,6 @@ function DataTableToolbarFilter<TData>({
               multiple={columnMeta.variant === 'dateRange'}
             />
           );
-
         case 'select':
         case 'multiSelect':
           return (

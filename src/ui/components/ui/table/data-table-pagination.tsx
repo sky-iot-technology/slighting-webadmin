@@ -15,14 +15,19 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   pageSizeOptions?: number[];
+  totalRows: number;
 }
 
 export function DataTablePagination<TData>({
   table,
   pageSizeOptions = [5, 10, 20, 30, 40, 50],
   className,
+  totalRows,
   ...props
 }: DataTablePaginationProps<TData>) {
+  const { pageIndex, pageSize } = table.getState().pagination;
+  const start = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
+  const end = Math.min((pageIndex + 1) * pageSize, totalRows);
   return (
     <div
       className={cn(
@@ -49,8 +54,7 @@ export function DataTablePagination<TData>({
       </div>
       <div className='flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
         <div className='flex items-center justify-center text-sm font-medium'>
-          Page {table.getState().pagination.pageIndex + 1} of{' '}
-          {table.getPageCount()}
+          {start} - {end} trong {totalRows}
         </div>
         <div className='flex items-center space-x-2'>
           <Button

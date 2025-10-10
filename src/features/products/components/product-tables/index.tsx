@@ -29,7 +29,7 @@ export function ProductTable<TData, TValue>({
   });
 
   return (
-    <DataTable table={table}>
+    <DataTable table={table} totalRows={totalItems}>
       <DataTableToolbar table={table} />
     </DataTable>
   );

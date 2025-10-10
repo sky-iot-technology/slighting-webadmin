@@ -163,7 +163,7 @@ export default function CalendarForm({
             />
 
             <FormField
-              // control={form.control}
+              control={form.control}
               name='name'
               render={({ field }) => (
                 <FormItem className='col-span-2'>
