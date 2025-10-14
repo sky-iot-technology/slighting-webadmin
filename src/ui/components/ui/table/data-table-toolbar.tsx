@@ -3,14 +3,12 @@
 import type { Column, Table } from '@tanstack/react-table';
 import * as React from 'react';
 
+import { cn } from '@/lib/utils';
+import { Input } from '@/ui/components/ui/input';
 import { DataTableDateFilter } from '@/ui/components/ui/table/data-table-date-filter';
 import { DataTableFacetedFilter } from '@/ui/components/ui/table/data-table-faceted-filter';
 import { DataTableSliderFilter } from '@/ui/components/ui/table/data-table-slider-filter';
-import { DataTableViewOptions } from '@/ui/components/ui/table/data-table-view-options';
-import { Button } from '@/ui/components/ui/button';
-import { Input } from '@/ui/components/ui/input';
-import { cn } from '@/lib/utils';
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { DataTableFilterOptions } from './data-table-filter-options';
 import { AnimatedSearchInput } from './animated-search-input';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
@@ -25,17 +23,6 @@ export function DataTableToolbar<TData>({
   actions,
   ...props
 }: DataTableToolbarProps<TData>) {
-  const isFiltered = table.getState().columnFilters.length > 0;
-
-  const columns = React.useMemo(
-    () => table.getAllColumns().filter((column) => column.getCanFilter()),
-    [table]
-  );
-
-  const onReset = React.useCallback(() => {
-    table.resetColumnFilters();
-  }, [table]);
-
   return (
     <div
       role='toolbar'
@@ -46,27 +33,15 @@ export function DataTableToolbar<TData>({
       )}
       {...props}
     >
-      <div className='flex flex-1 flex-wrap items-center justify-end gap-2'>
-        {columns.map((column) => (
+      <div className='flex flex-1 flex-wrap items-center gap-2'>
+        {/* {columns.map((column) => (
           <DataTableToolbarFilter key={column.id} column={column} />
-        ))}
-        {isFiltered && (
-          <Button
-            aria-label='Reset filters'
-            variant='outline'
-            size='sm'
-            className='border-dashed'
-            onClick={onReset}
-          >
-            <Cross2Icon />
-            Reset
-          </Button>
-        )}
+        ))} */}
       </div>
       <div className='flex items-center gap-2'>
         {actions}
         {children}
-        {/* <DataTableViewOptions table={table} /> */}
+        <DataTableFilterOptions table={table} />
       </div>
     </div>
   );

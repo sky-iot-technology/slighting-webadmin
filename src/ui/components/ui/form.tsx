@@ -12,11 +12,35 @@ import {
   type FieldPath,
   type FieldValues
 } from 'react-hook-form';
+import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Label } from '@/ui/components/ui/label';
 
 const Form = FormProvider;
+
+// Create a context to store the schema
+const FormSchemaContext = React.createContext<z.ZodObject<any> | null>(null);
+
+// Custom hook to access the schema
+function useSchema() {
+  return React.useContext(FormSchemaContext);
+}
+
+// Schema provider component
+function FormSchemaProvider({
+  schema,
+  children
+}: {
+  schema: z.ZodObject<any>;
+  children: React.ReactNode;
+}) {
+  return (
+    <FormSchemaContext.Provider value={schema}>
+      {children}
+    </FormSchemaContext.Provider>
+  );
+}
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -92,6 +116,14 @@ function FormLabel({
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
   const { error, formItemId } = useFormField();
+  const fieldContext = React.useContext(FormFieldContext);
+  const schema = useSchema();
+
+  // Check if the field is required based on the schema
+  const isRequired =
+    schema && fieldContext?.name
+      ? isFieldRequired(schema, fieldContext.name as string)
+      : false;
 
   return (
     <Label
@@ -100,7 +132,10 @@ function FormLabel({
       className={cn('data-[error=true]:text-destructive', className)}
       htmlFor={formItemId}
       {...props}
-    />
+    >
+      {props.children}
+      {isRequired && <span className='text-destructive'>*</span>}
+    </Label>
   );
 }
 
@@ -141,14 +176,14 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   const body = error ? String(error?.message ?? '') : props.children;
 
   if (!body) {
-    return null;
+    return <div className='h-4'></div>;
   }
 
   return (
     <p
       data-slot='form-message'
       id={formMessageId}
-      className={cn('text-destructive text-sm', className)}
+      className={cn('text-destructive text-xs', className)}
       {...props}
     >
       {body}
@@ -156,13 +191,68 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
+// Helper function to check if a field is required in the Zod schema
+function isFieldRequired(schema: z.ZodObject<any>, fieldName: string): boolean {
+  try {
+    // Get the shape of the schema
+    const shape =
+      typeof schema._def.shape === 'function'
+        ? schema._def.shape()
+        : schema._def.shape;
+
+    if (!shape) return false;
+
+    // Check if the field exists in the schema
+    if (!(fieldName in shape)) {
+      return false;
+    }
+
+    // Get the field's schema
+    const fieldSchema = shape[fieldName];
+    if (!fieldSchema) return false;
+
+    // Check if the field is optional
+    return !isOptionalField(fieldSchema);
+  } catch (error) {
+    console.error(`Error checking if field ${fieldName} is required:`, error);
+    return false;
+  }
+}
+
+// Helper function to determine if a field is optional
+function isOptionalField(fieldSchema: any): boolean {
+  // If the field is wrapped with .optional()
+  if (fieldSchema._def?.typeName === 'ZodOptional') {
+    return true;
+  }
+
+  // If the field is nullable but not optional
+  if (fieldSchema._def?.typeName === 'ZodNullable') {
+    // Check the inner type
+    return isOptionalField(fieldSchema._def.innerType);
+  }
+
+  // Other complex cases like union types that include undefined
+  if (fieldSchema._def?.typeName === 'ZodUnion') {
+    return fieldSchema._def.options.some(
+      (option: any) =>
+        option._def.typeName === 'ZodUndefined' ||
+        option._def.typeName === 'ZodNull'
+    );
+  }
+
+  return false;
+}
+
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
   FormMessage,
-  FormField
+  FormSchemaProvider,
+  useFormField,
+  useSchema
 };

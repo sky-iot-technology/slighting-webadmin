@@ -171,6 +171,21 @@ function SelectScrollDownButton({
   );
 }
 
+function SelectClear({
+  className,
+  children,
+  value = null as unknown as string,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectPrimitive.Item>, 'value'> & {
+  value?: string;
+}) {
+  return (
+    <SelectItem key={'reset'} className='opacity-50' value={value} {...props}>
+      {children ?? 'All'}
+    </SelectItem>
+  );
+}
+
 export {
   Select,
   SelectContent,
@@ -181,5 +196,6 @@ export {
   SelectScrollUpButton,
   SelectSeparator,
   SelectTrigger,
-  SelectValue
+  SelectValue,
+  SelectClear
 };

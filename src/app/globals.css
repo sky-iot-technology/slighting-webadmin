@@ -75,6 +75,7 @@
   --calendar-radio-green: oklch(0.704 0.22749 144.107);
   --calendar-time-hover: oklch(0.9046 0.0293 163.17);
   --calendar-table-children: oklch(0.9889 0.0058 239.82);
+  --cyan-1: oklch(0.6407 0.1081 203.59);
 }
 
 .dark {
@@ -183,6 +184,24 @@
   --color-calendar-radio-green: var(--calendar-radio-green);
   --color-calendar-time-hover: var(--calendar-time-hover);
   --color-calendar-table-children: var(--calendar-table-children);
+  --color-cyan-1: var(--cyan-1);
+}
+
+/* Table row selection styles */
+[data-state='selected'] {
+  background-color: hsl(var(--primary) / 0.1);
+}
+
+[data-state='selected']:hover {
+  background-color: hsl(var(--primary) / 0.15);
+}
+
+/* Checkbox column styling */
+.rtl\:space-x-reverse:where([dir='rtl'])
+  .space-x-2
+  > :not([hidden])
+  ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
 }
 
 @layer base {
