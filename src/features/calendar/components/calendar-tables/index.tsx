@@ -1,7 +1,10 @@
 'use client';
 
 import { DataTable } from '@/ui/components/ui/table/data-table';
-import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import {
+  DataTableCalendarToolbar,
+  DataTableToolbar
+} from '@/ui/components/ui/table/data-table-toolbar';
 import { useDataTable } from '@/core/shared/hooks/use-data-table';
 
 import { ColumnDef } from '@tanstack/react-table';
@@ -74,7 +77,7 @@ export function CalendarTable<TData, TValue>({
           </button>
         )}
         <h3 className='text-xl font-bold'>Danh sách lịch</h3>
-        <DataTableToolbar
+        {/* <DataTableToolbar
           table={table}
           className='w-auto flex-1'
           actions={
@@ -88,6 +91,22 @@ export function CalendarTable<TData, TValue>({
               Thêm lịch
             </Button>
           }
+        /> */}
+        <DataTableCalendarToolbar
+          table={table}
+          className='w-auto flex-1'
+          actions={
+            <Button
+              variant='default'
+              size='sm'
+              className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+              onClick={() => setOpen(true)}
+            >
+              <IconPlus className='h-3 w-3' />
+              Thêm
+            </Button>
+          }
+          filter={false}
         />
       </div>
       <CalendarDialog

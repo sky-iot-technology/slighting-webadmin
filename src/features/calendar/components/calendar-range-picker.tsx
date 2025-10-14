@@ -17,13 +17,15 @@ type CalendarRangePickerProps = {
   value?: DateRange | Date;
   onChange?: (value?: DateRange | Date) => void;
   disabled?: boolean;
+  classname?: string;
 };
 
 export function CalendarRangePicker({
   mode = 'range',
   value,
   onChange,
-  disabled
+  disabled,
+  classname
 }: CalendarRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
@@ -39,11 +41,26 @@ export function CalendarRangePicker({
       if (!value) return undefined;
       if (value instanceof Date) {
       }
-      // Nếu là DateRange, lấy ngày từ
       return (value as DateRange)?.from;
     }
     return undefined;
   });
+
+  React.useEffect(() => {
+    if (mode === 'range') {
+      if (value && !(value instanceof Date)) {
+        setDate(value as DateRange);
+      } else {
+        setDate(undefined);
+      }
+    } else if (mode === 'single') {
+      if (value instanceof Date) {
+        setSingleDate(value);
+      } else {
+        setSingleDate(undefined);
+      }
+    }
+  }, [value, mode]);
 
   const [openFrom, setOpenFrom] = React.useState(false);
   const [openTo, setOpenTo] = React.useState(false);
@@ -80,6 +97,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
+          classname,
           'border-input flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -104,6 +122,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
+          classname,
           'border-input bg-background flex h-[31px] w-[200px] items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -125,7 +144,6 @@ export function CalendarRangePicker({
               mode='single'
               selected={singleDate}
               onSelect={handleSingleSelect}
-              initialFocus
             />
           </PopoverContent>
         </Popover>
@@ -138,6 +156,7 @@ export function CalendarRangePicker({
   return (
     <div
       className={cn(
+        classname,
         'border-input bg-background flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
       )}
     >
@@ -162,7 +181,6 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.from}
             onSelect={handleFromSelect}
-            initialFocus
           />
         </PopoverContent>
       </Popover>
@@ -190,7 +208,6 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.to}
             onSelect={handleToSelect}
-            initialFocus
           />
         </PopoverContent>
       </Popover>

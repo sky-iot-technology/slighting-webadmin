@@ -75,6 +75,7 @@
   --calendar-radio-green: oklch(0.704 0.22749 144.107);
   --calendar-time-hover: oklch(0.9046 0.0293 163.17);
   --calendar-table-children: oklch(0.9889 0.0058 239.82);
+  --calendar-table-select: oklch(0.9778 0.0117 239.9);
 }
 
 .dark {
@@ -183,6 +184,7 @@
   --color-calendar-radio-green: var(--calendar-radio-green);
   --color-calendar-time-hover: var(--calendar-time-hover);
   --color-calendar-table-children: var(--calendar-table-children);
+  --color-calendar-table-select: var(--calendar-table-select);
 }
 
 @layer base {

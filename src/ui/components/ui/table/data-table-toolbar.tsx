@@ -12,6 +12,14 @@ import { Input } from '@/ui/components/ui/input';
 import { cn } from '@/lib/utils';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { AnimatedSearchInput } from './animated-search-input';
+import { ScrollArea } from '../scroll-area';
+import { Popover, PopoverContent, PopoverTrigger } from '../popover';
+import { FilterIcon } from 'lucide-react';
+import { Separator } from '../separator';
+import { CalendarRangePicker } from '../../../../features/calendar/components/calendar-range-picker';
+import { DateRange } from 'react-day-picker';
+import { DataTableSelectFilter } from './data-table-select-filter';
+import { CalendarRangeFilter } from './test';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
@@ -71,6 +79,162 @@ export function DataTableToolbar<TData>({
     </div>
   );
 }
+
+interface DataTableCustomToolbar<TData> extends React.ComponentProps<'div'> {
+  table: Table<TData>;
+  actions?: React.ReactNode;
+  filter?: boolean;
+}
+
+export function DataTableCalendarToolbar<TData>({
+  table,
+  children,
+  className,
+  actions,
+  filter,
+  ...props
+}: DataTableCustomToolbar<TData>) {
+  const columns = React.useMemo(
+    () => table.getAllColumns().filter((column) => column.getCanFilter()),
+    [table]
+  );
+
+  const onReset = React.useCallback(() => {
+    table.resetColumnFilters();
+  }, [table]);
+
+  const [open, setOpen] = React.useState(false);
+
+  return (
+    <div
+      role='toolbar'
+      aria-orientation='horizontal'
+      className={cn(
+        'flex w-full items-start justify-between gap-2 p-1',
+        className
+      )}
+      {...props}
+    >
+      <div className='flex flex-1 flex-wrap items-center justify-end gap-2'>
+        {/* Nút mở bộ lọc */}
+        {columns
+          .filter((col) => col.id === 'name')
+          .map((column) => (
+            <DataTableToolbarFilter key={column.id} column={column} />
+          ))}
+        {columns
+          .filter((col) => col.id === 'startDate')
+          .map((column) => (
+            <CalendarRangePicker
+              key={column.id}
+              mode='range'
+              onChange={(value) => {
+                const range = value as DateRange | undefined;
+                const startCol = table.getColumn('startDate');
+                const endCol = table.getColumn('endDate');
+                if (range?.from && range?.to) {
+                  const startIso = new Date(range.from).toISOString();
+                  const endIso = new Date(range.to);
+                  endIso.setUTCHours(23, 59, 59, 999);
+
+                  startCol?.setFilterValue(startIso);
+                  endCol?.setFilterValue(endIso.toISOString());
+                }
+              }}
+              classname='!w-[230px]'
+            />
+            // <CalendarRangeFilter key={column.id} column={column} table={table}/>
+          ))}
+        <div className='flex items-center gap-2'>
+          {actions}
+          {children}
+        </div>
+
+        {filter && (
+          <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
+              <Button variant='outline' size='sm' className='gap-2'>
+                <FilterIcon className='h-4 w-4' />
+              </Button>
+            </PopoverTrigger>
+
+            <PopoverContent align='end' className='p-3' sideOffset={8}>
+              <ScrollArea className='max-h-[400px] pr-2'>
+                <div className='space-y-4'>
+                  {/* Nhóm: Sắp xếp */}
+                  <div>
+                    <h4 className='mb-2 text-xs font-bold text-black'>
+                      Sắp xếp
+                    </h4>
+                    {/* Bạn có thể tạo nút toggle sort cụ thể */}
+                    {/* <Button
+                    variant="ghost"
+                    size="sm"
+                    className="w-full justify-start"
+                    onClick={() => table.toggleSorting('startDate')}
+                  >
+                    Theo ngày bắt đầu
+                  </Button> */}
+                  </div>
+
+                  {/* Nhóm: Loại lịch */}
+                  <div>
+                    {/* <h4 className="mb-2 text-sm font-medium text-muted-foreground">
+                    Loại lịch
+                  </h4> */}
+                    {columns
+                      .filter((col) => col.id === 'type')
+                      .map((column) => (
+                        <DataTableToolbarFilter
+                          key={column.id}
+                          column={column}
+                        />
+                      ))}
+                  </div>
+
+                  {/* Nhóm: Trạng thái */}
+                  <div>
+                    <h4 className='text-muted-foreground mb-2 text-sm font-medium'>
+                      Trạng thái
+                    </h4>
+                    <Separator className='mb-2' />
+                    {columns
+                      .filter((col) => col.id === 'status')
+                      .map((column) => (
+                        <DataTableToolbarFilter
+                          key={column.id}
+                          column={column}
+                        />
+                      ))}
+                  </div>
+                  <div className='flex justify-between'>
+                    <Button
+                      onClick={onReset}
+                      variant='ghost'
+                      size='sm'
+                      className='border-dashed'
+                    >
+                      Đặt lại
+                    </Button>
+                    <Button
+                      onClick={onReset}
+                      variant='default'
+                      size='sm'
+                      className='border-dashed'
+                    >
+                      Áp dụng
+                    </Button>
+                  </div>
+                </div>
+              </ScrollArea>
+            </PopoverContent>
+          </Popover>
+        )}
+      </div>
+    </div>
+  );
+}
+
 interface DataTableToolbarFilterProps<TData> {
   column: Column<TData>;
 }
@@ -126,6 +290,13 @@ function DataTableToolbarFilter<TData>({
           );
 
         case 'date':
+          return (
+            <DataTableDateFilter
+              column={column}
+              title={columnMeta.label ?? column.id}
+              multiple={columnMeta.variant === 'date'}
+            />
+          );
         case 'dateRange':
           return (
             <DataTableDateFilter
@@ -142,6 +313,15 @@ function DataTableToolbarFilter<TData>({
               title={columnMeta.label ?? column.id}
               options={columnMeta.options ?? []}
               multiple={columnMeta.variant === 'multiSelect'}
+            />
+          );
+        case 'selectSimple':
+          return (
+            <DataTableSelectFilter
+              column={column}
+              title={columnMeta.label ?? column.id}
+              options={columnMeta.options ?? []}
+              placeholder={columnMeta.placeholder ?? 'Tất cả'}
             />
           );
 

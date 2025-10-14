@@ -19,6 +19,7 @@ export const columns: ColumnDef<Calendar>[] = [
         />
       );
     },
+    size: 50,
     cell: ({ row }) => {
       const canExpand = row.getCanExpand();
       return (
@@ -74,6 +75,7 @@ export const columns: ColumnDef<Calendar>[] = [
     enableColumnFilter: true
   },
   {
+    id: 'type',
     accessorKey: 'type',
     header: 'Loại lịch',
     cell: ({ row }) => {
@@ -86,7 +88,16 @@ export const columns: ColumnDef<Calendar>[] = [
             : 'text-calendar-gray';
 
       return <div className={corlorClass}>{type}</div>;
-    }
+    },
+    meta: {
+      label: 'Loại lịch',
+      variant: 'selectSimple',
+      options: [
+        { label: 'Khẩn cấp', value: 'Khẩn cấp' },
+        { label: 'Theo lịch', value: 'Theo lịch' }
+      ]
+    },
+    enableColumnFilter: true
   },
   {
     accessorKey: 'time',
@@ -147,6 +158,7 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     id: 'actions',
     header: 'Thao tác',
+    size: 57,
     cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

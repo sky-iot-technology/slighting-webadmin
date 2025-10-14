@@ -128,6 +128,7 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
           <AnimatePresence>
             <motion.div
               ref={dropdownRef}
+              onWheelCapture={(e) => e.stopPropagation()}
               initial={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}

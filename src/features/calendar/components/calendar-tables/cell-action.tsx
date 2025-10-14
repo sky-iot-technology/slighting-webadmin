@@ -54,41 +54,59 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant='ghost' className='h-8 w-8 p-0'>
+          <Button variant='ghost' className='flex h-8 w-full items-center p-0'>
             <span className='sr-only'>Open menu</span>
             <IconDotsVertical className='h-4 w-4' />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align='end'
-          className='flex h-32 w-31.5 flex-col gap-2'
+          className='flex w-31.5 flex-col gap-2 p-2'
         >
-          <DropdownMenuItem onClick={() => setOpenView(true)}>
-            <Image
-              src={'/assets/icons/view.svg'}
-              alt='view'
-              width={16}
-              height={16}
-            />{' '}
-            Chi tiết
+          <DropdownMenuItem
+            onClick={() => setOpenView(true)}
+            className='flex w-full items-center text-xs'
+          >
+            <div className='mx-2 flex w-4 justify-center'>
+              <Image
+                src={'/assets/icons/view.svg'}
+                alt='view'
+                width={12}
+                height={12}
+              />
+            </div>
+            <span>Chi tiết</span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpenEdit(true)}>
-            <Image
-              src={'/assets/icons/edit.svg'}
-              alt='edit'
-              width={16}
-              height={16}
-            />{' '}
-            Sửa
+
+          <DropdownMenuItem
+            onClick={() => setOpenEdit(true)}
+            className='flex w-full items-center text-xs'
+          >
+            <div className='mx-2 flex w-4 justify-center'>
+              <Image
+                src={'/assets/icons/edit.svg'}
+                alt='edit'
+                width={12}
+                height={12}
+              />
+            </div>
+            <span>Sửa</span>
           </DropdownMenuItem>
-          <DropdownMenuItem variant='default' onClick={() => setOpen(true)}>
-            <Image
-              src={'/assets/icons/trash.svg'}
-              alt='trash'
-              width={16}
-              height={16}
-            />{' '}
-            Xóa
+
+          <DropdownMenuItem
+            variant='default'
+            onClick={() => setOpen(true)}
+            className='flex w-full items-center text-xs'
+          >
+            <div className='mx-2 flex w-4 justify-center'>
+              <Image
+                src={'/assets/icons/trash.svg'}
+                alt='trash'
+                width={12}
+                height={12}
+              />
+            </div>
+            <span className='text-destructive'>Xóa</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

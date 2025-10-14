@@ -20,8 +20,8 @@ export interface GetCalendarsParamsDto extends QueryParams {
   name?: string;
   type?: CalendarType;
   status?: CalendarStatus;
-  from?: string;
-  to?: string;
+  start_range?: string;
+  end_range?: string;
 }
 
 export interface CreateCalendarDto {

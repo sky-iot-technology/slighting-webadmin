@@ -1,8 +1,8 @@
 'use client';
-import { RegionNode } from '@/core/domains/groups';
-import { RegionTree } from '@/ui/components/tree-group';
+import { RegionNode, useGetGroups } from '@/core/domains/groups';
+import { RegionTree, SelectedRegion } from '@/ui/components/tree-group';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { columns } from './calendar-tables/columns';
 import { CalendarTable } from './calendar-tables';
 import { ColumnDef } from '@tanstack/react-table';
@@ -64,10 +64,14 @@ export default function CalendarPage() {
   const page = searchParams.get('page');
   const search = searchParams.get('name');
   const pageLimit = searchParams.get('perPage');
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
 
   const filters = {
     page: page ? parseInt(page.toString()) : undefined,
     limit: pageLimit ? parseInt(pageLimit.toString()) : undefined,
+    from: startDate ?? undefined,
+    to: endDate ?? undefined,
     ...(search && { name: search })
   };
 
@@ -140,8 +144,10 @@ export default function CalendarPage() {
                 <RegionTree
                   renderNode='icon'
                   data={sampleRegions}
-                  onSelect={(item) => console.log('Selected region:', item)}
-                  onToggle={(node) => console.log('Toggled node:', node)}
+                  onSelect={(item) => {}}
+                  onToggle={(node) => {
+                    console.log('Toggled node:', node);
+                  }}
                   selectedId={undefined}
                   width={'100%'}
                   height={height}
