@@ -3,18 +3,16 @@ import Image from 'next/image';
 import { ReactNode } from 'react';
 import { NodeRendererProps, Tree } from 'react-arborist';
 
-export type SelectedRegion = { id: string; name: string } | null;
+export type SelectedRegion = { id: string; name: string; icon?: string } | null;
 
 type RegionTreeProps = {
   data: RegionNode[];
   onSelect: (item: SelectedRegion) => void;
-  onToggle: (node: RegionNode) => void;
   selectedId?: string;
   renderNode?:
     | ((
         props: NodeRendererProps<RegionNode> & {
           onSelect: (payload: { id: string; name: string }) => void;
-          onToggle: (node: RegionNode) => void;
           selectedId?: string | null;
         }
       ) => ReactNode)
@@ -38,7 +36,6 @@ const nodeRenderers = {
 export function RegionTree({
   data,
   onSelect,
-  onToggle,
   selectedId,
   renderNode = DefaultNode,
   classname = 'text-xs [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent',
@@ -66,14 +63,13 @@ export function RegionTree({
       padding={padding}
       className={classname}
     >
-      {(props) => renderFn({ ...props, onSelect, onToggle, selectedId })}
+      {(props) => renderFn({ ...props, onSelect, selectedId })}
     </Tree>
   );
 }
 
 type NodeProps = NodeRendererProps<RegionNode> & {
-  onSelect: (payload: { id: string; name: string }) => void;
-  onToggle: (node: RegionNode) => void;
+  onSelect: (payload: { id: string; name: string; icon?: string }) => void;
   selectedId?: string | null;
 };
 
@@ -82,10 +78,12 @@ function DefaultNode({
   style,
   dragHandle,
   onSelect,
-  onToggle,
   selectedId
 }: NodeProps) {
   const isSelected = node.data.id === selectedId;
+  const hasChildren =
+    Array.isArray(node.data.children) && node.data.children.length > 0;
+
   return (
     <div
       style={{
@@ -95,12 +93,11 @@ function DefaultNode({
       ref={dragHandle}
       className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded-md px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
     >
-      {!node.isLeaf ? (
+      {hasChildren ? (
         <span
           className='w-[12px] cursor-pointer select-none'
           onClick={() => {
             node.toggle();
-            onToggle(node.data);
           }}
         >
           {node.isOpen ? (
@@ -138,7 +135,6 @@ function IconNode({
   style,
   dragHandle,
   onSelect,
-  onToggle,
   selectedId
 }: NodeProps) {
   const isSelected = node.data.id === selectedId;
@@ -158,6 +154,9 @@ function IconNode({
     }
   };
 
+  const hasChildren =
+    Array.isArray(node.data.children) && node.data.children.length > 0;
+
   return (
     <div
       style={{
@@ -167,12 +166,11 @@ function IconNode({
       ref={dragHandle}
       className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
     >
-      {!node.isLeaf ? (
+      {hasChildren ? (
         <span
           className='w-[12px] cursor-pointer select-none'
           onClick={() => {
             node.toggle();
-            onToggle(node.data);
           }}
         >
           {node.isOpen ? (
@@ -197,7 +195,13 @@ function IconNode({
       <button
         type='button'
         className={`flex flex-1 cursor-pointer appearance-none items-center gap-1 truncate text-left`}
-        onClick={() => onSelect({ id: node.data.id, name: node.data.name })}
+        onClick={() =>
+          onSelect({
+            id: node.data.id,
+            name: node.data.name,
+            icon: getIconForLevel(node.level)
+          })
+        }
       >
         <Image
           src={getIconForLevel(node.level)}

@@ -14,15 +14,10 @@ import {
   CreateCalendarDto,
   UpdateCalendarDto
 } from './types';
+import { useMemo } from 'react';
 
-// ✅ Local Query Key (avoid collisions)
 export const CALENDARS_QUERY_KEY = 'calendars';
 
-/* ----------------------------------------
- 🟢 Query Hooks
----------------------------------------- */
-
-// ✅ Get all calendars with optional filters
 export const useGetCalendars = (
   params?: GetCalendarsParamsDto,
   options?: Omit<
@@ -30,150 +25,138 @@ export const useGetCalendars = (
       CalendarListResponseDto,
       Error,
       CalendarListResponseDto,
-      readonly [string, GetCalendarsParamsDto?]
+      readonly [string, Partial<GetCalendarsParamsDto>?]
     >,
     'queryKey' | 'queryFn'
   >
 ) => {
-  return useQuery<
-    CalendarListResponseDto,
-    Error,
-    CalendarListResponseDto,
-    readonly [string, GetCalendarsParamsDto?]
-  >({
-    queryKey: [CALENDARS_QUERY_KEY, params],
-    queryFn: () => calendarApi.getAll(params),
-    gcTime: 30 * 60 * 1000, // Cache 30 mins
-    staleTime: 5 * 60 * 1000, // Fresh 5 mins
-    ...options
-  });
-};
+  const queryKeyParams = useMemo(() => {
+    if (!params) return undefined;
 
-// ✅ Get calendar by ID
-export const useGetCalendarById = (
-  id: string | number,
-  options?: Omit<
-    UseQueryOptions<
-      CalendarDetailResponseDto,
-      Error,
-      CalendarDetailResponseDto,
-      readonly [string, string, string | number]
-    >,
-    'queryKey' | 'queryFn'
-  >
-) => {
+    const { groups, name, page, limit, start_range, end_range } = params;
+    return { groups, name, page, limit, start_range, end_range };
+  }, [params]);
   return useQuery<
-    CalendarDetailResponseDto,
+    CalendarListResponseDto,
     Error,
-    CalendarDetailResponseDto,
-    readonly [string, string, string | number]
+    CalendarListResponseDto,
+    readonly [string, Partial<GetCalendarsParamsDto>?]
   >({
-    queryKey: [CALENDARS_QUERY_KEY, 'detail', id],
-    queryFn: () => calendarApi.getById(String(id)),
-    enabled: !!id,
+    queryKey: [CALENDARS_QUERY_KEY, queryKeyParams],
+    queryFn: () => calendarApi.getAll(params),
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
     ...options
   });
 };
 
-/* ----------------------------------------
- 🟠 Mutation Hooks
----------------------------------------- */
-
-// ✅ Create new calendar
-export const useCreateCalendar = (
+export const useCreateCalendars = (
   options?: UseMutationOptions<Calendar, Error, CreateCalendarDto>
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation<Calendar, Error, CreateCalendarDto>({
-    mutationFn: (data) => calendarApi.create(data),
+    ...options,
+    mutationFn: (data) => calendarApi.createCalendar(data),
     onSuccess: (data, variables, context) => {
+      console.log('✅ onSuccess in useCreateProduct');
       queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
+
+      // Add the new calendar to the cache
       queryClient.setQueryData([CALENDARS_QUERY_KEY, 'detail', data.id], data);
-      toast.success('Lịch mới đã được tạo thành công!');
+
+      toast.success('Calendar created successfully!');
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      console.error('❌ Failed to create calendar:', error);
-      toast.error(error.message || 'Tạo lịch thất bại');
+      console.error('Failed to create calendar:', error);
+      toast.error(error.message || 'Failed to create calendar');
       options?.onError?.(error, variables, context);
-    },
-    ...options
+    }
   });
 };
 
-// ✅ Update existing calendar
-export const useUpdateCalendar = (
-  options?: UseMutationOptions<
-    Calendar,
-    Error,
-    { id: string | number; data: UpdateCalendarDto }
-  >
-) => {
-  const queryClient = useQueryClient();
-
-  return useMutation<
-    Calendar,
-    Error,
-    { id: string | number; data: UpdateCalendarDto }
-  >({
-    mutationFn: ({ id, data }) => calendarApi.update(String(id), data),
-    onSuccess: (data, variables, context) => {
-      queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
-      queryClient.setQueryData(
-        [CALENDARS_QUERY_KEY, 'detail', variables.id],
-        data
-      );
-      toast.success('Cập nhật lịch thành công!');
-      options?.onSuccess?.(data, variables, context);
-    },
-    onError: (error, variables, context) => {
-      console.error('❌ Failed to update calendar:', error);
-      toast.error(error.message || 'Cập nhật lịch thất bại');
-      options?.onError?.(error, variables, context);
-    },
-    ...options
-  });
-};
-
-// ✅ Delete calendar
-export const useDeleteCalendar = (
+export const useDeleteCalendars = (
   options?: UseMutationOptions<void, Error, string | number>
 ) => {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, string | number>({
-    mutationFn: (id) => calendarApi.delete(String(id)),
-    onSuccess: (data, deletedId, context) => {
+    ...options,
+    mutationFn: (id) => calendarApi.deleteCalendar(id),
+    onSuccess: (data, deleteId, context) => {
+      //Remove calendar from cache
       queryClient.removeQueries({
-        queryKey: [CALENDARS_QUERY_KEY, 'detail', deletedId]
+        queryKey: [CALENDARS_QUERY_KEY, 'detail', deleteId]
       });
-      queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
-      toast.success('Xóa lịch thành công!');
-      options?.onSuccess?.(data, deletedId, context);
+
+      queryClient.invalidateQueries({
+        queryKey: [CALENDARS_QUERY_KEY]
+      });
+
+      toast.success('Calendar deleted successfully');
+      options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
-      console.error('❌ Failed to delete calendar:', error);
-      toast.error(error.message || 'Xóa lịch thất bại');
+      console.error('Failed to delete calendar: ', error);
+      toast.error(error.message || 'Failed to delete calendar');
       options?.onError?.(error, variables, context);
-    },
-    ...options
+    }
   });
 };
 
-/* ----------------------------------------
- 🔵 Prefetch Hook
----------------------------------------- */
-export const usePrefetchCalendars = (params?: GetCalendarsParamsDto) => {
+export const useGetCalendarById = (
+  id: string,
+  options?: Omit<
+    UseQueryOptions<
+      Calendar,
+      Error,
+      Calendar,
+      readonly [string, string, string]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<Calendar, Error, Calendar, readonly [string, string, string]>(
+    {
+      queryKey: [CALENDARS_QUERY_KEY, 'detail', id],
+      queryFn: () => calendarApi.getById(id),
+      enabled: !!id,
+      gcTime: 30 * 60 * 1000,
+      staleTime: 5 * 60 * 1000,
+      ...options
+    }
+  );
+};
+
+export const useUpdateCalendar = (
+  options?: UseMutationOptions<
+    Calendar,
+    Error,
+    { id: string; data: UpdateCalendarDto }
+  >
+) => {
   const queryClient = useQueryClient();
 
-  return () => {
-    queryClient.prefetchQuery({
-      queryKey: [CALENDARS_QUERY_KEY, params],
-      queryFn: () => calendarApi.getAll(params),
-      staleTime: 5 * 60 * 1000
-    });
-  };
+  return useMutation<Calendar, Error, { id: string; data: UpdateCalendarDto }>({
+    ...options,
+    mutationFn: ({ id, data }) => calendarApi.updateCalendar(id, data),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
+
+      //update to cache
+      queryClient.setQueryData(
+        [CALENDARS_QUERY_KEY, 'detail', variables.id],
+        data
+      );
+
+      toast.success('Calendar update successfully!');
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to update calendar:', error);
+      toast.error(error.message || 'Failed to update calendar');
+      options?.onError?.(error, variables, context);
+    }
+  });
 };

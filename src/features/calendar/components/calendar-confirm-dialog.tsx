@@ -1,20 +1,25 @@
 'use client';
-import { Calendar } from '@/core/domains/calendars';
 import { Button } from '@/ui/components/ui/button';
 import { CalendarRangePicker } from './calendar-range-picker';
-import { formSchema } from './calendar-form';
 import { z } from 'zod';
+import {
+  dayofweek,
+  PRIORITY_LABELS,
+  RECURRING_LABELS
+} from '@/core/domains/calendars/constant';
+import { DateRange } from 'react-day-picker';
+import { calendarFormSchema } from '@/core/domains/calendars';
+import { MultiSelect } from '@/ui/components/ui/multi-select';
 
 type Props = {
-  data: z.infer<typeof formSchema>;
+  data: z.infer<typeof calendarFormSchema>;
   onBack: () => void;
   onConfirm: () => void;
 };
 
 export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
-  console.log(data);
   return (
-    <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
+    <div className='mt-2 space-y-3.5 p-5.5 text-xs font-bold text-black'>
       <h3 className='text-primary text-left text-base font-bold'>
         Xác nhận lịch
       </h3>
@@ -26,26 +31,94 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
 
       <div className='flex gap-2'>
         <span className=''>Loại lịch:</span>
-        <span className='text-right font-medium'>{data.type}</span>
+        <span className='text-right font-medium'>
+          {PRIORITY_LABELS[data.priority]}
+        </span>
       </div>
 
       <div className='flex gap-2'>
         <span className=''>Lặp lại:</span>
-        <span className='text-right font-medium'>{data.repeat}</span>
+        <span className='text-right font-medium'>
+          {RECURRING_LABELS[data.recurring]}
+        </span>
       </div>
 
       <div className='flex items-center gap-5.5'>
         <span className=''>Ngày áp dụng:</span>
-        <CalendarRangePicker mode='range' value={data.date} disabled />
+        <CalendarRangePicker
+          mode={data.date.from && data.date.to ? 'range' : 'single'}
+          value={
+            data.date.from
+              ? (data.date as DateRange)
+              : { from: new Date(), to: undefined }
+          }
+          disabled
+        />
       </div>
 
+      {data.monthly && data.monthly.length > 0 && (
+        <div className='flex items-center gap-5.5'>
+          <span className=''>Ngày áp dụng:</span>
+          <CalendarRangePicker
+            mode={data.date.from && data.date.to ? 'range' : 'single'}
+            value={
+              data.date.from
+                ? (data.date as DateRange)
+                : { from: new Date(), to: undefined }
+            }
+            disabled
+          />
+        </div>
+      )}
+
+      {data.weekly && data.weekly.length > 0 && (
+        <div className=''>
+          <span>Ngày trong tuần:</span>
+          <div className='flex flex-wrap gap-1 pt-1'>
+            {data.weekly.map((value) => {
+              const label = dayofweek[Number(value)];
+              return (
+                <span
+                  key={value}
+                  className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                >
+                  {label}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {data.monthly && data.monthly.length > 0 && (
+        <div className=''>
+          <span>Ngày trong tháng:</span>
+          <div className='flex flex-wrap gap-1 pt-1'>
+            {data.monthly.map((value) => {
+              return (
+                <span
+                  key={value}
+                  className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                >
+                  {value}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <div className='flex flex-col gap-2'>
-        <span className=''>Thời gian và độ sáng:</span>
+        <span className=''>Thời gian và hành động:</span>
         {data.schedules?.map((item, index) => (
           <div key={index} className='test-sm flex gap-8 font-medium'>
             <span>{index + 1}</span>
             <span>{item.time}</span>
-            <span>{item.brightness}%</span>
+            {item.brightness ? (
+              <span>{item.brightness}%</span>
+            ) : (
+              <span>{item.onOff ? 'Bật' : 'Tắt'}</span>
+            )}
           </div>
         ))}
       </div>

@@ -1,10 +1,12 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { Column, ColumnDef } from '@tanstack/react-table';
+import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
 import { Calendar } from '@/core/domains/calendars';
+import { PRIORITY_LABELS } from '@/core/domains/calendars/constant';
+import { formatDateString } from '../../helper';
 
 export const columns: ColumnDef<Calendar>[] = [
   {
@@ -22,14 +24,17 @@ export const columns: ColumnDef<Calendar>[] = [
     size: 50,
     cell: ({ row }) => {
       const canExpand = row.getCanExpand();
+      const isChild = row.depth > 0;
       return (
         <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
+          {!isChild && (
+            <Checkbox
+              checked={row.getIsSelected()}
+              onCheckedChange={(value) => row.toggleSelected(!!value)}
+              aria-label='Select row'
+              className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
+            />
+          )}
           {canExpand ? (
             <button
               onClick={row.getToggleExpandedHandler()}
@@ -54,7 +59,7 @@ export const columns: ColumnDef<Calendar>[] = [
               )}
             </button>
           ) : (
-            <span className='inline-block w-4' /> // giữ layout thẳng hàng
+            <span className='inline-block w-4' />
           )}
         </div>
       );
@@ -66,7 +71,10 @@ export const columns: ColumnDef<Calendar>[] = [
     id: 'name',
     accessorKey: 'name',
     header: 'Tên lịch',
-    cell: ({ row }) => <div>{row.getValue('name')}</div>,
+    cell: ({ row }) => {
+      if (row.depth > 0) return <div>-</div>;
+      return <div>{row.getValue('name')}</div>;
+    },
     meta: {
       label: 'name',
       placeholder: 'Tìm tên lịch',
@@ -75,19 +83,21 @@ export const columns: ColumnDef<Calendar>[] = [
     enableColumnFilter: true
   },
   {
-    id: 'type',
-    accessorKey: 'type',
+    id: 'priority',
+    accessorKey: 'priority',
     header: 'Loại lịch',
     cell: ({ row }) => {
-      const type = row.getValue('type') as string;
-      const corlorClass =
-        type === 'Khẩn cấp'
+      if (row.depth > 0) return <div>-</div>;
+      const priority = row.getValue('priority') as number;
+      const label = PRIORITY_LABELS[priority] || 'Không xác định';
+      const color =
+        priority === 1
           ? 'text-calendar-red'
-          : type === 'Theo lịch'
+          : priority === 2
             ? 'text-calendar-blue'
             : 'text-calendar-gray';
 
-      return <div className={corlorClass}>{type}</div>;
+      return <div className={color}>{label}</div>;
     },
     meta: {
       label: 'Loại lịch',
@@ -102,23 +112,79 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'time',
     header: 'Thời gian',
-    cell: ({ row }) => <div>{row.getValue('time')}</div>
+    cell: ({ row }) => {
+      if (row.depth === 0) {
+        const { last_execution_status, schedules } = row.original as any;
+        let parsedStatus: { job_id?: number; status?: string } = {};
+        try {
+          parsedStatus = JSON.parse(last_execution_status);
+        } catch (error) {
+          parsedStatus = {};
+        }
+        const schedule = schedules.find(
+          (s: any) => s.id === parsedStatus.job_id
+        );
+        if (schedule) {
+          return <div>{schedule.time}</div>;
+        }
+        return <div>-</div>;
+      }
+
+      return <div>{row.getValue('time')}</div>;
+    }
   },
   {
     accessorKey: 'status',
     header: 'Trạng thái',
     cell: ({ row }) => {
-      const status = row.getValue('status') as string;
-      const icon =
-        status === 'active'
+      const isSubRow = row.depth > 0;
+      let schedule: any;
+
+      if (!isSubRow) {
+        const { last_execution_status, schedules } = row.original as any;
+        let parsedStatus: { job_id?: number; status?: string } = {};
+        try {
+          parsedStatus = JSON.parse(last_execution_status);
+        } catch (error) {
+          parsedStatus = {};
+        }
+        if (parsedStatus.status !== 'SUCCESS') {
+          return <div>-</div>;
+        }
+        schedule = schedules.find((s: any) => s.id === parsedStatus.job_id);
+        if (!schedule) {
+          return <div>-</div>;
+        }
+      } else {
+        schedule = row.original;
+      }
+      const { payload }: any = schedule;
+
+      const command = payload?.command ?? '';
+      const params = payload?.params ?? {};
+
+      const isOn = params?.on === true;
+
+      let icon = '/assets/icons/calendarOffline.svg';
+      let label = '';
+
+      if (command.includes('OnOff')) {
+        icon = isOn
           ? '/assets/icons/calendarOnline.svg'
-          : status === 'inactive'
-            ? '/assets/icons/calendarOffline.svg'
-            : '/assets/icons/calendarDisconnect.svg';
+          : '/assets/icons/calendarOffline.svg';
+        label = isOn ? 'Bật' : 'Tắt';
+      } else if (command.includes('Brightness')) {
+        icon = '/assets/icons/calendarOnline.svg';
+        const brightness = params.brightness;
+        label = `${brightness}%`;
+      } else {
+        label = 'Không xác định';
+      }
+
       return (
-        <div className='flex items-center gap-2.5'>
-          <Image src={icon} alt={status} width={16} height={20} />
-          <span>test</span>
+        <div className='flex items-center gap-3'>
+          <Image src={icon} alt='schedule-status' width={16} height={20} />
+          <span>{label}</span>
         </div>
       );
     }
@@ -133,8 +199,9 @@ export const columns: ColumnDef<Calendar>[] = [
     },
     enableColumnFilter: true,
     cell: ({ row }) => {
-      const date = new Date(row.getValue('startDate') as string);
-      return <div>{date.toLocaleDateString('vi-VN')}</div>;
+      if (row.depth > 0) return <div>-</div>;
+      const date = formatDateString(row.original.schedules[0].start_datetime);
+      return <div>{date}</div>;
     }
   },
   {
@@ -142,8 +209,9 @@ export const columns: ColumnDef<Calendar>[] = [
     accessorKey: 'endDate',
     header: 'Ngày kết thúc',
     cell: ({ row }) => {
-      const date = new Date(row.getValue('endDate') as string);
-      return <div>{date.toLocaleDateString('vi-VN')}</div>;
+      if (row.depth > 0) return <div>-</div>;
+      const date = formatDateString(row.original.schedules[0].end_datetime);
+      return <div>{date}</div>;
     },
     enableColumnFilter: true
   },
@@ -151,14 +219,23 @@ export const columns: ColumnDef<Calendar>[] = [
     accessorKey: 'createdDate',
     header: 'Ngày tạo',
     cell: ({ row }) => {
-      const date = new Date(row.getValue('createdDate') as string);
-      return <div>{date.toLocaleDateString('vi-VN')}</div>;
+      if (row.depth > 0) return <div>-</div>;
+      const date = formatDateString(row.original.created_at);
+      return <div>{date}</div>;
     }
   },
   {
     id: 'actions',
     header: 'Thao tác',
     size: 57,
-    cell: ({ row }) => <CellAction data={row.original} />
+    cell: ({ row }) => {
+      const isSubRow = row.depth > 0;
+
+      return (
+        <div className='flex min-h-[32px] items-center justify-center'>
+          {!isSubRow && <CellAction id={row.original.id} />}
+        </div>
+      );
+    }
   }
 ];

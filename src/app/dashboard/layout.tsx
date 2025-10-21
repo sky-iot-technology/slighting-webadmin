@@ -4,6 +4,7 @@ import { SidebarInset, SidebarProvider } from '@/ui/components/ui/sidebar';
 import { ProtectedRoute } from '@/core/shared/components/protected-route';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
+import { BootstrapProviders } from './bootstrap/bootstrap-providers';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn Dashboard Starter',
@@ -18,10 +19,11 @@ export default async function DashboardLayout({
   // Persisting the sidebar state in the cookie.
   const cookieStore = await cookies();
   const defaultOpen = cookieStore.get('sidebar_state')?.value === 'true';
-  
+
   return (
     <ProtectedRoute>
       <SidebarProvider defaultOpen={defaultOpen}>
+        <BootstrapProviders />
         <AppSidebar />
         <SidebarInset>
           <Header />

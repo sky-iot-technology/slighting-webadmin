@@ -1,52 +1,123 @@
-import type { BaseEntity, QueryParams } from '@/core/shared/types';
+import type {
+  BaseEntity,
+  PaginationParams,
+  QueryParams
+} from '@/core/shared/types';
 
-export type CalendarStatus = 'active' | 'inactive' | 'pending';
-export type CalendarType = 'Khẩn cấp' | 'Theo lịch';
 export type CalendarRepeat = 'Không' | 'Hàng ngày' | 'Hàng tuần' | 'Hàng tháng';
+
+export type ScheduleStatus = 'active' | 'inactive' | 'waiting';
+export type ScheduleAction = 'PLAY' | 'STOP';
+export type SchedulePriority = 1 | 2 | 3;
+export type ScheduleRecurring =
+  | 'none'
+  | 'daily'
+  | 'weekly'
+  | 'monthly'
+  | 'custom';
+
+export type DeviceType =
+  | 'lms.devices.types.LIGHT'
+  | 'lms.devices.types.SWITCH'
+  | 'lms.devices.types.SENSOR'
+  | string;
+
 export interface Calendar {
   id: string;
   name: string;
-  type: CalendarType;
-  repeat: CalendarRepeat;
-  time: string;
-  status: CalendarStatus;
-  startDate: string;
-  endDate: string;
-  createdDate: string;
-  children?: Calendar[];
+  description: string;
+  domain_id: string;
+  client_id: string;
+  group_ids: string[] | null;
+  level: number;
+  priority: SchedulePriority;
+  device_type: DeviceType;
+  action: ScheduleAction;
+  output_channels: string[];
+  output_topic: string;
+  status: ScheduleStatus;
+  dual_mode: string;
+  execute_on_device: string;
+  last_execution_status: string;
+  created_at: string;
+  updated_at: string;
+  created_by: string;
+  device_sync: string;
+  schedules: SubSchedule[];
 }
 
-export interface GetCalendarsParamsDto extends QueryParams {
+export interface SubSchedule {
+  id: number;
+  schedule_id: string;
+  client_id: string;
+  enabled: boolean;
+  ids: string[];
+  start_datetime: string;
+  end_datetime: string;
+  last_execution_at?: string;
+  error_message?: string;
+  cron_expression: string;
+  payload: {
+    command: string;
+    params: Record<string, any>;
+  };
+  time: string;
+  recurring: ScheduleRecurring;
+  recurring_period: Record<string, any>;
+  second: string;
+  minute: string;
+  hour: string;
+  day_of_month: string;
+  month: string;
+  day_of_week: string;
+  created_at: string;
+}
+
+export interface GetCalendarsParamsDto extends PaginationParams {
   name?: string;
-  type?: CalendarType;
-  status?: CalendarStatus;
+  groups?: string;
   start_range?: string;
   end_range?: string;
-}
-
-export interface CreateCalendarDto {
-  name: string;
-  type: CalendarType;
-  time: string;
-  startDate: string;
-  endDate: string;
-}
-
-export interface UpdateCalendarDto extends Partial<CreateCalendarDto> {
-  status?: CalendarStatus;
+  status?: ScheduleStatus;
+  client_id?: string;
 }
 
 export interface CalendarListResponseDto {
-  calendars: Calendar[];
-  total_calendars: number;
-  page: number;
+  schedules: Calendar[];
   limit: number;
-  total_pages: number;
-  has_next: boolean;
-  has_prev: boolean;
+  offset: number;
+  total: number;
 }
 
 export interface CalendarDetailResponseDto {
   calendar: Calendar;
-  related_calendars?: Calendar[];
 }
+
+export interface CreateSubScheduleDto {
+  start_datetime: string;
+  end_datetime: string;
+  ids: string[];
+  time: string;
+  recurring: ScheduleRecurring;
+  recurring_period: {};
+  enabled: boolean;
+  payload: {
+    command: string;
+    params: Record<string, any>;
+  };
+}
+
+export interface CreateCalendarDto {
+  name: string;
+  description?: string;
+  output_channel: string;
+  output_topic: string;
+  device_type: DeviceType;
+  group_ids?: string[];
+  client_id?: string;
+  priority: SchedulePriority;
+  action: ScheduleAction;
+  schedules: CreateSubScheduleDto[];
+}
+
+export interface UpdateCalendarDto extends Partial<CreateCalendarDto> {}

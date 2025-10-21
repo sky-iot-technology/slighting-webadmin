@@ -290,8 +290,10 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     getFacetedMinMaxValues: getFacetedMinMaxValues(),
 
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: (row: any) => row.children ?? [],
-    getRowCanExpand: (row: any) => !!row.original.children?.length,
+    getSubRows: tableProps.getSubRows ?? ((row: any) => row.children ?? []),
+    getRowCanExpand:
+      tableProps.getRowCanExpand ??
+      ((row: any) => !!row.original.children?.length),
 
     manualPagination: true,
     manualSorting: true,

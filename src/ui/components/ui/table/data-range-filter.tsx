@@ -35,71 +35,63 @@ function parseAsDate(timestamp: number | string | undefined): Date | undefined {
 }
 
 type CalendarRangeFilterProps<TData> = {
-  table: Table<TData>;
-  column: Column<TData, unknown>;
-  startId?: string;
-  endId?: string;
+  startColumn: Column<TData, unknown>;
+  endColumn: Column<TData, unknown>;
   className?: string;
 };
 
 export function CalendarRangeFilter<TData>({
-  table,
-  column,
-  startId = 'startDate',
-  endId = 'endDate',
+  startColumn,
+  endColumn,
   className
 }: CalendarRangeFilterProps<TData>) {
-  const columnFilterValue = column.getFilterValue();
-  const filters = table.getState().columnFilters;
+  const startValue = startColumn.getFilterValue() as
+    | number
+    | string
+    | undefined;
+  const endValue = endColumn.getFilterValue() as number | string | undefined;
 
   const selectedDates = React.useMemo<DateRange>(() => {
-    const endCol = table.getColumn(endId);
-    const endVal = endCol?.getFilterValue() as number | string | undefined;
+    if (!startValue && !endValue) return { from: undefined, to: undefined };
 
-    if (!columnFilterValue && !endVal) {
-      return { from: undefined, to: undefined };
-    }
+    const timestamps = parseColumnFilterValue(startValue);
+    const timestamps2 = parseColumnFilterValue(endValue);
 
-    const timestamps = parseColumnFilterValue(columnFilterValue);
     return {
       from: parseAsDate(timestamps[0]),
-      to: parseAsDate(endVal)
+      to: parseAsDate(timestamps2[0])
     };
-  }, [columnFilterValue, filters]);
+  }, [startValue, endValue]);
 
   const handleChange = React.useCallback(
     (value?: DateRange) => {
-      const startCol = table.getColumn(startId);
-      const endCol = table.getColumn(endId);
+      const from = value?.from;
+      const to = value?.to;
 
-      if (!value?.from && !value?.to) {
-        startCol?.setFilterValue(undefined);
-        endCol?.setFilterValue(undefined);
-        column.setFilterValue(undefined);
+      if (!from || !to) {
+        startColumn?.setFilterValue(undefined);
+        endColumn?.setFilterValue(undefined);
         return;
       }
 
-      let fromTs: number | undefined;
-      if (value.from && !isNaN(value.from.getTime())) {
-        const startDate = new Date(value.from);
-        startDate.setUTCHours(0, 0, 0, 0);
-        fromTs = startDate.getTime(); // 👉 timestamp
-        startCol?.setFilterValue(fromTs);
-      } else {
-        startCol?.setFilterValue(undefined);
-      }
+      const isValidFrom = !isNaN(from.getTime());
+      const isValidTo = !isNaN(to.getTime());
 
-      let toTs: number | undefined;
-      if (value.to && !isNaN(value.to.getTime())) {
-        const endDate = new Date(value.to);
-        endDate.setUTCHours(23, 59, 59, 999);
-        toTs = endDate.getTime(); // 👉 timestamp
-        endCol?.setFilterValue(toTs);
+      if (isValidFrom && isValidTo) {
+        const fromDate = new Date(from);
+        fromDate.setUTCHours(0, 0, 0, 0);
+
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999);
+
+        startColumn?.setFilterValue(fromDate.getTime());
+        endColumn?.setFilterValue(toDate.getTime());
       } else {
-        endCol?.setFilterValue(undefined);
+        startColumn?.setFilterValue(undefined);
+        endColumn?.setFilterValue(undefined);
       }
     },
-    [table, column, startId, endId]
+    [startColumn, endColumn]
   );
 
   return (

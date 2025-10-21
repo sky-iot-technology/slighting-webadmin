@@ -109,7 +109,7 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
       <button
         type='button'
         disabled={disabled}
-        className={`flex w-full items-center justify-between rounded-[4px] border border-gray-400 px-1 py-1 ${!disabled ? 'cursor-pointer' : ''}`}
+        className={`border-input flex w-full items-center justify-between rounded-[4px] border px-1 py-1 ${!disabled ? 'cursor-pointer' : ''}`}
         onClick={() => setOpen((o) => !o)}
       >
         {value || `Chọn thời gian`}

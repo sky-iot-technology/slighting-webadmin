@@ -9,19 +9,11 @@ import ReactMapGL, {
   WebMercatorViewport
 } from '@goongmaps/goong-map-react';
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import MapMarker from './map-marker';
-import {
-  mapControllerProps,
-  navigationControlProps,
-  scaleControlProps
-} from '../config/map-controls';
+import { mapControllerProps, scaleControlProps } from '../config/map-controls';
 import CabinetInfoPanel from './cabinet_info_panel';
 import { useMapResize } from '../hooks/useMapResize';
 import { useMapLayers } from '../hooks/useMapLayers';
-import { Device, useGetDevices } from '@/core/domains/devices';
-import { Skeleton } from '@/ui/components/ui/skeleton';
-import MapFilter from './map-filter';
-import { useGetGroups } from '@/core/domains/groups';
+import { Device } from '@/core/domains/devices';
 import { Loader2 } from 'lucide-react';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';

@@ -6,29 +6,81 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/ui/components/ui/dialog';
-import { Badge } from '@/ui/components/ui/badge';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale/vi';
-import type { Calendar } from '@/core/domains/calendars/types';
 import { Button } from '@/ui/components/ui/button';
 import { CalendarRangePicker } from './calendar-range-picker';
 import { TimeBrightnessForm } from './calendar-time-brightness';
+import {
+  dayofweek,
+  PRIORITY_LABELS,
+  RECURRING_LABELS
+} from '@/core/domains/calendars/constant';
+import { useGetCalendarById } from '@/core/domains/calendars';
+import { useCatalogueStore } from '@/core/domains/catalogues/store';
+import { SubCatalogueDevice } from '@/core/domains/catalogues';
+import { useMemo } from 'react';
+import { RegionNode } from '@/core/domains/groups';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
 
 type CalendarViewDialogProps = {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
-  calendar: Calendar | null;
+  id: string;
 };
 
 export function CalendarViewDialog({
   open,
   onOpenChange,
-  calendar
+  id
 }: CalendarViewDialogProps) {
-  if (!calendar) return null;
+  const { treeData } = useRegionTreeStore();
+  const { catalogues } = useCatalogueStore();
 
-  const formatDate = (date: string) =>
-    format(new Date(date), 'dd/MM/yyyy HH:mm', { locale: vi });
+  const { data, isLoading, error } = useGetCalendarById(id ?? '', {
+    enabled: !!id
+  });
+
+  const displayText = useMemo(() => {
+    const groupIds = data?.group_ids ?? [];
+    console.log(data?.group_ids);
+    if (groupIds.length === 0) return '—';
+
+    const findNodeName = (nodes: RegionNode[], id: string): string | null => {
+      for (const node of nodes) {
+        if (node.id === id) return node.name;
+        if (node.children) {
+          const found = findNodeName(node.children, id);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const names = groupIds
+      .map((id: string) => findNodeName(treeData, id))
+      .filter(Boolean) as string[];
+
+    return names.length > 0 ? names.join(', ') : '—';
+  }, [data?.group_ids, treeData]);
+
+  if (!id) return null;
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error...</p>;
+  if (!data) return null;
+
+  const allDeviceIds = data.schedules[0].ids;
+
+  const monthly = data.schedules[0].recurring_period.day_of_month;
+  const weekly = data.schedules[0].recurring_period.day_of_week;
+
+  const selectedDevice = catalogues.find((d) => d.type === data.device_type);
+
+  const nameLine = allDeviceIds.map((id) => {
+    const attr = selectedDevice?.attributes[id];
+    if (typeof attr === 'object' && attr !== null && 'name' in attr) {
+      return (attr as SubCatalogueDevice).name;
+    }
+    return null;
+  });
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -36,36 +88,35 @@ export function CalendarViewDialog({
         <DialogHeader>
           <DialogTitle className='text-left text-[16px] font-bold'>
             Chi tiết lịch:
-            <span className='text-primary ml-2 font-bold'>{calendar.name}</span>
+            <span className='text-primary ml-2 font-bold'>{data.name}</span>
           </DialogTitle>
         </DialogHeader>
 
         <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
           <div className='flex gap-2'>
-            <span className=''>Trạng thái lịch:</span>
-            <span className='text-right font-medium'>Đang chạy</span>
-          </div>
-
-          <div className='flex gap-2'>
             <span className=''>Chi nhánh cha:</span>
-            <span className='text-right font-medium'>HCM</span>
+            <span className='text-right font-medium'>{displayText}</span>
           </div>
 
           <div className='flex gap-2'>
             <span className=''>Theo nhánh thiết bị:</span>
             <span className='text-right font-medium'>
-              line 1, line 2, line 3
+              {nameLine.filter(Boolean).join(', ')}
             </span>
           </div>
 
           <div className='flex gap-2'>
             <span className=''>Lặp lại:</span>
-            <span className='text-right font-medium'>{calendar.status}</span>
+            <span className='text-right font-medium'>
+              {RECURRING_LABELS[data.schedules[0].recurring]}
+            </span>
           </div>
 
           <div className='flex gap-2'>
             <span className=''>Loại lịch:</span>
-            <span className='text-right font-medium'>{calendar.type}</span>
+            <span className='text-right font-medium'>
+              {PRIORITY_LABELS[data.priority]}
+            </span>
           </div>
 
           <div className='flex items-center gap-2'>
@@ -73,26 +124,61 @@ export function CalendarViewDialog({
             <CalendarRangePicker
               mode='range'
               value={{
-                from: new Date(calendar.startDate),
-                to: new Date(calendar.endDate)
+                from: new Date(data.schedules[0].start_datetime),
+                to: new Date(data.schedules[0].end_datetime)
               }}
               disabled
             />
           </div>
 
+          {weekly && weekly.length > 0 && (
+            <div className=''>
+              <span>Ngày trong tuần:</span>
+              <div className='flex flex-wrap gap-1 pt-1'>
+                {weekly.map((value: any) => {
+                  const label = dayofweek[Number(value)];
+                  return (
+                    <span
+                      key={value}
+                      className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                    >
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {monthly && monthly.length > 0 && (
+            <div className=''>
+              <span>Ngày trong tháng:</span>
+              <div className='flex flex-wrap gap-1 pt-1'>
+                {monthly.map((value: any) => {
+                  return (
+                    <span
+                      key={value}
+                      className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                    >
+                      {value}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
           <div className='flex flex-col gap-2.5'>
             <span className=''>Thời gian & Độ sáng:</span>
-            <TimeBrightnessForm disabled />
+            <TimeBrightnessForm disabled schedules={data.schedules} />
           </div>
 
           <div className='flex flex-col gap-2 pt-1'>
-            <span className=''>Thiết bị điều khiển (3) </span>
+            <span className=''>
+              Thiết bị điều khiển ({allDeviceIds.length}){' '}
+            </span>
             <div className='flex flex-col gap-1'>
-              {[
-                'Thiết bị 963',
-                'Thiết bị 963',
-                'Thiết bị 963dsddd thiết bị tên rất dài để test'
-              ].map((name, i) => (
+              {allDeviceIds.map((name, i) => (
                 <div
                   key={i}
                   className='grid h-6 w-full grid-cols-3 items-center rounded-[4px] border px-2 text-[10px] font-normal'

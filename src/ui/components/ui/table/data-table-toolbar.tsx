@@ -6,7 +6,6 @@ import * as React from 'react';
 import { DataTableDateFilter } from '@/ui/components/ui/table/data-table-date-filter';
 import { DataTableFacetedFilter } from '@/ui/components/ui/table/data-table-faceted-filter';
 import { DataTableSliderFilter } from '@/ui/components/ui/table/data-table-slider-filter';
-import { DataTableViewOptions } from '@/ui/components/ui/table/data-table-view-options';
 import { Button } from '@/ui/components/ui/button';
 import { Input } from '@/ui/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -16,10 +15,8 @@ import { ScrollArea } from '../scroll-area';
 import { Popover, PopoverContent, PopoverTrigger } from '../popover';
 import { FilterIcon } from 'lucide-react';
 import { Separator } from '../separator';
-import { CalendarRangePicker } from '../../../../features/calendar/components/calendar-range-picker';
-import { DateRange } from 'react-day-picker';
 import { DataTableSelectFilter } from './data-table-select-filter';
-import { CalendarRangeFilter } from './test';
+import { CalendarRangeFilter } from './data-range-filter';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
@@ -105,6 +102,10 @@ export function DataTableCalendarToolbar<TData>({
 
   const [open, setOpen] = React.useState(false);
 
+  const startColumn = table.getColumn('startDate');
+  const endColumn = table.getColumn('endDate');
+  const isFiltered = table.getState().columnFilters.length > 0;
+
   return (
     <div
       role='toolbar'
@@ -122,29 +123,25 @@ export function DataTableCalendarToolbar<TData>({
           .map((column) => (
             <DataTableToolbarFilter key={column.id} column={column} />
           ))}
-        {columns
-          .filter((col) => col.id === 'startDate')
-          .map((column) => (
-            <CalendarRangePicker
-              key={column.id}
-              mode='range'
-              onChange={(value) => {
-                const range = value as DateRange | undefined;
-                const startCol = table.getColumn('startDate');
-                const endCol = table.getColumn('endDate');
-                if (range?.from && range?.to) {
-                  const startIso = new Date(range.from).toISOString();
-                  const endIso = new Date(range.to);
-                  endIso.setUTCHours(23, 59, 59, 999);
 
-                  startCol?.setFilterValue(startIso);
-                  endCol?.setFilterValue(endIso.toISOString());
-                }
-              }}
-              classname='!w-[230px]'
-            />
-            // <CalendarRangeFilter key={column.id} column={column} table={table}/>
-          ))}
+        {startColumn && endColumn && (
+          <CalendarRangeFilter
+            key='dateRange'
+            startColumn={startColumn}
+            endColumn={endColumn}
+          />
+        )}
+        {isFiltered && (
+          <Button
+            aria-label='Reset filters'
+            variant='outline'
+            size='sm'
+            className='border-dashed'
+            onClick={onReset}
+          >
+            <Cross2Icon />
+          </Button>
+        )}
         <div className='flex items-center gap-2'>
           {actions}
           {children}

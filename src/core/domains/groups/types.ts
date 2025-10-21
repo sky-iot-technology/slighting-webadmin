@@ -24,6 +24,7 @@ export interface GroupListResponseDto {
 
 export interface Group extends BaseEntity {
   domain_id: string;
+  parent_id?: string;
   name: string;
   description: string;
   metadata: groupMetadata;

@@ -14,8 +14,8 @@ import { cn } from '@/lib/utils';
 
 type CalendarRangePickerProps = {
   mode?: 'single' | 'range';
-  value?: DateRange | Date;
-  onChange?: (value?: DateRange | Date) => void;
+  value?: DateRange | undefined;
+  onChange?: (value?: DateRange) => void;
   disabled?: boolean;
   classname?: string;
 };
@@ -48,17 +48,10 @@ export function CalendarRangePicker({
 
   React.useEffect(() => {
     if (mode === 'range') {
-      if (value && !(value instanceof Date)) {
-        setDate(value as DateRange);
-      } else {
-        setDate(undefined);
-      }
+      setDate(value);
     } else if (mode === 'single') {
-      if (value instanceof Date) {
-        setSingleDate(value);
-      } else {
-        setSingleDate(undefined);
-      }
+      if (value?.from) setSingleDate(value.from);
+      else setSingleDate(undefined);
     }
   }, [value, mode]);
 
@@ -68,8 +61,9 @@ export function CalendarRangePicker({
   // ✅ Handler for "single" mode
   const handleSingleSelect = (selected?: Date) => {
     if (disabled) return;
+    const newRange = selected ? { from: selected, to: undefined } : undefined;
     setSingleDate(selected);
-    onChange?.(selected);
+    onChange?.(newRange);
     setOpenFrom(false);
   };
 
