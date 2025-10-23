@@ -1,116 +1,64 @@
 'use client';
-import { RegionNode } from '@/core/domains/groups';
-import { RegionTree } from '@/ui/components/tree-group';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import { columns } from './calendar-tables/columns';
-import { CalendarTable } from './calendar-tables';
-import { ColumnDef } from '@tanstack/react-table';
-import { Calendar, useGetCalendars } from '@/core/domains/calendars';
-import { useSearchParams } from 'next/navigation';
-import { Skeleton } from '@/ui/components/ui/skeleton';
 
-export const sampleRegions: RegionNode[] = [
-  {
-    id: 'hcm',
-    name: 'Hồ Chí Minh',
-    children: [
-      {
-        id: 'thuduc',
-        name: 'Thủ Đức'
-      },
-      {
-        id: 'quan1',
-        name: 'Quận 1'
-      },
-      {
-        id: 'govap',
-        name: 'Gò Vấp'
-      }
-    ]
-  },
-  {
-    id: 'hanoi',
-    name: 'Hà Nội',
-    children: [
-      { id: 'caugiay', name: 'Cầu Giấy' },
-      { id: 'hoankiem', name: 'Hoàn Kiếm' }
-    ]
-  },
-  {
-    id: 'danang',
-    name: 'Đà Nẵng',
-    children: [
-      { id: 'haichau', name: 'Hải Châu' },
-      { id: 'sontra', name: 'Sơn Trà' }
-    ]
-  },
-  {
-    id: 'haugiang',
-    name: 'Hậu Giang'
-  },
-  {
-    id: 'dongnai',
-    name: 'Đồng Nai'
-  }
-];
+import { SelectedRegion } from '@/ui/components/tree-group';
+import Image from 'next/image';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { GetCalendarsParamsDto } from '@/core/domains/calendars';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import CalendarTree from './calendar-tree';
+import { CalendarContent } from './calendar-content';
+import { useDebounce } from '@/core/shared/hooks/use-debounce';
+import { CalendarSidebar } from './calendar-sidebar';
 
 export default function CalendarPage() {
   const [treeOpen, setTreeOpen] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [height, setHeight] = useState(0);
+  const [selectedRegion, setSelectedRegion] = useState<SelectedRegion | null>(
+    null
+  );
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
   const page = searchParams.get('page');
   const search = searchParams.get('name');
   const pageLimit = searchParams.get('perPage');
+  const startDate = searchParams.get('startDate');
+  const endDate = searchParams.get('endDate');
 
-  const filters = {
-    page: page ? parseInt(page.toString()) : undefined,
-    limit: pageLimit ? parseInt(pageLimit.toString()) : undefined,
-    ...(search && { name: search })
-  };
+  const filters = useMemo<GetCalendarsParamsDto>(
+    () => ({
+      page: page ? parseInt(page.toString()) : 1,
+      limit: pageLimit ? parseInt(pageLimit.toString()) : 20,
+      start_range: startDate ?? undefined,
+      end_range: endDate ?? undefined,
+      ...(search && { name: search })
+    }),
+    [page, pageLimit, startDate, endDate, search]
+  );
 
-  const { data, isLoading, error, refetch } = useGetCalendars(filters);
+  const handleRegionChange = useCallback(
+    (region: SelectedRegion) => {
+      const newUrl = new URL(pathname, window.location.origin);
+      if (selectedRegion?.id === region?.id) {
+        setSelectedRegion(null);
+        newUrl.searchParams.delete('page');
+      } else {
+        setSelectedRegion(region);
+        newUrl.searchParams.set('page', '1');
+      }
+      router.push(newUrl.toString());
+    },
+    [pathname, router, selectedRegion?.id]
+  );
 
-  const calendars = data?.calendars ?? [];
-  useEffect(() => {
-    if (!containerRef.current) return;
-    const observer = new ResizeObserver(([entry]) => {
-      setHeight(entry.contentRect.height);
-    });
-    observer.observe(containerRef.current);
-    return () => observer.disconnect();
-  }, [isLoading, error]);
-
-  if (isLoading) {
-    return (
-      <div className='space-y-4'>
-        <Skeleton className='h-8 w-48' />
-        <Skeleton className='h-4 w-96' />
-        <div className='space-y-2'>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className='h-16 w-full' />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='flex h-64 items-center justify-center'>
-        <div className='text-center'>
-          <h3 className='text-destructive text-lg font-semibold'>
-            Error loading products
-          </h3>
-          <p className='text-muted-foreground text-sm'>
-            {error.message || 'Something went wrong'}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  const handleToggleSidebar = useCallback(() => {
+    setTreeOpen((prev) => !prev);
+  }, []);
 
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
@@ -121,47 +69,21 @@ export default function CalendarPage() {
             className={`rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-0'}`}
           >
             {treeOpen && (
-              <div className='flex h-full flex-col pt-1.5 pr-[9px] pl-2'>
-                <div className='bg-background flex h-[31px] items-center rounded-[6px] pr-2 pl-2'>
-                  <Image
-                    src={'/assets/icons/search.svg'}
-                    alt='search'
-                    width={11}
-                    height={11}
-                    className='text-muted-foreground mr-2 ml-1.5'
-                  />
-
-                  <input
-                    className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'
-                    placeholder='Tìm kiếm chi nhánh...'
-                  />
-                </div>
-
-                <RegionTree
-                  renderNode='icon'
-                  data={sampleRegions}
-                  onSelect={(item) => console.log('Selected region:', item)}
-                  onToggle={(node) => console.log('Toggled node:', node)}
-                  selectedId={undefined}
-                  width={'100%'}
-                  height={height}
-                  indent={25}
-                  rowHeight={36}
-                  overscanCount={1}
-                  paddingTop={10}
-                />
-              </div>
+              <CalendarSidebar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedRegion={selectedRegion}
+                onRegionChange={handleRegionChange}
+              />
             )}
           </div>
 
-          {/* Main content (Table) */}
           <div className='flex flex-1 flex-col bg-white' ref={containerRef}>
-            <CalendarTable
-              data={calendars}
-              totalItems={data?.total_calendars ?? 0}
-              columns={columns as ColumnDef<Calendar, any>[]}
+            <CalendarContent
+              filters={filters}
+              selectedRegion={selectedRegion}
               isSidebarOpen={treeOpen}
-              onToggleSidebar={() => setTreeOpen(!treeOpen)}
+              onToggleSidebar={handleToggleSidebar}
             />
           </div>
         </div>

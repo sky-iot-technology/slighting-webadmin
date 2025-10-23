@@ -76,6 +76,8 @@
   --calendar-time-hover: oklch(0.9046 0.0293 163.17);
   --calendar-table-children: oklch(0.9889 0.0058 239.82);
   --cyan-1: oklch(0.6407 0.1081 203.59);
+  --calendar-table-select: oklch(0.9778 0.0117 239.9);
+  --gray-1: oklch(0.9791 0 0);
 }
 
 .dark {
@@ -202,6 +204,8 @@
   > :not([hidden])
   ~ :not([hidden]) {
   --tw-space-x-reverse: 1;
+  --color-calendar-table-select: var(--calendar-table-select);
+  --color-gray-1: var(--gray-1);
 }
 
 @layer base {

@@ -35,7 +35,7 @@ export const authApi = {
   async getDomain(): Promise<string> {
     const response = await publicApi.get<DomainsResponse>(`/domains`);
 
-    return response.domains[1].id;
+    return response.domains[2].id;
   },
 
   async getCurrentUser(token: string): Promise<User> {

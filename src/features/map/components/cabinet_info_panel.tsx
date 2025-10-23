@@ -296,7 +296,9 @@ function CabinetInfoPanel(props: InfoModalProps) {
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
                   <span>Điện áp tiêu thụ (kWh):</span>
-                  <span className='font-medium'>{sensorAttrs?.electric}</span>
+                  <span className='font-medium'>
+                    {Number(sensorAttrs?.electric).toFixed(2)}
+                  </span>
                 </div>
 
                 <div className='flex items-center justify-between'>

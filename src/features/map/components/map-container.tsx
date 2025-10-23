@@ -6,8 +6,8 @@ import { useCallback, useEffect, useState } from 'react';
 import MapFilter from './map-filter';
 import GoongMap from './goong-map';
 import { Device, useGetDevices } from '@/core/domains/devices';
+import { SelectedRegion } from '@/ui/components/tree-group';
 
-type SelectedRegion = { id: string; name: string } | null;
 export default function MapContainer() {
   const [selectedDevice, setSelectedDevice] = useState<{
     device: Device | null;

@@ -26,7 +26,7 @@ export function AnimatedSearchInput({ column, columnMeta }: any) {
     <div
       className={cn(
         'border-input bg-background flex h-8 items-center overflow-hidden rounded-md border transition-all duration-300 ease-in-out',
-        expanded ? 'w-[124px] pl-2 lg:w-[164px]' : 'w-9 justify-center'
+        expanded ? 'w-[164px] pl-2 lg:w-[218px]' : 'w-9 justify-center'
       )}
     >
       <div

@@ -1,10 +1,12 @@
-import { calendars } from '@/features/calendar/components/fake';
+import { authenticatedApi } from '@/core/shared/api';
 import {
   Calendar,
   CalendarDetailResponseDto,
   CalendarListResponseDto,
-  CreateCalendarDto,
   GetCalendarsParamsDto,
+  ScheduleStatus,
+  DeviceType,
+  CreateCalendarDto,
   UpdateCalendarDto
 } from './types';
 
@@ -12,87 +14,110 @@ export const calendarApi = {
   async getAll(
     params?: GetCalendarsParamsDto
   ): Promise<CalendarListResponseDto> {
-    let data = [...calendars];
+    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const offset = (page - 1) * limit;
+    const response = await authenticatedApi.get<CalendarListResponseDto>(
+      '/schedules',
+      {
+        params: {
+          offset,
+          limit,
+          ...params
+        }
+      }
+    );
+    return response;
+  },
 
-    // 1️⃣ Lọc theo loại & trạng thái
-    if (params?.type) data = data.filter((c) => c.type === params.type);
-    if (params?.status) data = data.filter((c) => c.status === params.status);
-
-    // 2️⃣ Lọc theo khoảng thời gian
-    if (params?.from && params?.to) {
-      const from = new Date(params.from);
-      const to = new Date(params.to);
-      data = data.filter(
-        (c) => new Date(c.startDate) >= from && new Date(c.endDate) <= to
+  async createCalendar(data: CreateCalendarDto): Promise<Calendar> {
+    try {
+      const response = await authenticatedApi.post<Calendar>(
+        '/schedules',
+        data
       );
+      return response;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Không thể tạo lịch. Vui lòng thử lại.';
+      console.error('❌ createCalendar error:', message);
+      throw new Error(message);
     }
+  },
 
-    // 3️⃣ Lọc theo từ khóa tìm kiếm (name)
-    if (params?.name) {
-      const search = params.name.toLowerCase();
-      data = data.filter((c) => c.name.toLowerCase().includes(search));
+  async deleteCalendar(id: string | number): Promise<void> {
+    try {
+      await authenticatedApi.delete<Calendar>(`/schedules/${id}`);
+    } catch (error: any) {
+      console.error('delete error:', error.message);
+      throw new Error(error);
     }
-
-    // 4️⃣ Phân trang (page & limit)
-    const page = params?.page ?? 1;
-    const limit = params?.limit ?? data.length; // default: tất cả
-    const startIndex = (page - 1) * limit;
-    const endIndex = startIndex + limit;
-
-    const paginated = data.slice(startIndex, endIndex);
-
-    // 5️⃣ Trả về dữ liệu dạng chuẩn
-    return {
-      calendars: paginated,
-      total_calendars: data.length,
-      page,
-      limit,
-      total_pages: Math.ceil(data.length / limit),
-      has_next: endIndex < data.length,
-      has_prev: page > 1
-    };
   },
 
-  async getById(id: string): Promise<CalendarDetailResponseDto> {
-    const calendar = calendars.find((c) => c.id === id);
-    if (!calendar) throw new Error('Calendar not found');
-    return {
-      calendar,
-      related_calendars: calendars.filter(
-        (c) => c.type === calendar.type && c.id !== calendar.id
-      )
-    };
-  },
-  async create(data: CreateCalendarDto): Promise<Calendar> {
-    const newCalendar: Calendar = {
-      id: String(Date.now()),
-      name: data.name,
-      type: data.type,
-      time: data.time,
-      status: 'pending', // default status
-      startDate: data.startDate,
-      endDate: data.endDate,
-      createdDate: new Date().toISOString()
-    };
-    calendars.push(newCalendar);
-    return newCalendar;
+  async getById(id: string): Promise<Calendar> {
+    try {
+      const response = await authenticatedApi.get<Calendar>(`/schedules/${id}`);
+      return response;
+    } catch (error: any) {
+      console.error('get calendar by id error:', error.message);
+      throw new Error(error);
+    }
   },
 
-  /* ✅ Update calendar */
-  async update(id: string, data: UpdateCalendarDto): Promise<Calendar> {
-    const index = calendars.findIndex((c) => c.id === id);
-    if (index === -1) throw new Error('Calendar not found');
-    calendars[index] = {
-      ...calendars[index],
-      ...data
-    };
-    return calendars[index];
-  },
-
-  /* ✅ Delete calendar */
-  async delete(id: string): Promise<void> {
-    const index = calendars.findIndex((c) => c.id === id);
-    if (index === -1) throw new Error('Calendar not found');
-    calendars.splice(index, 1);
+  async updateCalendar(id: string, data: UpdateCalendarDto): Promise<Calendar> {
+    try {
+      const response = await authenticatedApi.put<Calendar>(
+        `/schedules/${id}`,
+        data
+      );
+      return response;
+    } catch (error: any) {
+      console.error('update calendar by id error:', error.message);
+      throw new Error(error);
+    }
   }
+
+  // async getById(id: string): Promise<CalendarDetailResponseDto> {
+  //   const calendar = calendars.find((c) => c.id === id);
+  //   if (!calendar) throw new Error('Calendar not found');
+  //   return {
+  //     calendar,
+  //     related_calendars: calendars.filter(
+  //       (c) => c.type === calendar.type && c.id !== calendar.id
+  //     )
+  //   };
+  // },
+  // async create(data: CreateCalendarDto): Promise<Calendar> {
+  //   const newCalendar: Calendar = {
+  //     id: String(Date.now()),
+  //     name: data.name,
+  //     type: data.type,
+  //     time: data.time,
+  //     status: 'pending', // default status
+  //     startDate: data.startDate,
+  //     endDate: data.endDate,
+  //     createdDate: new Date().toISOString()
+  //   };
+  //   calendars.push(newCalendar);
+  //   return newCalendar;
+  // },
+
+  // /* ✅ Update calendar */
+  // async update(id: string, data: UpdateCalendarDto): Promise<Calendar> {
+  //   const index = calendars.findIndex((c) => c.id === id);
+  //   if (index === -1) throw new Error('Calendar not found');
+  //   calendars[index] = {
+  //     ...calendars[index],
+  //     ...data
+  //   };
+  //   return calendars[index];
+  // },
+
+  // /* ✅ Delete calendar */
+  // async delete(id: string): Promise<void> {
+  //   const index = calendars.findIndex((c) => c.id === id);
+  //   if (index === -1) throw new Error('Calendar not found');
+  //   calendars.splice(index, 1);
+  // }
 };

@@ -14,17 +14,22 @@ import { cn } from '@/lib/utils';
 
 type CalendarRangePickerProps = {
   mode?: 'single' | 'range';
-  value?: DateRange | Date;
-  onChange?: (value?: DateRange | Date) => void;
+  value?: DateRange | undefined;
+  onChange?: (value?: DateRange) => void;
   disabled?: boolean;
+  disablePastDate?: boolean;
+  classname?: string;
 };
 
 export function CalendarRangePicker({
   mode = 'range',
   value,
   onChange,
-  disabled
+  disabled,
+  disablePastDate,
+  classname
 }: CalendarRangePickerProps) {
+  console.log(value);
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
       if (!value) return undefined;
@@ -39,25 +44,49 @@ export function CalendarRangePicker({
       if (!value) return undefined;
       if (value instanceof Date) {
       }
-      // Nếu là DateRange, lấy ngày từ
       return (value as DateRange)?.from;
     }
     return undefined;
   });
 
+  React.useEffect(() => {
+    if (mode === 'range') {
+      setDate(value);
+    } else if (mode === 'single') {
+      if (value?.from) setSingleDate(value.from);
+      else setSingleDate(undefined);
+    }
+  }, [value, mode]);
+
   const [openFrom, setOpenFrom] = React.useState(false);
   const [openTo, setOpenTo] = React.useState(false);
 
+  //for checking past-date
+  const isPastDate = React.useCallback(
+    (date?: Date) => {
+      if (!disablePastDate || !date) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+
+      return checkDate < today;
+    },
+    [disablePastDate]
+  );
+
   // ✅ Handler for "single" mode
   const handleSingleSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
+    const newRange = selected ? { from: selected, to: undefined } : undefined;
     setSingleDate(selected);
-    onChange?.(selected);
+    onChange?.(newRange);
     setOpenFrom(false);
   };
 
   const handleFromSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
     const newRange = { from: selected, to: date?.to };
     setDate(newRange);
     onChange?.(newRange);
@@ -65,7 +94,7 @@ export function CalendarRangePicker({
   };
 
   const handleToSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
     const newRange = { from: date?.from, to: selected };
     setDate(newRange);
     onChange?.(newRange);
@@ -80,6 +109,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
+          classname,
           'border-input flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -104,6 +134,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
+          classname,
           'border-input bg-background flex h-[31px] w-[200px] items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -125,7 +156,7 @@ export function CalendarRangePicker({
               mode='single'
               selected={singleDate}
               onSelect={handleSingleSelect}
-              initialFocus
+              disablePastDate={disablePastDate}
             />
           </PopoverContent>
         </Popover>
@@ -138,6 +169,7 @@ export function CalendarRangePicker({
   return (
     <div
       className={cn(
+        classname,
         'border-input bg-background flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
       )}
     >
@@ -162,7 +194,7 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.from}
             onSelect={handleFromSelect}
-            initialFocus
+            disablePastDate={disablePastDate}
           />
         </PopoverContent>
       </Popover>
@@ -190,7 +222,7 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.to}
             onSelect={handleToSelect}
-            initialFocus
+            disablePastDate={disablePastDate}
           />
         </PopoverContent>
       </Popover>

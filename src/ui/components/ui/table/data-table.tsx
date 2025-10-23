@@ -67,7 +67,10 @@ export function DataTable<TData>({
                   className={cn('bg-muted sticky top-0 z-10', headerClassName)}
                 >
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id}>
+                    <TableRow
+                      key={headerGroup.id}
+                      className='data-[state=selected]:bg-calendar-table-select'
+                    >
                       {headerGroup.headers.map((header) => (
                         <TableHead
                           key={header.id}
@@ -95,7 +98,7 @@ export function DataTable<TData>({
                         key={row.id}
                         data-state={row.getIsSelected() && 'selected'}
                         className={cn(
-                          '',
+                          'data-[state=selected]:bg-calendar-table-select',
                           rowClassName,
                           row.depth > 0 && 'bg-calendar-table-children'
                         )}

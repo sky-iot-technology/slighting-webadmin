@@ -44,6 +44,7 @@ export function diffTimeHMS(updatedAt: string): string {
 export function mapGroupsToRegionNodes(
   apiResponse: GroupListResponseDto
 ): RegionNode[] {
+  if (!apiResponse?.groups || !Array.isArray(apiResponse.groups)) return [];
   return apiResponse.groups.map((g) => ({
     id: String(g.id),
     name: g.name,
@@ -57,8 +58,10 @@ export function mapGroupHierarchyToRegionNodes(
   return groups.map((g) => ({
     id: String(g.id),
     name: g.name,
-    children: g.children
-      ? mapGroupHierarchyToRegionNodes(g.children)
+    children: Array.isArray(g.children)
+      ? g.children.length > 0
+        ? mapGroupHierarchyToRegionNodes(g.children)
+        : []
       : undefined
   }));
 }
@@ -68,14 +71,26 @@ export function mergeHierarchyIntoRoots(
   selectId: string,
   hierarchyGroups: RegionNode[]
 ): RegionNode[] {
-  const selectedRoot = hierarchyGroups.find((g) => g.id === selectId);
   return roots.map((root) => {
-    if (root.id === selectId && selectedRoot) {
+    if (root.id === selectId) {
+      const matched = hierarchyGroups.find((h) => h.id === selectId);
       return {
         ...root,
-        children: selectedRoot?.children ?? []
+        children: matched?.children ?? []
       };
     }
+
+    if (root.children?.length) {
+      return {
+        ...root,
+        children: mergeHierarchyIntoRoots(
+          root.children,
+          selectId,
+          hierarchyGroups
+        )
+      };
+    }
+
     return root;
   });
 }
