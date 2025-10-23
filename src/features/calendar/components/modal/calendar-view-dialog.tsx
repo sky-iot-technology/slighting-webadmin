@@ -7,8 +7,6 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import { Button } from '@/ui/components/ui/button';
-import { CalendarRangePicker } from './calendar-range-picker';
-import { TimeBrightnessForm } from './calendar-time-brightness';
 import {
   dayofweek,
   PRIORITY_LABELS,
@@ -20,6 +18,8 @@ import { SubCatalogueDevice } from '@/core/domains/catalogues';
 import { useMemo } from 'react';
 import { RegionNode } from '@/core/domains/groups';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
+import { CalendarRangePicker } from '../calendar-range-picker';
+import { TimeBrightnessForm } from '../calendar-time-brightness';
 
 type CalendarViewDialogProps = {
   open: boolean;
@@ -39,9 +39,10 @@ export function CalendarViewDialog({
     enabled: !!id
   });
 
+  console.log(data);
+
   const displayText = useMemo(() => {
     const groupIds = data?.group_ids ?? [];
-    console.log(data?.group_ids);
     if (groupIds.length === 0) return '—';
 
     const findNodeName = (nodes: RegionNode[], id: string): string | null => {
@@ -124,8 +125,10 @@ export function CalendarViewDialog({
             <CalendarRangePicker
               mode='range'
               value={{
-                from: new Date(data.schedules[0].start_datetime),
-                to: new Date(data.schedules[0].end_datetime)
+                from: new Date(
+                  data.schedules[0].start_datetime.replace(/Z$/, '')
+                ),
+                to: new Date(data.schedules[0].end_datetime.replace(/Z$/, ''))
               }}
               disabled
             />

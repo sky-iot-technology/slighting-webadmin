@@ -1,9 +1,14 @@
 import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import TimePicker from 'react-time-picker';
 import { motion, AnimatePresence } from 'framer-motion';
 import CustomScrollbar from '../custom-scrollbar';
-import { createPortal } from 'react-dom';
 
 interface CustomTimePickerProps {
   value?: string;
@@ -34,6 +39,36 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
 
   const pickerRef = useRef<HTMLDivElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const hourListRef = useRef<HTMLDivElement | null>(null);
+  const minuteListRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (value) {
+      const [h, m] = value.split(':');
+      if (h && m) {
+        setHour(h.padStart(2, '0'));
+        setMinute(m.padStart(2, '0'));
+      }
+    }
+  }, [value]);
+
+  useEffect(() => {
+    if (open) {
+      const timer = setTimeout(() => {
+        const hourEl = hourListRef.current?.querySelector(
+          `[data-hour="${hour}"]`
+        );
+        const minuteEl = minuteListRef.current?.querySelector(
+          `[data-minute="${minute}"]`
+        );
+
+        hourEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        minuteEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -48,8 +83,9 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside, true);
+    return () =>
+      document.removeEventListener('mousedown', handleClickOutside, true);
   }, []);
 
   useEffect(() => {
@@ -77,11 +113,13 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
     }
   }, [open]);
 
-  const hours = Array.from({ length: 24 }, (_, i) =>
-    i.toString().padStart(2, '0')
+  const hours = useMemo(
+    () => Array.from({ length: 24 }, (_, i) => i.toString().padStart(2, '0')),
+    []
   );
-  const minutes = Array.from({ length: 60 }, (_, i) =>
-    i.toString().padStart(2, '0')
+  const minutes = useMemo(
+    () => Array.from({ length: 60 }, (_, i) => i.toString().padStart(2, '0')),
+    []
   );
 
   const handleApply = () => {
@@ -100,12 +138,24 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
     setOpen(false);
   };
 
+  useEffect(() => {
+    if (open) {
+      const hourEl = hourListRef.current?.querySelector(
+        `[data-hour="${hour}"]`
+      );
+      const minuteEl = minuteListRef.current?.querySelector(
+        `[data-minute="${minute}"]`
+      );
+      hourEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      minuteEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  }, [hour, minute]);
+
   return (
     <div
       ref={pickerRef}
       className={`relative w-[104px] rounded-[4px] text-[11px]`}
     >
-      {/* Input hiển thị */}
       <button
         type='button'
         disabled={disabled}
@@ -122,79 +172,81 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
       </button>
 
       {/* Dropdown */}
-      {!disabled &&
-        open &&
-        createPortal(
-          <AnimatePresence>
-            <motion.div
-              ref={dropdownRef}
-              onWheelCapture={(e) => e.stopPropagation()}
-              initial={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
-              transition={{ duration: 0.15 }}
-              className='pointer-events-auto fixed z-[99999] flex flex-col rounded-[4px] border border-gray-300 bg-white p-1 shadow-lg'
-              style={{
-                top: position.top,
-                left: position.left,
-                width: position.width
-              }}
-            >
-              <div className='flex w-full justify-center gap-1 pl-1'>
-                {/* Hour list */}
-                <CustomScrollbar className='max-h-48 w-[48px] overflow-y-auto text-center'>
-                  {hours.map((h) => (
-                    <div
-                      key={h}
-                      onClick={() => setHour(h)}
-                      className={`hover:bg-tree-hover cursor-pointer rounded px-1 py-1 text-xs ${
-                        h === hour ? 'bg-calendar-time-hover font-semibold' : ''
-                      }`}
-                    >
-                      {h}
-                    </div>
-                  ))}
-                </CustomScrollbar>
+      {!disabled && open && (
+        <AnimatePresence>
+          <motion.div
+            ref={dropdownRef}
+            onWheelCapture={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
+            initial={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
+            transition={{ duration: 0.15 }}
+            className={`absolute left-0 z-[99] flex flex-col rounded-[4px] border border-gray-300 bg-white p-1 shadow-lg ${dropdownPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} `}
+            style={{
+              width: '100%'
+            }}
+          >
+            <div className='flex w-full justify-center gap-1 pl-1'>
+              {/* Hour list */}
+              <CustomScrollbar
+                className='max-h-48 w-[48px] overflow-y-auto text-center'
+                ref={hourListRef}
+              >
+                {hours.map((h) => (
+                  <div
+                    key={h}
+                    data-hour={h}
+                    onClick={() => setHour(h)}
+                    className={`hover:bg-tree-hover cursor-pointer rounded px-1 py-1 text-xs ${
+                      h === hour ? 'bg-calendar-time-hover font-semibold' : ''
+                    }`}
+                  >
+                    {h}
+                  </div>
+                ))}
+              </CustomScrollbar>
 
-                {/* Minute list */}
-                <CustomScrollbar className='max-h-48 w-[48px] overflow-y-auto text-center'>
-                  {minutes.map((m) => (
-                    <div
-                      key={m}
-                      onClick={() => setMinute(m)}
-                      className={`hover:bg-tree-hover cursor-pointer rounded px-1 py-1 text-xs ${
-                        m === minute
-                          ? 'bg-calendar-time-hover font-semibold'
-                          : ''
-                      }`}
-                    >
-                      {m}
-                    </div>
-                  ))}
-                </CustomScrollbar>
-              </div>
+              {/* Minute list */}
+              <CustomScrollbar
+                ref={minuteListRef}
+                className='max-h-48 w-[48px] overflow-y-auto text-center'
+              >
+                {minutes.map((m) => (
+                  <div
+                    key={m}
+                    data-minute={m}
+                    onClick={() => setMinute(m)}
+                    className={`hover:bg-tree-hover cursor-pointer rounded px-1 py-1 text-xs ${
+                      m === minute ? 'bg-calendar-time-hover font-semibold' : ''
+                    }`}
+                  >
+                    {m}
+                  </div>
+                ))}
+              </CustomScrollbar>
+            </div>
 
-              {/* Footer */}
-              <div className='my-1 flex items-center justify-between border-gray-600 px-2'>
-                <button
-                  type='button'
-                  onClick={handleNow}
-                  className='text-xs text-blue-400 hover:underline'
-                >
-                  Now
-                </button>
-                <button
-                  type='button'
-                  onClick={handleApply}
-                  className='rounded bg-emerald-500 px-2 py-1 text-xs font-semibold text-white hover:bg-emerald-600'
-                >
-                  OK
-                </button>
-              </div>
-            </motion.div>
-          </AnimatePresence>,
-          document.body
-        )}
+            {/* Footer */}
+            <div className='my-1 flex items-center justify-between border-gray-600 px-2'>
+              <button
+                type='button'
+                onClick={handleNow}
+                className='text-xs text-blue-400 hover:underline'
+              >
+                Now
+              </button>
+              <button
+                type='button'
+                onClick={handleApply}
+                className='rounded bg-emerald-500 px-2 py-1 text-xs font-semibold text-white hover:bg-emerald-600'
+              >
+                OK
+              </button>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      )}
 
       {/* hidden react-time-picker */}
       <div className='hidden'>

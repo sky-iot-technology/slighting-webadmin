@@ -1,18 +1,31 @@
 import { z } from 'zod';
 
-export const subScheduleSchema = z.object({
-  time: z.string().min(1, 'Thời gian không được để trống'),
-  actionType: z.enum(['brightness', 'onOff']).nullable().optional(),
-  brightness: z.number().min(0).max(100).optional(),
-  onOff: z.boolean().optional(),
-  enabled: z.boolean().default(true),
-  payload: z
-    .object({
-      command: z.string(),
-      params: z.record(z.any())
-    })
-    .default({ command: 'default-command', params: {} })
-});
+export const subScheduleSchema = z
+  .object({
+    time: z.string().min(1, 'Thời gian không được để trống'),
+    actionType: z.enum(['brightness', 'onOff']).nullable().optional(),
+    brightness: z.number().min(0).max(100).optional(),
+    onOff: z.boolean().optional(),
+
+    enabled: z.boolean().default(true),
+    payload: z
+      .object({
+        command: z.string(),
+        params: z.record(z.any())
+      })
+      .default({ command: 'default-command', params: {} })
+  })
+  .refine(
+    (data) =>
+      (data.actionType === 'brightness'
+        ? typeof data.brightness === 'number'
+        : true) &&
+      (data.actionType === 'onOff' ? typeof data.onOff === 'boolean' : true),
+    {
+      message: 'Thiếu giá trị cho hành động đã chọn',
+      path: ['actionType']
+    }
+  );
 
 export const calendarFormSchema = z
   .object({
@@ -23,7 +36,7 @@ export const calendarFormSchema = z
     device_type: z
       .string()
       .refine((val) => val.startsWith('lms.devices.types.'), {
-        message: 'Device type không hợp lệ'
+        message: 'Loại thiết bị không hợp lệ'
       }),
     group_ids: z.array(z.string()).optional(),
     client_id: z.string().default('default'),
@@ -62,7 +75,15 @@ export const calendarFormSchema = z
       });
     }
 
-    if (recurring === 'weekly' && (!weekly || weekly.length === 0)) {
+    if (date?.from && date?.to && date.to < date.from) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['date'],
+        message: 'Ngày kết thúc phải sau ngày bắt đầu'
+      });
+    }
+
+    if (recurring === 'weekly' && !weekly?.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['weekly'],
@@ -70,7 +91,7 @@ export const calendarFormSchema = z
       });
     }
 
-    if (recurring === 'monthly' && (!monthly || monthly.length === 0)) {
+    if (recurring === 'monthly' && !monthly?.length) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['monthly'],

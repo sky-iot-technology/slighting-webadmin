@@ -200,7 +200,9 @@ export const columns: ColumnDef<Calendar>[] = [
     enableColumnFilter: true,
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
-      const date = formatDateString(row.original.schedules[0].start_datetime);
+      const date = formatDateString(
+        row.original.schedules[0].start_datetime.replace(/Z$/, '')
+      );
       return <div>{date}</div>;
     }
   },
@@ -210,7 +212,9 @@ export const columns: ColumnDef<Calendar>[] = [
     header: 'Ngày kết thúc',
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
-      const date = formatDateString(row.original.schedules[0].end_datetime);
+      const date = formatDateString(
+        row.original.schedules[0].end_datetime.replace(/Z$/, '')
+      );
       return <div>{date}</div>;
     },
     enableColumnFilter: true

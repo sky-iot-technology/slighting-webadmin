@@ -8,6 +8,7 @@ import { Skeleton } from '@/ui/components/ui/skeleton';
 import { ColumnDef } from '@tanstack/react-table';
 import { CalendarTable } from './calendar-tables';
 import { columns } from './calendar-tables/columns';
+import { memo } from 'react';
 
 interface CalendarContentProps {
   filters: GetCalendarsParamsDto;
@@ -16,7 +17,7 @@ interface CalendarContentProps {
   onToggleSidebar: () => void;
 }
 
-export function CalendarContent({
+export const CalendarContent = memo(function CalendarContent({
   filters,
   selectedRegion,
   isSidebarOpen,
@@ -69,4 +70,4 @@ export function CalendarContent({
       region={selectedRegion ?? null}
     />
   );
-}
+});

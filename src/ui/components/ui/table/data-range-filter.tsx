@@ -4,6 +4,7 @@ import * as React from 'react';
 import type { Column, Table } from '@tanstack/react-table';
 import type { DateRange } from 'react-day-picker';
 import { CalendarRangePicker } from '@/features/calendar/components/calendar-range-picker';
+import { utcToLocal } from '@/features/calendar/helper';
 
 function parseColumnFilterValue(value: unknown) {
   if (value === null || value === undefined) {
@@ -26,12 +27,11 @@ function parseColumnFilterValue(value: unknown) {
   return [];
 }
 
-function parseAsDate(timestamp: number | string | undefined): Date | undefined {
-  if (!timestamp) return undefined;
-  const numericTimestamp =
-    typeof timestamp === 'string' ? Number(timestamp) : timestamp;
-  const date = new Date(numericTimestamp);
-  return !Number.isNaN(date.getTime()) ? date : undefined;
+function parseAsDate(value: string | number | undefined): Date | undefined {
+  if (!value) return undefined;
+  if (typeof value === 'number') return new Date(value);
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? undefined : parsed;
 }
 
 type CalendarRangeFilterProps<TData> = {
@@ -50,16 +50,14 @@ export function CalendarRangeFilter<TData>({
     | string
     | undefined;
   const endValue = endColumn.getFilterValue() as number | string | undefined;
-
   const selectedDates = React.useMemo<DateRange>(() => {
     if (!startValue && !endValue) return { from: undefined, to: undefined };
 
     const timestamps = parseColumnFilterValue(startValue);
     const timestamps2 = parseColumnFilterValue(endValue);
-
     return {
-      from: parseAsDate(timestamps[0]),
-      to: parseAsDate(timestamps2[0])
+      from: utcToLocal(parseAsDate(timestamps[0])),
+      to: utcToLocal(parseAsDate(timestamps2[0]))
     };
   }, [startValue, endValue]);
 
@@ -78,14 +76,32 @@ export function CalendarRangeFilter<TData>({
       const isValidTo = !isNaN(to.getTime());
 
       if (isValidFrom && isValidTo) {
-        const fromDate = new Date(from);
-        fromDate.setUTCHours(0, 0, 0, 0);
+        const fromDate = new Date(
+          Date.UTC(
+            from.getFullYear(),
+            from.getMonth(),
+            from.getDate(),
+            0,
+            0,
+            0,
+            0
+          )
+        ).toISOString();
 
-        const toDate = new Date(to);
-        toDate.setUTCHours(23, 59, 59, 999);
+        const toDate = new Date(
+          Date.UTC(
+            to.getFullYear(),
+            to.getMonth(),
+            to.getDate(),
+            23,
+            59,
+            59,
+            999
+          )
+        ).toISOString();
 
-        startColumn?.setFilterValue(fromDate.getTime());
-        endColumn?.setFilterValue(toDate.getTime());
+        startColumn?.setFilterValue(fromDate);
+        endColumn?.setFilterValue(toDate);
       } else {
         startColumn?.setFilterValue(undefined);
         endColumn?.setFilterValue(undefined);

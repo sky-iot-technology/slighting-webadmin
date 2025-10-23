@@ -26,6 +26,8 @@ type RegionTreeProps = {
   paddingTop?: number;
   padding?: number;
   overscanCount?: number;
+  searchTerm?: string;
+  searchMatch?: (node: any, term: string) => boolean;
 };
 
 const nodeRenderers = {
@@ -45,7 +47,9 @@ export function RegionTree({
   rowHeight,
   paddingTop,
   padding,
-  overscanCount
+  overscanCount,
+  searchTerm = '',
+  searchMatch
 }: RegionTreeProps) {
   const renderFn =
     typeof renderNode === 'string' ? nodeRenderers[renderNode] : renderNode;
@@ -53,6 +57,8 @@ export function RegionTree({
   return (
     <Tree
       data={data}
+      searchTerm={searchTerm}
+      searchMatch={searchMatch}
       openByDefault={false}
       width={width}
       height={height}

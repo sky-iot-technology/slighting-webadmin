@@ -12,9 +12,9 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import CalendarDialog from '../calendar-dialog';
+import CalendarDialog from '../modal/calendar-dialog';
 import { useDeleteCalendars } from '@/core/domains/calendars';
-import { CalendarViewDialog } from '../calendar-view-dialog';
+import { CalendarViewDialog } from '../modal/calendar-view-dialog';
 
 interface CellActionProps {
   id: string;

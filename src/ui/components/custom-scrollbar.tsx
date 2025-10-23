@@ -32,6 +32,8 @@ const CustomScrollbar = React.forwardRef<HTMLDivElement, CustomScrollbarProps>(
         style={style}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onMouseDown={(e) => e.stopPropagation()}
+        data-scrollable='true'
         className={`[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent ${className} `}
       >
         {children}

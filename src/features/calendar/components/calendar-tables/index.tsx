@@ -13,7 +13,7 @@ import Image from 'next/image';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
-import CalendarDialog from '../calendar-dialog';
+import CalendarDialog from '../modal/calendar-dialog';
 import { Badge } from '@/ui/components/ui/badge';
 interface ProductTableParams<TData, TValue> {
   data: TData[];

@@ -9,6 +9,12 @@ import {
 } from '@/core/domains/calendars';
 import { z } from 'zod';
 
+export function utcToLocal(dateStr?: string | Date): Date | undefined {
+  if (!dateStr) return undefined;
+  const d = new Date(dateStr);
+  return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+}
+
 export const formatDateString = (dateString?: string | null): string => {
   if (!dateString) return '-';
 
@@ -161,7 +167,9 @@ export const mapSchedulesToForm = (
     return [
       {
         time: '',
-        actionType: null,
+        actionType: undefined,
+        brightness: undefined,
+        onOff: undefined,
         enabled: true,
         payload: { command: 'default-command', params: {} }
       }

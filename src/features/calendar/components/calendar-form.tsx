@@ -37,11 +37,11 @@ import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { useEffect, useState } from 'react';
 import { dayofweek } from '@/core/domains/calendars/constant';
-import { mapCalendarToFormData } from '../helper';
+import { mapCalendarToFormData, utcToLocal } from '../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { MultiRegionTree, SelectedRegions } from '@/ui/components/tree-test';
 import { Skeleton } from '@/ui/components/ui/skeleton';
-import { TreeMultiSelect } from './test';
+import { TreeMultiSelect } from './calendar-multi-tree';
 
 type CalendarFormProps = {
   initialData: Partial<Calendar> | null;
@@ -142,20 +142,6 @@ export default function CalendarForm({
                         Chọn chi nhánh cha
                       </FormLabel>
                       <FormControl>
-                        {/* <Select onValueChange={(val) => field.onChange([val])} value={field.value?.[0] ?? ''}>
-                          <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn khu vực' />
-                          </SelectTrigger>
-                          <SelectContent className='[&_[data-slot=select-item]]:text-xs'>
-                            <MultiRegionTree
-                              data={treeData}
-                              selectedIds={selectedIds}
-                              onMultiSelect={handleMulti}
-                              onToggle={(node) => setExpandedNodeId(node.id)}
-                              height={undefined}
-                            />
-                          </SelectContent>
-                        </Select> */}
                         <TreeMultiSelect
                           value={field.value ?? []}
                           onChange={field.onChange}
@@ -355,12 +341,17 @@ export default function CalendarForm({
                             value={
                               field.value
                                 ? {
-                                    from: field.value.from ?? undefined,
-                                    to: field.value.to ?? undefined
+                                    from: field.value?.from
+                                      ? utcToLocal(field.value.from)
+                                      : undefined,
+                                    to: field.value?.to
+                                      ? utcToLocal(field.value.to)
+                                      : undefined
                                   }
                                 : undefined
                             }
                             onChange={(v) => field.onChange(v)}
+                            disablePastDate={true}
                           />
                         </FormControl>
                         <FormMessage />
@@ -434,15 +425,19 @@ export default function CalendarForm({
                 />
               )}
 
-              <FormItem className=''>
-                <FormLabel className='mb-1 text-xs font-bold'>
-                  Thời gian & Độ sáng
-                </FormLabel>
-                <FormControl>
-                  <TimeBrightnessForm />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
+              <FormField
+                control={form.control}
+                name='schedules'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Thời gian & Độ sáng</FormLabel>
+                    <FormControl>
+                      <TimeBrightnessForm />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <div className='flex h-[30px] items-center justify-end gap-1'>
                 <Button

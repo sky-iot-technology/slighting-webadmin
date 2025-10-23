@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { RegionTreeWrapper } from './RegionTreeWrapper';
-import { useRegionTree } from '@/core/shared/hooks/region-sidebar-tree';
 import { cn } from '@/lib/utils';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 

@@ -17,6 +17,7 @@ type CalendarRangePickerProps = {
   value?: DateRange | undefined;
   onChange?: (value?: DateRange) => void;
   disabled?: boolean;
+  disablePastDate?: boolean;
   classname?: string;
 };
 
@@ -25,8 +26,10 @@ export function CalendarRangePicker({
   value,
   onChange,
   disabled,
+  disablePastDate,
   classname
 }: CalendarRangePickerProps) {
+  console.log(value);
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
       if (!value) return undefined;
@@ -58,9 +61,24 @@ export function CalendarRangePicker({
   const [openFrom, setOpenFrom] = React.useState(false);
   const [openTo, setOpenTo] = React.useState(false);
 
+  //for checking past-date
+  const isPastDate = React.useCallback(
+    (date?: Date) => {
+      if (!disablePastDate || !date) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+
+      return checkDate < today;
+    },
+    [disablePastDate]
+  );
+
   // ✅ Handler for "single" mode
   const handleSingleSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
     const newRange = selected ? { from: selected, to: undefined } : undefined;
     setSingleDate(selected);
     onChange?.(newRange);
@@ -68,7 +86,7 @@ export function CalendarRangePicker({
   };
 
   const handleFromSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
     const newRange = { from: selected, to: date?.to };
     setDate(newRange);
     onChange?.(newRange);
@@ -76,7 +94,7 @@ export function CalendarRangePicker({
   };
 
   const handleToSelect = (selected?: Date) => {
-    if (disabled) return;
+    if (disabled || isPastDate(selected)) return;
     const newRange = { from: date?.from, to: selected };
     setDate(newRange);
     onChange?.(newRange);
@@ -138,6 +156,7 @@ export function CalendarRangePicker({
               mode='single'
               selected={singleDate}
               onSelect={handleSingleSelect}
+              disablePastDate={disablePastDate}
             />
           </PopoverContent>
         </Popover>
@@ -175,6 +194,7 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.from}
             onSelect={handleFromSelect}
+            disablePastDate={disablePastDate}
           />
         </PopoverContent>
       </Popover>
@@ -202,6 +222,7 @@ export function CalendarRangePicker({
             mode='single'
             selected={date?.to}
             onSelect={handleToSelect}
+            disablePastDate={disablePastDate}
           />
         </PopoverContent>
       </Popover>

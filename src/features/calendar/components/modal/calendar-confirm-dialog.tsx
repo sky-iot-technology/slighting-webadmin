@@ -1,6 +1,5 @@
 'use client';
 import { Button } from '@/ui/components/ui/button';
-import { CalendarRangePicker } from './calendar-range-picker';
 import { z } from 'zod';
 import {
   dayofweek,
@@ -9,7 +8,7 @@ import {
 } from '@/core/domains/calendars/constant';
 import { DateRange } from 'react-day-picker';
 import { calendarFormSchema } from '@/core/domains/calendars';
-import { MultiSelect } from '@/ui/components/ui/multi-select';
+import { CalendarRangePicker } from '../calendar-range-picker';
 
 type Props = {
   data: z.infer<typeof calendarFormSchema>;

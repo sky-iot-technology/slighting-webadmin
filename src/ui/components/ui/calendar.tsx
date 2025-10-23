@@ -10,12 +10,17 @@ import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomScrollbar from '../custom-scrollbar';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
 
+type CalendarProps = ComponentProps<typeof DayPicker> & {
+  disablePastDate?: boolean;
+};
+
 function Calendar({
   className,
   classNames,
   showOutsideDays = true,
+  disablePastDate = false,
   ...props
-}: ComponentProps<typeof DayPicker>) {
+}: CalendarProps) {
   const [month, setMonth] = React.useState(new Date());
 
   const [internalSelected, setInternalSelected] = React.useState<
@@ -23,6 +28,25 @@ function Calendar({
   >(undefined);
   const selected = (props as any).selected ?? internalSelected;
   const onSelect = (props as any).onSelect ?? setInternalSelected;
+
+  const isPastDate = React.useCallback(
+    (date: Date) => {
+      if (!disablePastDate) return false;
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const checkDate = new Date(date);
+      checkDate.setHours(0, 0, 0, 0);
+      return checkDate < today;
+    },
+    [disablePastDate]
+  );
+
+  const modifiers = React.useMemo(
+    () => ({
+      past: isPastDate
+    }),
+    [isPastDate]
+  );
 
   const goPrev = () => {
     const m = new Date(month);
@@ -78,8 +102,15 @@ function Calendar({
         className='text-[14px] [&_.rdp-day_button]:size-6'
         classNames={{
           caption_label: 'hidden',
-          month_caption: 'hidden'
+          month_caption: 'hidden',
+          day_disabled: 'text-muted-foreground opacity-50 cursor-not-allowed',
+          day: cn(
+            'rdp-day font-normal',
+            disablePastDate &&
+              '[&[data-past="true"]]:opacity-40 [&[data-past="true"]]:cursor-not-allowed'
+          )
         }}
+        modifiers={modifiers}
         footer={
           <div className='mt-2 flex items-center justify-between px-4'>
             <button
@@ -100,6 +131,7 @@ function Calendar({
             </button>
           </div>
         }
+        disabled={disablePastDate ? { before: new Date() } : undefined}
         {...props}
       />
     </div>

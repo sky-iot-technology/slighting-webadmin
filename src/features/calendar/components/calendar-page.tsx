@@ -2,11 +2,13 @@
 
 import { SelectedRegion } from '@/ui/components/tree-group';
 import Image from 'next/image';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import CalendarTree from './calendar-tree';
 import { CalendarContent } from './calendar-content';
+import { useDebounce } from '@/core/shared/hooks/use-debounce';
+import { CalendarSidebar } from './calendar-sidebar';
 
 export default function CalendarPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -14,6 +16,9 @@ export default function CalendarPage() {
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion | null>(
     null
   );
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -25,13 +30,16 @@ export default function CalendarPage() {
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
 
-  const filters: GetCalendarsParamsDto = {
-    page: page ? parseInt(page.toString()) : 1,
-    limit: pageLimit ? parseInt(pageLimit.toString()) : 20,
-    start_range: startDate ?? undefined,
-    end_range: endDate ?? undefined,
-    ...(search && { name: search })
-  };
+  const filters = useMemo<GetCalendarsParamsDto>(
+    () => ({
+      page: page ? parseInt(page.toString()) : 1,
+      limit: pageLimit ? parseInt(pageLimit.toString()) : 20,
+      start_range: startDate ?? undefined,
+      end_range: endDate ?? undefined,
+      ...(search && { name: search })
+    }),
+    [page, pageLimit, startDate, endDate, search]
+  );
 
   const handleRegionChange = useCallback(
     (region: SelectedRegion) => {
@@ -48,6 +56,10 @@ export default function CalendarPage() {
     [pathname, router, selectedRegion?.id]
   );
 
+  const handleToggleSidebar = useCallback(() => {
+    setTreeOpen((prev) => !prev);
+  }, []);
+
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
       <div className='bg-calender-gray h-full w-full rounded-[4px] pb-[7px]'>
@@ -57,27 +69,12 @@ export default function CalendarPage() {
             className={`rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-0'}`}
           >
             {treeOpen && (
-              <div className='flex h-full flex-col pt-1.5 pr-[9px] pl-2'>
-                <div className='bg-background mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
-                  <Image
-                    src={'/assets/icons/search.svg'}
-                    alt='search'
-                    width={11}
-                    height={11}
-                    className='text-muted-foreground mr-2 ml-1.5'
-                  />
-
-                  <input
-                    className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'
-                    placeholder='Tìm kiếm chi nhánh...'
-                  />
-                </div>
-
-                <CalendarTree
-                  selectedRegion={selectedRegion}
-                  onRegionChange={handleRegionChange}
-                />
-              </div>
+              <CalendarSidebar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                selectedRegion={selectedRegion}
+                onRegionChange={handleRegionChange}
+              />
             )}
           </div>
 
@@ -86,7 +83,7 @@ export default function CalendarPage() {
               filters={filters}
               selectedRegion={selectedRegion}
               isSidebarOpen={treeOpen}
-              onToggleSidebar={() => setTreeOpen(!treeOpen)}
+              onToggleSidebar={handleToggleSidebar}
             />
           </div>
         </div>

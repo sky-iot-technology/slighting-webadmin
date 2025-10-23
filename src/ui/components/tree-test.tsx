@@ -182,27 +182,29 @@ export function MultiRegionTree({
   );
 
   return (
-    <Tree
-      data={data}
-      openByDefault={false}
-      width={width}
-      height={height}
-      indent={indent}
-      rowHeight={rowHeight}
-      overscanCount={overscanCount}
-      paddingTop={paddingTop}
-      padding={padding}
-      className={classname}
-      onSelect={() => {}}
-    >
-      {(props) => (
-        <MultiDefaultNode
-          {...props}
-          onMultiSelect={handleSelect}
-          selectedIds={selectedIds}
-        />
-      )}
-    </Tree>
+    <div style={{ height: height ? `${height}px` : 'auto' }}>
+      <Tree
+        data={data}
+        openByDefault={false}
+        width={width}
+        height={height}
+        indent={indent}
+        rowHeight={rowHeight}
+        overscanCount={overscanCount}
+        paddingTop={paddingTop}
+        padding={padding}
+        className={classname}
+        onSelect={() => {}}
+      >
+        {(props) => (
+          <MultiDefaultNode
+            {...props}
+            onMultiSelect={handleSelect}
+            selectedIds={selectedIds}
+          />
+        )}
+      </Tree>
+    </div>
   );
 }
 
@@ -254,7 +256,7 @@ function MultiDefaultNode({
       ref={dragHandle}
       className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded-md px-2 py-1`}
     >
-      {!node.isLeaf ? (
+      {hasChildren ? (
         <span
           className='w-[12px] cursor-pointer select-none'
           onClick={(e) => {

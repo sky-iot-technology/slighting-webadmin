@@ -44,7 +44,7 @@ export function TimeBrightnessForm({
     return <TimeBrightnessView schedules={schedules} />;
 
   const form = useFormContext<FormValues>();
-
+  const errors = form.formState.errors;
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: 'schedules'
@@ -187,6 +187,13 @@ export function TimeBrightnessForm({
                 >
                   <Trash2 className='h-2 w-2' />
                 </Button>
+              )}
+              {errors.schedules?.[index]?.time?.message && (
+                <div className='col-span-3'>
+                  <p className='mt-0.5 text-xs text-red-500'>
+                    {errors.schedules[index].time?.message}
+                  </p>
+                </div>
               )}
             </React.Fragment>
           );
