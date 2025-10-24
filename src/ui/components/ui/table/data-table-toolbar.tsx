@@ -78,8 +78,6 @@ export function DataTableCalendarToolbar<TData>({
     table.resetColumnFilters();
   }, [table]);
 
-  const [open, setOpen] = React.useState(false);
-
   const startColumn = table.getColumn('startDate');
   const endColumn = table.getColumn('endDate');
   const isFiltered = table.getState().columnFilters.length > 0;
@@ -123,88 +121,8 @@ export function DataTableCalendarToolbar<TData>({
         <div className='flex items-center gap-2'>
           {actions}
           {children}
+          {filter && <DataTableFilterOptions table={table} />}
         </div>
-
-        {filter && (
-          <Popover open={open} onOpenChange={setOpen}>
-            <PopoverTrigger asChild>
-              <Button variant='outline' size='sm' className='gap-2'>
-                <FilterIcon className='h-4 w-4' />
-              </Button>
-            </PopoverTrigger>
-
-            <PopoverContent align='end' className='p-3' sideOffset={8}>
-              <ScrollArea className='max-h-[400px] pr-2'>
-                <div className='space-y-4'>
-                  {/* Nhóm: Sắp xếp */}
-                  <div>
-                    <h4 className='mb-2 text-xs font-bold text-black'>
-                      Sắp xếp
-                    </h4>
-                    {/* Bạn có thể tạo nút toggle sort cụ thể */}
-                    {/* <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => table.toggleSorting('startDate')}
-                  >
-                    Theo ngày bắt đầu
-                  </Button> */}
-                  </div>
-
-                  {/* Nhóm: Loại lịch */}
-                  <div>
-                    {/* <h4 className="mb-2 text-sm font-medium text-muted-foreground">
-                    Loại lịch
-                  </h4> */}
-                    {columns
-                      .filter((col) => col.id === 'type')
-                      .map((column) => (
-                        <DataTableToolbarFilter
-                          key={column.id}
-                          column={column}
-                        />
-                      ))}
-                  </div>
-
-                  {/* Nhóm: Trạng thái */}
-                  <div>
-                    <h4 className='text-muted-foreground mb-2 text-sm font-medium'>
-                      Trạng thái
-                    </h4>
-                    <Separator className='mb-2' />
-                    {columns
-                      .filter((col) => col.id === 'status')
-                      .map((column) => (
-                        <DataTableToolbarFilter
-                          key={column.id}
-                          column={column}
-                        />
-                      ))}
-                  </div>
-                  <div className='flex justify-between'>
-                    <Button
-                      onClick={onReset}
-                      variant='ghost'
-                      size='sm'
-                      className='border-dashed'
-                    >
-                      Đặt lại
-                    </Button>
-                    <Button
-                      onClick={onReset}
-                      variant='default'
-                      size='sm'
-                      className='border-dashed'
-                    >
-                      Áp dụng
-                    </Button>
-                  </div>
-                </div>
-              </ScrollArea>
-            </PopoverContent>
-          </Popover>
-        )}
       </div>
     </div>
   );

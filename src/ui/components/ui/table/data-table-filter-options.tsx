@@ -107,47 +107,49 @@ export function DataTableFilterOptions<TData>({
       <PopoverContent align='end' className='w-80 p-0'>
         <div className='flex flex-col gap-3 p-3'>
           {/* Filters from props */}
-          {filterOptions.map((opt) => {
-            const value = filterValues[opt.id] ?? '';
-            return (
-              <div key={opt.id} className='space-y-1'>
-                <Label>{opt.label}</Label>
-                {opt.variant === 'text' && (
-                  <Input
-                    placeholder='Tất cả'
-                    value={value}
-                    onChange={(e) =>
-                      setFilterValues((prev) => ({
-                        ...prev,
-                        [opt.id]: e.target.value
-                      }))
-                    }
-                    className='h-9'
-                  />
-                )}
-                {opt.variant === 'select' && (
-                  <Select
-                    value={value}
-                    onValueChange={(v) =>
-                      setFilterValues((prev) => ({ ...prev, [opt.id]: v }))
-                    }
-                  >
-                    <SelectTrigger className='w-full'>
-                      <SelectValue placeholder='Tất cả' />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectClear>Tất cả</SelectClear>
-                      {(opt.options ?? []).map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                )}
-              </div>
-            );
-          })}
+          {filterOptions
+            .filter((opt) => opt.variant !== 'text')
+            .map((opt) => {
+              const value = filterValues[opt.id] ?? '';
+              return (
+                <div key={opt.id} className='space-y-1'>
+                  <Label>{opt.label}</Label>
+                  {opt.variant === 'text' && (
+                    <Input
+                      placeholder='Tất cả'
+                      value={value}
+                      onChange={(e) =>
+                        setFilterValues((prev) => ({
+                          ...prev,
+                          [opt.id]: e.target.value
+                        }))
+                      }
+                      className='h-9'
+                    />
+                  )}
+                  {opt.variant === 'select' && (
+                    <Select
+                      value={value}
+                      onValueChange={(v) =>
+                        setFilterValues((prev) => ({ ...prev, [opt.id]: v }))
+                      }
+                    >
+                      <SelectTrigger className='w-full'>
+                        <SelectValue placeholder='Tất cả' />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectClear>Tất cả</SelectClear>
+                        {(opt.options ?? []).map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                </div>
+              );
+            })}
 
           {/* Actions */}
           <div className='flex items-center justify-between pt-1'>

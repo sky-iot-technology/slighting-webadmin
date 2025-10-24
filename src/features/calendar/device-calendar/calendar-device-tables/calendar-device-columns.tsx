@@ -5,8 +5,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
 import { Calendar } from '@/core/domains/calendars';
-import { PRIORITY_LABELS } from '@/core/domains/calendars/constant';
+import {
+  DEVICESYNC_LABELS,
+  PRIORITY_LABELS
+} from '@/core/domains/calendars/constant';
 import { formatDateString } from '../../helper';
+import { cn } from '@/lib/utils';
 
 export const columns: ColumnDef<Calendar>[] = [
   {
@@ -25,19 +29,28 @@ export const columns: ColumnDef<Calendar>[] = [
     cell: ({ row }) => {
       const canExpand = row.getCanExpand();
       const isChild = row.depth > 0;
+      const isDeleted = row.original.is_deleted === true;
+
       return (
-        <div className='flex w-full items-center gap-2'>
+        <div
+          className={cn(
+            'flex w-full items-center gap-2 transition-opacity',
+            isDeleted && 'pointer-events-none opacity-50 select-none'
+          )}
+        >
           {!isChild && (
             <Checkbox
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label='Select row'
+              disabled={isDeleted}
               className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
             />
           )}
           {canExpand ? (
             <button
               onClick={row.getToggleExpandedHandler()}
+              disabled={isDeleted}
               className='flex h-4 w-4 items-center justify-center'
             >
               {row.getIsExpanded() ? (
@@ -98,7 +111,16 @@ export const columns: ColumnDef<Calendar>[] = [
             : 'text-calendar-gray';
 
       return <div className={color}>{label}</div>;
-    }
+    },
+    meta: {
+      label: 'Loại lịch',
+      variant: 'select',
+      options: [
+        { label: 'Khẩn cấp', value: 'Khẩn cấp' },
+        { label: 'Theo lịch', value: 'Theo lịch' }
+      ]
+    },
+    enableColumnFilter: true
   },
   {
     accessorKey: 'time',
@@ -211,6 +233,24 @@ export const columns: ColumnDef<Calendar>[] = [
     enableColumnFilter: true
   },
   {
+    accessorKey: 'device_sync',
+    header: 'Trạng thái đồng bộ',
+    cell: ({ row }) => {
+      if (row.depth > 0) return <div>-</div>;
+      const device_state = row.getValue(
+        'device_sync'
+      ) as keyof typeof DEVICESYNC_LABELS;
+      const label = DEVICESYNC_LABELS[device_state] ?? String(device_state);
+      const colorClass =
+        device_state === 'synced'
+          ? 'text-calendar-radio-green'
+          : device_state === 'waiting'
+            ? 'text-calendar-red'
+            : 'text-calendar-gray';
+      return <div className={colorClass}>{label}</div>;
+    }
+  },
+  {
     accessorKey: 'createdDate',
     header: 'Ngày tạo',
     cell: ({ row }) => {
@@ -225,10 +265,18 @@ export const columns: ColumnDef<Calendar>[] = [
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
+      const isDeleted = row.original.is_deleted === true;
 
       return (
-        <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction id={row.original.id} />}
+        <div
+          className={cn(
+            'flex min-h-[32px] items-center justify-center transition-opacity',
+            isDeleted && 'pointer-events-none opacity-50 select-none'
+          )}
+        >
+          {!isSubRow && (
+            <CellAction id={row.original.id} disabled={isDeleted} />
+          )}
         </div>
       );
     }

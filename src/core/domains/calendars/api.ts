@@ -7,7 +7,8 @@ import {
   ScheduleStatus,
   DeviceType,
   CreateCalendarDto,
-  UpdateCalendarDto
+  UpdateCalendarDto,
+  GetDeivceCalendarsParamsDto
 } from './types';
 
 export const calendarApi = {
@@ -76,6 +77,25 @@ export const calendarApi = {
       console.error('update calendar by id error:', error.message);
       throw new Error(error);
     }
+  },
+
+  async getListCalendarByDeviceId(
+    id: string,
+    params?: GetDeivceCalendarsParamsDto
+  ) {
+    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const offset = (page - 1) * limit;
+    const response = await authenticatedApi.get<CalendarListResponseDto>(
+      `/devices/${id}/schedules`,
+      {
+        params: {
+          offset,
+          limit,
+          ...params
+        }
+      }
+    );
+    return response;
   }
 
   // async getById(id: string): Promise<CalendarDetailResponseDto> {

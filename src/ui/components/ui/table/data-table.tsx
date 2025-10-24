@@ -26,6 +26,7 @@ interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   rowClassName?: string; // <TableRow>
   cellClassName?: string; // <TableCell>
   paginationClassName?: string; // vùng pagination
+  getRowClassName?: (row: TData) => string;
 }
 
 export function DataTable<TData>({
@@ -41,7 +42,8 @@ export function DataTable<TData>({
   bodyClassName,
   rowClassName,
   cellClassName,
-  paginationClassName
+  paginationClassName,
+  getRowClassName
 }: DataTableProps<TData>) {
   return (
     <div className={cn('flex flex-1 flex-col', className)}>
@@ -100,7 +102,8 @@ export function DataTable<TData>({
                         className={cn(
                           'data-[state=selected]:bg-calendar-table-select',
                           rowClassName,
-                          row.depth > 0 && 'bg-calendar-table-children'
+                          row.depth > 0 && 'bg-calendar-table-children',
+                          getRowClassName?.(row.original)
                         )}
                       >
                         {row.getVisibleCells().map((cell, cellIndex) => (

@@ -15,6 +15,21 @@ export function utcToLocal(dateStr?: string | Date): Date | undefined {
   return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
 }
 
+function pad(num: number) {
+  return num.toString().padStart(2, '0');
+}
+
+function formatLocalToFakeISO(date: Date, endOfDay = false): string {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = pad(d.getMonth() + 1);
+  const day = pad(d.getDate());
+  const hours = endOfDay ? '23' : '00';
+  const minutes = endOfDay ? '59' : '00';
+  const seconds = endOfDay ? '59' : '00';
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}Z`;
+}
+
 export const formatDateString = (dateString?: string | null): string => {
   if (!dateString) return '-';
 
@@ -28,6 +43,15 @@ export const formatDateString = (dateString?: string | null): string => {
   return `${day}/${month}/${year}`;
 };
 
+function parseLocalDate(dateStr?: string): Date | undefined {
+  if (!dateStr) return undefined;
+  const cleaned = dateStr.replace('Z', '');
+  const [datePart, timePart = '00:00:00'] = cleaned.split(/[T ]/);
+  const [y, m, d] = datePart.split('-').map(Number);
+  const [hh, mm, ss] = timePart.split(':').map(Number);
+  return new Date(y, m - 1, d, hh ?? 0, mm ?? 0, ss ?? 0);
+}
+
 export function mapFormToCreateCalendarDto(
   formData: z.infer<typeof calendarFormSchema>
 ): CreateCalendarDto {
@@ -38,81 +62,22 @@ export function mapFormToCreateCalendarDto(
   let toISO: string;
 
   if (isUrgent) {
-    // ⚡ Lịch khẩn cấp: bắt đầu ngay bây giờ, kết thúc cuối ngày hiện tại
     const now = new Date();
-    const endOfToday = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-      23,
-      59,
-      59
-    );
-
-    fromISO = now.toISOString();
-    toISO = endOfToday.toISOString();
+    fromISO = formatLocalToFakeISO(now);
+    toISO = formatLocalToFakeISO(now, true);
   } else if (isNonRecurring) {
-    // 📅 Không lặp lại: chỉ có from → to = cuối ngày đó
-    const from = formData.date?.from;
-    if (from) {
-      fromISO = new Date(
-        from.getFullYear(),
-        from.getMonth(),
-        from.getDate(),
-        0,
-        0,
-        0
-      ).toISOString();
-
-      const endOfDay = new Date(
-        from.getFullYear(),
-        from.getMonth(),
-        from.getDate(),
-        23,
-        59,
-        59
-      );
-      toISO = endOfDay.toISOString();
-    } else {
-      // fallback nếu user chưa chọn ngày
-      const now = new Date();
-      fromISO = now.toISOString();
-      toISO = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        23,
-        59,
-        59
-      ).toISOString();
-    }
+    const from = formData.date?.from!;
+    fromISO = formatLocalToFakeISO(from);
+    toISO = formatLocalToFakeISO(from, true);
   } else {
     const from = formData.date?.from;
-    const to = formData.date?.to;
-
+    const to = formData.date?.to ?? from;
     fromISO = from
-      ? new Date(
-          from.getFullYear(),
-          from.getMonth(),
-          from.getDate(),
-          0,
-          0,
-          0
-        ).toISOString()
-      : new Date().toISOString();
-
-    toISO = to
-      ? new Date(
-          to.getFullYear(),
-          to.getMonth(),
-          to.getDate(),
-          23,
-          59,
-          59
-        ).toISOString()
-      : fromISO;
+      ? formatLocalToFakeISO(from)
+      : formatLocalToFakeISO(new Date());
+    toISO = to ? formatLocalToFakeISO(to, true) : fromISO;
   }
-
+  console.log(formData.priority);
   return {
     name: formData.name,
     description: formData.description,
@@ -182,13 +147,18 @@ export const mapSchedulesToForm = (
         ? Number(s.payload.params.brightness)
         : undefined;
 
+    const onOff =
+      s.payload?.params?.on !== undefined
+        ? Boolean(s.payload.params.on)
+        : undefined;
+
     const actionType = brightness !== undefined ? 'brightness' : 'onOff';
 
     return {
       time: s.time,
       actionType,
       brightness,
-      onOff: undefined,
+      onOff,
       enabled: s.enabled ?? true,
       payload: {
         command: s.payload?.command ?? 'default-command',
@@ -204,12 +174,8 @@ export function mapCalendarToFormData(
   const firstSchedule = initialData.schedules?.[0];
 
   const recurring = firstSchedule?.recurring ?? 'none';
-  const from = firstSchedule?.start_datetime
-    ? new Date(firstSchedule.start_datetime)
-    : undefined;
-  const to = firstSchedule?.end_datetime
-    ? new Date(firstSchedule.end_datetime)
-    : undefined;
+  const from = parseLocalDate(firstSchedule?.start_datetime);
+  const to = parseLocalDate(firstSchedule?.end_datetime);
 
   const weekly =
     recurring === 'weekly'

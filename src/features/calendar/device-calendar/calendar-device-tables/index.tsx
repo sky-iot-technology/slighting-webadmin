@@ -9,31 +9,22 @@ import { useDataTable } from '@/core/shared/hooks/use-data-table';
 
 import { ColumnDef, getExpandedRowModel } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
-import Image from 'next/image';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
-import CalendarDialog from '../modal/calendar-dialog';
-import { Badge } from '@/ui/components/ui/badge';
+import CalendarDeviceDialog from '../modal/calendar-device-dialog';
+
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
-  isSidebarOpen?: boolean;
-  onToggleSidebar?: () => void;
-  region?: {
-    id?: string;
-    name?: string;
-    icon?: string;
-  } | null;
+  clientId: string;
 }
 export function CalendarTable<TData, TValue>({
   data,
   totalItems,
   columns,
-  isSidebarOpen,
-  onToggleSidebar,
-  region
+  clientId
 }: ProductTableParams<TData, TValue>) {
   const [open, setOpen] = useState(false);
 
@@ -57,51 +48,15 @@ export function CalendarTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className='bg-calender-gray'
-      wrapperClassName='mx-1 mt-1 rounded-[4px]'
-      tableContainerClassName='border-none'
+      className=''
+      wrapperClassName='mx-1 mt-1 rounded-none'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='bg-white border-t-1'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
     >
       <div className='flex items-center gap-2 bg-white'>
-        {onToggleSidebar && (
-          <button
-            onClick={onToggleSidebar}
-            className='cursor-pointer rounded p-1 hover:bg-gray-100'
-          >
-            {isSidebarOpen ? (
-              <Image
-                src='/assets/icons/chevronLeft.svg'
-                alt='chevronLeft'
-                width={4.5}
-                height={8.25}
-              />
-            ) : (
-              <Image
-                src='/assets/icons/chevronRight.svg'
-                alt='chevronRight'
-                width={4.5}
-                height={8.25}
-              />
-            )}
-          </button>
-        )}
-        <h3 className='text-xl font-bold'>Danh sách lịch</h3>
-        {region && region.icon && (
-          <Badge className='bg-gray-1'>
-            <Image
-              src={region.icon || '/assets/icons/default-region.svg'}
-              alt='region icon'
-              width={14}
-              height={14}
-              className='h-[14px] w-[14px]'
-            />
-            <span className='text-xs text-black'>{region.name}</span>
-          </Badge>
-        )}
-
         <DataTableCalendarToolbar
           table={table}
           className='w-auto flex-1'
@@ -116,14 +71,15 @@ export function CalendarTable<TData, TValue>({
               Thêm
             </Button>
           }
-          filter={false}
+          filter={true}
         />
+        {/* <DataTableToolbar table={table} /> */}
       </div>
-      <CalendarDialog
+      <CalendarDeviceDialog
         pageTitle='Thêm lịch'
         open={open}
         onOpenChange={setOpen}
-        initialData={{ group_ids: region?.id ? [region.id] : [] }}
+        initialData={{ client_id: clientId }}
       />
     </DataTable>
   );

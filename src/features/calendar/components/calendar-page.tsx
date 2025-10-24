@@ -1,13 +1,10 @@
 'use client';
 
 import { SelectedRegion } from '@/ui/components/tree-group';
-import Image from 'next/image';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import CalendarTree from './calendar-tree';
 import { CalendarContent } from './calendar-content';
-import { useDebounce } from '@/core/shared/hooks/use-debounce';
 import { CalendarSidebar } from './calendar-sidebar';
 
 export default function CalendarPage() {
@@ -18,7 +15,6 @@ export default function CalendarPage() {
   );
 
   const [searchTerm, setSearchTerm] = useState('');
-  const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const searchParams = useSearchParams();
   const router = useRouter();

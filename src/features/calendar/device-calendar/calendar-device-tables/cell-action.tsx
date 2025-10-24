@@ -12,9 +12,9 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import CalendarDialog from '../modal/calendar-dialog';
 import { useDeleteCalendars } from '@/core/domains/calendars';
-import { CalendarViewDialog } from '../modal/calendar-view-dialog';
+import CalendarDeviceDialog from '../modal/calendar-device-dialog';
+import { CalendarDeviceViewDialog } from '../modal/calendar-device-view-dialog';
 
 interface CellActionProps {
   id: string;
@@ -49,7 +49,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
 
       {/* ✏️ Edit */}
       {openEdit && (
-        <CalendarDialog
+        <CalendarDeviceDialog
           pageTitle='Chỉnh sửa lịch'
           open={openEdit}
           onOpenChange={setOpenEdit}
@@ -59,7 +59,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
 
       {/* View */}
       {openView && (
-        <CalendarViewDialog
+        <CalendarDeviceViewDialog
           open={openView}
           onOpenChange={setOpenView}
           id={id}

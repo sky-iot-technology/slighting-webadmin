@@ -1,31 +1,25 @@
 import {
   Calendar,
   GetCalendarsParamsDto,
-  useGetCalendars
+  useGetCalendarsByDevice
 } from '@/core/domains/calendars';
-import { SelectedRegion } from '@/ui/components/tree-group';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { ColumnDef } from '@tanstack/react-table';
-import { CalendarTable } from './calendar-tables';
 import { memo } from 'react';
-import { columns } from './calendar-tables/columns';
+import { CalendarTable } from './calendar-device-tables';
+import { columns } from './calendar-device-tables/calendar-device-columns';
 
 interface CalendarContentProps {
+  deviceId: string;
   filters: GetCalendarsParamsDto;
-  selectedRegion: SelectedRegion | null;
-  isSidebarOpen: boolean;
-  onToggleSidebar: () => void;
 }
 
 export const CalendarContent = memo(function CalendarContent({
   filters,
-  selectedRegion,
-  isSidebarOpen,
-  onToggleSidebar
+  deviceId
 }: CalendarContentProps) {
-  const { data, isLoading, error } = useGetCalendars({
-    ...filters,
-    groups: selectedRegion?.id
+  const { data, isLoading, error } = useGetCalendarsByDevice(deviceId, {
+    ...filters
   });
 
   const calendars = data?.schedules ?? [];
@@ -59,15 +53,12 @@ export const CalendarContent = memo(function CalendarContent({
       </div>
     );
   }
-
   return (
     <CalendarTable
       data={calendars}
       totalItems={totalItems}
       columns={columns as ColumnDef<Calendar, any>[]}
-      isSidebarOpen={isSidebarOpen}
-      onToggleSidebar={onToggleSidebar}
-      region={selectedRegion ?? null}
+      clientId={deviceId}
     />
   );
 });

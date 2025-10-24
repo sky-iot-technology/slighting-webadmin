@@ -12,11 +12,13 @@ import {
   CalendarDetailResponseDto,
   GetCalendarsParamsDto,
   CreateCalendarDto,
-  UpdateCalendarDto
+  UpdateCalendarDto,
+  GetDeivceCalendarsParamsDto
 } from './types';
 import { useMemo } from 'react';
 
 export const CALENDARS_QUERY_KEY = 'calendars';
+export const DEVICE_CALENDARS_QUERY_KEY = 'device-calendars';
 
 export const useGetCalendars = (
   params?: GetCalendarsParamsDto,
@@ -61,6 +63,7 @@ export const useCreateCalendars = (
     onSuccess: (data, variables, context) => {
       console.log('✅ onSuccess in useCreateProduct');
       queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
+      queryClient.invalidateQueries({ queryKey: [DEVICE_CALENDARS_QUERY_KEY] });
 
       // Add the new calendar to the cache
       queryClient.setQueryData([CALENDARS_QUERY_KEY, 'detail', data.id], data);
@@ -92,6 +95,10 @@ export const useDeleteCalendars = (
 
       queryClient.invalidateQueries({
         queryKey: [CALENDARS_QUERY_KEY]
+      });
+
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === DEVICE_CALENDARS_QUERY_KEY
       });
 
       toast.success('Calendar deleted successfully');
@@ -143,8 +150,10 @@ export const useUpdateCalendar = (
     mutationFn: ({ id, data }) => calendarApi.updateCalendar(id, data),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === DEVICE_CALENDARS_QUERY_KEY
+      });
 
-      //update to cache
       queryClient.setQueryData(
         [CALENDARS_QUERY_KEY, 'detail', variables.id],
         data
@@ -158,5 +167,39 @@ export const useUpdateCalendar = (
       toast.error(error.message || 'Failed to update calendar');
       options?.onError?.(error, variables, context);
     }
+  });
+};
+
+export const useGetCalendarsByDevice = (
+  deviceId: string,
+  params?: GetDeivceCalendarsParamsDto,
+  options?: Omit<
+    UseQueryOptions<
+      CalendarListResponseDto,
+      Error,
+      CalendarListResponseDto,
+      readonly [string, string, Partial<GetDeivceCalendarsParamsDto>?]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  const queryKeyParams = useMemo(() => {
+    if (!params) return undefined;
+    const { page, limit, ...rest } = params;
+    return { page, limit, ...rest };
+  }, [params]);
+
+  return useQuery<
+    CalendarListResponseDto,
+    Error,
+    CalendarListResponseDto,
+    readonly [string, string, Partial<GetDeivceCalendarsParamsDto>?]
+  >({
+    queryKey: [DEVICE_CALENDARS_QUERY_KEY, deviceId, queryKeyParams],
+    queryFn: () => calendarApi.getListCalendarByDeviceId(deviceId, params),
+    enabled: !!deviceId,
+    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    ...options
   });
 };

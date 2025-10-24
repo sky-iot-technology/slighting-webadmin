@@ -21,27 +21,16 @@ import { Button } from '@/ui/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/ui/components/ui/radio-group';
 import { Label } from '@/ui/components/ui/label';
 import { cn } from '@/lib/utils';
-import { CalendarRangePicker } from './calendar-range-picker';
-import { TimeBrightnessForm } from './calendar-time-brightness';
 import { Calendar } from '@/core/domains/calendars';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/ui/components/ui/select';
-import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice } from '@/core/domains/catalogues';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { useEffect, useState } from 'react';
 import { dayofweek } from '@/core/domains/calendars/constant';
 import { mapCalendarToFormData, utcToLocal } from '../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
-import { MultiRegionTree, SelectedRegions } from '@/ui/components/tree-test';
-import { Skeleton } from '@/ui/components/ui/skeleton';
-import { TreeMultiSelect } from './calendar-multi-tree';
+import { CalendarRangePicker } from '../components/calendar-range-picker';
+import { TimeBrightnessForm } from '../components/calendar-time-brightness';
+import { useGetDeviceById } from '@/core/domains/devices';
 
 type CalendarFormProps = {
   initialData: Partial<Calendar> | null;
@@ -49,19 +38,15 @@ type CalendarFormProps = {
   onNext: (data: any) => void;
   onClose?: () => void;
   formData?: z.infer<typeof calendarFormSchema> | null;
-  isEditMode?: boolean;
 };
 
-export default function CalendarForm({
+export default function CalendarDeviceForm({
   initialData,
   formData,
   pageTitle,
   onNext,
-  onClose,
-  isEditMode
+  onClose
 }: CalendarFormProps) {
-  const { catalogues } = useCatalogueStore();
-
   const defaultValues =
     formData ??
     ((initialData
@@ -111,15 +96,16 @@ export default function CalendarForm({
     onNext(values);
   };
 
-  const selectedDevice = catalogues.find(
-    (d) => d.type === form.watch('device_type')
-  );
-  const branches = Object.entries(selectedDevice?.attributes ?? {})
-    .filter(
-      ([key, value]) =>
-        key !== 'icon' && typeof value === 'object' && value !== null
-    )
-    .map(([_, value]) => value as SubCatalogueDevice);
+  const clientId = initialData?.client_id ?? '';
+  const { data } = useGetDeviceById(clientId, {
+    enabled: !!clientId
+  });
+
+  useEffect(() => {
+    if (data?.type) {
+      setValue('device_type', data.type);
+    }
+  }, [data, setValue]);
 
   return (
     <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
@@ -132,57 +118,6 @@ export default function CalendarForm({
         <CardContent className='px-0'>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-              {(!initialData?.group_ids?.length || isEditMode) && (
-                <FormField
-                  control={form.control}
-                  name='group_ids'
-                  render={({ field }) => (
-                    <FormItem className='col-span-2'>
-                      <FormLabel className='text-xs font-bold'>
-                        Chọn chi nhánh cha
-                      </FormLabel>
-                      <FormControl>
-                        <TreeMultiSelect
-                          value={field.value ?? []}
-                          onChange={field.onChange}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <FormField
-                control={form.control}
-                name='device_type'
-                render={({ field }) => (
-                  <FormItem className='col-span-2'>
-                    <FormLabel className='text-xs font-bold'>
-                      Loại thiết bị
-                    </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                          <SelectValue placeholder='Chọn loại thiết bị' />
-                        </SelectTrigger>
-                        <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                          {catalogues.map((c, index) => (
-                            <SelectItem key={index} value={c.type}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <FormField
                 control={form.control}
                 name='ids'
@@ -194,7 +129,7 @@ export default function CalendarForm({
                     <FormControl>
                       <MultiSelect
                         options={
-                          branches?.map((b) => ({
+                          data?.devices.map((b) => ({
                             value: b.device_id,
                             label: b.name
                           })) ?? []
@@ -341,12 +276,8 @@ export default function CalendarForm({
                             value={
                               field.value
                                 ? {
-                                    from: field.value?.from
-                                      ? utcToLocal(field.value.from)
-                                      : undefined,
+                                    from: field.value?.from,
                                     to: field.value?.to
-                                      ? utcToLocal(field.value.to)
-                                      : undefined
                                   }
                                 : undefined
                             }

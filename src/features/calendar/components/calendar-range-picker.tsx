@@ -29,7 +29,6 @@ export function CalendarRangePicker({
   disablePastDate,
   classname
 }: CalendarRangePickerProps) {
-  console.log(value);
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
       if (!value) return undefined;
@@ -102,7 +101,9 @@ export function CalendarRangePicker({
   };
 
   const formattedFrom = date?.from ? format(date.from, 'dd/MM/yyyy') : '';
+
   const formattedTo = date?.to ? format(date.to, 'dd/MM/yyyy') : '';
+
   const formattedSingle = singleDate ? format(singleDate, 'dd/MM/yyyy') : '';
 
   if (disabled) {

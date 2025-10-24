@@ -14,7 +14,7 @@ type CatalogueState = {
 };
 
 export const useCatalogueStore = create<CatalogueState>()(
-  devtools((set) => ({
+  devtools<CatalogueState>((set) => ({
     catalogues: [],
     total: 0,
     isLoading: false,

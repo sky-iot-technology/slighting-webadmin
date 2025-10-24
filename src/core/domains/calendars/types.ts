@@ -6,7 +6,7 @@ import type {
 
 export type CalendarRepeat = 'Không' | 'Hàng ngày' | 'Hàng tuần' | 'Hàng tháng';
 
-export type ScheduleStatus = 'active' | 'inactive' | 'waiting';
+export type ScheduleStatus = 'active' | 'inactive';
 export type ScheduleAction = 'PLAY' | 'STOP';
 export type SchedulePriority = 1 | 2 | 3;
 export type ScheduleRecurring =
@@ -21,6 +21,8 @@ export type DeviceType =
   | 'lms.devices.types.SWITCH'
   | 'lms.devices.types.SENSOR'
   | string;
+
+export type ScheduleSyncStatus = 'waiting' | 'synced';
 
 export interface Calendar {
   id: string;
@@ -43,6 +45,7 @@ export interface Calendar {
   updated_at: string;
   created_by: string;
   device_sync: string;
+  is_deleted: boolean;
   schedules: SubSchedule[];
 }
 
@@ -80,6 +83,13 @@ export interface GetCalendarsParamsDto extends PaginationParams {
   end_range?: string;
   status?: ScheduleStatus;
   client_id?: string;
+}
+
+export interface GetDeivceCalendarsParamsDto
+  extends Omit<GetCalendarsParamsDto, 'client_id'> {
+  device_sync?: ScheduleSyncStatus;
+  is_deleted?: boolean;
+  schedule_id?: string;
 }
 
 export interface CalendarListResponseDto {
