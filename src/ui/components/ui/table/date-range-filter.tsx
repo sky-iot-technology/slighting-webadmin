@@ -6,22 +6,22 @@ import type { DateRange } from 'react-day-picker';
 import { CalendarRangePicker } from '@/features/calendar/components/calendar-range-picker';
 import { utcToLocal } from '@/features/calendar/helper';
 
-function parseColumnFilterValue(value: unknown) {
+function parseColumnFilterValue(value: unknown): string[] {
   if (value === null || value === undefined) {
     return [];
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => {
-      if (typeof item === 'number' || typeof item === 'string') {
-        return item;
-      }
-      return undefined;
-    });
+    const [year, month, day, ...rest] = value;
+    if (year && month && day) {
+      const isoDate = `${year}-${month.padStart(2, '0')}-${day.slice(0, 2).padStart(2, '0')}T${rest.join(':')}`;
+      return [isoDate];
+    }
+    return [];
   }
 
   if (typeof value === 'string' || typeof value === 'number') {
-    return [value];
+    return [value.toString()];
   }
 
   return [];
@@ -29,9 +29,8 @@ function parseColumnFilterValue(value: unknown) {
 
 function parseAsDate(value: string | number | undefined): Date | undefined {
   if (!value) return undefined;
-  if (typeof value === 'number') return new Date(value);
-  const parsed = new Date(value);
-  return isNaN(parsed.getTime()) ? undefined : parsed;
+  const date = new Date(value);
+  return isNaN(date.getTime()) ? undefined : date;
 }
 
 type CalendarRangeFilterProps<TData> = {
@@ -50,9 +49,9 @@ export function CalendarRangeFilter<TData>({
     | string
     | undefined;
   const endValue = endColumn.getFilterValue() as number | string | undefined;
+
   const selectedDates = React.useMemo<DateRange>(() => {
     if (!startValue && !endValue) return { from: undefined, to: undefined };
-
     const timestamps = parseColumnFilterValue(startValue);
     const timestamps2 = parseColumnFilterValue(endValue);
     return {
@@ -63,17 +62,18 @@ export function CalendarRangeFilter<TData>({
 
   const handleChange = React.useCallback(
     (value?: DateRange) => {
+      console.log('handleChange value:', value);
       const from = value?.from;
       const to = value?.to;
 
-      if (!from || !to) {
+      if (!from && !to) {
         startColumn?.setFilterValue(undefined);
         endColumn?.setFilterValue(undefined);
         return;
       }
 
-      const isValidFrom = !isNaN(from.getTime());
-      const isValidTo = !isNaN(to.getTime());
+      const isValidFrom = from && !isNaN(from.getTime());
+      const isValidTo = to && !isNaN(to.getTime());
 
       if (isValidFrom && isValidTo) {
         const fromDate = new Date(
@@ -99,12 +99,11 @@ export function CalendarRangeFilter<TData>({
             999
           )
         ).toISOString();
-
+        console.log('Setting filters:', { fromDate, toDate }); // Debug
         startColumn?.setFilterValue(fromDate);
         endColumn?.setFilterValue(toDate);
       } else {
-        startColumn?.setFilterValue(undefined);
-        endColumn?.setFilterValue(undefined);
+        console.log('Invalid dates, keeping existing filters:', { from, to });
       }
     },
     [startColumn, endColumn]
@@ -115,7 +114,7 @@ export function CalendarRangeFilter<TData>({
       mode='range'
       value={selectedDates}
       onChange={(value) => handleChange(value as DateRange | undefined)}
-      classname={className ?? '!w-[230px]'}
+      className={className ?? '!w-[230px]'}
     />
   );
 }

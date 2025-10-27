@@ -49,7 +49,6 @@ export function TimeBrightnessForm({
     control: form.control,
     name: 'schedules'
   });
-
   const count = form.watch('schedules')?.length ?? 0;
 
   return (
@@ -105,20 +104,31 @@ export function TimeBrightnessForm({
                     <Controller
                       //   control={form.control}
                       name={`schedules.${index}.brightness`}
-                      render={({ field }) => (
-                        <div className='flex items-center justify-start'>
-                          <Slider
-                            value={[field.value ?? 0]}
-                            onValueChange={(v) => field.onChange(v[0])}
-                            max={100}
-                            step={1}
-                            className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
-                          />
-                          <span className='ml-1'>
-                            {(field.value ?? 0).toFixed(0)}%
-                          </span>
-                        </div>
-                      )}
+                      render={({ field }) => {
+                        const [tempValue, setTempValue] = React.useState(
+                          field.value ?? 0
+                        );
+
+                        return (
+                          <div className='flex items-center justify-start'>
+                            <Slider
+                              value={[tempValue]}
+                              onValueChange={(v) => setTempValue(v[0])}
+                              onValueCommit={(v) => {
+                                const committed = v[0];
+                                setTempValue(committed);
+                                field.onChange(committed);
+                              }}
+                              max={100}
+                              step={1}
+                              className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+                            />
+                            <span className='ml-1'>
+                              {tempValue.toFixed(0)}%
+                            </span>
+                          </div>
+                        );
+                      }}
                     />
                     {!disabled && (
                       <Button

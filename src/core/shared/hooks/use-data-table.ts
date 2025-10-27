@@ -63,6 +63,7 @@ interface UseDataTableProps<TData>
   scroll?: boolean;
   shallow?: boolean;
   startTransition?: React.TransitionStartFunction;
+  defaultVisibility?: VisibilityState;
 }
 
 export function useDataTable<TData>(props: UseDataTableProps<TData>) {
@@ -78,6 +79,7 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     scroll = false,
     shallow = true,
     startTransition,
+    defaultVisibility,
     ...tableProps
   } = props;
 
@@ -108,7 +110,9 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     initialState?.rowSelection ?? {}
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>(initialState?.columnVisibility ?? {});
+    React.useState<VisibilityState>(
+      initialState?.columnVisibility ?? defaultVisibility ?? {}
+    );
 
   const [page, setPage] = useQueryState(
     PAGE_KEY,

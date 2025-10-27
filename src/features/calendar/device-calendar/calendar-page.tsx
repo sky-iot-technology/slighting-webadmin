@@ -1,6 +1,11 @@
 'use client';
 import { useMemo, useRef } from 'react';
-import { GetCalendarsParamsDto } from '@/core/domains/calendars';
+import {
+  GetCalendarsParamsDto,
+  GetDeivceCalendarsParamsDto,
+  ScheduleStatus,
+  ScheduleSync
+} from '@/core/domains/calendars';
 import { useSearchParams } from 'next/navigation';
 import { CalendarContent } from './calendar-content';
 
@@ -18,17 +23,19 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
   const pageLimit = searchParams.get('perPage');
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
+  const priority = searchParams.get('priority');
+  const device_sync = searchParams.get('device_sync');
+  const status = searchParams.get('status');
 
-  const filters = useMemo<GetCalendarsParamsDto>(
-    () => ({
-      page: page ? parseInt(page.toString()) : 1,
-      limit: pageLimit ? parseInt(pageLimit.toString()) : 20,
-      start_range: startDate ?? undefined,
-      end_range: endDate ?? undefined,
-      ...(search && { name: search })
-    }),
-    [page, pageLimit, startDate, endDate, search]
-  );
+  const filters: GetDeivceCalendarsParamsDto = {
+    page: page ? parseInt(page) : 1,
+    limit: pageLimit ? parseInt(pageLimit) : 20,
+    start_range: startDate ?? undefined,
+    end_range: endDate ?? undefined,
+    status: status as ScheduleStatus | undefined,
+    device_sync: device_sync as ScheduleSync | undefined,
+    ...(search && { name: search })
+  };
 
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>

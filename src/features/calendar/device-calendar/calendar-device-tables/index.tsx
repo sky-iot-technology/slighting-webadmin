@@ -41,7 +41,12 @@ export function CalendarTable<TData, TValue>({
     getExpandedRowModel: getExpandedRowModel(),
     getSubRows: (row: any) => row.schedules,
     getRowCanExpand: (row: any) =>
-      Array.isArray(row.original.schedules) && row.original.schedules.length > 0
+      Array.isArray(row.original.schedules) &&
+      row.original.schedules.length > 0,
+    defaultVisibility: {
+      status: false,
+      group: false
+    }
   });
 
   return (

@@ -16,11 +16,11 @@ interface CustomTimePickerProps {
   disabled?: boolean;
 }
 
-export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
+export const CustomTimePicker = React.memo(function CustomTimePicker({
   value,
   onChange,
   disabled
-}) => {
+}: CustomTimePickerProps) {
   const [open, setOpen] = useState(false);
   const [hour, setHour] = useState('00');
   const [minute, setMinute] = useState('00');
@@ -254,4 +254,4 @@ export const CustomTimePicker: React.FC<CustomTimePickerProps> = ({
       </div>
     </div>
   );
-};
+});

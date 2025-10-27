@@ -116,8 +116,8 @@ export const columns: ColumnDef<Calendar>[] = [
       label: 'Loại lịch',
       variant: 'select',
       options: [
-        { label: 'Khẩn cấp', value: 'Khẩn cấp' },
-        { label: 'Theo lịch', value: 'Theo lịch' }
+        { label: 'Khẩn cấp', value: '1' },
+        { label: 'Theo lịch', value: '2' }
       ]
     },
     enableColumnFilter: true
@@ -147,7 +147,7 @@ export const columns: ColumnDef<Calendar>[] = [
     }
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'status_light',
     header: 'Trạng thái',
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
@@ -233,6 +233,37 @@ export const columns: ColumnDef<Calendar>[] = [
     enableColumnFilter: true
   },
   {
+    id: 'status',
+    accessorKey: 'status',
+    header: 'Trạng thái',
+    cell: () => null,
+    meta: {
+      label: 'Trạng thái',
+      variant: 'select',
+      options: [
+        { label: 'Kích hoạt', value: 'active' },
+        { label: 'Chưa kích hoạt', value: 'inactive' }
+      ]
+    },
+    enableColumnFilter: true
+  },
+  {
+    id: 'group',
+    accessorKey: 'group',
+    header: 'Chi nhánh',
+    cell: () => {},
+    meta: {
+      label: 'Chi nhánh',
+      variant: 'select',
+      options: [
+        { label: 'Đã đồng bộ', value: 'synced' },
+        { label: 'Chưa đồng bộ', value: 'waiting' }
+      ]
+    },
+    enableColumnFilter: true
+  },
+  {
+    id: 'device_sync',
     accessorKey: 'device_sync',
     header: 'Trạng thái đồng bộ',
     cell: ({ row }) => {
@@ -248,7 +279,16 @@ export const columns: ColumnDef<Calendar>[] = [
             ? 'text-calendar-red'
             : 'text-calendar-gray';
       return <div className={colorClass}>{label}</div>;
-    }
+    },
+    meta: {
+      label: 'Trạng thái đồng bộ',
+      variant: 'select',
+      options: [
+        { label: 'Đã đồng bộ', value: 'synced' },
+        { label: 'Chưa đồng bộ', value: 'waiting' }
+      ]
+    },
+    enableColumnFilter: true
   },
   {
     accessorKey: 'createdDate',

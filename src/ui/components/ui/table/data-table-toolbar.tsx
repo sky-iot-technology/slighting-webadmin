@@ -12,12 +12,8 @@ import { DataTableFilterOptions } from './data-table-filter-options';
 import { Button } from '@/ui/components/ui/button';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { AnimatedSearchInput } from './animated-search-input';
-import { ScrollArea } from '../scroll-area';
-import { Popover, PopoverContent, PopoverTrigger } from '../popover';
-import { FilterIcon } from 'lucide-react';
-import { Separator } from '../separator';
 import { DataTableSelectFilter } from './data-table-select-filter';
-import { CalendarRangeFilter } from './data-range-filter';
+import { CalendarRangeFilter } from './date-range-filter';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;

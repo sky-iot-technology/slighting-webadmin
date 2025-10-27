@@ -105,7 +105,7 @@ export function DataTableFilterOptions<TData>({
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-80 p-0'>
-        <div className='flex flex-col gap-3 p-3'>
+        <div className='flex flex-col gap-1.5 p-3'>
           {/* Filters from props */}
           {filterOptions
             .filter((opt) => opt.variant !== 'text')
@@ -129,7 +129,9 @@ export function DataTableFilterOptions<TData>({
                   )}
                   {opt.variant === 'select' && (
                     <Select
-                      value={value}
+                      value={
+                        Array.isArray(value) ? (value[0] ?? '') : (value ?? '')
+                      }
                       onValueChange={(v) =>
                         setFilterValues((prev) => ({ ...prev, [opt.id]: v }))
                       }

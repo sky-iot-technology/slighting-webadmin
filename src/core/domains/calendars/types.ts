@@ -7,6 +7,7 @@ import type {
 export type CalendarRepeat = 'Không' | 'Hàng ngày' | 'Hàng tuần' | 'Hàng tháng';
 
 export type ScheduleStatus = 'active' | 'inactive';
+export type ScheduleSync = 'waiting' | 'synced';
 export type ScheduleAction = 'PLAY' | 'STOP';
 export type SchedulePriority = 1 | 2 | 3;
 export type ScheduleRecurring =
@@ -82,6 +83,7 @@ export interface GetCalendarsParamsDto extends PaginationParams {
   start_range?: string;
   end_range?: string;
   status?: ScheduleStatus;
+  device_sync?: ScheduleSync;
   client_id?: string;
 }
 

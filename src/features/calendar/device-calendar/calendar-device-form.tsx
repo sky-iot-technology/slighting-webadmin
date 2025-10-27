@@ -361,7 +361,7 @@ export default function CalendarDeviceForm({
                 name='schedules'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>
+                    <FormLabel className='pt-2 text-xs font-bold'>
                       Thời gian & Hành động
                     </FormLabel>
                     <FormControl>

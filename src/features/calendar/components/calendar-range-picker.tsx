@@ -18,7 +18,7 @@ type CalendarRangePickerProps = {
   onChange?: (value?: DateRange) => void;
   disabled?: boolean;
   disablePastDate?: boolean;
-  classname?: string;
+  className?: string;
 };
 
 export function CalendarRangePicker({
@@ -27,7 +27,7 @@ export function CalendarRangePicker({
   onChange,
   disabled,
   disablePastDate,
-  classname
+  className
 }: CalendarRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
@@ -110,7 +110,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
-          classname,
+          className,
           'border-input flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -135,7 +135,7 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
-          classname,
+          className,
           'border-input bg-background flex h-[31px] w-[200px] items-center justify-between rounded-[6px] border px-2 text-xs'
         )}
       >
@@ -170,7 +170,7 @@ export function CalendarRangePicker({
   return (
     <div
       className={cn(
-        classname,
+        className,
         'border-input bg-background flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
       )}
     >
