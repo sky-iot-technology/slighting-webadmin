@@ -16,10 +16,19 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
+      const allNonDeletedRowsSelected = table
+        .getRowModel()
+        .rows.every((row) => row.original.is_deleted || row.getIsSelected());
       return (
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          checked={allNonDeletedRowsSelected}
+          onCheckedChange={(value) => {
+            table.getRowModel().rows.forEach((row) => {
+              if (!row.original.is_deleted) {
+                row.toggleSelected(!!value);
+              }
+            });
+          }}
           aria-label='Select all'
           className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
@@ -254,11 +263,7 @@ export const columns: ColumnDef<Calendar>[] = [
     cell: () => {},
     meta: {
       label: 'Chi nhánh',
-      variant: 'select',
-      options: [
-        { label: 'Đã đồng bộ', value: 'synced' },
-        { label: 'Chưa đồng bộ', value: 'waiting' }
-      ]
+      variant: 'regionTree'
     },
     enableColumnFilter: true
   },

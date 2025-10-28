@@ -7,6 +7,7 @@ import {
   SubSchedule,
   subScheduleSchema
 } from '@/core/domains/calendars';
+import { RegionNode } from '@/core/domains/groups';
 import { z } from 'zod';
 
 export function utcToLocal(dateStr?: string | Date): Date | undefined {
@@ -206,3 +207,52 @@ export function mapCalendarToFormData(
     schedules: mapSchedulesToForm(initialData.schedules ?? [])
   };
 }
+
+export const findNodeName = (
+  nodes: RegionNode[],
+  id: string
+): string | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node.name;
+    if (node.children) {
+      const found = findNodeName(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+export const findNodeSlug = (
+  nodes: RegionNode[],
+  id: string
+): string | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node.slug;
+    if (node.children) {
+      const found = findNodeSlug(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+export function flattenTree(nodes: RegionNode[]): RegionNode[] {
+  return nodes.flatMap((node) => [
+    node,
+    ...(node.children?.length ? flattenTree(node.children) : [])
+  ]);
+}
+
+export const findNodeId = (
+  nodes: RegionNode[],
+  slug: string
+): string | null => {
+  for (const node of nodes) {
+    if (node.slug === slug) return node.id;
+    if (node.children) {
+      const found = findNodeId(node.children, slug);
+      if (found) return found;
+    }
+  }
+  return null;
+};

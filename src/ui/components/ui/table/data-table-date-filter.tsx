@@ -14,7 +14,6 @@ import {
 } from '@/ui/components/ui/popover';
 import { Separator } from '@/ui/components/ui/separator';
 import { formatDate } from '@/lib/format';
-import { CalendarRangePicker } from '@/features/calendar/components/calendar-range-picker';
 
 type DateSelection = Date[] | DateRange;
 
@@ -135,8 +134,9 @@ export function DataTableDateFilter<TData>({
         : 'Select date range';
 
       return (
-        hasSelectedDates && (
-          <span className='flex items-center gap-2'>
+        <span className='flex items-center gap-2'>
+          <span>{title}</span>
+          {hasSelectedDates && (
             <>
               <Separator
                 orientation='vertical'
@@ -144,20 +144,8 @@ export function DataTableDateFilter<TData>({
               />
               <span>{dateText}</span>
             </>
-          </span>
-        )
-        // <span className='flex items-center gap-2'>
-        //   <span>{title}</span>
-        //   {hasSelectedDates && (
-        //     <>
-        //       <Separator
-        //         orientation='vertical'
-        //         className='mx-0.5 data-[orientation=vertical]:h-4'
-        //       />
-        //       <span>{dateText}</span>
-        //     </>
-        //   )}
-        // </span>
+          )}
+        </span>
       );
     }
 
@@ -185,31 +173,48 @@ export function DataTableDateFilter<TData>({
   }, [selectedDates, multiple, formatDateRange, title]);
 
   return (
-    <CalendarRangePicker
-      mode={multiple ? 'range' : 'single'}
-      value={
-        multiple
-          ? getIsDateRange(selectedDates)
-            ? selectedDates
-            : { from: undefined, to: undefined }
-          : !getIsDateRange(selectedDates)
-            ? selectedDates[0]
-            : undefined
-      }
-      onChange={(value) => {
-        if (!value) {
-          column.setFilterValue(undefined);
-          return;
-        }
-
-        if (multiple && 'from' in value) {
-          const from = value.from?.getTime();
-          const to = value.to?.getTime();
-          column.setFilterValue(from || to ? [from, to] : undefined);
-        } else if (value instanceof Date) {
-          column.setFilterValue(value.getTime());
-        }
-      }}
-    />
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant='outline' size='sm' className='border-dashed'>
+          {hasValue ? (
+            <div
+              role='button'
+              aria-label={`Clear ${title} filter`}
+              tabIndex={0}
+              onClick={onReset}
+              className='focus-visible:ring-ring rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:ring-1 focus-visible:outline-none'
+            >
+              <XCircle />
+            </div>
+          ) : (
+            <CalendarIcon />
+          )}
+          {label}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className='w-auto p-0' align='start'>
+        {multiple ? (
+          <Calendar
+            initialFocus
+            mode='range'
+            selected={
+              getIsDateRange(selectedDates)
+                ? selectedDates
+                : { from: undefined, to: undefined }
+            }
+            onSelect={onSelect}
+          />
+        ) : (
+          <Calendar
+            initialFocus
+            mode='single'
+            selected={
+              !getIsDateRange(selectedDates) ? selectedDates[0] : undefined
+            }
+            onSelect={onSelect}
+          />
+        )}
+      </PopoverContent>
+    </Popover>
   );
 }

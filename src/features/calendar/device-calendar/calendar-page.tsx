@@ -8,6 +8,8 @@ import {
 } from '@/core/domains/calendars';
 import { useSearchParams } from 'next/navigation';
 import { CalendarContent } from './calendar-content';
+import { findNodeId } from '../helper';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
 
 interface CalendarDeviceProps {
   deviceId: string;
@@ -17,6 +19,7 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const searchParams = useSearchParams();
+  const { treeData } = useRegionTreeStore();
 
   const page = searchParams.get('page');
   const search = searchParams.get('name');
@@ -26,12 +29,14 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
   const priority = searchParams.get('priority');
   const device_sync = searchParams.get('device_sync');
   const status = searchParams.get('status');
+  const group = searchParams.get('group');
 
   const filters: GetDeivceCalendarsParamsDto = {
     page: page ? parseInt(page) : 1,
     limit: pageLimit ? parseInt(pageLimit) : 20,
     start_range: startDate ?? undefined,
     end_range: endDate ?? undefined,
+    group: findNodeId(treeData, group ?? '') ?? undefined,
     status: status as ScheduleStatus | undefined,
     device_sync: device_sync as ScheduleSync | undefined,
     ...(search && { name: search })

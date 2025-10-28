@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { MultiRegionTree } from '@/ui/components/tree-test';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useMemo, useState } from 'react';
+import { findNodeName } from '../helper';
 
 interface TreeSelectProps {
   value: string[];
@@ -27,17 +28,6 @@ export const TreeMultiSelect = ({
 
   const selectedText = useMemo(() => {
     if (!value?.length) return null;
-
-    const findNodeName = (nodes: any[], id: string): string | null => {
-      for (const node of nodes) {
-        if (node.id === id) return node.name;
-        if (node.children) {
-          const found = findNodeName(node.children, id);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
 
     const names = value
       .map((id) => findNodeName(treeData, id))

@@ -9,21 +9,35 @@ import { useRegionTreeStore } from '@/core/domains/tree/store';
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
   onRegionChange: (region: SelectedRegion) => void;
+  className?: string;
+  buttonClassName?: string;
+  treeClassName?: string;
 };
 
 export function TreeProvider({
   selectedRegion,
-  onRegionChange
+  onRegionChange,
+  className,
+  buttonClassName,
+  treeClassName
 }: TreeProviderProps) {
   const [open, setOpen] = useState(false);
   const { treeData } = useRegionTreeStore();
 
   return (
-    <div className='relative h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]'>
+    <div
+      className={cn(
+        className,
+        'relative h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]'
+      )}
+    >
       {/* Trigger button */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className='border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]'
+        className={cn(
+          buttonClassName,
+          'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]'
+        )}
       >
         <span
           className={
@@ -47,6 +61,7 @@ export function TreeProvider({
       </button>
       <div
         className={cn(
+          treeClassName,
           'bg-popover absolute z-10 mt-0.5 w-[160px] overflow-x-hidden overflow-y-auto rounded-md border sm:w-[180px] md:w-[217px]',
           open ? 'block opacity-100' : 'hidden opacity-0'
         )}

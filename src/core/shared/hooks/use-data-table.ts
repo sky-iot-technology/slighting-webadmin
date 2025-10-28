@@ -211,11 +211,30 @@ export function useDataTable<TData>(props: UseDataTableProps<TData>) {
     return Object.entries(filterValues).reduce<ColumnFiltersState>(
       (filters, [key, value]) => {
         if (value !== null) {
-          const processedValue = Array.isArray(value)
-            ? value
-            : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
-              ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
-              : [value];
+          // const processedValue = Array.isArray(value)
+          //   ? value
+          //   : typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)
+          //     ? value.split(/[^a-zA-Z0-9]+/).filter(Boolean)
+          //     : [value];
+
+          let processedValue: any;
+          if (
+            typeof value === 'string' &&
+            /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)
+          ) {
+            processedValue = value;
+          } else if (Array.isArray(value)) {
+            processedValue = value;
+          } else if (
+            typeof value === 'string' &&
+            /^[0-9a-fA-F-]{36}$/.test(value)
+          ) {
+            processedValue = [value];
+          } else if (typeof value === 'string' && /[^a-zA-Z0-9]/.test(value)) {
+            processedValue = value.split(/[^a-zA-Z0-9]+/).filter(Boolean);
+          } else {
+            processedValue = [value];
+          }
 
           filters.push({
             id: key,

@@ -22,6 +22,13 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { Label } from '@/ui/components/ui/label';
+import { TreeProvider } from '@/features/map/tree/TreeProvider';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
+import {
+  findNodeName,
+  findNodeSlug,
+  flattenTree
+} from '@/features/calendar/helper';
 
 interface DataTableFilterOptionsProps<TData> {
   table: Table<TData>;
@@ -37,6 +44,7 @@ export function DataTableFilterOptions<TData>({
   onCancel
 }: DataTableFilterOptionsProps<TData>) {
   const [open, setOpen] = React.useState(false);
+  const { treeData } = useRegionTreeStore();
 
   const filterOptions = React.useMemo(
     () =>
@@ -62,6 +70,7 @@ export function DataTableFilterOptions<TData>({
       const tableVal = (col?.getFilterValue() as string) ?? '';
       seed[opt.id] = initialValues?.[opt.id] ?? tableVal ?? '';
     }
+    console.log(seed);
     setFilterValues(seed);
   }, [filterOptions, initialValues, table]);
 
@@ -108,12 +117,15 @@ export function DataTableFilterOptions<TData>({
         <div className='flex flex-col gap-1.5 p-3'>
           {/* Filters from props */}
           {filterOptions
-            .filter((opt) => opt.variant !== 'text')
+            .filter(
+              (opt) =>
+                opt.variant && !['text', 'dateRange'].includes(opt.variant)
+            )
             .map((opt) => {
               const value = filterValues[opt.id] ?? '';
               return (
                 <div key={opt.id} className='space-y-1'>
-                  <Label>{opt.label}</Label>
+                  <Label className='text-xs'>{opt.label}</Label>
                   {opt.variant === 'text' && (
                     <Input
                       placeholder='Tất cả'
@@ -124,7 +136,7 @@ export function DataTableFilterOptions<TData>({
                           [opt.id]: e.target.value
                         }))
                       }
-                      className='h-9'
+                      className='h-9 text-xs'
                     />
                   )}
                   {opt.variant === 'select' && (
@@ -136,18 +148,48 @@ export function DataTableFilterOptions<TData>({
                         setFilterValues((prev) => ({ ...prev, [opt.id]: v }))
                       }
                     >
-                      <SelectTrigger className='w-full'>
+                      <SelectTrigger className='w-full text-xs'>
                         <SelectValue placeholder='Tất cả' />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectClear>Tất cả</SelectClear>
                         {(opt.options ?? []).map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
+                          <SelectItem
+                            key={o.value}
+                            value={o.value}
+                            className='text-xs'
+                          >
                             {o.label}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                  )}
+                  {opt.variant === 'regionTree' && (
+                    <TreeProvider
+                      className='!h-9 !w-full'
+                      buttonClassName='!bg-white'
+                      treeClassName='!w-full'
+                      selectedRegion={(() => {
+                        const slug = Array.isArray(value)
+                          ? value.join('-')
+                          : value;
+                        if (!slug) return undefined;
+                        const node = flattenTree(treeData).find(
+                          (n) => n.slug === slug
+                        );
+                        if (!node) return undefined;
+                        return { id: node.id, name: node.name };
+                      })()}
+                      onRegionChange={(selectedRegion) => {
+                        setFilterValues((prev) => ({
+                          ...prev,
+                          [opt.id]:
+                            findNodeSlug(treeData, selectedRegion?.id ?? '') ??
+                            ''
+                        }));
+                      }}
+                    />
                   )}
                 </div>
               );
@@ -156,6 +198,7 @@ export function DataTableFilterOptions<TData>({
           {/* Actions */}
           <div className='flex items-center justify-between pt-1'>
             <Button
+              className='text-xs'
               variant='ghost'
               size='sm'
               onClick={() => {
@@ -173,7 +216,7 @@ export function DataTableFilterOptions<TData>({
             >
               Đặt lại
             </Button>
-            <Button size='sm' onClick={handleApply}>
+            <Button className='text-xs' size='sm' onClick={handleApply}>
               Áp dụng
             </Button>
           </div>

@@ -69,5 +69,6 @@ export interface GetGroupsHierarchyResponseDto {
 export type RegionNode = {
   id: string;
   name: string;
+  slug: string;
   children?: RegionNode[];
 };

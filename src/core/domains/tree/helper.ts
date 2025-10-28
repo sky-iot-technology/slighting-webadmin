@@ -1,4 +1,5 @@
 import { Group, RegionNode } from '../groups';
+import slugify from 'slugify';
 
 export function buildRegionTree(groups: Group[]): RegionNode[] {
   const map = new Map<string, RegionNode>();
@@ -8,6 +9,7 @@ export function buildRegionTree(groups: Group[]): RegionNode[] {
     map.set(String(g.id), {
       id: String(g.id),
       name: g.name,
+      slug: slugify(g.name, { lower: true, strict: true }),
       children: []
     });
   }

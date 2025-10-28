@@ -88,10 +88,11 @@ export interface GetCalendarsParamsDto extends PaginationParams {
 }
 
 export interface GetDeivceCalendarsParamsDto
-  extends Omit<GetCalendarsParamsDto, 'client_id'> {
+  extends Omit<GetCalendarsParamsDto, 'client_id' | 'groups'> {
   device_sync?: ScheduleSyncStatus;
   is_deleted?: boolean;
   schedule_id?: string;
+  group?: string;
 }
 
 export interface CalendarListResponseDto {
