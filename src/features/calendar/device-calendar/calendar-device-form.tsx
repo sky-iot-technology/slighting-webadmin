@@ -266,25 +266,27 @@ export default function CalendarDeviceForm({
                   name='date'
                   render={({ field }) => {
                     return (
-                      <FormItem className='flex justify-between'>
-                        <FormLabel className='text-xs font-bold'>
-                          Ngày áp dụng:
-                        </FormLabel>
-                        <FormControl>
-                          <CalendarRangePicker
-                            mode={showRange ? 'range' : 'single'}
-                            value={
-                              field.value
-                                ? {
-                                    from: field.value?.from,
-                                    to: field.value?.to
-                                  }
-                                : undefined
-                            }
-                            onChange={(v) => field.onChange(v)}
-                            disablePastDate={true}
-                          />
-                        </FormControl>
+                      <FormItem className='flex flex-col'>
+                        <div className='flex justify-between'>
+                          <FormLabel className='text-xs font-bold'>
+                            Ngày áp dụng:
+                          </FormLabel>
+                          <FormControl>
+                            <CalendarRangePicker
+                              mode={showRange ? 'range' : 'single'}
+                              value={
+                                field.value
+                                  ? {
+                                      from: field.value?.from,
+                                      to: field.value?.to
+                                    }
+                                  : undefined
+                              }
+                              onChange={(v) => field.onChange(v)}
+                              disablePastDate={true}
+                            />
+                          </FormControl>
+                        </div>
                         <FormMessage />
                       </FormItem>
                     );
@@ -297,7 +299,7 @@ export default function CalendarDeviceForm({
                   control={form.control}
                   name='weekly'
                   render={({ field }) => (
-                    <FormItem className='col-span-2 pt-2'>
+                    <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Chọn ngày trong tuần
                       </FormLabel>
@@ -330,7 +332,7 @@ export default function CalendarDeviceForm({
                   control={form.control}
                   name='monthly'
                   render={({ field }) => (
-                    <FormItem className='col-span-2 pt-2'>
+                    <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Chọn ngày trong tháng
                       </FormLabel>
@@ -361,7 +363,7 @@ export default function CalendarDeviceForm({
                 name='schedules'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='pt-2 text-xs font-bold'>
+                    <FormLabel className='text-xs font-bold'>
                       Thời gian & Hành động
                     </FormLabel>
                     <FormControl>
