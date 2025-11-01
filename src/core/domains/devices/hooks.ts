@@ -43,8 +43,6 @@ export const useGetDevices = (
   >({
     queryKey: [DEVICES_QUERY_KEY, params],
     queryFn: () => devicesApi.getAll(params),
-    gcTime: 30 * 60 * 1000,
-    staleTime: 5 * 60 * 1000,
     ...options
   });
 };
@@ -118,6 +116,28 @@ export const useSetBrightnessLight = (
       options?.onError?.(error, variables, context);
     },
     ...options
+  });
+};
+
+export const useCreateDevice = (
+  options?: UseMutationOptions<Device, Error, any>
+) => {
+  const queryClient = useQueryClient();
+
+  const onSuccessCallback = options?.onSuccess;
+  const onErrorCallback = options?.onError;
+
+  return useMutation<Device, Error, any>({
+    mutationFn: (deviceData) => devicesApi.createDevice(deviceData),
+    onSuccess: (data, variables, context) => {
+      toast.success('Device created successfully!');
+      queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] });
+      onSuccessCallback?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      toast.error(error.message || 'Failed to create device');
+      onErrorCallback?.(error, variables, context);
+    }
   });
 };
 

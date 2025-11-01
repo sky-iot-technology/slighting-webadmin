@@ -25,65 +25,109 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/ui/components/ui/select';
-import { Textarea } from '@/ui/components/ui/textarea';
-import { Product } from '@/core/shared/constants/mock-api';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import * as z from 'zod';
 import { DateInput } from '@/ui/components/ui/date-input';
+import {
+  deviceFormSchema,
+  type DeviceFormValues,
+  convertFormToApiPayload
+} from './schemas';
+import { useCreateDevice } from '@/core/domains/devices/hooks';
+import { useGetTags } from '@/core/domains/tags';
+import { useGetGroups } from '@/core/domains/groups';
+import { useRouter } from 'next/navigation';
+import { MultiSelect } from '@/ui/components/ui/multi-select';
+import { useMemo } from 'react';
+import { useCatalogueStore } from '@/core/domains/catalogues/store';
 
-const MAX_FILE_SIZE = 5000000;
-const ACCEPTED_IMAGE_TYPES = [
-  'image/jpeg',
-  'image/jpg',
-  'image/png',
-  'image/webp'
-];
-
-const formSchema = z.object({
-  image: z
-    .any()
-    .refine((files) => files?.length == 1, 'Image is required.')
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
-    )
-    .optional(),
-  name: z.string().min(2, {
-    message: 'Product name must be at least 2 characters.'
-  }),
-  category: z.string().optional(),
-  price: z.number().optional(),
-  description: z.string().min(10, {
-    message: 'Description must be at least 10 characters.'
-  })
-});
+interface Device {
+  id?: string;
+  name?: string;
+  type?: string;
+  parent_group_id?: string;
+  tags?: string[];
+  device_info?: {
+    lat?: number;
+    lon?: number;
+    online?: boolean;
+  };
+  device_asset?: {
+    asset_attribute?: any[];
+  };
+}
 
 export default function ProductForm({
   initialData,
   pageTitle
 }: {
-  initialData: Product | null;
+  initialData: Device | null;
   pageTitle: string;
 }) {
-  const defaultValues = {
-    name: initialData?.name || '',
-    category: initialData?.category || '',
-    price: initialData?.price || 0,
-    description: initialData?.description || ''
-  };
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    values: defaultValues
+  // Fetch tags from API
+  const { data: tagsData, isLoading: isLoadingTags } = useGetTags({
+    resource_type: 'device'
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Form submission logic would be implemented here
+  // Fetch groups from API
+  const { data: groupsData, isLoading: isLoadingGroups } = useGetGroups({
+    status: 'enabled'
+  });
+
+  const { catalogues } = useCatalogueStore();
+
+  // Transform tags data into MultiSelect options format
+  const tagOptions = useMemo(() => {
+    if (!tagsData?.tag) return [];
+    return tagsData.tag.map((tag) => ({
+      value: tag.alias || String(tag.id),
+      label: tag.name || tag.alias || String(tag.id)
+    }));
+  }, [tagsData]);
+
+  // Transform groups data into Select options format
+  const groupOptions = useMemo(() => {
+    if (!groupsData?.groups) return [];
+    return groupsData.groups.map((group) => ({
+      value: String(group.id),
+      label: group.name
+    }));
+  }, [groupsData]);
+
+  const createDeviceMutation = useCreateDevice({
+    onSuccess: () => {
+      form.reset();
+      router.replace('/dashboard/product');
+    }
+  });
+
+  const defaultValues: Partial<DeviceFormValues> = {
+    id: initialData?.id || '',
+    name: initialData?.name || '',
+    type: initialData?.type || '',
+    parent_group_id: initialData?.parent_group_id || '',
+    tags: initialData?.tags || [],
+    lat: initialData?.device_info?.lat || 0,
+    lon: initialData?.device_info?.lon || 0,
+    address: '',
+    note: '',
+    serial: '',
+    manufacturer: ''
+  };
+
+  const form = useForm<DeviceFormValues>({
+    resolver: zodResolver(deviceFormSchema),
+    defaultValues
+  });
+
+  function onSubmit(values: DeviceFormValues) {
+    // Convert form values to API payload format
+    const apiPayload = convertFormToApiPayload(values);
+
+    // Call API to create device
+    createDeviceMutation.mutate(apiPayload);
   }
 
   return (
@@ -94,7 +138,7 @@ export default function ProductForm({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <FormSchemaProvider schema={formSchema}>
+        <FormSchemaProvider schema={deviceFormSchema}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-4'>
@@ -128,7 +172,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='id'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mã thiết bị</FormLabel>
@@ -147,7 +191,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='price'
+                      name='name'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Tên thiết bị</FormLabel>
@@ -166,14 +210,14 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='category'
+                      name='type'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Loại thiết bị</FormLabel>
 
                           <Select
                             onValueChange={(value) => field.onChange(value)}
-                            value={field.value![field.value!.length - 1]}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger className='w-full'>
@@ -181,19 +225,11 @@ export default function ProductForm({
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value='beauty'>
-                                Beauty Products
-                              </SelectItem>
-                              <SelectItem value='electronics'>
-                                Electronics
-                              </SelectItem>
-                              <SelectItem value='clothing'>Clothing</SelectItem>
-                              <SelectItem value='home'>
-                                Home & Garden
-                              </SelectItem>
-                              <SelectItem value='sports'>
-                                Sports & Outdoors
-                              </SelectItem>
+                              {catalogues.map((c, index) => (
+                                <SelectItem key={index} value={c.type}>
+                                  {c.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
 
@@ -206,36 +242,25 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='category'
+                      name='tags'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nhóm yêu thích</FormLabel>
-                          <Select
-                            onValueChange={(value) => field.onChange(value)}
-                            value={field.value![field.value!.length - 1]}
-                          >
-                            <FormControl>
-                              <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='Chọn nhóm thiết bị' />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value='beauty'>
-                                Beauty Products
-                              </SelectItem>
-                              <SelectItem value='electronics'>
-                                Electronics
-                              </SelectItem>
-                              <SelectItem value='clothing'>Clothing</SelectItem>
-                              <SelectItem value='home'>
-                                Home & Garden
-                              </SelectItem>
-                              <SelectItem value='sports'>
-                                Sports & Outdoors
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-
+                          <FormControl>
+                            <MultiSelect
+                              options={tagOptions}
+                              defaultValue={field.value ?? []}
+                              onValueChange={(val) => field.onChange(val)}
+                              placeholder={'Chọn nhóm thiết bị'}
+                              disabled={isLoadingTags}
+                              resetOnDefaultValueChange={true}
+                              className='w-full text-base'
+                              popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
+                              itemClassName='text-base'
+                              autoSize={false}
+                              singleLine={true}
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
@@ -244,14 +269,23 @@ export default function ProductForm({
                   <div className='grid w-full grid-cols-1 gap-3 md:col-span-2 md:col-start-2 md:grid-cols-3'>
                     <FormField
                       control={form.control}
-                      name='category'
+                      name='lat'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Kinh độ & Vĩ độ</FormLabel>
                           <FormControl>
                             <Input
+                              type='number'
                               placeholder='Kinh độ'
                               {...field}
+                              value={field.value || ''}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value
+                                    ? parseFloat(e.target.value)
+                                    : ''
+                                )
+                              }
                               className='h-9 rounded-sm'
                             />
                           </FormControl>
@@ -261,14 +295,23 @@ export default function ProductForm({
                     />
                     <FormField
                       control={form.control}
-                      name='category'
+                      name='lon'
                       render={({ field }) => (
                         <FormItem>
                           <div className='md:h-3.5'></div>
                           <FormControl>
                             <Input
+                              type='number'
                               placeholder='Vĩ độ'
                               {...field}
+                              value={field.value || ''}
+                              onChange={(e) =>
+                                field.onChange(
+                                  e.target.value
+                                    ? parseFloat(e.target.value)
+                                    : ''
+                                )
+                              }
                               className='h-9 rounded-sm'
                             />
                           </FormControl>
@@ -287,37 +330,39 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='category'
+                      name='parent_group_id'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Chi nhánh</FormLabel>
-
                           <Select
                             onValueChange={(value) => field.onChange(value)}
-                            value={field.value![field.value!.length - 1]}
+                            value={field.value}
+                            disabled={isLoadingGroups}
                           >
                             <FormControl>
                               <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='Chi nhánh' />
+                                <SelectValue
+                                  placeholder={
+                                    isLoadingGroups
+                                      ? 'Đang tải...'
+                                      : 'Chọn chi nhánh'
+                                  }
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value='beauty'>
-                                Beauty Products
-                              </SelectItem>
-                              <SelectItem value='electronics'>
-                                Electronics
-                              </SelectItem>
-                              <SelectItem value='clothing'>Clothing</SelectItem>
-                              <SelectItem value='home'>
-                                Home & Garden
-                              </SelectItem>
-                              <SelectItem value='sports'>
-                                Sports & Outdoors
-                              </SelectItem>
+                              {groupOptions.length > 0
+                                ? groupOptions.map((group) => (
+                                    <SelectItem
+                                      key={group.value}
+                                      value={group.value}
+                                    >
+                                      {group.label}
+                                    </SelectItem>
+                                  ))
+                                : null}
                             </SelectContent>
                           </Select>
-
                           <FormMessage />
                         </FormItem>
                       )}
@@ -326,7 +371,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='address'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Địa chỉ</FormLabel>
@@ -345,7 +390,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='note'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ghi chú</FormLabel>
@@ -369,7 +414,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='serial'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Serial</FormLabel>
@@ -388,13 +433,19 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='date'
+                      name='installation_date'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ngày lắp đặt</FormLabel>
                           <FormControl>
                             <DateInput
-                              value={field.value}
+                              value={
+                                field.value instanceof Date
+                                  ? field.value
+                                  : field.value
+                                    ? new Date((field.value as number) * 1000)
+                                    : undefined
+                              }
                               onChange={field.onChange}
                               placeholder='Chọn ngày lắp đặt'
                             />
@@ -407,13 +458,19 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='date'
+                      name='purchase_date'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ngày áp dụng bảo hành</FormLabel>
                           <FormControl>
                             <DateInput
-                              value={field.value}
+                              value={
+                                field.value instanceof Date
+                                  ? field.value
+                                  : field.value
+                                    ? new Date((field.value as number) * 1000)
+                                    : undefined
+                              }
                               onChange={field.onChange}
                               placeholder='Chọn ngày bảo hành'
                             />
@@ -426,7 +483,7 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='manufacturer'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nhà sản xuất</FormLabel>
@@ -445,13 +502,19 @@ export default function ProductForm({
                   <div className='w-full'>
                     <FormField
                       control={form.control}
-                      name='date'
+                      name='expiration_date'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Ngày hết hạn bảo hành</FormLabel>
                           <FormControl>
                             <DateInput
-                              value={field.value}
+                              value={
+                                field.value instanceof Date
+                                  ? field.value
+                                  : field.value
+                                    ? new Date((field.value as number) * 1000)
+                                    : undefined
+                              }
                               onChange={field.onChange}
                               placeholder='Chọn ngày hết hạn bảo hành'
                             />
@@ -464,8 +527,16 @@ export default function ProductForm({
                 </div>
               </div>
               <div className='flex flex-row justify-end gap-3'>
-                <Button variant={'outline'}>Huỷ</Button>
-                <Button type='submit'>Lưu</Button>
+                <Button
+                  variant={'outline'}
+                  type='button'
+                  onClick={() => router.push('/dashboard/product')}
+                >
+                  Huỷ
+                </Button>
+                <Button type='submit' disabled={createDeviceMutation.isPending}>
+                  {createDeviceMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+                </Button>
               </div>
             </form>
           </Form>

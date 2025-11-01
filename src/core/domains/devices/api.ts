@@ -1,8 +1,4 @@
-import {
-  publicApi,
-  authenticatedApi,
-  type ApiRequestConfig
-} from '@/core/shared/api';
+import { authenticatedApi } from '@/core/shared/api';
 import {
   Device,
   DeviceCommandRequest,
@@ -63,7 +59,6 @@ export const devicesApi = {
         body
       );
     } catch (error) {
-      console.log(error);
       throw new Error(`Something wrong`);
     }
   },
@@ -143,6 +138,17 @@ export const devicesApi = {
     } catch (error: any) {
       console.error('❌ deleteDeviceParent error:', error.message);
       throw new Error(error);
+    }
+  },
+
+  async createDevice(deviceData: any): Promise<Device> {
+    try {
+      return await authenticatedApi.post<Device>(
+        `/devices/things/object`,
+        deviceData
+      );
+    } catch (error) {
+      throw new Error('Failed to create device');
     }
   }
 };

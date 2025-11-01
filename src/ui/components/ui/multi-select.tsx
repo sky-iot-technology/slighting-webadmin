@@ -462,9 +462,9 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       }
       if (responsive === true) {
         const defaultResponsive = {
-          mobile: { maxCount: 2, hideIcons: false, compactMode: true },
-          tablet: { maxCount: 4, hideIcons: false, compactMode: false },
-          desktop: { maxCount: 6, hideIcons: false, compactMode: false }
+          mobile: { maxCount: 1, hideIcons: false, compactMode: true },
+          tablet: { maxCount: 1, hideIcons: false, compactMode: false },
+          desktop: { maxCount: 1, hideIcons: false, compactMode: false }
         };
         const currentSettings = defaultResponsive[screenSize];
         return {
@@ -997,7 +997,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 </div>
               ) : (
                 <div className='mx-auto flex w-full items-center justify-between'>
-                  <span className='text-muted-foreground mx-1 text-xs'>
+                  <span className='text-muted-foreground mx-1 text-sm'>
                     {placeholder}
                   </span>
                   <ChevronDown className='text-muted-foreground mx-2 h-4 cursor-pointer' />
@@ -1083,7 +1083,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       >
                         <CheckIcon className='h-4 w-4 !text-white' />
                       </div>
-                      <span>
+                      <span className='text-sm'>
                         (Chọn tất cả
                         {getAllOptions().length > 20
                           ? ` - ${getAllOptions().length} options`
@@ -1178,7 +1178,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                               aria-hidden='true'
                             />
                           )}
-                          <span>{option.label}</span>
+                          <span className='text-sm'>{option.label}</span>
                         </CommandItem>
                       );
                     })}
