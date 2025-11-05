@@ -1,14 +1,13 @@
 import {
   Select,
   SelectTrigger,
-  SelectValue,
   SelectContent
 } from '@/ui/components/ui/select';
 import { cn } from '@/lib/utils';
-import { MultiRegionTree } from '@/ui/components/tree-test';
+import { MultiRegionTree } from '@/ui/components/tree-multiSelect';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useMemo, useState } from 'react';
-import { findNodeName } from '../helper';
+import { findNodeName } from '../../helper';
 
 interface TreeSelectProps {
   value: string[];

@@ -1,12 +1,12 @@
 'use client';
 
-import { useGetGroups } from '@/core/domains/groups';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useCallback, useEffect, useState } from 'react';
 import MapFilter from './map-filter';
-import GoongMap from './goong-map';
 import { Device, useGetDevices } from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
+import GoongMap from '@/ui/business/map/goong-map';
 
 export default function MapContainer() {
   const [selectedDevice, setSelectedDevice] = useState<{
@@ -14,22 +14,23 @@ export default function MapContainer() {
     ts: number;
   }>({ device: null, ts: 0 });
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion>(null);
-  const { data: regions, isLoading: isRegionsLoading } = useGetGroups({
-    root_group: true
-  });
+
+  const { treeData, isLoading: isRegionsLoading } = useRegionTreeStore();
+
   const { data, isLoading, isFetching, error } = useGetDevices(
     { group: selectedRegion?.id },
     { enabled: !!selectedRegion }
   );
   const devices = data?.devices ?? [];
+
   useEffect(() => {
-    if (regions?.groups?.length && !selectedRegion) {
+    if (treeData?.length && !selectedRegion) {
       setSelectedRegion({
-        id: String(regions.groups[0].id),
-        name: regions.groups[0].name
+        id: treeData[0].id,
+        name: treeData[0].name
       });
     }
-  }, [regions]);
+  }, [treeData, selectedRegion]);
 
   const handleRegionChange = useCallback((region: SelectedRegion) => {
     setSelectedRegion(region);
@@ -49,6 +50,7 @@ export default function MapContainer() {
         {isRegionsLoading ? (
           <div className='bg-map-filter flex rounded-lg px-1 py-1'>
             <Skeleton className='bg-background mr-0.5 h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]' />
+            <Skeleton className='relative ml-0.5 h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]' />
           </div>
         ) : (
           <MapFilter

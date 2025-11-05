@@ -19,7 +19,6 @@ import {
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RequestWatcher } from './RequestWatcher';
-import next from 'next';
 import React from 'react';
 
 type LightInfo = {

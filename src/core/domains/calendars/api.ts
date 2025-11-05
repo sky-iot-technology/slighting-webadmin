@@ -56,6 +56,17 @@ export const calendarApi = {
     }
   },
 
+  async deleteCalendars(ids: (string | number)[]): Promise<void> {
+    try {
+      await authenticatedApi.delete<Calendar>(`/schedules`, {
+        data: { ids }
+      });
+    } catch (error: any) {
+      console.error('delete error:', error.message);
+      throw new Error(error);
+    }
+  },
+
   async getById(id: string): Promise<Calendar> {
     try {
       const response = await authenticatedApi.get<Calendar>(`/schedules/${id}`);
@@ -83,7 +94,9 @@ export const calendarApi = {
     id: string,
     params?: GetDeivceCalendarsParamsDto
   ) {
-    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const { page: rawPage = 1, limit: rawLimit = 20, ...rest } = params ?? {};
+    const page = Math.max(1, Number(rawPage) || 1);
+    const limit = Math.max(1, Number(rawLimit) || 20);
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<CalendarListResponseDto>(
       `/devices/${id}/schedules`,
@@ -91,7 +104,7 @@ export const calendarApi = {
         params: {
           offset,
           limit,
-          ...params
+          ...rest
         }
       }
     );

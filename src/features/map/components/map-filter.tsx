@@ -1,5 +1,4 @@
-import { TreeProvider } from '@/features/map/tree/TreeProvider';
-import Image from 'next/image';
+import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 import { SearchBar } from './search-bar';
 import { Device } from '@/core/domains/devices';
 

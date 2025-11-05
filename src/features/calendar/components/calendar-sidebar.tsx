@@ -2,7 +2,7 @@
 import Image from 'next/image';
 import { memo } from 'react';
 import { SelectedRegion } from '@/ui/components/tree-group';
-import CalendarTree from './calendar-tree';
+import TreeSidebar from '@/ui/business/tree/TreeSidebar';
 
 interface CalendarSidebarProps {
   searchTerm: string;
@@ -35,7 +35,7 @@ export const CalendarSidebar = memo(function CalendarSidebar({
         />
       </div>
 
-      <CalendarTree
+      <TreeSidebar
         selectedRegion={selectedRegion}
         onRegionChange={onRegionChange}
         searchTerm={searchTerm}

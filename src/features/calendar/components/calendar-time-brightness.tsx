@@ -3,13 +3,11 @@
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from '@/ui/components/ui/button';
 import { Slider } from '@/ui/components/ui/slider';
-import { Clock, Trash2, X } from 'lucide-react';
-import TimePicker from 'react-time-picker';
+import { Trash2, X } from 'lucide-react';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { CustomTimePicker } from '@/ui/components/ui/custom-time-picker';
-import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { SubSchedule } from '@/core/domains/calendars';
 import { Switch } from '@/ui/components/ui/switch';
 import {

@@ -29,7 +29,6 @@ export const navItems: NavItem[] = [
     shortcut: ['d', 'd'],
     items: [] // Empty array as there are no child items for Dashboard
   },
-
   {
     title: 'Map',
     url: '/dashboard/map',
@@ -37,6 +36,21 @@ export const navItems: NavItem[] = [
     shortcut: ['p', 'p'],
     isActive: false,
     items: [] // No child items
+  },
+  {
+    title: 'Management',
+    url: '/dashboard/management',
+    icon: 'management',
+    shortcut: ['p', 'p'],
+    isActive: false,
+    items: [
+      {
+        title: 'Branch',
+        url: '/dashboard/branch',
+        icon: 'branch',
+        shortcut: ['m', 'm']
+      }
+    ]
   },
   {
     title: 'Calendar',

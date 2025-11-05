@@ -2,7 +2,7 @@ import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { RegionTree, SelectedRegion } from '@/ui/components/tree-group';
 import { memo, useEffect, useState } from 'react';
 
-function CalendarTree({
+function TreeSidebar({
   selectedRegion,
   onRegionChange,
   searchTerm
@@ -28,4 +28,4 @@ function CalendarTree({
   );
 }
 
-export default memo(CalendarTree);
+export default memo(TreeSidebar);

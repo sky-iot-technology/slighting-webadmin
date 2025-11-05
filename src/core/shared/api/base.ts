@@ -2,7 +2,7 @@ import axios, {
   type AxiosError,
   type AxiosInstance,
   type AxiosRequestConfig,
-  type AxiosResponse,
+  type AxiosResponse
 } from 'axios';
 
 import type { ApiError } from '@/core/shared/types';
@@ -25,9 +25,9 @@ export abstract class BaseApiClient {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        ...config?.headers,
+        ...config?.headers
       },
-      ...config,
+      ...config
     });
 
     this.admin = axios.create({
@@ -36,9 +36,9 @@ export abstract class BaseApiClient {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        ...config?.headers,
+        ...config?.headers
       },
-      ...config,
+      ...config
     });
 
     this.setupInterceptors();
@@ -77,13 +77,15 @@ export abstract class BaseApiClient {
     if (typeof window === 'undefined') {
       return null;
     }
-    
+
     // Read token from cookies instead of localStorage
     try {
-      return document.cookie
-        .split('; ')
-        .find(row => row.startsWith('access_token='))
-        ?.split('=')[1] || null;
+      return (
+        document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('access_token='))
+          ?.split('=')[1] || null
+      );
     } catch {
       return null;
     }
@@ -109,9 +111,12 @@ export abstract class BaseApiClient {
     if (error.response) {
       // Error with a response from the server (e.g., 4xx, 5xx)
       const customError: ApiError = {
-        message: (error.response.data as any)?.message || error.message || 'Unknown error',
+        message:
+          (error.response.data as any)?.message ||
+          error.message ||
+          'Unknown error',
         status: error.response.status,
-        code: (error.response.data as any)?.code || 'UNKNOWN_ERROR',
+        code: (error.response.data as any)?.code || 'UNKNOWN_ERROR'
       };
       throw customError;
     } else if (error.request) {
@@ -119,7 +124,7 @@ export abstract class BaseApiClient {
       const customError: ApiError = {
         message: 'Network error or no response received',
         status: 0,
-        code: 'NETWORK_ERROR',
+        code: 'NETWORK_ERROR'
       };
       throw customError;
     } else {
@@ -127,7 +132,7 @@ export abstract class BaseApiClient {
       const customError: ApiError = {
         message: `Request setup error: ${error.message}`,
         status: 0,
-        code: 'REQUEST_SETUP_ERROR',
+        code: 'REQUEST_SETUP_ERROR'
       };
       throw customError;
     }
@@ -186,12 +191,17 @@ export abstract class BaseApiClient {
   /**
    * Performs a DELETE request.
    * @param url The endpoint URL.
+   * @param data The data to send.
    * @param config Optional Axios configuration.
    * @returns Promise with the response data.
    */
-  protected async delete<T>(url: string, config?: ApiRequestConfig): Promise<T> {
+  protected async delete<T>(
+    url: string,
+    data?: any,
+    config?: ApiRequestConfig
+  ): Promise<T> {
     const client = this.getClient(config?.isAdmin);
-    const response = await client.delete<T>(url, config);
+    const response = await client.delete<T>(url, data, config);
     return this.handleResponse(response);
   }
 

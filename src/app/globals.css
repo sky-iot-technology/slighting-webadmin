@@ -78,6 +78,12 @@
   --cyan-1: oklch(0.6407 0.1081 203.59);
   --calendar-table-select: oklch(0.9778 0.0117 239.9);
   --gray-1: oklch(0.9791 0 0);
+  --orange-1: oklch(0.9892 0.0102 81.8);
+  --blue-1: oklch(0.9823 0.0143 213.1);
+  --green-1: oklch(0.985 0.0267 140.18);
+  --purple-1: oklch(0.9745 0.0134 295.33);
+  --yellow-1: oklch(0.9769 0.0186 75.33);
+  --blue-2: oklch(0.6407 0.1081 203.59);
 }
 
 .dark {
@@ -187,6 +193,13 @@
   --color-calendar-time-hover: var(--calendar-time-hover);
   --color-calendar-table-children: var(--calendar-table-children);
   --color-cyan-1: var(--cyan-1);
+  --color-gray-1: var(--gray-1);
+  --color-orange-1: var(--orange-1);
+  --color-blue-1: var(--blue-1);
+  --color-green-1: var(--green-1);
+  --color-purple-1: var(--purple-1);
+  --color-yellow-1: var(--yellow-1);
+  --color-blue-2: var(--blue-2);
 }
 
 /* Table row selection styles */

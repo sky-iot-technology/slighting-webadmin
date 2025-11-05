@@ -14,10 +14,13 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 import { AnimatedSearchInput } from './animated-search-input';
 import { DataTableSelectFilter } from './data-table-select-filter';
 import { CalendarRangeFilter } from './date-range-filter';
+import { DataTableActionsPopover } from './data-table-actions';
 
 interface DataTableToolbarProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   actions?: React.ReactNode;
+  excel?: boolean;
+  onDeleteAll?: (selectedRows: TData[]) => Promise<void> | void;
 }
 
 export function DataTableToolbar<TData>({
@@ -25,6 +28,8 @@ export function DataTableToolbar<TData>({
   children,
   className,
   actions,
+  excel,
+  onDeleteAll,
   ...props
 }: DataTableToolbarProps<TData>) {
   return (
@@ -45,6 +50,11 @@ export function DataTableToolbar<TData>({
       <div className='flex items-center gap-2'>
         {actions}
         {children}
+        <DataTableActionsPopover
+          table={table}
+          excel={excel}
+          onDeleteAll={onDeleteAll}
+        />
         <DataTableFilterOptions table={table} />
       </div>
     </div>
@@ -55,6 +65,8 @@ interface DataTableCustomToolbar<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   actions?: React.ReactNode;
   filter?: boolean;
+  excel?: boolean;
+  onDeleteAll?: (selectedRows: TData[]) => Promise<void> | void;
 }
 
 export function DataTableCalendarToolbar<TData>({
@@ -63,6 +75,8 @@ export function DataTableCalendarToolbar<TData>({
   className,
   actions,
   filter,
+  excel,
+  onDeleteAll,
   ...props
 }: DataTableCustomToolbar<TData>) {
   const columns = React.useMemo(
@@ -117,6 +131,11 @@ export function DataTableCalendarToolbar<TData>({
         <div className='flex items-center gap-2'>
           {actions}
           {children}
+          <DataTableActionsPopover
+            table={table}
+            excel={excel}
+            onDeleteAll={onDeleteAll}
+          />
           {filter && <DataTableFilterOptions table={table} />}
         </div>
       </div>

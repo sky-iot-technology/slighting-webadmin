@@ -101,8 +101,12 @@ export class AuthenticatedApiClient extends BaseApiClient {
     return super.put(url, data, config);
   }
 
-  public async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    return super.delete(url, config);
+  public async delete<T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return super.delete(url, data, config);
   }
 
   public async patch<T>(

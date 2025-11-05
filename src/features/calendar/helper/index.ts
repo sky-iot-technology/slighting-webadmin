@@ -222,6 +222,20 @@ export const findNodeName = (
   return null;
 };
 
+export const findNodeById = (
+  nodes: RegionNode[],
+  id: string
+): RegionNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) return node;
+    if (node.children) {
+      const found = findNodeById(node.children, id);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
 export const findNodeSlug = (
   nodes: RegionNode[],
   id: string
@@ -251,6 +265,25 @@ export const findNodeId = (
     if (node.slug === slug) return node.id;
     if (node.children) {
       const found = findNodeId(node.children, slug);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+export const findParentNode = (
+  nodes: RegionNode[],
+  id: string
+): RegionNode | null => {
+  for (const node of nodes) {
+    if (node.id === id) {
+      return node;
+    }
+    if (node.children?.some((child) => child.id === id)) {
+      return node;
+    }
+    if (node.children) {
+      const found = findParentNode(node.children, id);
       if (found) return found;
     }
   }

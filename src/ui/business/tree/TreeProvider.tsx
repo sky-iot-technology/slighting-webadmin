@@ -2,9 +2,9 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { SelectedRegion } from '@/ui/components/tree-group';
-import { RegionTreeWrapper } from './RegionTreeWrapper';
 import { cn } from '@/lib/utils';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
+import { RegionTreeWrapper } from './RegionTreeWrapper';
 
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
@@ -33,6 +33,7 @@ export function TreeProvider({
     >
       {/* Trigger button */}
       <button
+        type='button'
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
           buttonClassName,

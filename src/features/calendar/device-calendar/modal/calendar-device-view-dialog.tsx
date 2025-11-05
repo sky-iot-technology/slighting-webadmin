@@ -13,8 +13,6 @@ import {
   RECURRING_LABELS
 } from '@/core/domains/calendars/constant';
 import { useGetCalendarById } from '@/core/domains/calendars';
-import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice } from '@/core/domains/catalogues';
 import { useMemo } from 'react';
 import { RegionNode } from '@/core/domains/groups';
 import { useRegionTreeStore } from '@/core/domains/tree/store';

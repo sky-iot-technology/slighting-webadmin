@@ -4,36 +4,46 @@ import ReactMapGL, {
   FlyToInterpolator,
   MapEvent,
   MapRef,
+  Marker,
   ScaleControl,
   ViewportProps,
   WebMercatorViewport
 } from '@goongmaps/goong-map-react';
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { mapControllerProps, scaleControlProps } from '../config/map-controls';
-import CabinetInfoPanel from './cabinet_info_panel';
-import { useMapResize } from '../hooks/useMapResize';
-import { useMapLayers } from '../hooks/useMapLayers';
 import { Device } from '@/core/domains/devices';
 import { Loader2 } from 'lucide-react';
+import { useMapLayers } from '@/features/map/hooks/useMapLayers';
+import { useMapResize } from '@/features/map/hooks/useMapResize';
+import {
+  mapControllerProps,
+  scaleControlProps
+} from '@/features/map/config/map-controls';
+import Cabinet_info_panel from '@/features/map/components/cabinet_info_panel';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
 type SelectedRegion = { id: string; name: string } | null;
 
 type GoongMapProps = {
-  selectedRegion: SelectedRegion;
-  devices: any[];
+  selectedRegion: SelectedRegion | null;
+  devices?: Device[];
   isLoading: boolean;
   isFetching: boolean;
   selectedDevice: { device: Device | null; ts: number } | null;
+
+  /** ✅ optional render for popup */
+  renderPopup?: (id: string | number, onClose: () => void) => React.ReactNode;
 };
 
 export default function GoongMap({
-  selectedRegion,
-  devices,
-  isLoading,
-  isFetching,
-  selectedDevice
+  selectedRegion = null,
+  devices = [],
+  isLoading = false,
+  isFetching = false,
+  selectedDevice = null,
+  renderPopup
 }: GoongMapProps) {
+  const [isMapLoading, setIsMapLoading] = useState(true);
   const [mapStyle, setMapStyle] = useState(mapStyleDefault);
   const [transitionDuration, setTransitionDuration] = useState(1000);
   const [viewport, setViewport] = useState<ViewportProps>({
@@ -48,12 +58,6 @@ export default function GoongMap({
 
   const mapRef = useRef<MapRef | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-
-  const handleGetCursor = useCallback(
-    ({ isHovering, isDragging }: any) =>
-      isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grab',
-    []
-  );
 
   const handleViewportChange = useCallback((options: ViewportProps) => {
     setViewport((prev) => ({ ...prev, ...options }));
@@ -77,6 +81,7 @@ export default function GoongMap({
   }, []);
 
   const onClick = (event: MapEvent) => {
+    if (renderPopup) return;
     if (!event.features?.length) return;
 
     const map = mapRef.current?.getMap();
@@ -108,9 +113,12 @@ export default function GoongMap({
       const longs = devicesWithCoords.map((x) => x.device_info.lon);
       const lats = devicesWithCoords.map((x) => x.device_info.lat);
 
+      const container = mapContainerRef.current;
+      if (!container) return;
+
       const { longitude, latitude, zoom } = new WebMercatorViewport({
-        width: window.innerWidth,
-        height: window.innerHeight
+        width: container.clientWidth || window.innerWidth,
+        height: container.clientHeight || window.innerHeight
       }).fitBounds(
         [
           [Math.min(...longs), Math.min(...lats)],
@@ -150,10 +158,8 @@ export default function GoongMap({
   }, [devices, needsInitialization, isLoading, isFetching]);
 
   useEffect(() => {
-    if (selectedRegion) {
-      setNeedsInitialization(true);
-    }
-  }, [selectedRegion]);
+    setNeedsInitialization(true);
+  }, [selectedRegion?.id]);
 
   useEffect(() => {
     if (selectedDevice?.device) {
@@ -164,14 +170,11 @@ export default function GoongMap({
     }
   }, [selectedDevice, flyToDevice]);
 
-  useMapLayers(mapRef, devices);
-  useMapResize(mapContainerRef, setViewport);
+  useMapLayers(mapRef, devices, selectedRegion?.id);
+  useMapResize(mapContainerRef, mapRef, setViewport);
 
   return (
-    <div
-      ref={mapContainerRef}
-      className='relative h-[calc(100dvh-52px)] w-full overflow-x-hidden overflow-y-auto'
-    >
+    <div ref={mapContainerRef} className='absolute inset-0'>
       <ReactMapGL
         {...mapControllerProps}
         {...viewport}
@@ -182,7 +185,6 @@ export default function GoongMap({
         }
         ref={mapRef}
         mapStyle={mapStyle}
-        getCursor={handleGetCursor}
         onViewportChange={handleViewportChange}
         scrollZoom={isScrollZoom}
         transitionDuration={transitionDuration}
@@ -190,6 +192,13 @@ export default function GoongMap({
           setIsScrollZoom(true);
           setPopupInfo(null);
           onClick(e);
+        }}
+        onLoad={(evt: any) => {
+          const map = evt.target;
+          setIsMapLoading(true);
+          map.on('idle', () => {
+            setIsMapLoading(false);
+          });
         }}
       >
         <ScaleControl {...scaleControlProps} />
@@ -200,6 +209,15 @@ export default function GoongMap({
           <div className='flex items-center gap-2 rounded-md bg-white p-2 shadow-md'>
             <Loader2 className='text-primary h-6 w-6 animate-spin' />
             <span className='text-primary text-sm'>Đang tải thiết bị...</span>
+          </div>
+        </div>
+      )}
+
+      {isMapLoading && (
+        <div className='absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-sm'>
+          <Skeleton className='h-[100%] w-[100%] rounded-[8px]' />
+          <div className='absolute flex flex-col items-center'>
+            <Loader2 className='text-primary h-6 w-6 animate-spin' />
           </div>
         </div>
       )}
@@ -216,14 +234,22 @@ export default function GoongMap({
 
       {popupInfo && (
         <div className='absolute top-[34px] right-1.5 z-10'>
-          <CabinetInfoPanel
-            id={popupInfo}
-            onOpenChange={() => {
+          {renderPopup ? (
+            renderPopup(popupInfo, () => {
               setPopupInfo(null);
               setViewport(lastViewport);
               setTransitionDuration(1000);
-            }}
-          />
+            })
+          ) : (
+            <Cabinet_info_panel
+              id={popupInfo}
+              onOpenChange={() => {
+                setPopupInfo(null);
+                setViewport(lastViewport);
+                setTransitionDuration(1000);
+              }}
+            />
+          )}
         </div>
       )}
     </div>

@@ -84,18 +84,39 @@ export default function AppSidebar() {
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === subItem.url}
-                            >
-                              <Link href={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
+                        {item.items?.map((subItem) => {
+                          const SubIcon = subItem.icon
+                            ? Icons[subItem.icon]
+                            : null;
+                          const isActive = pathname === subItem.url;
+
+                          return (
+                            <SidebarMenuSubItem key={subItem.title}>
+                              <SidebarMenuSubButton asChild isActive={isActive}>
+                                <Link
+                                  href={subItem.url}
+                                  className='flex items-center gap-2'
+                                >
+                                  {SubIcon &&
+                                    (isActive ? (
+                                      <SubIcon
+                                        color='#072645'
+                                        width={18}
+                                        height={18}
+                                      />
+                                    ) : (
+                                      <SubIcon
+                                        className='text-muted-foreground'
+                                        width={18}
+                                        height={18}
+                                      />
+                                    ))}
+                                  <span>{subItem.title}</span>
+                                </Link>
+                              </SidebarMenuSubButton>
+                            </SidebarMenuSubItem>
+                          );
+                        })}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </SidebarMenuItem>

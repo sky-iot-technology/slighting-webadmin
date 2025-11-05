@@ -11,15 +11,22 @@ import {
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
-  GetDevicesParamsDto
+  GetDevicesParamsDto,
+  SetDevicesParentGroup
 } from './types';
 
 export const devicesApi = {
   async getAll(params?: GetDevicesParamsDto): Promise<DeviceListResponseDto> {
+    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<DeviceListResponseDto>(
       `/devices/things`,
       {
-        params
+        params: {
+          offset,
+          limit,
+          ...params
+        }
       }
     );
 
@@ -116,6 +123,26 @@ export const devicesApi = {
       );
     } catch (error) {
       throw new Error(`Request id: ${requestId} not found`);
+    }
+  },
+
+  async setDevicesParentGroup(data: SetDevicesParentGroup): Promise<void> {
+    try {
+      await authenticatedApi.post<DeviceRequestResponse>(
+        `/devices/things/parent`,
+        data
+      );
+    } catch (error: any) {
+      throw new Error(error);
+    }
+  },
+
+  async deleteDevicesParentGroup(id: string): Promise<void> {
+    try {
+      await authenticatedApi.delete<void>(`/clients/${id}/parent`);
+    } catch (error: any) {
+      console.error('❌ deleteDeviceParent error:', error.message);
+      throw new Error(error);
     }
   }
 };

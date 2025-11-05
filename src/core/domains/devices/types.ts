@@ -8,24 +8,15 @@ export interface Device extends BaseEntity {
   ctrl_channel_id: string;
   data_channel_id: string;
   credentials: Credentials;
-  attributes: Attributes;
   domain_id: string;
   parent_group_id: string;
   device_info: DeviceInfo;
+  device_asset: DeviceAsset;
   product_info: ProductInfo[];
   devices: SubDevice[];
   updated_by: string;
   status: string;
   warning: string;
-}
-
-export interface Attributes {
-  ota_support: boolean;
-  report_support: boolean;
-  reset_support: boolean;
-  schedule_support: boolean;
-  tz_support: boolean;
-  [key: string]: any;
 }
 
 export interface Credentials {
@@ -54,6 +45,30 @@ export interface DeviceInfo {
     net_mode: string;
     network_operator: string;
   };
+}
+
+export interface DeviceAsset {
+  id: string;
+  name: string;
+  group?: string;
+  organization?: string;
+  category_type?: string;
+  asset_status?: string;
+  asset_number?: string;
+  asset_attribute?: AssetAttribute[];
+  created_at?: string;
+  created_by?: string;
+  updated_at?: string;
+}
+
+export interface AssetAttribute {
+  index: number;
+  is_disabled: boolean;
+  identify: string;
+  attr: string;
+  type: number;
+  content: string | number | null;
+  reminder_ids?: string[];
 }
 
 export interface ProductInfo {
@@ -87,7 +102,7 @@ export interface GetDevicesParamsDto
   dir?: 'asc' | 'desc';
   order?: string;
   metadata?: any;
-  group?: string;
+  group?: string | undefined;
   name?: string;
   status?: 'enabled' | 'disabled' | 'deleted' | 'all' | 'unknown';
   type?: string;
@@ -159,4 +174,9 @@ export type DeviceRequestResponse = {
 export type DeviceExecuteResponse = {
   request_id: string;
   poll_interval: number;
+};
+
+export type SetDevicesParentGroup = {
+  parent_group_id: string;
+  device_ids: string[];
 };

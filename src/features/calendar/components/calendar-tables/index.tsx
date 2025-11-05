@@ -15,6 +15,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import CalendarDialog from '../modal/calendar-dialog';
 import { Badge } from '@/ui/components/ui/badge';
+import { useDeleteMultiCalendars } from '@/core/domains/calendars';
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -52,6 +53,14 @@ export function CalendarTable<TData, TValue>({
     getRowCanExpand: (row: any) =>
       Array.isArray(row.original.schedules) && row.original.schedules.length > 0
   });
+
+  const { mutate: deleteCalendars, isPending } = useDeleteMultiCalendars();
+
+  const handleDelete = async (selectedRows: any[]) => {
+    if (!selectedRows.length) return;
+    const ids = selectedRows.map((r) => r.id as string);
+    deleteCalendars(ids);
+  };
 
   return (
     <DataTable
@@ -117,6 +126,8 @@ export function CalendarTable<TData, TValue>({
             </Button>
           }
           filter={false}
+          excel={false}
+          onDeleteAll={handleDelete}
         />
       </div>
       <CalendarDialog

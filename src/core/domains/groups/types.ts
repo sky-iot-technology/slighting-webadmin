@@ -72,3 +72,24 @@ export type RegionNode = {
   slug: string;
   children?: RegionNode[];
 };
+
+export interface CreateGroupDTO {
+  name: string;
+  description?: string;
+  parent_id?: string;
+  metadata?: metadata;
+}
+
+interface metadata {
+  lat: number;
+  long: number;
+}
+
+export interface UpdateGroupDto
+  extends Partial<Omit<CreateGroupDTO, 'parent_id'>> {}
+
+export interface SetChildrenGroupDto {
+  parent_id?: string;
+  children_ids: string[];
+  parent_id_old?: string;
+}

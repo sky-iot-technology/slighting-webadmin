@@ -15,10 +15,7 @@ import {
 } from '@/core/domains/calendars';
 import { useEffect, useMemo, useState } from 'react';
 import { z } from 'zod';
-import {
-  mapCalendarToFormData,
-  mapFormToCreateCalendarDto
-} from '../../helper';
+import { mapFormToCreateCalendarDto } from '../../helper';
 import CalendarConfirm from '../../components/modal/calendar-confirm-dialog';
 import CalendarDeviceForm from '../calendar-device-form';
 

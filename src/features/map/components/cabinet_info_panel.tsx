@@ -19,7 +19,7 @@ import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
 import { useGetDeviceById } from '@/core/domains/devices';
 import { diffTimeHMS, getSensorAttributes } from '../helper';
-import React, { useEffect } from 'react';
+import React from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 
 type InfoModalProps = {

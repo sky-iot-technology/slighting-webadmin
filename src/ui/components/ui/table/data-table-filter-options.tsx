@@ -22,13 +22,14 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { Label } from '@/ui/components/ui/label';
-import { TreeProvider } from '@/features/map/tree/TreeProvider';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import {
   findNodeName,
   findNodeSlug,
   flattenTree
 } from '@/features/calendar/helper';
+import Image from 'next/image';
+import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 
 interface DataTableFilterOptionsProps<TData> {
   table: Table<TData>;
@@ -70,7 +71,6 @@ export function DataTableFilterOptions<TData>({
       const tableVal = (col?.getFilterValue() as string) ?? '';
       seed[opt.id] = initialValues?.[opt.id] ?? tableVal ?? '';
     }
-    console.log(seed);
     setFilterValues(seed);
   }, [filterOptions, initialValues, table]);
 
@@ -100,7 +100,7 @@ export function DataTableFilterOptions<TData>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className='rounded-[4px]'>
         <Button
           aria-label='Toggle filters'
           role='combobox'
@@ -108,9 +108,13 @@ export function DataTableFilterOptions<TData>({
           size='sm'
           className='ml-auto hidden h-8 lg:flex'
         >
-          <ListFilter />
-          Filters
-          <CaretSortIcon className='ml-auto opacity-50' />
+          {/* <ListFilter /> */}
+          <Image
+            src={'/assets/icons/filter.svg'}
+            alt='filter'
+            width={16}
+            height={16}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-80 p-0'>

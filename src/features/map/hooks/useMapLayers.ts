@@ -29,10 +29,11 @@ const loadIcons = (map: any) => {
 
 export const useMapLayers = (
   mapRef: React.RefObject<MapRef | null>,
-  devices: any[]
+  devices: any[],
+  regionId?: string
 ) => {
   const isSourceInitialized = useRef(false);
-
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   useEffect(() => {
     const map = mapRef.current?.getMap();
     if (!map) return;
@@ -41,7 +42,14 @@ export const useMapLayers = (
 
     const updateMapData = () => {
       try {
+        const existingSource = map.getSource('devices-source') as any;
         if (!isSourceInitialized.current) {
+          if (existingSource) {
+            existingSource.setData(devicesGeoJSON);
+            isSourceInitialized.current = true;
+            return;
+          }
+
           // Tải icon chỉ khi source được tạo lần đầu
           loadIcons(map);
           map.addSource('devices-source', {
@@ -55,7 +63,6 @@ export const useMapLayers = (
           map.addLayer(clusterLayer as any);
           map.addLayer(clusterCountLayer as any);
           map.addLayer(unclusteredPointLayer as any);
-
           isSourceInitialized.current = true;
         } else {
           // Cập nhật dữ liệu trong source hiện có
@@ -69,17 +76,38 @@ export const useMapLayers = (
       }
     };
 
-    if (map.isStyleLoaded()) {
-      updateMapData();
-    } else {
-      const loadHandler = () => {
-        updateMapData();
-      };
-      map.once('load', loadHandler);
+    // const tryLoad = (attempt = 0) => {
+    //   if (map.isStyleLoaded()) {
+    //     updateMapData();
+    //   } else if (attempt < 20) {
+    //     timeoutRef.current = setTimeout(() => tryLoad(attempt + 1), 300);
+    //   } else {
+    //     console.warn('⚠️ Map style not ready after 3s, skipping addSource');
+    //   }
+    // };
 
-      return () => {
-        map.off('load', loadHandler);
-      };
-    }
-  }, [mapRef, devices]);
+    // if (map.isStyleLoaded()) {
+    //   updateMapData();
+    // } else {
+    //   map.once('load', updateMapData);
+    //   tryLoad(); // dự phòng khi load ko bắn (tab switching)
+    // }
+
+    // // cleanup
+    // return () => {
+    //   if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    //   map.off('load', updateMapData);
+    // };
+
+    const handleStyleReady = () => {
+      if (map.isStyleLoaded()) updateMapData();
+    };
+    map.once('styledata', handleStyleReady);
+    map.once('idle', handleStyleReady);
+    if (map.isStyleLoaded()) handleStyleReady();
+    return () => {
+      map.off('styledata', handleStyleReady);
+      map.off('idle', handleStyleReady);
+    };
+  }, [mapRef, devices, regionId]);
 };

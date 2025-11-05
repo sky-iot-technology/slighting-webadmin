@@ -35,13 +35,11 @@ import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { SubCatalogueDevice } from '@/core/domains/catalogues';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { dayofweek } from '@/core/domains/calendars/constant';
-import { mapCalendarToFormData, utcToLocal } from '../helper';
+import { mapCalendarToFormData } from '../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
-import { MultiRegionTree, SelectedRegions } from '@/ui/components/tree-test';
-import { Skeleton } from '@/ui/components/ui/skeleton';
-import { TreeMultiSelect } from './calendar-multi-tree';
+import { TreeMultiSelect } from './tree/calendar-multi-tree';
 
 type CalendarFormProps = {
   initialData: Partial<Calendar> | null;

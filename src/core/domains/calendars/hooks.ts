@@ -112,6 +112,43 @@ export const useDeleteCalendars = (
   });
 };
 
+export const useDeleteMultiCalendars = (
+  options?: UseMutationOptions<void, Error, (string | number)[]>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, (string | number)[]>({
+    ...options,
+    mutationFn: (ids) => calendarApi.deleteCalendars(ids),
+    onSuccess: (data, deletedIds, context) => {
+      deletedIds.forEach((id) => {
+        queryClient.removeQueries({
+          queryKey: [CALENDARS_QUERY_KEY, 'detail', id]
+        });
+      });
+
+      queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
+
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === DEVICE_CALENDARS_QUERY_KEY
+      });
+
+      toast.success(
+        deletedIds.length > 1
+          ? `Đã xoá ${deletedIds.length} lịch bảo trì`
+          : 'Lịch bảo trì đã được xoá'
+      );
+
+      options?.onSuccess?.(data, deletedIds, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('❌ Delete calendars failed:', error);
+      toast.error(error.message || 'Xoá lịch bảo trì thất bại');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
 export const useGetCalendarById = (
   id: string,
   options?: Omit<

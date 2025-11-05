@@ -12,7 +12,8 @@ import {
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
-  GetDevicesParamsDto
+  GetDevicesParamsDto,
+  SetDevicesParentGroup
 } from './types';
 import { devicesApi } from './api';
 import { toast } from 'sonner';
@@ -198,5 +199,58 @@ export const useQueryStatus = (
     gcTime: 0,
     staleTime: 0,
     ...options
+  });
+};
+
+export const useSetParent = (
+  options?: UseMutationOptions<void, Error, SetDevicesParentGroup>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, SetDevicesParentGroup>({
+    ...options,
+    mutationFn: (data) => devicesApi.setDevicesParentGroup(data),
+    onSuccess: (data, variables, context) => {
+      toast.success('Set devices parent successfully!');
+
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY]
+      });
+
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to set devices parent: ', error);
+      toast.error(error.message || 'Failed to set devices parent');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useDeleteDeviceParent = (
+  options?: UseMutationOptions<void, Error, string>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    ...options,
+    mutationFn: (id) => devicesApi.deleteDevicesParentGroup(id),
+    onSuccess: (data, deleteId, context) => {
+      queryClient.removeQueries({
+        queryKey: [DEVICES_QUERY_KEY, 'detail', deleteId]
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY]
+      });
+
+      toast.success('Delete Device Parent successfully');
+      options?.onSuccess?.(data, deleteId, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to delete Group: ', error);
+      toast.error(error.message || 'Failed to delete Group');
+      options?.onError?.(error, variables, context);
+    }
   });
 };
