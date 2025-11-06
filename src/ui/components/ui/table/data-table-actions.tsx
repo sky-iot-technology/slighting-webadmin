@@ -128,7 +128,10 @@ export function DataTableActionsPopover<TData>({
         </Button>
       </PopoverTrigger>
 
-      <PopoverContent align='end' className='w-44 space-y-1 p-2'>
+      <PopoverContent
+        align='end'
+        className='inline-flex !w-auto min-w-[10rem] flex-col space-y-1 p-2'
+      >
         <input
           ref={fileInputRef}
           type='file'
@@ -140,7 +143,7 @@ export function DataTableActionsPopover<TData>({
         <Button
           variant='ghost'
           size='sm'
-          className='text-destructive w-full justify-start text-xs'
+          className='text-destructive hover:!text-destructive w-full justify-start text-xs'
           onClick={() => {
             setAlertOpen(true);
           }}
