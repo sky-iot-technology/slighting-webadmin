@@ -141,7 +141,7 @@ export default function BranchPage() {
                                   <IconPlus className='h-4 w-4' />
                                 </Button>
                               }
-                              excel={false}
+                              excel={true}
                               onDeleteAll={() => console.log('2122121')}
                             />
 
