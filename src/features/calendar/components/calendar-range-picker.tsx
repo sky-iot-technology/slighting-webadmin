@@ -75,10 +75,15 @@ export function CalendarRangePicker({
     [disablePastDate]
   );
 
-  // ✅ Handler for "single" mode
   const handleSingleSelect = (selected?: Date) => {
     if (disabled || isPastDate(selected)) return;
-    const newRange = selected ? { from: selected, to: undefined } : undefined;
+    if (selected === undefined) {
+      setSingleDate(undefined);
+      onChange?.(undefined);
+      return;
+    }
+    if (isPastDate(selected)) return;
+    const newRange = { from: selected, to: undefined };
     setSingleDate(selected);
     onChange?.(newRange);
     setOpenFrom(false);
@@ -86,7 +91,19 @@ export function CalendarRangePicker({
 
   const handleFromSelect = (selected?: Date) => {
     if (disabled || isPastDate(selected)) return;
-    const newRange = { from: selected, to: date?.to };
+    if (selected === undefined) {
+      const newRange = { from: undefined, to: date?.to };
+      setDate(newRange);
+      onChange?.(newRange);
+      return;
+    }
+    let from = selected;
+    let to = date?.to;
+
+    if (to && from > to) {
+      [from, to] = [to, from];
+    }
+    const newRange = { from, to };
     setDate(newRange);
     onChange?.(newRange);
     setOpenFrom(false);
@@ -94,7 +111,20 @@ export function CalendarRangePicker({
 
   const handleToSelect = (selected?: Date) => {
     if (disabled || isPastDate(selected)) return;
-    const newRange = { from: date?.from, to: selected };
+    if (selected === undefined) {
+      const newRange = { from: date?.from, to: undefined };
+      setDate(newRange);
+      onChange?.(newRange);
+      return;
+    }
+    let from = date?.from;
+    let to = selected;
+
+    if (from && from > to) {
+      [from, to] = [to, from];
+    }
+
+    const newRange = { from, to };
     setDate(newRange);
     onChange?.(newRange);
     setOpenTo(false);

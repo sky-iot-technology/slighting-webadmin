@@ -140,7 +140,7 @@ export function DataTableActionsPopover<TData>({
         <Button
           variant='ghost'
           size='sm'
-          className='text-destructive w-full justify-start text-xs'
+          className='text-destructive hover:text-destructive w-full justify-start text-xs'
           onClick={() => {
             setAlertOpen(true);
           }}

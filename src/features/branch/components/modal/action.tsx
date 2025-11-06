@@ -105,7 +105,7 @@ export function BranchActionMenu({
 
           <DropdownMenuItem
             onClick={() => setOpenConfirm(true)}
-            className='text-destructive flex items-center text-xs'
+            className='text-destructive hover:!text-destructive flex items-center text-xs'
           >
             <Image
               src='/assets/icons/trash.svg'

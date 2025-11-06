@@ -78,7 +78,7 @@ export function CalendarTable<TData, TValue>({
         {onToggleSidebar && (
           <button
             onClick={onToggleSidebar}
-            className='cursor-pointer rounded p-1 hover:bg-gray-100'
+            className='min-h-[12px] min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
           >
             {isSidebarOpen ? (
               <Image
@@ -86,6 +86,7 @@ export function CalendarTable<TData, TValue>({
                 alt='chevronLeft'
                 width={4.5}
                 height={8.25}
+                className='shrink-0'
               />
             ) : (
               <Image
@@ -93,6 +94,7 @@ export function CalendarTable<TData, TValue>({
                 alt='chevronRight'
                 width={4.5}
                 height={8.25}
+                className='shrink-0'
               />
             )}
           </button>
