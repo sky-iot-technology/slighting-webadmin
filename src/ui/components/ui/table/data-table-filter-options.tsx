@@ -106,7 +106,7 @@ export function DataTableFilterOptions<TData>({
           role='combobox'
           variant='outline'
           size='sm'
-          className='ml-auto hidden h-8 lg:flex'
+          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 border-none p-0 lg:flex'
         >
           {/* <ListFilter /> */}
           <Image

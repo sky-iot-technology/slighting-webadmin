@@ -25,7 +25,7 @@ function toIsoEndOfDayUTC(d: Date): string {
 
 type CalendarRangeFilterProps<TData> = {
   startColumn: Column<TData, unknown>;
-  endColumn: Column<TData, unknown>;
+  endColumn?: Column<TData, unknown> | null;
   className?: string;
 };
 
@@ -35,22 +35,54 @@ export function CalendarRangeFilter<TData>({
   className
 }: CalendarRangeFilterProps<TData>) {
   const startValue = startColumn.getFilterValue();
-  const endValue = endColumn.getFilterValue();
+  const endValue = endColumn
+    ? (endColumn.getFilterValue() as string | undefined)
+    : undefined;
 
   const [dateRange, setDateRange] = React.useState<DateRange | undefined>(
-    () => ({
-      from: parseAsDate(String(startValue))
-        ? utcToLocal(parseAsDate(String(startValue))!)
-        : undefined,
-      to: parseAsDate(String(endValue))
-        ? utcToLocal(parseAsDate(String(endValue))!)
-        : undefined
-    })
+    () => {
+      let from: Date | undefined;
+      let to: Date | undefined;
+      if (typeof startValue === 'string' && startValue.includes(',')) {
+        const [fromStr, toStr] = startValue.split(',');
+        from = parseAsDate(fromStr);
+        to = parseAsDate(toStr);
+      } else {
+        from = parseAsDate(String(startValue));
+        to = parseAsDate(String(endValue));
+      }
+
+      return {
+        from: from ? utcToLocal(from) : undefined,
+        to: to ? utcToLocal(to) : undefined
+      };
+    }
   );
 
   React.useEffect(() => {
-    const fromDate = parseAsDate(String(startValue));
-    const toDate = parseAsDate(String(endValue));
+    if (!startValue && !endValue) {
+      setDateRange(undefined);
+      return;
+    }
+
+    let fromDate: Date | undefined;
+    let toDate: Date | undefined;
+    if (typeof startValue === 'string' && startValue.includes(',')) {
+      const [fromStr, toStr] = startValue.split(',');
+      fromDate = parseAsDate(fromStr);
+      toDate = parseAsDate(toStr);
+    } else if (
+      typeof startValue === 'object' &&
+      startValue !== null &&
+      'from' in startValue
+    ) {
+      const sv = startValue as { from?: string; to?: string };
+      fromDate = parseAsDate(sv.from);
+      toDate = parseAsDate(sv.to);
+    } else {
+      fromDate = parseAsDate(String(startValue));
+      toDate = parseAsDate(String(endValue));
+    }
 
     const isSame =
       fromDate?.toISOString() === dateRange?.from?.toISOString() &&
@@ -73,7 +105,7 @@ export function CalendarRangeFilter<TData>({
 
       if (!from && !to) {
         startColumn.setFilterValue(undefined);
-        endColumn.setFilterValue(undefined);
+        if (endColumn) endColumn.setFilterValue(undefined);
         return;
       }
 
@@ -84,8 +116,14 @@ export function CalendarRangeFilter<TData>({
       const fromISO = toIsoStartOfDayUTC(from);
       const toISO = toIsoEndOfDayUTC(to);
 
-      startColumn.setFilterValue(fromISO);
-      endColumn.setFilterValue(toISO);
+      if (endColumn) {
+        startColumn.setFilterValue(fromISO ?? undefined);
+        endColumn.setFilterValue(toISO ?? undefined);
+      } else {
+        startColumn.setFilterValue(
+          fromISO && toISO ? `${fromISO},${toISO}` : fromISO
+        );
+      }
     },
     [startColumn, endColumn]
   );
@@ -95,7 +133,7 @@ export function CalendarRangeFilter<TData>({
       mode='range'
       value={dateRange}
       onChange={(value) => handleSelect(value as DateRange | undefined)}
-      className={className ?? '!w-[230px]'}
+      className={className ?? '!h-7.5 !w-[230px] !rounded-[4px]'}
     />
   );
 }

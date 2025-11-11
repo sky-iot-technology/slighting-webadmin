@@ -19,6 +19,7 @@ type CalendarRangePickerProps = {
   disabled?: boolean;
   disablePastDate?: boolean;
   className?: string;
+  textClassname?: string;
 };
 
 export function CalendarRangePicker({
@@ -27,7 +28,8 @@ export function CalendarRangePicker({
   onChange,
   disabled,
   disablePastDate,
-  className
+  className,
+  textClassname
 }: CalendarRangePickerProps) {
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
@@ -144,6 +146,7 @@ export function CalendarRangePicker({
             <button
               type='button'
               className={cn(
+                textClassname,
                 'flex-1 cursor-pointer bg-transparent text-center text-xs font-medium outline-none',
                 !formattedSingle && 'text-muted-foreground'
               )}

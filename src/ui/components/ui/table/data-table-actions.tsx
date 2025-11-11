@@ -109,7 +109,6 @@ export function DataTableActionsPopover<TData>({
     setOpen(false);
   };
 
-  // console.log(table.getSelectedRowModel().rows.map(r => r.original));
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild className='rounded-[4px]'>
@@ -117,7 +116,7 @@ export function DataTableActionsPopover<TData>({
           variant='outline'
           size='sm'
           aria-label='Actions menu'
-          className=''
+          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 border-none p-0 lg:flex'
         >
           <Image
             src={'/assets/icons/options.svg'}

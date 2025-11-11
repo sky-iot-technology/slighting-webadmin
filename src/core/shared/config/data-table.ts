@@ -62,7 +62,10 @@ export const dataTableConfig = {
     'select',
     'multiSelect',
     'selectSimple',
-    'regionTree'
+    'regionTree',
+    'dateRangeSingle',
+    'dateRangeFrom',
+    'dateRangeTo'
   ] as const,
   operators: [
     'iLike',

@@ -22,12 +22,14 @@ const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
 type GoongMapProps = {
   lat?: number;
   long?: number;
+  disabled?: boolean;
   onSelectLocation?: (coords: { lat: number; long: number }) => void;
 };
 
 export default function GoongMapMarker({
   lat,
   long,
+  disabled = false,
   onSelectLocation
 }: GoongMapProps) {
   const [mapStyle, setMapStyle] = useState(mapStyleDefault);
@@ -48,9 +50,12 @@ export default function GoongMapMarker({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
   const handleGetCursor = useCallback(
-    ({ isHovering, isDragging }: any) =>
-      isDragging ? 'grabbing' : isHovering ? 'pointer' : 'crosshair',
-    []
+    ({ isHovering, isDragging }: any) => {
+      if (disabled)
+        return isDragging ? 'grabbing' : isHovering ? 'pointer' : 'grabbing';
+      return isDragging ? 'grabbing' : isHovering ? 'pointer' : 'crosshair';
+    },
+    [disabled]
   );
 
   useEffect(() => {
@@ -72,6 +77,7 @@ export default function GoongMapMarker({
   }, []);
 
   const handleClick = (e: MapEvent) => {
+    if (disabled) return;
     const { lngLat } = e;
     const [lon, lat] = lngLat;
     const coords = { lat, long: lon };

@@ -78,6 +78,7 @@
   --cyan-1: oklch(0.6407 0.1081 203.59);
   --calendar-table-select: oklch(0.9778 0.0117 239.9);
   --gray-1: oklch(0.9791 0 0);
+  --gray-2: oklch(0.9427 0.0058 264.53);
   --orange-1: oklch(0.9892 0.0102 81.8);
   --blue-1: oklch(0.9823 0.0143 213.1);
   --green-1: oklch(0.985 0.0267 140.18);
@@ -194,6 +195,7 @@
   --color-calendar-table-children: var(--calendar-table-children);
   --color-cyan-1: var(--cyan-1);
   --color-gray-1: var(--gray-1);
+  --color-gray-2: var(--gray-2);
   --color-orange-1: var(--orange-1);
   --color-blue-1: var(--blue-1);
   --color-green-1: var(--green-1);

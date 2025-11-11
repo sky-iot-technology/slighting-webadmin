@@ -33,7 +33,7 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
 
   const filters: GetDeivceCalendarsParamsDto = {
     page: page ? parseInt(page) : 1,
-    limit: pageLimit ? parseInt(pageLimit) : 20,
+    limit: pageLimit ? parseInt(pageLimit) : 10,
     start_range: startDate ?? undefined,
     end_range: endDate ?? undefined,
     group: findNodeId(treeData, group ?? '') ?? undefined,

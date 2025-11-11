@@ -37,7 +37,7 @@ export function DataTableToolbar<TData>({
       role='toolbar'
       aria-orientation='horizontal'
       className={cn(
-        'flex w-full items-start justify-between gap-2 p-1',
+        'flex w-full items-center justify-between gap-2',
         className
       )}
       {...props}
@@ -69,7 +69,7 @@ interface DataTableCustomToolbar<TData> extends React.ComponentProps<'div'> {
   onDeleteAll?: (selectedRows: TData[]) => Promise<void> | void;
 }
 
-export function DataTableCalendarToolbar<TData>({
+export function DataTableCustomToolbar<TData>({
   table,
   children,
   className,
@@ -84,14 +84,40 @@ export function DataTableCalendarToolbar<TData>({
     [table]
   );
 
+  const rangePairs = React.useMemo(() => {
+    const groups: Record<
+      string,
+      { from?: Column<TData, unknown>; to?: Column<TData, unknown> }
+    > = {};
+
+    columns.forEach((col) => {
+      const meta: any = col.columnDef.meta;
+      if (!meta) return;
+
+      if (meta.variant === 'dateRangeFrom') {
+        const key = meta.rangeGroup ?? col.id;
+        groups[key] ??= {};
+        groups[key].from = col;
+      }
+
+      if (meta.variant === 'dateRangeTo') {
+        const key = meta.rangeGroup ?? col.id;
+        groups[key] ??= {};
+        groups[key].to = col;
+      }
+    });
+
+    return Object.entries(groups)
+      .filter(([, v]) => v.from)
+      .map(([key, v]) => ({ key, ...v }));
+  }, [columns]);
+
   const onReset = React.useCallback(() => {
     table.resetColumnFilters();
   }, [table]);
 
-  const startColumn = table.getColumn('startDate');
-  const endColumn = table.getColumn('endDate');
   const isFiltered = table.getState().columnFilters.length > 0;
-
+  console.log(rangePairs);
   return (
     <div
       role='toolbar'
@@ -103,20 +129,37 @@ export function DataTableCalendarToolbar<TData>({
       {...props}
     >
       <div className='flex flex-1 flex-wrap items-center justify-end gap-2'>
-        {/* Nút mở bộ lọc */}
         {columns
           .filter((col) => col.id === 'name')
           .map((column) => (
             <DataTableToolbarFilter key={column.id} column={column} />
           ))}
 
-        {startColumn && endColumn && (
-          <CalendarRangeFilter
-            key='dateRange'
-            startColumn={startColumn}
-            endColumn={endColumn}
-          />
+        {columns.map((column) => {
+          const meta: any = column.columnDef.meta;
+
+          if (
+            meta?.variant === 'dateRangeFrom' ||
+            meta?.variant === 'dateRangeTo'
+          ) {
+            return null;
+          }
+
+          if (meta?.variant === 'dateRangeSingle') {
+            return <CalendarRangeFilter key={column.id} startColumn={column} />;
+          }
+        })}
+
+        {rangePairs.map(({ key, from, to }) =>
+          from ? (
+            <CalendarRangeFilter
+              key={`date-range-${key}`}
+              startColumn={from}
+              endColumn={to}
+            />
+          ) : null
         )}
+
         {isFiltered && (
           <Button
             aria-label='Reset filters'

@@ -58,7 +58,15 @@ export const navItems: NavItem[] = [
     icon: 'calendar',
     shortcut: ['p', 'p'],
     isActive: false,
-    items: [] // No child items
+    items: []
+  },
+  {
+    title: 'Maintenance',
+    url: '/dashboard/maintenance',
+    icon: 'maintenance',
+    shortcut: ['m', 'm'],
+    isActive: false,
+    items: []
   },
   {
     title: 'Account',

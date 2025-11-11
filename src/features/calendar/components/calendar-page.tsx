@@ -29,7 +29,7 @@ export default function CalendarPage() {
   const filters = useMemo<GetCalendarsParamsDto>(
     () => ({
       page: page ? parseInt(page.toString()) : 1,
-      limit: pageLimit ? parseInt(pageLimit.toString()) : 20,
+      limit: pageLimit ? parseInt(pageLimit.toString()) : 10,
       start_range: startDate ?? undefined,
       end_range: endDate ?? undefined,
       ...(search && { name: search })
@@ -49,7 +49,7 @@ export default function CalendarPage() {
       }
       router.push(newUrl.toString());
     },
-    [pathname, router, selectedRegion?.id]
+    [pathname, router, selectedRegion]
   );
 
   const handleToggleSidebar = useCallback(() => {

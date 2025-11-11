@@ -2,7 +2,7 @@
 
 import { DataTable } from '@/ui/components/ui/table/data-table';
 import {
-  DataTableCalendarToolbar,
+  DataTableCustomToolbar,
   DataTableToolbar
 } from '@/ui/components/ui/table/data-table-toolbar';
 import { useDataTable } from '@/core/shared/hooks/use-data-table';
@@ -111,14 +111,14 @@ export function CalendarTable<TData, TValue>({
           </Badge>
         )}
 
-        <DataTableCalendarToolbar
+        <DataTableCustomToolbar
           table={table}
           className='w-auto flex-1'
           actions={
             <Button
               variant='default'
               size='sm'
-              className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+              className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
               onClick={() => setOpen(true)}
             >
               <IconPlus className='h-3 w-3' />
