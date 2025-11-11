@@ -200,6 +200,13 @@ export default function GoongMap({
             setIsMapLoading(false);
           });
         }}
+        getCursor={(state: any) => {
+          return state.isDragging
+            ? 'grabbing'
+            : state.isHovering
+              ? 'pointer'
+              : 'crosshair';
+        }}
       >
         <ScaleControl {...scaleControlProps} />
       </ReactMapGL>

@@ -66,9 +66,14 @@ export const authApi = {
   },
 
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    const response = await authenticatedApi.post<AuthResponse>(
+    const response = await publicApi.post<AuthResponse>(
       `/users/tokens/refresh`,
-      { refreshToken }
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${refreshToken}`
+        }
+      }
     );
 
     // Update cookies with new tokens

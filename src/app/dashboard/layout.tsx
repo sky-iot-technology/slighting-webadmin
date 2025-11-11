@@ -5,6 +5,7 @@ import { ProtectedRoute } from '@/core/shared/components/protected-route';
 import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { BootstrapProviders } from './bootstrap/bootstrap-providers';
+import { BreadcrumbsProvider } from '@/core/shared/context/breadcrumbs-context';
 
 export const metadata: Metadata = {
   title: 'Next Shadcn Dashboard Starter',
@@ -22,16 +23,18 @@ export default async function DashboardLayout({
 
   return (
     <ProtectedRoute>
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <BootstrapProviders />
-        <AppSidebar />
-        <SidebarInset>
-          <Header />
-          {/* page main content */}
-          {children}
-          {/* page main content ends */}
-        </SidebarInset>
-      </SidebarProvider>
+      <BreadcrumbsProvider>
+        <SidebarProvider defaultOpen={defaultOpen}>
+          <BootstrapProviders />
+          <AppSidebar />
+          <SidebarInset>
+            <Header />
+            {/* page main content */}
+            {children}
+            {/* page main content ends */}
+          </SidebarInset>
+        </SidebarProvider>
+      </BreadcrumbsProvider>
     </ProtectedRoute>
   );
 }

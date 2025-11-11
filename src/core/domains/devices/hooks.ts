@@ -274,3 +274,32 @@ export const useDeleteDeviceParent = (
     }
   });
 };
+
+// Hook for getting device count by online status
+export const useGetDeviceCount = (
+  online?: boolean,
+  options?: Omit<
+    UseQueryOptions<
+      DeviceListResponseDto,
+      Error,
+      DeviceListResponseDto,
+      readonly [string, string, boolean | undefined]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    DeviceListResponseDto,
+    Error,
+    DeviceListResponseDto,
+    readonly [string, string, boolean | undefined]
+  >({
+    queryKey: [DEVICES_QUERY_KEY, 'count', online],
+    queryFn: () =>
+      devicesApi.getAll({
+        only_total: true,
+        metadata: `{ "device_info": { "online": ${online ? 'true' : 'false'} } }`
+      }),
+    ...options
+  });
+};

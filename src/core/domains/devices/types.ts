@@ -11,7 +11,7 @@ export interface Device extends BaseEntity {
   domain_id: string;
   parent_group_id: string;
   device_info: DeviceInfo;
-  device_asset: DeviceAsset;
+  device_asset?: DeviceAsset;
   product_info: ProductInfo[];
   devices: SubDevice[];
   updated_by: string;
@@ -76,6 +76,30 @@ export interface ProductInfo {
   value: string;
   type: string;
   unit: string;
+}
+
+export interface AssetAttribute {
+  index: number;
+  is_disabled: boolean;
+  identify: string;
+  attr: string;
+  type: number; // 1: text, 2: date, 3: number
+  content: string | number | null;
+  reminder_ids?: string[];
+}
+
+export interface DeviceAsset {
+  id: string;
+  name: string;
+  group?: string;
+  organization?: string;
+  category_type?: string;
+  asset_status?: string;
+  asset_number?: string;
+  asset_attribute?: AssetAttribute[];
+  created_at?: string;
+  created_by?: string;
+  updated_at?: string;
 }
 
 export interface SubDeviceLastState {
