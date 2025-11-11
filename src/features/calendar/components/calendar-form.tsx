@@ -121,7 +121,7 @@ export default function CalendarForm({
     .map(([_, value]) => value as SubCatalogueDevice);
 
   return (
-    <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
+    <CustomScrollbar className='h-full flex-1 overflow-y-auto p-5.5 sm:p-6'>
       <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>

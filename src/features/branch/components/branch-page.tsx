@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BranchSidebar } from './branch-sidebar';
 import { Device, useGetDevices } from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
@@ -19,6 +19,8 @@ import { IconPlus } from '@tabler/icons-react';
 import BranchAddDevice from './modal/branch-add-device';
 import GoongMap from '@/ui/business/map/goong-map';
 import { useDeviceFiltersFromParams } from '../hook/device-filter';
+import { usePathname, useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function BranchPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -34,13 +36,18 @@ export default function BranchPage() {
 
   const filters = useDeviceFiltersFromParams();
 
+  const router = useRouter();
+
   const handleToggleSidebar = useCallback(() => {
     setTreeOpen((prev) => !prev);
   }, []);
 
   const handleRegionChange = useCallback(
     (region: SelectedRegion) => {
+      const { pathname } = window.location;
+      const newUrl = new URL(pathname, window.location.origin);
       setSelectedRegion(region);
+      router.push(newUrl.toString());
     },
     [selectedRegion?.id]
   );
@@ -74,54 +81,74 @@ export default function BranchPage() {
     );
   }, [selectedRegion?.id, data?.total, devices, catalogues, treeData]);
 
+  useEffect(() => {
+    if (treeData?.length && !selectedRegion) {
+      setSelectedRegion({
+        id: treeData[0].id,
+        name: treeData[0].name
+      });
+    }
+  }, [treeData, selectedRegion]);
+
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
       <div className='h-full w-full rounded-[4px] pb-[7px]'>
         <div className='flex h-full w-full'>
           <div
-            className={`rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-14'}`}
+            className={`overflow-hidden rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-0'}`}
           >
             <BranchSidebar
               selectedRegion={selectedRegion}
               onRegionChange={handleRegionChange}
-              isSidebarOpen={treeOpen}
-              onToggleSidebar={handleToggleSidebar}
             />
           </div>
-
-          <div
-            className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pl-1.5'
-            ref={containerRef}
-          >
-            <div className='pt-3'>
+          <div className='flex w-full flex-col'>
+            <div className='bg-white py-[6px]'>
               {selectedRegion && (
-                <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-2'>
-                  <Tabs
-                    value={activeTab}
-                    onValueChange={setActiveTab}
-                    className='w-full flex-shrink-0 sm:w-auto'
-                  >
-                    <TabsList className='flex gap-2.5 !bg-none text-[14px] font-medium'>
-                      <TabsTrigger
-                        value='detail'
-                        className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                      >
-                        Chi tiết
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value='devices'
-                        className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                      >
-                        Thiết bị
-                      </TabsTrigger>
-                      <TabsTrigger
-                        value='config'
-                        className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                      >
-                        Cấu hình
-                      </TabsTrigger>
-                    </TabsList>
-                  </Tabs>
+                <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
+                  <div className='flex items-center gap-2'>
+                    <button
+                      onClick={handleToggleSidebar}
+                      className='cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                    >
+                      <Image
+                        src={
+                          treeOpen
+                            ? '/assets/icons/chevronLeft.svg'
+                            : '/assets/icons/chevronRight.svg'
+                        }
+                        alt='toggle'
+                        width={5}
+                        height={9}
+                      />
+                    </button>
+                    <Tabs
+                      value={activeTab}
+                      onValueChange={setActiveTab}
+                      className='w-full flex-shrink-0 sm:w-auto'
+                    >
+                      <TabsList className='flex bg-transparent text-[14px] font-medium'>
+                        <TabsTrigger
+                          value='detail'
+                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                        >
+                          Chi tiết
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value='devices'
+                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                        >
+                          Thiết bị
+                        </TabsTrigger>
+                        <TabsTrigger
+                          value='config'
+                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                        >
+                          Cấu hình
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
 
                   {(() => {
                     if (activeTab === 'devices' && deviceTable) {
@@ -135,7 +162,7 @@ export default function BranchPage() {
                                 <Button
                                   variant='default'
                                   size='sm'
-                                  className='bg-primary hover:bg-primary/90 flex items-center rounded-[4px] !px-3 text-white'
+                                  className='bg-primary hover:bg-primary/90 flex h-7.5 w-7.5 items-center rounded-[4px] !px-3 text-white'
                                   onClick={() => setOpen(true)}
                                 >
                                   <IconPlus className='h-4 w-4' />
@@ -160,33 +187,38 @@ export default function BranchPage() {
               )}
             </div>
 
-            {activeTab === 'detail' && selectedRegion ? (
-              <BranchDetailTab
-                selectedRegionId={selectedRegion?.id}
-                treeData={treeData}
-                group={group}
-                devices={devices}
-                isLoading={isLoading}
-                isFetching={isFetching}
-                selectedDevice={selectedDevice}
-              />
-            ) : activeTab === 'devices' && selectedRegion ? (
-              devicesTableMemo
-            ) : activeTab === 'config' && selectedRegion ? (
-              <div className='relative mt-3 h-full w-full min-w-0 overflow-hidden rounded-[8px] bg-white px-2.5 py-3'>
-                <BranchConfigTab />
-              </div>
-            ) : (
-              <div className='relative mt-3 h-full w-full min-w-0 overflow-hidden rounded-[8px]'>
-                <GoongMap
-                  selectedRegion={selectedRegion}
+            <div
+              className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pt-3 pl-3'
+              ref={containerRef}
+            >
+              {activeTab === 'detail' && selectedRegion ? (
+                <BranchDetailTab
+                  selectedRegionId={selectedRegion?.id}
+                  treeData={treeData}
+                  group={group}
                   devices={devices}
                   isLoading={isLoading}
                   isFetching={isFetching}
                   selectedDevice={selectedDevice}
                 />
-              </div>
-            )}
+              ) : activeTab === 'devices' && selectedRegion ? (
+                devicesTableMemo
+              ) : activeTab === 'config' && selectedRegion ? (
+                <div className='relative h-full w-full min-w-0 overflow-hidden rounded-[8px] bg-white px-2.5 py-3'>
+                  <BranchConfigTab />
+                </div>
+              ) : (
+                <div className='relative mt-3 h-full w-full min-w-0 overflow-hidden rounded-[8px]'>
+                  <GoongMap
+                    selectedRegion={selectedRegion}
+                    devices={devices}
+                    isLoading={isLoading}
+                    isFetching={isFetching}
+                    selectedDevice={selectedDevice}
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

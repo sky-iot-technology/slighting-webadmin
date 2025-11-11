@@ -186,7 +186,8 @@ export const columns: ColumnDef<Calendar>[] = [
     header: 'Ngày bắt đầu',
     meta: {
       label: '',
-      variant: 'dateRange'
+      variant: 'dateRangeFrom',
+      rangeGroup: 'scheduleDate'
     },
     enableColumnFilter: true,
     cell: ({ row }) => {
@@ -207,6 +208,11 @@ export const columns: ColumnDef<Calendar>[] = [
         row.original.schedules[0].end_datetime.replace(/Z$/, '')
       );
       return <div>{date}</div>;
+    },
+    meta: {
+      label: '',
+      variant: 'dateRangeTo',
+      rangeGroup: 'scheduleDate'
     },
     enableColumnFilter: true
   },

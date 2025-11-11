@@ -1,7 +1,6 @@
 'use client';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { Button } from '@/ui/components/ui/button';
-import Image from 'next/image';
 import { memo, useState } from 'react';
 import BranchDialog from './modal/branch-dialog';
 import TreeSidebar from '@/ui/business/tree/TreeSidebar';
@@ -10,43 +9,25 @@ import { IconPlus } from '@tabler/icons-react';
 interface BranchSidebarProps {
   selectedRegion: SelectedRegion | null;
   onRegionChange: (region: SelectedRegion) => void;
-  isSidebarOpen: boolean;
-  onToggleSidebar: () => void;
 }
 
 export const BranchSidebar = memo(function BranchSidebar({
   selectedRegion,
-  onRegionChange,
-  isSidebarOpen,
-  onToggleSidebar
+  onRegionChange
 }: BranchSidebarProps) {
   const [openNew, setOpenNew] = useState(false);
   return (
-    <div className={`flex h-full flex-col pt-1.5 pr-[9px] pl-2`}>
+    <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
       <div
-        className={`mb-2 flex h-[31px] items-center gap-3.5 rounded-[6px] px-2 ${isSidebarOpen ? 'justify-end' : 'justify-start'}`}
+        className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
       >
-        {isSidebarOpen && (
-          <Button className='h-7 text-xs' onClick={() => setOpenNew(!openNew)}>
-            <IconPlus className='h-3 w-3' />
-            Thêm chi nhánh
-          </Button>
-        )}
-        <button
-          onClick={onToggleSidebar}
-          className='cursor-pointer rounded p-1 hover:bg-gray-100'
+        <Button
+          className='h-7.5 w-[121px] gap-1 text-xs'
+          onClick={() => setOpenNew(!openNew)}
         >
-          <Image
-            src={
-              isSidebarOpen
-                ? '/assets/icons/chevronLeft.svg'
-                : '/assets/icons/chevronRight.svg'
-            }
-            alt='toggle'
-            width={5}
-            height={9}
-          />
-        </button>
+          <IconPlus className='h-3 w-3' />
+          Thêm chi nhánh
+        </Button>
       </div>
       <TreeSidebar
         selectedRegion={selectedRegion}

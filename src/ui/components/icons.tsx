@@ -75,8 +75,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/maintenance.svg'}
       alt='maintenance'
-      width={24}
-      height={24}
+      width={20}
+      height={20}
       className='dark:invert'
     />
   ),
@@ -84,8 +84,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/map.svg'}
       alt='map'
-      width={16}
-      height={16}
+      width={19}
+      height={19}
       className='dark:invert'
     />
   ),
@@ -94,8 +94,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/calendar.svg'}
       alt='calendar'
-      width={13}
-      height={13}
+      width={19}
+      height={19}
       className='dark:invert'
     />
   ),

@@ -102,31 +102,36 @@ export default function CalendarDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
-      <DialogContent className='w-[417px] rounded-xl p-0' hideCloseButton>
-        {step === 1 && (
-          <CalendarForm
-            initialData={initialFormData as Partial<Calendar>}
-            formData={formData}
-            pageTitle={pageTitle}
-            onNext={handleNext}
-            onClose={() => onOpenChange && onOpenChange(false)}
-            isEditMode={isEditMode}
-          />
-        )}
-        {step === 2 && formData && (
-          <CalendarConfirm
-            data={formData}
-            onBack={handleBack}
-            onConfirm={() => {
-              const dto = mapFormToCreateCalendarDto(formData);
-              if (isEditMode && calendarId) {
-                updateCalendar.mutate({ id: calendarId, data: dto });
-              } else {
-                createCalendar.mutate(dto);
-              }
-            }}
-          />
-        )}
+      <DialogContent
+        className='flex max-h-[90vh] w-[417px] flex-col rounded-xl p-0'
+        hideCloseButton
+      >
+        <div className='flex min-h-0 flex-1 flex-col'>
+          {step === 1 && (
+            <CalendarForm
+              initialData={initialFormData as Partial<Calendar>}
+              formData={formData}
+              pageTitle={pageTitle}
+              onNext={handleNext}
+              onClose={() => onOpenChange && onOpenChange(false)}
+              isEditMode={isEditMode}
+            />
+          )}
+          {step === 2 && formData && (
+            <CalendarConfirm
+              data={formData}
+              onBack={handleBack}
+              onConfirm={() => {
+                const dto = mapFormToCreateCalendarDto(formData);
+                if (isEditMode && calendarId) {
+                  updateCalendar.mutate({ id: calendarId, data: dto });
+                } else {
+                  createCalendar.mutate(dto);
+                }
+              }}
+            />
+          )}
+        </div>
       </DialogContent>
     </Dialog>
   );

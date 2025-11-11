@@ -31,7 +31,7 @@ export function BranchDetailTab({
 
   return (
     <div
-      className={`mt-3 grid w-full flex-1 grid-cols-[var(--sidebar-width,285px)_1fr] gap-1 overflow-hidden rounded-[8px] transition-all duration-200 ease-in-out`}
+      className={`grid w-full flex-1 grid-cols-[var(--sidebar-width,285px)_1fr] gap-1 overflow-hidden rounded-[8px] transition-all duration-200 ease-in-out`}
       style={
         {
           '--sidebar-width': hasRegion ? '285px' : '0px'
