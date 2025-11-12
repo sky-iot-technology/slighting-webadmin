@@ -214,7 +214,7 @@ function isFieldRequired(schema: z.ZodObject<any>, fieldName: string): boolean {
     // Check if the field is optional
     return !isOptionalField(fieldSchema);
   } catch (error) {
-    console.error(`Error checking if field ${fieldName} is required:`, error);
+    // Silently fail - field will be treated as not required
     return false;
   }
 }
@@ -224,6 +224,18 @@ function isOptionalField(fieldSchema: any): boolean {
   // If the field is wrapped with .optional()
   if (fieldSchema._def?.typeName === 'ZodOptional') {
     return true;
+  }
+
+  // Handle ZodEffects (transformations, refinements, etc.) by checking the inner schema
+  if (
+    fieldSchema._def?.typeName === 'ZodEffects' ||
+    fieldSchema._def?.typeName === 'ZodDefault'
+  ) {
+    // Check the inner type/schema
+    const innerSchema = fieldSchema._def.schema || fieldSchema._def.innerType;
+    if (innerSchema) {
+      return isOptionalField(innerSchema);
+    }
   }
 
   // If the field is nullable but not optional

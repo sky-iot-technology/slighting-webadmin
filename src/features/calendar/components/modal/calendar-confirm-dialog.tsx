@@ -18,7 +18,7 @@ type Props = {
 
 export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
   return (
-    <div className='mt-2 space-y-3.5 p-5.5 text-xs font-bold text-black'>
+    <div className='space-y-3.5 p-5.5 text-xs font-bold text-black'>
       <h3 className='text-primary text-left text-base font-bold'>
         Xác nhận lịch
       </h3>

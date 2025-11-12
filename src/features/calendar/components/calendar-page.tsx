@@ -6,6 +6,7 @@ import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { CalendarContent } from './calendar-content';
 import { CalendarSidebar } from './calendar-sidebar';
+import { cn } from '@/lib/utils';
 
 export default function CalendarPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -60,9 +61,15 @@ export default function CalendarPage() {
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
       <div className='bg-calender-gray h-full w-full rounded-[4px] pb-[7px]'>
         <div className='flex h-full w-full'>
-          {/* Sidebar con (Tree) */}
           <div
-            className={`rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-0'}`}
+            className={cn(
+              'bg-white transition-all duration-300 ease-in-out',
+              'overflow-hidden rounded-[1px_1px_4px_4px]',
+              'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full md:static md:z-auto md:translate-x-0',
+              'md:w-64 md:overflow-visible',
+              treeOpen && 'translate-x-0 md:w-64',
+              !treeOpen && 'md:w-0'
+            )}
           >
             {treeOpen && (
               <CalendarSidebar
@@ -73,6 +80,13 @@ export default function CalendarPage() {
               />
             )}
           </div>
+
+          {treeOpen && (
+            <div
+              className='fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden'
+              onClick={() => setTreeOpen(false)}
+            />
+          )}
 
           <div className='flex flex-1 flex-col bg-white' ref={containerRef}>
             <CalendarContent

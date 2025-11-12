@@ -143,11 +143,9 @@ export function DataTable<TData>({
             </ScrollArea>
           </div>
         </div>
+        {actionBar && <div className='flex flex-col gap-2.5'>{actionBar}</div>}
         <div className={cn('flex flex-col gap-2.5', paginationClassName)}>
           <DataTablePagination table={table} totalRows={totalRows} />
-          {actionBar &&
-            table.getFilteredSelectedRowModel().rows.length > 0 &&
-            actionBar}
         </div>
       </div>
     </div>

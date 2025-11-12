@@ -51,6 +51,7 @@ export function SignInForm() {
                   {...field}
                   type='text'
                   placeholder='Nhập tên đăng nhập'
+                  className='h-13 rounded-full'
                 />
               </FormControl>
               <FormMessage />
@@ -70,6 +71,7 @@ export function SignInForm() {
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                     placeholder='Nhập mật khẩu'
+                    className='h-13 rounded-full'
                   />
                   <button
                     type='button'

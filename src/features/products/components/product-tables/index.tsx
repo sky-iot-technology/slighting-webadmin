@@ -7,24 +7,29 @@ import { DataTable } from '@/ui/components/ui/table/data-table';
 import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useState } from 'react';
 
+import { Button } from '@/ui/components/ui/button';
+import { IconPlus } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
 import { parseAsInteger, useQueryState } from 'nuqs';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
+  actionBar?: React.ReactNode;
 }
 
 export function ProductTable<TData, TValue>({
   data,
   totalItems,
-  columns
+  columns,
+  actionBar
 }: ProductTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
+  const router = useRouter();
   const pageCount = Math.ceil(totalItems / pageSize);
 
   const { table } = useDataTable({
@@ -68,8 +73,36 @@ export function ProductTable<TData, TValue>({
   };
 
   return (
-    <DataTable table={table} totalRows={totalItems}>
-      <DataTableToolbar table={table} />
+    <DataTable
+      table={table}
+      totalRows={totalItems}
+      // wrapperClassName='mx-1 mt-1 rounded-none'
+      tableContainerClassName='border-none rounded-none'
+      // paginationClassName='py-3'
+      headerClassName='bg-white border-t-1'
+      actionBar={actionBar}
+    >
+      {/* <DataTableToolbar table={table} /> */}
+      <div className='flex items-center gap-2 py-6'>
+        <DataTableToolbar
+          table={table}
+          className='w-auto flex-1'
+          actions={
+            <Button
+              variant='default'
+              size='sm'
+              className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+              onClick={() => {
+                router.push('/dashboard/product/new');
+              }}
+            >
+              <IconPlus className='h-3 w-3' />
+              Thêm
+            </Button>
+          }
+          onDeleteAll={() => console.log('delete product')}
+        />
+      </div>
       <AlertModal
         isOpen={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

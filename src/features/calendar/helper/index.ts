@@ -78,7 +78,6 @@ export function mapFormToCreateCalendarDto(
       : formatLocalToFakeISO(new Date());
     toISO = to ? formatLocalToFakeISO(to, true) : fromISO;
   }
-  console.log(formData.priority);
   return {
     name: formData.name,
     description: formData.description,

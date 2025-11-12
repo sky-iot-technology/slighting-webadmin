@@ -11,7 +11,7 @@ export interface Device extends BaseEntity {
   domain_id: string;
   parent_group_id: string;
   device_info: DeviceInfo;
-  device_asset: DeviceAsset;
+  device_asset?: DeviceAsset;
   product_info: ProductInfo[];
   devices: SubDevice[];
   updated_by: string;
@@ -78,6 +78,30 @@ export interface ProductInfo {
   unit: string;
 }
 
+export interface AssetAttribute {
+  index: number;
+  is_disabled: boolean;
+  identify: string;
+  attr: string;
+  type: number; // 1: text, 2: date, 3: number
+  content: string | number | null;
+  reminder_ids?: string[];
+}
+
+export interface DeviceAsset {
+  id: string;
+  name: string;
+  group?: string;
+  organization?: string;
+  category_type?: string;
+  asset_status?: string;
+  asset_number?: string;
+  asset_attribute?: AssetAttribute[];
+  created_at?: string;
+  created_by?: string;
+  updated_at?: string;
+}
+
 export interface SubDeviceLastState {
   [key: string]: number | string | boolean;
 }
@@ -87,11 +111,18 @@ export interface SubDevice {
   type: string;
   name: string;
   traits: string[];
+  // t: enum class TypeValue{
+  //   Number = 1,
+  //   String,
+  //   ArrayNumber,
+  //   ArrayString
+  // };
   attributes?: Record<
     string,
     {
       n: string; //name
-      u: string; //unit
+      u: string; //unit,
+      t: number; //value
     }
   >;
   last_state?: SubDeviceLastState;
@@ -180,3 +211,14 @@ export type SetDevicesParentGroup = {
   parent_group_id: string;
   device_ids: string[];
 };
+
+export interface DeviceQueryRequest {
+  device_id: string;
+  children_ids: string[] | ['*'];
+  channel_route: string;
+}
+
+export interface DeviceQueryResponse {
+  request_id: string;
+  poll_interval: number;
+}

@@ -110,47 +110,4 @@ export const calendarApi = {
     );
     return response;
   }
-
-  // async getById(id: string): Promise<CalendarDetailResponseDto> {
-  //   const calendar = calendars.find((c) => c.id === id);
-  //   if (!calendar) throw new Error('Calendar not found');
-  //   return {
-  //     calendar,
-  //     related_calendars: calendars.filter(
-  //       (c) => c.type === calendar.type && c.id !== calendar.id
-  //     )
-  //   };
-  // },
-  // async create(data: CreateCalendarDto): Promise<Calendar> {
-  //   const newCalendar: Calendar = {
-  //     id: String(Date.now()),
-  //     name: data.name,
-  //     type: data.type,
-  //     time: data.time,
-  //     status: 'pending', // default status
-  //     startDate: data.startDate,
-  //     endDate: data.endDate,
-  //     createdDate: new Date().toISOString()
-  //   };
-  //   calendars.push(newCalendar);
-  //   return newCalendar;
-  // },
-
-  // /* ✅ Update calendar */
-  // async update(id: string, data: UpdateCalendarDto): Promise<Calendar> {
-  //   const index = calendars.findIndex((c) => c.id === id);
-  //   if (index === -1) throw new Error('Calendar not found');
-  //   calendars[index] = {
-  //     ...calendars[index],
-  //     ...data
-  //   };
-  //   return calendars[index];
-  // },
-
-  // /* ✅ Delete calendar */
-  // async delete(id: string): Promise<void> {
-  //   const index = calendars.findIndex((c) => c.id === id);
-  //   if (index === -1) throw new Error('Calendar not found');
-  //   calendars.splice(index, 1);
-  // }
 };

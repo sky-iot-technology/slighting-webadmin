@@ -1,13 +1,11 @@
-import {
-  publicApi,
-  authenticatedApi,
-  type ApiRequestConfig
-} from '@/core/shared/api';
+import { authenticatedApi } from '@/core/shared/api';
 import {
   Device,
   DeviceCommandRequest,
   DeviceExecuteResponse,
   DeviceListResponseDto,
+  DeviceQueryRequest,
+  DeviceQueryResponse,
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
@@ -17,7 +15,7 @@ import {
 
 export const devicesApi = {
   async getAll(params?: GetDevicesParamsDto): Promise<DeviceListResponseDto> {
-    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const { page = 1, limit = 20 } = params ?? {};
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<DeviceListResponseDto>(
       `/devices/things`,
@@ -63,7 +61,6 @@ export const devicesApi = {
         body
       );
     } catch (error) {
-      console.log(error);
       throw new Error(`Something wrong`);
     }
   },
@@ -143,6 +140,28 @@ export const devicesApi = {
     } catch (error: any) {
       console.error('❌ deleteDeviceParent error:', error.message);
       throw new Error(error);
+    }
+  },
+
+  async createDevice(deviceData: any): Promise<Device> {
+    try {
+      return await authenticatedApi.post<Device>(
+        `/devices/things/object`,
+        deviceData
+      );
+    } catch (error) {
+      throw new Error('Failed to create device');
+    }
+  },
+
+  async queryDevices(data: DeviceQueryRequest): Promise<DeviceQueryResponse> {
+    try {
+      return await authenticatedApi.post<DeviceQueryResponse>(
+        `/devices/things/query`,
+        data
+      );
+    } catch (error) {
+      throw new Error('Failed to query devices');
     }
   }
 };
