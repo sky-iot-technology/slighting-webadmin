@@ -8,18 +8,18 @@ import { ColumnDef, getExpandedRowModel, Table } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import React from 'react';
 
-interface BranchTableParams<TData, TValue> {
+interface departmentTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
   onTableReady?: (table: Table<TData>) => void;
 }
-export function BranchTable<TData, TValue>({
+export function DepartmentTable<TData, TValue>({
   data,
   totalItems,
   columns,
   onTableReady
-}: BranchTableParams<TData, TValue>) {
+}: departmentTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
   const pageCount = Math.ceil(totalItems / pageSize);
@@ -50,7 +50,7 @@ export function BranchTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className=''
+      className='mt-3'
       wrapperClassName='rounded-[8px]'
       tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
       paginationClassName='py-3'

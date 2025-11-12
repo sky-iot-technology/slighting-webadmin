@@ -89,7 +89,6 @@ export const Icons = {
       className='dark:invert'
     />
   ),
-  role: IconShieldCheck,
   calendar: () => (
     <Image
       src={'/assets/icons/calendar.svg'}
@@ -112,6 +111,24 @@ export const Icons = {
     <Image
       src={'/assets/icons/branch.svg'}
       alt='branch'
+      width={14}
+      height={14}
+      className='dark:invert'
+    />
+  ),
+  organization: () => (
+    <Image
+      src={'/assets/icons/organization.svg'}
+      alt='organization'
+      width={20}
+      height={20}
+      className='dark:invert'
+    />
+  ),
+  role: () => (
+    <Image
+      src={'/assets/icons/role.svg'}
+      alt='role'
       width={14}
       height={14}
       className='dark:invert'

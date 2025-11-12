@@ -31,7 +31,7 @@ export function BranchDetailTab({
 
   return (
     <div
-      className={`grid w-full flex-1 grid-cols-[var(--sidebar-width,285px)_1fr] gap-1 overflow-hidden rounded-[8px] transition-all duration-200 ease-in-out`}
+      className={`grid w-full flex-1 grid-cols-[var(--sidebar-width,285px)_1fr] overflow-hidden rounded-[8px] transition-all duration-200 ease-in-out`}
       style={
         {
           '--sidebar-width': hasRegion ? '285px' : '0px'
@@ -39,11 +39,11 @@ export function BranchDetailTab({
       }
     >
       <div
-        className={`h-full w-[285px] rounded-[8px] bg-white px-6 py-5 transition-all duration-300 ease-in-out ${hasRegion ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'} `}
+        className={`h-full w-[285px] rounded-l-[4px] bg-white px-6 pt-3 pb-5 transition-all duration-300 ease-in-out ${hasRegion ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'} `}
       >
         <div className='flex flex-col gap-5 text-xs'>
           <div className='flex items-center justify-between'>
-            <span className='text-[16px] font-bold'>Thông tin chi nhánh:</span>
+            <span className='text-[16px] font-bold'>Thông tin chi nhánh</span>
             <BranchActionMenu id={selectedRegionId ?? ''} />
           </div>
 
@@ -86,7 +86,7 @@ export function BranchDetailTab({
       </div>
 
       {/* Bản đồ */}
-      <div className='relative h-full w-full min-w-0 overflow-hidden rounded-[8px]'>
+      <div className='relative h-full w-full min-w-0 overflow-hidden rounded-r-[4px]'>
         <GoongMap
           selectedRegion={{
             id: selectedRegionId ?? '',

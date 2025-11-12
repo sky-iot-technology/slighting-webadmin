@@ -1,13 +1,5 @@
-import { CalendarTable } from '@/features/calendar/components/calendar-tables';
-import { columns } from '@/features/calendar/components/calendar-tables/device-calendar-columns';
-import { calendars } from '@/features/calendar/components/fake';
+import RolePage from '@/features/role/components/role-page';
 
 export default function page() {
-  return (
-    <CalendarTable
-      data={calendars}
-      totalItems={calendars.length}
-      columns={columns}
-    />
-  );
+  return <RolePage />;
 }

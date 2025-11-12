@@ -49,6 +49,12 @@ export const navItems: NavItem[] = [
         url: '/dashboard/branch',
         icon: 'branch',
         shortcut: ['m', 'm']
+      },
+      {
+        title: 'Role',
+        url: '/dashboard/role',
+        icon: 'role',
+        shortcut: ['m', 'm']
       }
     ]
   },
@@ -64,6 +70,14 @@ export const navItems: NavItem[] = [
     title: 'Maintenance',
     url: '/dashboard/maintenance',
     icon: 'maintenance',
+    shortcut: ['m', 'm'],
+    isActive: false,
+    items: []
+  },
+  {
+    title: 'Organization',
+    url: '/dashboard/organization',
+    icon: 'organization',
     shortcut: ['m', 'm'],
     isActive: false,
     items: []
@@ -109,14 +123,6 @@ export const navItems: NavItem[] = [
     title: 'Product',
     url: '/dashboard/product',
     icon: 'product',
-    shortcut: ['r', 'r'],
-    isActive: false,
-    items: [] // No child items
-  },
-  {
-    title: 'Role',
-    url: '/dashboard/role',
-    icon: 'role',
     shortcut: ['r', 'r'],
     isActive: false,
     items: [] // No child items

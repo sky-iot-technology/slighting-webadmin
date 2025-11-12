@@ -19,7 +19,7 @@ export const BranchSidebar = memo(function BranchSidebar({
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
       <div
-        className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
+        className={`mb-5 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
       >
         <Button
           className='h-7.5 w-[121px] gap-1 text-xs'
