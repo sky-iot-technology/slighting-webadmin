@@ -5,9 +5,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { WorkOrder } from '@/core/domains/maintenances/types';
 
-export const workorderColumns = (
-  onOpen: (data: WorkOrder) => void
-): ColumnDef<WorkOrder>[] => [
+export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
   // {
   //   id: 'dir',
   //   accessorKey: 'dir',
@@ -135,7 +133,7 @@ export const workorderColumns = (
       const workOrder = row.original;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction data={workOrder} onOpen={onOpen} />}
+          {!isSubRow && <CellAction data={workOrder} id={workOrder.id} />}
         </div>
       );
     }

@@ -21,6 +21,7 @@ import GoongMap from '@/ui/business/map/goong-map';
 import { useDeviceFiltersFromParams } from '../hook/device-filter';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 export default function BranchPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -37,6 +38,17 @@ export default function BranchPage() {
   const filters = useDeviceFiltersFromParams();
 
   const router = useRouter();
+
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>Chi nhánh</span>
+      </div>
+    ),
+    []
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
 
   const handleToggleSidebar = useCallback(() => {
     setTreeOpen((prev) => !prev);

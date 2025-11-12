@@ -1,14 +1,26 @@
 'use client';
 
 import { Skeleton } from '@/ui/components/ui/skeleton';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import MapFilter from './map-filter';
 import { Device, useGetDevices } from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import GoongMap from '@/ui/business/map/goong-map';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 export default function MapContainer() {
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>Bản đồ</span>
+      </div>
+    ),
+    []
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
+
   const [selectedDevice, setSelectedDevice] = useState<{
     device: Device | null;
     ts: number;

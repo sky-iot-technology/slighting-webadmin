@@ -9,10 +9,10 @@ import { useDataTable } from '@/core/shared/hooks/use-data-table';
 
 import { ColumnDef, getExpandedRowModel } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
-import Image from 'next/image';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
+import RoleDialog from '../modal/role-dialog';
 interface RoleTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -75,12 +75,12 @@ export function RoleTable<TData, TValue>({
         excel={false}
         // onDeleteAll={handleDelete}
       />
-      {/* <CalendarDialog
-        pageTitle='Thêm lịch'
+      <RoleDialog
+        pageTitle='Thêm vai trò'
         open={open}
         onOpenChange={setOpen}
-        initialData={{ group_ids: region?.id ? [region.id] : [] }}
-      /> */}
+        // initialData={{ group_ids: region?.id ? [region.id] : [] }}
+      />
     </DataTable>
   );
 }

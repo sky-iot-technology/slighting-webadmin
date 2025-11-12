@@ -32,16 +32,13 @@ import { CalendarRangePicker } from '@/features/calendar/components/calendar-ran
 import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
 import { ImageUpload } from '@/ui/components/image-upload';
+import { useRouter } from 'next/navigation';
 
 type MaintenanceFormProps = {
   pageTitle: string;
-  onClose?: () => void;
 };
 
-export default function WorkorderForm({
-  onClose,
-  pageTitle
-}: MaintenanceFormProps) {
+export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
   //   const defaultValues = useMemo(() => {
   //     return (
   //       formData ??
@@ -63,7 +60,7 @@ export default function WorkorderForm({
   //           }) as z.infer<typeof branchFormSchema>)
   //     );
   //   }, [formData, initialData]);
-
+  const router = useRouter();
   const form = useForm<z.infer<typeof maintenanceWorkFormSchema>>({
     resolver: zodResolver(maintenanceWorkFormSchema)
     // defaultValues
@@ -356,19 +353,13 @@ export default function WorkorderForm({
 
           <div className='mt-2 mr-2.5 mb-3.5 flex h-[30px] items-center justify-end gap-4'>
             <Button
-              onClick={onClose}
+              onClick={() => router.push(`/dashboard/maintenance`)}
               variant={'outline'}
               type='button'
               className='h-full w-16 rounded-[4px] text-xs'
             >
               Đóng
             </Button>
-            {/* <Button
-                            type='submit'
-                            className='h-full w-[136px] rounded-[4px] text-xs'
-                        >
-                            Xác nhận
-                        </Button> */}
           </div>
         </form>
       </Form>

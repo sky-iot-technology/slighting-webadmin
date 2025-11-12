@@ -16,14 +16,14 @@ import { WorkOrder } from '@/core/domains/maintenances/types';
 import WorkorderHistory from '../modal/workorder-history-dialog';
 
 interface CellActionProps {
+  id: string;
   data: WorkOrder;
-  onOpen: (data: WorkOrder) => void;
   disabled?: boolean;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
+  id,
   data,
-  onOpen,
   disabled
 }) => {
   const [open, setOpen] = useState(false);
@@ -32,9 +32,9 @@ export const CellAction: React.FC<CellActionProps> = ({
   const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
 
-  const handleConfirmDelete = () => {
-    if (!data) return;
-  };
+  // const handleConfirmDelete = () => {
+  //   if (!data) return;
+  // };
 
   return (
     <>
@@ -67,7 +67,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           className='flex w-30 flex-col gap-2 p-2'
         >
           <DropdownMenuItem
-            onClick={() => onOpen(data)}
+            onClick={() => router.push(`/dashboard/maintenance/${id}`)}
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>

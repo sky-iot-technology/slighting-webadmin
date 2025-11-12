@@ -19,7 +19,7 @@ import { maintenanceColumns } from './maintenance-tables/columns';
 import MaintenanceDialog from './modal/maintenance-dialog';
 import { WorkorderTable } from './workorder-tables';
 import { workorderColumns } from './workorder-tables/columns';
-import WorkorderForm from './form/workorder-form';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 export default function MaintenancePage() {
   const [activeTab, setActiveTab] = useState<string>('alert');
@@ -29,12 +29,17 @@ export default function MaintenancePage() {
   const [workoderTable, setWorkoderTable] = useState<Table<WorkOrder> | null>(
     null
   );
-  const [viewMode, setViewMode] = useState<'list' | 'form'>('list');
 
-  const handleViewWorkorder = (data: WorkOrder) => {
-    // setSelectedWorkorder(row);
-    setViewMode('form');
-  };
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>Quản lý bảo trì</span>
+      </div>
+    ),
+    []
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
 
   const maintenanceTableMemo = useMemo(() => {
     return (
@@ -52,7 +57,7 @@ export default function MaintenancePage() {
       <WorkorderTable
         data={fakeWorkOrders}
         totalItems={fakeWorkOrders.length}
-        columns={workorderColumns(handleViewWorkorder)}
+        columns={workorderColumns()}
         onTableReady={setWorkoderTable}
       />
     );
@@ -60,77 +65,63 @@ export default function MaintenancePage() {
 
   return (
     <div className='h-full w-full p-3'>
-      <div
-        className={`flex w-full flex-1 flex-col bg-white pt-1 ${viewMode === 'list' ? 'h-full' : 'h-auto'}`}
-      >
-        {viewMode === 'list' && (
-          <>
-            <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
-              <Tabs
-                value={activeTab}
-                onValueChange={setActiveTab}
-                className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
+      <div className={`flex h-full w-full flex-1 flex-col bg-white pt-1`}>
+        <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
+          >
+            <TabsList className='flex !bg-transparent text-[12px]'>
+              <TabsTrigger
+                value='alert'
+                className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
               >
-                <TabsList className='flex !bg-transparent text-[12px]'>
-                  <TabsTrigger
-                    value='alert'
-                    className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                  >
-                    Cảnh báo
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='workorder'
-                    className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                  >
-                    Giao việc
-                  </TabsTrigger>
-                </TabsList>
-              </Tabs>
-              {activeTab === 'alert' && maintenanceTable && (
-                <DataTableCustomToolbar
-                  table={maintenanceTable}
-                  className='w-auto flex-1'
-                  actions={
-                    <Button
-                      variant='default'
-                      size='sm'
-                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center !rounded-[4px] !px-2 text-white'
-                      onClick={() => setOpen(true)}
-                    >
-                      <IconPlus className='h-4 w-4' />
-                      <span className='text-xs'>Tạo công việc</span>
-                    </Button>
-                  }
-                  excel={false}
-                  onDeleteAll={() => alert('Fake delete triggered')}
-                />
-              )}
-              {activeTab === 'workorder' && workoderTable && (
-                <DataTableCustomToolbar
-                  table={workoderTable}
-                  className='w-auto flex-1'
-                  excel={false}
-                  onDeleteAll={() => alert('Fake delete triggered')}
-                />
-              )}
-            </div>
+                Cảnh báo
+              </TabsTrigger>
+              <TabsTrigger
+                value='workorder'
+                className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+              >
+                Giao việc
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          {activeTab === 'alert' && maintenanceTable && (
+            <DataTableCustomToolbar
+              table={maintenanceTable}
+              className='w-auto flex-1'
+              actions={
+                <Button
+                  variant='default'
+                  size='sm'
+                  className='bg-primary hover:bg-primary/90 flex h-7.5 items-center !rounded-[4px] !px-2 text-white'
+                  onClick={() => setOpen(true)}
+                >
+                  <IconPlus className='h-4 w-4' />
+                  <span className='text-xs'>Tạo công việc</span>
+                </Button>
+              }
+              excel={false}
+              onDeleteAll={() => alert('Fake delete triggered')}
+            />
+          )}
+          {activeTab === 'workorder' && workoderTable && (
+            <DataTableCustomToolbar
+              table={workoderTable}
+              className='w-auto flex-1'
+              excel={false}
+              onDeleteAll={() => alert('Fake delete triggered')}
+            />
+          )}
+        </div>
 
-            {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
-            <MaintenanceDialog
-              pageTitle='Yêu cầu công việc'
-              open={open}
-              onOpenChange={setOpen}
-            />
-          </>
-        )}
-        {viewMode === 'form' && (
-          <>
-            <WorkorderForm
-              onClose={() => setViewMode('list')}
-              pageTitle='Chi tiết'
-            />
-          </>
-        )}
+        {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
+        <MaintenanceDialog
+          pageTitle='Yêu cầu công việc'
+          open={open}
+          onOpenChange={setOpen}
+        />
       </div>
     </div>
   );

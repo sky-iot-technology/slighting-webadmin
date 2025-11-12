@@ -7,6 +7,7 @@ import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { CalendarContent } from './calendar-content';
 import { CalendarSidebar } from './calendar-sidebar';
 import { cn } from '@/lib/utils';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 export default function CalendarPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -26,6 +27,17 @@ export default function CalendarPage() {
   const pageLimit = searchParams.get('perPage');
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
+
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>Quản lý lịch</span>
+      </div>
+    ),
+    []
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
 
   const filters = useMemo<GetCalendarsParamsDto>(
     () => ({

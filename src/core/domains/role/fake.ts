@@ -72,3 +72,21 @@ export const fakeRoles: Role[] = [
     note: 'Đảm bảo an ninh, trật tự khu vực làm việc'
   }
 ];
+
+export const uiModules = [
+  {
+    module: 'dashboard',
+    label: 'Dashboard',
+    actions: ['view']
+  },
+  {
+    module: 'device-management',
+    label: 'Quản lý thiết bị',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    module: 'user-management',
+    label: 'Quản lý người dùng',
+    actions: ['view', 'create', 'update', 'delete']
+  }
+] as const;

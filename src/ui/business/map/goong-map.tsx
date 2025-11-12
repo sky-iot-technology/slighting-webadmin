@@ -205,7 +205,7 @@ export default function GoongMap({
             ? 'grabbing'
             : state.isHovering
               ? 'pointer'
-              : 'crosshair';
+              : 'grab';
         }}
       >
         <ScaleControl {...scaleControlProps} />
