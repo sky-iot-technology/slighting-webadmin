@@ -111,11 +111,18 @@ export interface SubDevice {
   type: string;
   name: string;
   traits: string[];
+  // t: enum class TypeValue{
+  //   Number = 1,
+  //   String,
+  //   ArrayNumber,
+  //   ArrayString
+  // };
   attributes?: Record<
     string,
     {
       n: string; //name
-      u: string; //unit
+      u: string; //unit,
+      t: number; //value
     }
   >;
   last_state?: SubDeviceLastState;
@@ -204,3 +211,14 @@ export type SetDevicesParentGroup = {
   parent_group_id: string;
   device_ids: string[];
 };
+
+export interface DeviceQueryRequest {
+  device_id: string;
+  children_ids: string[] | ['*'];
+  channel_route: string;
+}
+
+export interface DeviceQueryResponse {
+  request_id: string;
+  poll_interval: number;
+}

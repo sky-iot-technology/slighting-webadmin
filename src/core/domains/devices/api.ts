@@ -4,6 +4,8 @@ import {
   DeviceCommandRequest,
   DeviceExecuteResponse,
   DeviceListResponseDto,
+  DeviceQueryRequest,
+  DeviceQueryResponse,
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
@@ -13,7 +15,7 @@ import {
 
 export const devicesApi = {
   async getAll(params?: GetDevicesParamsDto): Promise<DeviceListResponseDto> {
-    const { page = 1, limit = 20, ...rest } = params ?? {};
+    const { page = 1, limit = 20 } = params ?? {};
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<DeviceListResponseDto>(
       `/devices/things`,
@@ -149,6 +151,17 @@ export const devicesApi = {
       );
     } catch (error) {
       throw new Error('Failed to create device');
+    }
+  },
+
+  async queryDevices(data: DeviceQueryRequest): Promise<DeviceQueryResponse> {
+    try {
+      return await authenticatedApi.post<DeviceQueryResponse>(
+        `/devices/things/query`,
+        data
+      );
+    } catch (error) {
+      throw new Error('Failed to query devices');
     }
   }
 };

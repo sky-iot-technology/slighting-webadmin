@@ -3,6 +3,7 @@
 import {
   Device,
   SubDevice,
+  useSyncDevices,
   useTurnOnOffLight,
   useSetBrightnessLight
 } from '@/core/domains/devices';
@@ -30,6 +31,14 @@ import { Wrench, RefreshCw } from 'lucide-react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { RequestWatcher } from '@/features/map/components/RequestWatcher';
+import {
+  Select,
+  SelectClear,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/ui/components/ui/select';
 
 interface ActivityTabProps {
   device: Device;
@@ -64,9 +73,18 @@ export function ActivityTab({ device }: ActivityTabProps) {
   const [brightnessMap, setBrightnessMap] = useState<Record<string, number>>(
     {}
   );
-
+  const [selectedDeviceId, setSelectedDeviceId] = useState<string | undefined>(
+    undefined
+  );
+  const [syncRequestId, setSyncRequestId] = useState<string | undefined>(
+    undefined
+  );
+  const [syncPollInterval, setSyncPollInterval] = useState<number | undefined>(
+    undefined
+  );
   const { mutate: toggleDevice } = useTurnOnOffLight();
   const { mutate: setBrightness } = useSetBrightnessLight();
+  const { mutate: syncDevices } = useSyncDevices();
 
   // Get all sub-devices from the device
   const subDevices = useMemo(() => device.devices ?? [], [device]);
@@ -285,20 +303,69 @@ export function ActivityTab({ device }: ActivityTabProps) {
     return pages;
   };
 
+  const handleSyncDevices = () => {
+    const children_ids: string[] =
+      selectedDeviceId === undefined
+        ? allDevices.map((d) => d.device_id)
+        : [selectedDeviceId];
+
+    syncDevices(
+      {
+        device_id: String(device.id),
+        children_ids,
+        channel_route: device.ctrl_channel_id
+      },
+      {
+        onSuccess: (data) => {
+          // Store request_id and poll_interval to start polling
+          setSyncRequestId(data.request_id);
+          setSyncPollInterval(data.poll_interval * 1000); // Convert to milliseconds
+        }
+      }
+    );
+  };
+
+  const handleSyncStopped = (reason: string) => {
+    if (reason === 'completed') {
+      // Device state is already updated via useQueryStatus
+      // The component will re-render automatically when device prop updates
+    }
+    setSyncRequestId(undefined);
+    setSyncPollInterval(undefined);
+  };
+
   return (
     <>
-      <div className='flex justify-end gap-2'>
-        {/* <Select defaultValue='all'>
-          <SelectTrigger className='flex-1'>
-            <SelectValue placeholder='Chọn thiết bị' />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value='all'>Tất cả thiết bị</SelectItem>
-            <SelectItem value='line1'>Line 1</SelectItem>
-            <SelectItem value='line2'>Line 2</SelectItem>
-          </SelectContent>
-        </Select> */}
-        <Button className='bg-[#0859AA] hover:bg-[#064488]'>
+      <div className='flex items-center justify-end gap-2'>
+        <div className='w-50'>
+          <Select
+            value={selectedDeviceId ?? '__all__'}
+            onValueChange={(value) => {
+              setSelectedDeviceId(
+                value === '' || value === '__all__' ? undefined : value
+              );
+            }}
+          >
+            <SelectTrigger className='w-full'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='__all__'>Tất cả thiết bị</SelectItem>
+              {allDevices.map((subDevice) => (
+                <SelectItem
+                  key={subDevice.device_id}
+                  value={subDevice.device_id}
+                >
+                  {subDevice.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button
+          className='bg-[#0859AA] hover:bg-[#064488]'
+          onClick={handleSyncDevices}
+        >
           <RefreshCw className='mr-2 h-4 w-4' />
           Đồng bộ
         </Button>
@@ -553,6 +620,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           <RequestWatcher
             key={deviceId}
             requestId={requestId}
+            deviceId={String(device.id)}
             onStopped={() => {
               setRequests((prev) => {
                 const updated = { ...prev };
@@ -563,6 +631,16 @@ export function ActivityTab({ device }: ActivityTabProps) {
             }}
           />
         ))}
+
+        {/* Request Watcher for sync operation */}
+        {syncRequestId && (
+          <RequestWatcher
+            requestId={syncRequestId}
+            deviceId={String(device.id)}
+            pollInterval={syncPollInterval}
+            onStopped={handleSyncStopped}
+          />
+        )}
       </div>
     </>
   );

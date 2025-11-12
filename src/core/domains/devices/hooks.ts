@@ -9,6 +9,8 @@ import {
   Device,
   DeviceExecuteResponse,
   DeviceListResponseDto,
+  DeviceQueryRequest,
+  DeviceQueryResponse,
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
@@ -143,8 +145,9 @@ export const useCreateDevice = (
 
 export const useQueryStatus = (
   requestId: string,
-  // deviceId: string,
-  onStopped: (reason: string) => void,
+  deviceId?: string,
+  onStopped?: (reason: string) => void,
+  pollInterval?: number,
   options?: Omit<
     UseQueryOptions<
       DeviceRequestResponse,
@@ -156,12 +159,27 @@ export const useQueryStatus = (
   >
 ) => {
   const queryClient = useQueryClient();
-  let attempt = useRef(0);
-  const MAX_ATTEMPTS = 10;
+  const attempt = useRef(0);
+  const hasStopped = useRef(false);
+  const MAX_ATTEMPTS = 100; // Increased for longer polling
+  const pollIntervalRef = useRef(pollInterval || 3000);
+  const onStoppedRef = useRef(onStopped);
+
+  // Update ref when callback changes
+  useEffect(() => {
+    onStoppedRef.current = onStopped;
+  }, [onStopped]);
 
   useEffect(() => {
     attempt.current = 0;
+    hasStopped.current = false;
   }, [requestId]);
+
+  useEffect(() => {
+    if (pollInterval) {
+      pollIntervalRef.current = pollInterval;
+    }
+  }, [pollInterval]);
 
   return useQuery<
     DeviceRequestResponse,
@@ -173,12 +191,15 @@ export const useQueryStatus = (
     queryFn: async () => {
       const result = await devicesApi.getRequestById(requestId);
       attempt.current++;
+
       if (result.status === 'completed') {
-        const clientId = result.result.client_id;
+        // Use deviceId if provided, otherwise fall back to client_id from response
+        const targetDeviceId = deviceId || result.result.client_id;
+
         result.result.devices.forEach((device) => {
           if (device.status === 'SUCCESS') {
             queryClient.setQueryData<Device>(
-              [DEVICES_QUERY_KEY, 'detail', clientId],
+              [DEVICES_QUERY_KEY, 'detail', targetDeviceId],
               (old) => {
                 if (!old) return old;
                 return {
@@ -199,22 +220,45 @@ export const useQueryStatus = (
             );
           }
         });
+
+        if (!hasStopped.current) {
+          hasStopped.current = true;
+          onStoppedRef.current?.('completed');
+        }
+      } else if (result.status === 'failed') {
+        if (!hasStopped.current) {
+          hasStopped.current = true;
+          onStoppedRef.current?.('failed');
+        }
       }
+
       return result;
     },
     enabled: !!requestId,
-    refetchInterval: (data: any) => {
-      const status = data.state.data?.status;
-      if (!status) return 500;
+    refetchInterval: (query) => {
+      if (hasStopped.current) {
+        return false;
+      }
+
+      const data = query.state.data;
+      if (!data) {
+        return pollIntervalRef.current;
+      }
+
+      const status = data.status;
       if (status === 'completed' || status === 'failed') {
-        attempt.current = 0;
         return false;
       }
+
       if (attempt.current >= MAX_ATTEMPTS) {
-        onStopped?.('timeout');
+        if (!hasStopped.current) {
+          hasStopped.current = true;
+          onStoppedRef.current?.('timeout');
+        }
         return false;
       }
-      return 500;
+
+      return pollIntervalRef.current;
     },
     gcTime: 0,
     staleTime: 0,
@@ -300,6 +344,25 @@ export const useGetDeviceCount = (
         only_total: true,
         metadata: `{ "device_info": { "online": ${online ? 'true' : 'false'} } }`
       }),
+    ...options
+  });
+};
+
+// Hook for syncing devices
+export const useSyncDevices = (
+  options?: UseMutationOptions<DeviceQueryResponse, Error, DeviceQueryRequest>
+) => {
+  return useMutation<DeviceQueryResponse, Error, DeviceQueryRequest>({
+    mutationFn: (data) => devicesApi.queryDevices(data),
+    onSuccess: (data, variables, context) => {
+      toast.success('Đồng bộ thiết bị đã được khởi tạo!');
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to sync devices: ', error);
+      toast.error(error.message || 'Không thể đồng bộ thiết bị');
+      options?.onError?.(error, variables, context);
+    },
     ...options
   });
 };

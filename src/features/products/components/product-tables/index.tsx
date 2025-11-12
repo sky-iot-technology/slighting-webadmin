@@ -4,7 +4,7 @@ import { Product } from '@/core/shared/constants/data';
 import { useDataTable } from '@/core/shared/hooks/use-data-table';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import { DataTable } from '@/ui/components/ui/table/data-table';
-import { DataTableCalendarToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useState } from 'react';
 
 import { Button } from '@/ui/components/ui/button';
@@ -84,7 +84,7 @@ export function ProductTable<TData, TValue>({
     >
       {/* <DataTableToolbar table={table} /> */}
       <div className='flex items-center gap-2 py-6'>
-        <DataTableCalendarToolbar
+        <DataTableToolbar
           table={table}
           className='w-auto flex-1'
           actions={
@@ -100,8 +100,6 @@ export function ProductTable<TData, TValue>({
               Thêm
             </Button>
           }
-          filter={true}
-          excel={false}
           onDeleteAll={() => console.log('delete product')}
         />
       </div>

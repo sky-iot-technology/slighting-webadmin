@@ -57,6 +57,14 @@ export function OverviewTab({ device }: OverviewTabProps) {
     }));
   }, [groupsData]);
 
+  const sensorInfo = useMemo(() => {
+    const sensors = device.devices?.filter(
+      (d) => d.type === 'lms.devices.types.SENSOR'
+    );
+    if (sensors.length === 0) return null;
+    return sensors[0];
+  }, [device]);
+
   // Get device tags (may not be in Device type definition)
   const deviceTags = (device as any).tags as string[] | undefined;
 
@@ -76,7 +84,6 @@ export function OverviewTab({ device }: OverviewTabProps) {
   const getDeviceTypeLabel = (type: string) => {
     // Find the catalogue item that matches the device type
     const catalogue = catalogues.find((cat) => cat.type === type);
-    console.log('🚀 ~ getDeviceTypeLabel ~ catalogues:', catalogues);
     // Return the catalogue name if found, otherwise return the type
     return catalogue?.name || type;
   };
@@ -336,29 +343,50 @@ export function OverviewTab({ device }: OverviewTabProps) {
       </Card>
 
       {/* Limit Parameters Section */}
-      <Card className='border-none p-0 shadow-none'>
-        <Accordion type='single' collapsible className='p-0'>
-          <AccordionItem
-            value='limit-params'
-            className='border-none p-0 shadow-none'
-          >
-            <AccordionTrigger>
-              <CardTitle className='text-base font-bold'>
-                Thông số thiết bị
-              </CardTitle>
-            </AccordionTrigger>
+      {sensorInfo && (
+        <Card className='border-none p-0 shadow-none'>
+          <Accordion type='single' collapsible className='p-0'>
+            <AccordionItem
+              value='limit-params'
+              className='border-none p-0 shadow-none'
+            >
+              <AccordionTrigger>
+                <CardTitle className='text-base font-bold'>
+                  Thông số thiết bị
+                </CardTitle>
+              </AccordionTrigger>
 
-            <AccordionContent>
-              <CardContent className='px-0'>
-                <p className='text-muted-foreground text-sm'>
-                  Nội dung thông số hạn mức sẽ được cập nhật sau
-                </p>
-              </CardContent>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-      </Card>
-
+              <AccordionContent>
+                <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
+                  {Object.entries(sensorInfo.attributes || {}).map(
+                    ([key, value]) => {
+                      const valueType = sensorInfo.attributes?.[key]?.t;
+                      let _value = '';
+                      if (valueType === 1 || valueType === 2) {
+                        _value = sensorInfo.last_state?.[key]?.toString() || '';
+                      } else {
+                        _value = Array.isArray(sensorInfo.last_state?.[key])
+                          ? sensorInfo.last_state?.[key]?.join(', ')
+                          : '';
+                      }
+                      return (
+                        <div key={key} className='space-y-2'>
+                          <Label>{`${value.n} (${value.u})`}</Label>
+                          <Input
+                            value={_value}
+                            disabled
+                            className='disabled:opacity-90'
+                          />
+                        </div>
+                      );
+                    }
+                  )}
+                </CardContent>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </Card>
+      )}
       {/* Action Button */}
       <div className='flex justify-end'>
         <Button variant='outline'>Đóng</Button>
