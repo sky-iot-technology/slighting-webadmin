@@ -10,7 +10,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -27,6 +26,178 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+
+// Reusable component for the active state SVG background
+function ActiveStateIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <svg
+      width='34'
+      height='36'
+      viewBox='0 0 34 36'
+      fill='none'
+      xmlns='http://www.w3.org/2000/svg'
+    >
+      <path
+        d='M15 36C9.78439 28.7027 -1.28398e-06 29.3741 -7.97296e-07 18.24C-3.1061e-07 7.10594 8.79889 5.83784 15 -8.30516e-07C26.7638 -3.16304e-07 34 7.10594 34 18.24C34 29.3741 26.7638 36 15 36Z'
+        fill='#072645'
+      />
+      <rect
+        x='29'
+        y='6'
+        width='24'
+        height='24'
+        rx='12'
+        transform='rotate(90 29 6)'
+        fill='white'
+      />
+      <foreignObject x='9' y='9' width='24' height='24'>
+        {children}
+      </foreignObject>
+    </svg>
+  );
+}
+
+// Helper component for rendering icons
+function NavIcon({
+  icon: Icon,
+  isActive,
+  size = 20
+}: {
+  icon: React.ComponentType<{
+    color?: string;
+    width?: number;
+    height?: number;
+    className?: string;
+  }>;
+  isActive: boolean;
+  size?: number;
+}) {
+  if (isActive) {
+    return <Icon color='#072645' width={size} height={size} />;
+  }
+  return <Icon className='text-muted-foreground' width={size} height={size} />;
+}
+
+// Component for sidebar logo
+function SidebarLogo({ isOpen }: { isOpen: boolean }) {
+  return (
+    <div className='flex flex-row items-center justify-center'>
+      <Image src='/assets/images/logo.png' alt='logo' width={44} height={44} />
+      {isOpen && <span className='pl-2 text-xl font-bold'>{'Slighting'}</span>}
+    </div>
+  );
+}
+
+// Component for rendering menu item icon
+function MenuItemIcon({
+  icon: Icon,
+  isActive,
+  showActiveState,
+  size = 20
+}: {
+  icon: React.ComponentType<{
+    color?: string;
+    width?: number;
+    height?: number;
+    className?: string;
+  }>;
+  isActive: boolean;
+  showActiveState: boolean;
+  size?: number;
+}) {
+  if (!Icon) return null;
+
+  if (isActive && showActiveState) {
+    return (
+      <ActiveStateIcon>
+        <NavIcon icon={Icon} isActive={true} size={size} />
+      </ActiveStateIcon>
+    );
+  }
+
+  return <Icon />;
+}
+
+// Component for sub-menu item
+function SubMenuItem({
+  subItem,
+  isActive
+}: {
+  subItem: { title: string; url: string; icon?: string };
+  isActive: boolean;
+}) {
+  const SubIcon =
+    subItem.icon && subItem.icon in Icons
+      ? Icons[subItem.icon as keyof typeof Icons]
+      : null;
+
+  if (!SubIcon) {
+    return (
+      <SidebarMenuSubItem key={subItem.title}>
+        <SidebarMenuSubButton asChild isActive={isActive}>
+          <Link
+            href={subItem.url}
+            prefetch={true}
+            className='flex items-center gap-2'
+          >
+            <span>{subItem.title}</span>
+          </Link>
+        </SidebarMenuSubButton>
+      </SidebarMenuSubItem>
+    );
+  }
+
+  return (
+    <SidebarMenuSubItem key={subItem.title}>
+      <SidebarMenuButton asChild isActive={isActive}>
+        <Link
+          href={subItem.url}
+          prefetch={true}
+          className='flex items-center gap-2'
+        >
+          <MenuItemIcon
+            icon={SubIcon}
+            isActive={isActive}
+            showActiveState={isActive}
+          />
+          <span>{subItem.title}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuSubItem>
+  );
+}
+
+// Component for main menu item (non-collapsible)
+function MainMenuItem({
+  item,
+  Icon,
+  pathname,
+  open
+}: {
+  item: (typeof navItems)[0];
+  Icon: React.ComponentType;
+  pathname: string;
+  open: boolean;
+}) {
+  const isActive = pathname === item.url;
+
+  return (
+    <SidebarMenuItem key={item.title}>
+      <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
+        <Link href={item.url} prefetch={true}>
+          <MenuItemIcon
+            icon={Icon}
+            isActive={isActive}
+            showActiveState={isActive && open}
+            size={20}
+          />
+          <span>{item.title}</span>
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
 export default function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
@@ -38,26 +209,7 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible='icon'>
       <SidebarHeader>
-        {open ? (
-          <div className='flex flex-row items-center justify-center'>
-            <Image
-              src='/assets/images/logo.png'
-              alt='logo'
-              width={44}
-              height={44}
-            />
-            <span className='pl-2 text-xl font-bold'>{'Slighting'}</span>
-          </div>
-        ) : (
-          <div className='flex flex-row items-center justify-center'>
-            <Image
-              src='/assets/images/logo.png'
-              alt='logo'
-              width={44}
-              height={44}
-            />
-          </div>
-        )}
+        <SidebarLogo isOpen={open} />
       </SidebarHeader>
       <SidebarContent className='overflow-x-hidden'>
         <SidebarGroup className='mt-4'>
@@ -77,91 +229,37 @@ export default function AppSidebar() {
                         tooltip={item.title}
                         isActive={pathname === item.url}
                       >
-                        {item.icon && <Icon />}
+                        {item.icon && (
+                          <MenuItemIcon
+                            icon={Icon}
+                            isActive={pathname === item.url}
+                            showActiveState={false}
+                          />
+                        )}
                         <span>{item.title}</span>
                         <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
                       </SidebarMenuButton>
                     </CollapsibleTrigger>
                     <CollapsibleContent>
                       <SidebarMenuSub>
-                        {item.items?.map((subItem) => {
-                          const SubIcon = subItem.icon
-                            ? Icons[subItem.icon]
-                            : null;
-                          const isActive = pathname === subItem.url;
-
-                          return (
-                            <SidebarMenuSubItem key={subItem.title}>
-                              <SidebarMenuSubButton asChild isActive={isActive}>
-                                <Link
-                                  href={subItem.url}
-                                  className='flex items-center gap-2'
-                                >
-                                  {SubIcon &&
-                                    (isActive ? (
-                                      <SubIcon
-                                        color='#072645'
-                                        width={18}
-                                        height={18}
-                                      />
-                                    ) : (
-                                      <SubIcon
-                                        className='text-muted-foreground'
-                                        width={18}
-                                        height={18}
-                                      />
-                                    ))}
-                                  <span>{subItem.title}</span>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </SidebarMenuSubItem>
-                          );
-                        })}
+                        {item.items?.map((subItem) => (
+                          <SubMenuItem
+                            key={subItem.title}
+                            subItem={subItem}
+                            isActive={pathname === subItem.url}
+                          />
+                        ))}
                       </SidebarMenuSub>
                     </CollapsibleContent>
                   </SidebarMenuItem>
                 </Collapsible>
               ) : (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={item.title}
-                    isActive={pathname === item.url}
-                  >
-                    <Link href={item.url}>
-                      {item.icon &&
-                        (pathname === item.url && open ? (
-                          <svg
-                            width='34'
-                            height='36'
-                            viewBox='0 0 34 36'
-                            fill='none'
-                            xmlns='http://www.w3.org/2000/svg'
-                          >
-                            <path
-                              d='M15 36C9.78439 28.7027 -1.28398e-06 29.3741 -7.97296e-07 18.24C-3.1061e-07 7.10594 8.79889 5.83784 15 -8.30516e-07C26.7638 -3.16304e-07 34 7.10594 34 18.24C34 29.3741 26.7638 36 15 36Z'
-                              fill='#072645'
-                            />
-                            <rect
-                              x='29'
-                              y='6'
-                              width='24'
-                              height='24'
-                              rx='12'
-                              transform='rotate(90 29 6)'
-                              fill='white'
-                            />
-                            <foreignObject x='7' y='8' width='24' height='24'>
-                              <Icon color='#072645' width={20} height={20} />
-                            </foreignObject>
-                          </svg>
-                        ) : (
-                          <Icon />
-                        ))}
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
+                <MainMenuItem
+                  item={item}
+                  Icon={Icon}
+                  pathname={pathname}
+                  open={open}
+                />
               );
             })}
           </SidebarMenu>
