@@ -1,12 +1,16 @@
 'use client';
 
-import { fakeRoles } from '@/core/domains/role/fake';
-import { RoleTable } from './calendar-tables';
-import { roleColumns } from './calendar-tables/columns';
+import { RoleTable } from './role-tables';
+import { roleColumns } from './role-tables/columns';
 import { useMemo } from 'react';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { useGetRoles } from '@/core/domains/permissions';
 
 export default function RolePage() {
+  const { data, isLoading } = useGetRoles({
+    status: 'enabled'
+  });
+
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
@@ -21,11 +25,13 @@ export default function RolePage() {
   return (
     <div className='h-full w-full p-3'>
       <div className='flex h-full w-full flex-1 bg-white'>
-        <RoleTable
-          data={fakeRoles}
-          totalItems={fakeRoles.length}
-          columns={roleColumns()}
-        />
+        {!isLoading && data && (
+          <RoleTable
+            data={data?.['ui-roles']}
+            totalItems={data?.total}
+            columns={roleColumns()}
+          />
+        )}
       </div>
     </div>
   );

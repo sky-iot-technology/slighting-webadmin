@@ -1,0 +1,94 @@
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions
+} from '@tanstack/react-query';
+import {
+  CreateRoleInput,
+  GetRolesParamsDto,
+  RoleListResponseDto,
+  UIRoleResponse
+} from './types';
+import { rolesApi } from './api';
+import { toast } from 'sonner';
+
+export const ROLES_QUERY_KEY = 'ui-roles';
+
+export const useGetRoles = (
+  params?: GetRolesParamsDto,
+  options?: Omit<
+    UseQueryOptions<
+      RoleListResponseDto,
+      Error,
+      RoleListResponseDto,
+      readonly [string, GetRolesParamsDto?]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    RoleListResponseDto,
+    Error,
+    RoleListResponseDto,
+    readonly [string, GetRolesParamsDto?]
+  >({
+    queryKey: [ROLES_QUERY_KEY, params],
+    queryFn: () => rolesApi.getAll(params),
+    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    ...options
+  });
+};
+
+export const useGetRoleById = (
+  roleId: string,
+  options?: Omit<
+    UseQueryOptions<
+      UIRoleResponse,
+      Error,
+      UIRoleResponse,
+      readonly [string, string, string]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    UIRoleResponse,
+    Error,
+    UIRoleResponse,
+    readonly [string, string, string]
+  >({
+    queryKey: [ROLES_QUERY_KEY, 'detail', roleId],
+    queryFn: () => rolesApi.getById(roleId),
+    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    ...options
+  });
+};
+
+export const useCreateRole = (
+  options?: UseMutationOptions<UIRoleResponse, Error, CreateRoleInput>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<UIRoleResponse, Error, CreateRoleInput>({
+    ...options,
+    mutationFn: (data) => rolesApi.createRole(data),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [ROLES_QUERY_KEY] });
+
+      queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
+
+      toast.success('Tạo vai trò thành công!');
+      options?.onSuccess?.(data, variables, context);
+    },
+
+    onError: (error, variables, context) => {
+      console.error('Failed to create role:', error);
+      toast.error(error.message || 'Tạo vai trò thất bại');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

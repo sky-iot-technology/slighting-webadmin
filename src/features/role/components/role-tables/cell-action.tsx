@@ -12,6 +12,7 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import RoleDialog from '../modal/role-dialog';
 
 interface CellActionProps {
   id: string;
@@ -39,14 +40,14 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
       /> */}
 
       {/* ✏️ Edit */}
-      {/* {openEdit && (
-        <CalendarDialog
-          pageTitle='Chỉnh sửa lịch'
+      {openEdit && (
+        <RoleDialog
+          pageTitle='Chỉnh sửa vai trò'
           open={openEdit}
           onOpenChange={setOpenEdit}
-          calendarId={id}
+          roleId={id}
         />
-      )} */}
+      )}
 
       {/* View */}
       {/* {openView && (

@@ -7,18 +7,27 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import RoleForm from '../form/role-form';
+import { useGetRoleById } from '@/core/domains/permissions';
 
 type RoleDialogProps = {
   pageTitle: string;
   open: boolean;
   onOpenChange?: (open: boolean) => void;
+  roleId?: string;
 };
 
 export default function RoleDialog({
   pageTitle,
   open,
-  onOpenChange
+  onOpenChange,
+  roleId
 }: RoleDialogProps) {
+  const { data, isLoading } = useGetRoleById(roleId ?? '', {
+    enabled: !!roleId
+  });
+
+  console.log(roleId);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
@@ -28,6 +37,7 @@ export default function RoleDialog({
         hideCloseButton
       >
         <RoleForm
+          initialData={data}
           pageTitle={pageTitle}
           onClose={() => onOpenChange && onOpenChange(false)}
         />

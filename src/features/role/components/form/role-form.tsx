@@ -21,47 +21,60 @@ import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
 import { roleSchema } from '@/core/domains/role/schemas';
 import RolePermissionUI from '../role-permission-select';
+import {
+  CreateRoleInput,
+  UIRoleResponse
+} from '@/core/domains/permissions/types';
+import { toBackendPayload, useCreateRole } from '@/core/domains/permissions';
+import { useMemo } from 'react';
 
 type RoleFormProps = {
   pageTitle: string;
   onClose?: () => void;
+  initialData?: UIRoleResponse | null;
 };
 
-export default function RoleForm({ onClose, pageTitle }: RoleFormProps) {
-  //   const defaultValues = useMemo(() => {
-  //     return (
-  //       formData ??
-  //       ((initialData
-  //         ? {
-  //             name: initialData.name ?? '',
-  //             description: initialData.description ?? '',
-  //             parent_id: initialData.parent_id ?? '',
-  //             metadata: {
-  //               lat: initialData.metadata?.lat ?? undefined,
-  //               long: initialData.metadata?.long ?? undefined
-  //             }
-  //           }
-  //         : {
-  //             name: '',
-  //             description: '',
-  //             parent_id: '',
-  //             metadata: { lat: undefined, long: undefined }
-  //           }) as z.infer<typeof branchFormSchema>)
-  //     );
-  //   }, [formData, initialData]);
+export default function RoleForm({
+  onClose,
+  pageTitle,
+  initialData
+}: RoleFormProps) {
+  const defaultValues = useMemo(() => {
+    return (
+      initialData
+        ? {
+            name: initialData.name ?? '',
+            description: initialData.description ?? '',
+            permission: initialData.permission.ui
+          }
+        : {
+            name: '',
+            note: '',
+            permission: {}
+          }
+    ) as z.infer<typeof roleSchema>;
+  }, [initialData]);
 
   const form = useForm<z.infer<typeof roleSchema>>({
     resolver: zodResolver(roleSchema),
-    // defaultValues
-    defaultValues: {
-      name: '',
-      createdAt: '',
-      note: ''
-    }
+    defaultValues
   });
 
+  const createRole = useCreateRole({
+    onSuccess: () => {
+      if (onClose) onClose();
+    }
+  });
   const onSubmit = (values: z.infer<typeof roleSchema>) => {
-    console.log(values);
+    const backendPer = toBackendPayload(values.permission);
+    const payload: CreateRoleInput = {
+      name: values.name,
+      label: values.name.toLowerCase().replace(/\s+/g, '-'),
+      description: values.note ?? '',
+      status: 'enabled',
+      permission: backendPer
+    };
+    createRole.mutate(payload);
   };
 
   return (
@@ -115,20 +128,18 @@ export default function RoleForm({ onClose, pageTitle }: RoleFormProps) {
 
               <FormField
                 control={form.control}
-                name='note'
+                name='permission'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
                       Phân quyền
                     </FormLabel>
-                    <FormControl>
-                      {/* <Input
-                        className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập ghi chú'
-                        {...field}
-                      /> */}
-                      <RolePermissionUI />
-                    </FormControl>
+                    {/* <FormControl> */}
+                    <RolePermissionUI
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                    {/* </FormControl> */}
                     <FormMessage />
                   </FormItem>
                 )}

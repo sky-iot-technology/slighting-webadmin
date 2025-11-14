@@ -3,9 +3,10 @@
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { Role } from '@/core/domains/role/type';
+import { UIRoleResponse } from '@/core/domains/permissions';
+import { formatDateString } from '@/features/calendar/helper';
 
-export const roleColumns = (): ColumnDef<Role>[] => [
+export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
   // {
   //   id: 'dir',
   //   accessorKey: 'dir',
@@ -64,19 +65,19 @@ export const roleColumns = (): ColumnDef<Role>[] => [
     enableColumnFilter: true
   },
   {
-    id: 'createdAt',
-    accessorKey: 'createdAt',
+    id: 'created_at',
+    accessorKey: 'created_at',
     header: 'Ngày tạo',
     cell: ({ row }) => {
-      return <div>{row.getValue('createdAt')}</div>;
+      return <div>{formatDateString(row.getValue('created_at'))}</div>;
     }
   },
   {
-    id: 'note',
-    accessorKey: 'note',
+    id: 'description',
+    accessorKey: 'description',
     header: 'Ghi chú',
     cell: ({ row }) => {
-      return <div>{row.getValue('note')}</div>;
+      return <div>{row.getValue('description')}</div>;
     }
   },
   {
