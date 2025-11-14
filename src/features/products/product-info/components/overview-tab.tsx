@@ -61,8 +61,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
     const sensors = device.devices?.filter(
       (d) => d.type === 'lms.devices.types.SENSOR'
     );
-    if (sensors.length === 0) return null;
-    return sensors[0];
+    if (sensors && sensors.length > 0) return sensors[0];
+    return undefined;
   }, [device]);
 
   // Get device tags (may not be in Device type definition)
@@ -163,7 +163,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
             <div className='grid grid-cols-2 gap-4 text-sm'>
               <div>
                 <span className='text-muted-foreground'>Mã thiết bị:</span>
-                <span className='ml-2 font-medium'>{device.id}</span>
+                <span className='ml-2 font-medium'>
+                  {device.device_info?.imei}
+                </span>
               </div>
               <div>
                 <span className='text-muted-foreground'>Loại thiết bị:</span>

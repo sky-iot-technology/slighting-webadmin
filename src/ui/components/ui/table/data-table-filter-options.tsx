@@ -85,39 +85,40 @@ export function DataTableFilterOptions<TData>({
 
   const handleApply = React.useCallback(() => {
     const cleaned: Record<string, any> = {};
-    // Push values into table column filters when matching column exists
+    const currentFilters = table.getState().columnFilters;
+    const managedFilterIds = new Set(filterOptions.map((opt) => opt.id));
+
+    // Keep filters that are NOT managed by this component (e.g., text, dateRange)
+    const newFilters = currentFilters.filter(
+      (filter) => !managedFilterIds.has(filter.id)
+    );
+
+    // Add or update filters managed by this component
     Object.entries(filterValues).forEach(([id, val]) => {
       const col = table.getColumn(id);
       if (!col) return;
 
-      // const isEmpty =
-      // val === "" ||
-      // val == null ||
-      // (Array.isArray(val) && val.length === 0);
-
-      // if (isEmpty) {col.setFilterValue(undefined)}
-      // else {
-      //   if (col.columnDef.meta?.options) {
-      //     col.setFilterValue([val]);
-      //   } else {
-      //     col.setFilterValue(val);
-      //   }
-      // }
       const isEmpty =
         val === '' || val == null || (Array.isArray(val) && val.length === 0);
 
-      if (isEmpty) {
-        col.setFilterValue(undefined);
-      } else {
+      if (!isEmpty) {
         const hasOptions = !!col.columnDef.meta?.options;
-        col.setFilterValue(hasOptions ? [val] : val);
+        const filterValue = hasOptions ? [val] : val;
+        newFilters.push({ id, value: filterValue });
         cleaned[id] = val;
       }
+      // If isEmpty, we don't add it to newFilters, which removes it
+      // This will trigger onColumnFiltersChange to clear the URL parameter
     });
+
+    // Set the new filters array - this will trigger onColumnFiltersChange
+    // which will properly clear URL parameters for removed filters
+    table.setColumnFilters(newFilters);
+
     setFilterValues(cleaned);
     onApply?.(cleaned);
     setOpen(false);
-  }, [filterValues, table, onApply]);
+  }, [filterValues, table, onApply, filterOptions]);
 
   // Cancel currently just closes + optional callback
 
@@ -242,11 +243,19 @@ export function DataTableFilterOptions<TData>({
                 const resetValues: Record<string, string> = {};
                 for (const opt of filterOptions) {
                   resetValues[opt.id] = '';
-                  // const col = table.getColumn(opt.id);
-                  // col?.setFilterValue(undefined);
                 }
                 setFilterValues(resetValues);
-                table.resetColumnFilters();
+
+                // Remove only filters managed by this component
+                const currentFilters = table.getState().columnFilters;
+                const managedFilterIds = new Set(
+                  filterOptions.map((opt) => opt.id)
+                );
+                const newFilters = currentFilters.filter(
+                  (filter) => !managedFilterIds.has(filter.id)
+                );
+                table.setColumnFilters(newFilters);
+
                 table.setSorting([]);
                 handleCancel();
               }}

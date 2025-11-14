@@ -167,10 +167,12 @@ export function ActivityTab({ device }: ActivityTabProps) {
                 if (exec.command === 'lms.devices.commands.OnOff') {
                   paramText =
                     params.on !== undefined ? (params.on ? 'Bật' : 'Tắt') : '';
-                } else if (exec.command === 'lms.devices.commands.Brightness') {
+                } else if (
+                  exec.command === 'lms.devices.commands.BrightnessAbsolute'
+                ) {
                   paramText =
                     params.brightness !== undefined
-                      ? `Độ sáng: ${params.brightness}%`
+                      ? `${params.brightness}%`
                       : '';
                 } else if (Object.keys(params).length > 0) {
                   paramText = Object.entries(params)
@@ -633,20 +635,6 @@ export function ActivityTab({ device }: ActivityTabProps) {
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
-              {/* <Select
-              value={pageSize.toString()}
-              onValueChange={handlePageSizeChange}
-            >
-              <SelectTrigger className='w-[120px]'>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value='10'>10 trang</SelectItem>
-                <SelectItem value='20'>20 trang</SelectItem>
-                <SelectItem value='30'>30 trang</SelectItem>
-                <SelectItem value='50'>50 trang</SelectItem>
-              </SelectContent>
-            </Select> */}
             </div>
           </div>
         </div>
@@ -689,7 +677,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                               )}
                             </div>
                             <div className='flex items-center justify-between'>
-                              <div className='text-muted-foreground flex items-center gap-2 text-xs'>
+                              <div className='flex items-center gap-2 text-xs'>
                                 {activity.execution && (
                                   <span className='truncate'>
                                     {activity.execution}
