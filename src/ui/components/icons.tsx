@@ -39,7 +39,15 @@ import Image from 'next/image';
 export type Icon = React.ComponentType<IconProps>;
 
 export const Icons = {
-  dashboard: IconLayoutDashboard,
+  dashboard: () => (
+    <Image
+      src={'/assets/icons/dashboard.svg'}
+      alt='dashboard'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
   logo: IconCommand,
   login: IconLogin,
   close: IconX,
@@ -75,8 +83,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/maintenance.svg'}
       alt='maintenance'
-      width={20}
-      height={20}
+      width={17}
+      height={17}
       className='dark:invert'
     />
   ),
@@ -84,8 +92,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/map.svg'}
       alt='map'
-      width={19}
-      height={19}
+      width={17}
+      height={17}
       className='dark:invert'
     />
   ),
@@ -93,8 +101,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/calendar.svg'}
       alt='calendar'
-      width={19}
-      height={19}
+      width={17}
+      height={17}
       className='dark:invert'
     />
   ),
@@ -102,8 +110,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/management.svg'}
       alt='management'
-      width={24}
-      height={24}
+      width={17}
+      height={17}
       className='dark:invert'
     />
   ),
@@ -111,8 +119,8 @@ export const Icons = {
     <Image
       src={'/assets/icons/branch.svg'}
       alt='branch'
-      width={14}
-      height={14}
+      width={17}
+      height={17}
       className='dark:invert'
     />
   ),
@@ -131,6 +139,15 @@ export const Icons = {
       alt='role'
       width={14}
       height={14}
+      className='dark:invert'
+    />
+  ),
+  deviceMenu: () => (
+    <Image
+      src={'/assets/icons/device-menu.svg'}
+      alt='device-menu'
+      width={17}
+      height={17}
       className='dark:invert'
     />
   )

@@ -1,135 +1,89 @@
 import PageContainer from '@/ui/components/layout/page-container';
-import { Badge } from '@/ui/components/ui/badge';
 import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardAction,
-  CardFooter
-} from '@/ui/components/ui/card';
-import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
-import React from 'react';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/ui/components/ui/select';
+import { StatCard } from '../../../features/overview/components/stat-card';
 
-export default function OverViewLayout({
-  sales,
-  pie_stats,
-  bar_stats,
-  area_stats
+const stats = [
+  {
+    icon: '/assets/icons/total-device.svg',
+    label: 'Tổng thiết bị',
+    value: '1.247',
+    trend: 5.2,
+    shadow: '!shadow-primary',
+    trendType: 'up' as const,
+    bgColor: 'bg-card-primary'
+  },
+  {
+    icon: '/assets/icons/online.svg',
+    label: 'Thiết bị Online',
+    value: '1.089',
+    trend: 5.2,
+    shadow: '!shadow-success',
+    trendType: 'up' as const,
+    bgColor: 'bg-card-success'
+  },
+  {
+    icon: '/assets/icons/offline.svg',
+    label: 'Thiết bị Offline',
+    value: '1.221',
+    trend: 1.8,
+    shadow: '!shadow-default',
+    trendType: 'down' as const
+  },
+  {
+    icon: '/assets/icons/alert.svg',
+    label: 'Cảnh báo lỗi',
+    value: '23',
+    trend: 5.2,
+    shadow: '!shadow-danger',
+    trendType: 'down' as const,
+    bgColor: 'bg-card-danger'
+  }
+];
+
+export default function Overview2({
+  simple_stats,
+  alert_stats,
+  circle_stats
 }: {
-  sales: React.ReactNode;
-  pie_stats: React.ReactNode;
-  bar_stats: React.ReactNode;
-  area_stats: React.ReactNode;
+  simple_stats: React.ReactNode;
+  alert_stats: React.ReactNode;
+  circle_stats: React.ReactNode;
 }) {
   return (
     <PageContainer>
-      <div className='flex flex-1 flex-col space-y-2'>
-        <div className='flex items-center justify-between space-y-2'>
-          <h2 className='text-2xl font-bold tracking-tight'>
-            Hi, Welcome back 👋
-          </h2>
+      <div className='flex flex-1 flex-col space-y-2 bg-white'>
+        <div className='my-[9px] mr-[22px] flex items-center justify-end space-y-2'>
+          <Select defaultValue='All'>
+            <SelectTrigger className='h-[30px] w-[96px] rounded-sm px-2 text-sm leading-[15px] shadow-none'>
+              <SelectValue placeholder='Select Device' />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='Today'>Today</SelectItem>
+              <SelectItem value='This Week'>This Week</SelectItem>
+              <SelectItem value='This Month'>This Month</SelectItem>
+              <SelectItem value='This Year'>This Year</SelectItem>
+              <SelectItem value='All'>All</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className='*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4'>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Total Revenue</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                $1,250.00
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Trending up this month <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Visitors for the last 6 months
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>New Customers</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                1,234
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingDown />
-                  -20%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Down 20% this period <IconTrendingDown className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Acquisition needs attention
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Active Accounts</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                45,678
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +12.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Strong user retention <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Engagement exceed targets
-              </div>
-            </CardFooter>
-          </Card>
-          <Card className='@container/card'>
-            <CardHeader>
-              <CardDescription>Growth Rate</CardDescription>
-              <CardTitle className='text-2xl font-semibold tabular-nums @[250px]/card:text-3xl'>
-                4.5%
-              </CardTitle>
-              <CardAction>
-                <Badge variant='outline'>
-                  <IconTrendingUp />
-                  +4.5%
-                </Badge>
-              </CardAction>
-            </CardHeader>
-            <CardFooter className='flex-col items-start gap-1.5 text-sm'>
-              <div className='line-clamp-1 flex gap-2 font-medium'>
-                Steady performance increase{' '}
-                <IconTrendingUp className='size-4' />
-              </div>
-              <div className='text-muted-foreground'>
-                Meets growth projections
-              </div>
-            </CardFooter>
-          </Card>
+        <div className='dark:*:data-[slot=card]:bg-card mr-[22px] ml-[28px] grid grid-cols-1 gap-6 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4'>
+          {stats.map((stat, index) => (
+            <StatCard key={index} {...stat} />
+          ))}
         </div>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-7'>
-          <div className='col-span-4'>{bar_stats}</div>
-          <div className='col-span-4 md:col-span-3'>
-            {/* sales arallel routes */}
-            {sales}
-          </div>
-          <div className='col-span-4'>{area_stats}</div>
-          <div className='col-span-4 md:col-span-3'>{pie_stats}</div>
+
+        <div>{simple_stats}</div>
+
+        <div className='mr-[22px] mb-[26px] ml-[28px] grid grid-cols-1 gap-6 md:grid-cols-2'>
+          <div className='col-span-1'>{circle_stats}</div>
+          <div className='col-span-1'>{alert_stats}</div>
         </div>
       </div>
     </PageContainer>

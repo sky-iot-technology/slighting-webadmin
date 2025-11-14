@@ -37,7 +37,7 @@ export function SignInForm() {
   return (
     <Form {...form}>
       <Heading title='Đăng nhập' description='' />
-      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
         <FormField
           control={form.control}
           name='username'
@@ -51,7 +51,7 @@ export function SignInForm() {
                   {...field}
                   type='text'
                   placeholder='Nhập tên đăng nhập'
-                  className='h-13 rounded-full'
+                  className='h-10 rounded-full'
                 />
               </FormControl>
               <FormMessage />
@@ -71,7 +71,7 @@ export function SignInForm() {
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                     placeholder='Nhập mật khẩu'
-                    className='h-13 rounded-full'
+                    className='h-10 rounded-full'
                   />
                   <button
                     type='button'
