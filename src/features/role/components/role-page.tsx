@@ -25,7 +25,7 @@ export default function RolePage() {
   return (
     <div className='h-full w-full p-3'>
       <div className='flex h-full w-full flex-1 bg-white'>
-        {!isLoading && data && (
+        {data && (
           <RoleTable
             data={data?.['ui-roles']}
             totalItems={data?.total}

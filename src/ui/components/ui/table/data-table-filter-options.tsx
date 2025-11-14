@@ -60,6 +60,15 @@ export function DataTableFilterOptions<TData>({
     Record<string, string>
   >({});
 
+  const resetColumn = React.useCallback(
+    (id: string) => {
+      const col = table.getColumn(id);
+      col?.setFilterValue(undefined);
+      setFilterValues((prev) => ({ ...prev, [id]: '' }));
+    },
+    [table]
+  );
+
   // Sorting controls
   // (Optional) You can extend with sorting controls later if needed
 
@@ -75,24 +84,43 @@ export function DataTableFilterOptions<TData>({
   }, [filterOptions, initialValues, table]);
 
   const handleApply = React.useCallback(() => {
+    const cleaned: Record<string, any> = {};
     // Push values into table column filters when matching column exists
     Object.entries(filterValues).forEach(([id, val]) => {
       const col = table.getColumn(id);
       if (!col) return;
-      if (!val) col.setFilterValue(undefined);
-      else {
-        if (col.columnDef.meta?.options) {
-          col.setFilterValue([val]);
-        } else {
-          col.setFilterValue(val);
-        }
+
+      // const isEmpty =
+      // val === "" ||
+      // val == null ||
+      // (Array.isArray(val) && val.length === 0);
+
+      // if (isEmpty) {col.setFilterValue(undefined)}
+      // else {
+      //   if (col.columnDef.meta?.options) {
+      //     col.setFilterValue([val]);
+      //   } else {
+      //     col.setFilterValue(val);
+      //   }
+      // }
+      const isEmpty =
+        val === '' || val == null || (Array.isArray(val) && val.length === 0);
+
+      if (isEmpty) {
+        col.setFilterValue(undefined);
+      } else {
+        const hasOptions = !!col.columnDef.meta?.options;
+        col.setFilterValue(hasOptions ? [val] : val);
+        cleaned[id] = val;
       }
     });
-    onApply?.(filterValues);
+    setFilterValues(cleaned);
+    onApply?.(cleaned);
     setOpen(false);
   }, [filterValues, table, onApply]);
 
   // Cancel currently just closes + optional callback
+
   const handleCancel = React.useCallback(() => {
     onCancel?.();
     setOpen(false);
@@ -148,9 +176,13 @@ export function DataTableFilterOptions<TData>({
                       value={
                         Array.isArray(value) ? (value[0] ?? '') : (value ?? '')
                       }
-                      onValueChange={(v) =>
-                        setFilterValues((prev) => ({ ...prev, [opt.id]: v }))
-                      }
+                      onValueChange={(v) => {
+                        const safeValue = v === null ? '' : v;
+                        setFilterValues((prev) => ({
+                          ...prev,
+                          [opt.id]: safeValue
+                        }));
+                      }}
                     >
                       <SelectTrigger className='w-full text-xs'>
                         <SelectValue placeholder='Tất cả' />
@@ -210,10 +242,11 @@ export function DataTableFilterOptions<TData>({
                 const resetValues: Record<string, string> = {};
                 for (const opt of filterOptions) {
                   resetValues[opt.id] = '';
-                  const col = table.getColumn(opt.id);
-                  col?.setFilterValue(undefined);
+                  // const col = table.getColumn(opt.id);
+                  // col?.setFilterValue(undefined);
                 }
                 setFilterValues(resetValues);
+                table.resetColumnFilters();
                 table.setSorting([]);
                 handleCancel();
               }}
