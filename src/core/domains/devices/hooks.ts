@@ -20,6 +20,7 @@ import {
 import { devicesApi } from './api';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
+import { JOURNALS_QUERY_KEY } from '../journals';
 
 //Query keys
 export const DEVICES_QUERY_KEY = 'devices';
@@ -84,10 +85,14 @@ export const useTurnOnOffLight = (
     DeviceTurnOnOffRequest
   >
 ) => {
+  const queryClient = useQueryClient();
   return useMutation<DeviceExecuteResponse, Error, DeviceTurnOnOffRequest>({
     mutationFn: (data) => devicesApi.turnOnOffLight(data),
     onSuccess: (data, variables, context) => {
       toast.success('Request sent successfully!');
+      queryClient.invalidateQueries({
+        queryKey: [JOURNALS_QUERY_KEY, String(variables.device_id)]
+      });
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
@@ -106,10 +111,14 @@ export const useSetBrightnessLight = (
     DeviceSetBrightnessRequest
   >
 ) => {
+  const queryClient = useQueryClient();
   return useMutation<DeviceExecuteResponse, Error, DeviceSetBrightnessRequest>({
     mutationFn: (data) => devicesApi.setBrightness(data),
     onSuccess: (data, variables, context) => {
       toast.success('Request sent successfully!');
+      queryClient.invalidateQueries({
+        queryKey: [JOURNALS_QUERY_KEY, String(variables.device_id)]
+      });
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {

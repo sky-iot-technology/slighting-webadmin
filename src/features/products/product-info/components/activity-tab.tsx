@@ -7,6 +7,12 @@ import {
   useTurnOnOffLight,
   useSetBrightnessLight
 } from '@/core/domains/devices';
+import {
+  useGetJournalsByEntityId,
+  OPERATION_LABELS,
+  COMMAND_LABELS,
+  Journal
+} from '@/core/domains/journals';
 import { Button } from '@/ui/components/ui/button';
 import { Switch } from '@/ui/components/ui/switch';
 import { Slider } from '@/ui/components/ui/slider';
@@ -27,46 +33,27 @@ import {
   PaginationNext,
   PaginationPrevious
 } from '@/ui/components/ui/pagination';
-import { Wrench, RefreshCw } from 'lucide-react';
+import { Wrench, RefreshCw, Settings, Activity } from 'lucide-react';
 import { useState, useMemo, useCallback, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 import { RequestWatcher } from '@/features/map/components/RequestWatcher';
 import {
   Select,
-  SelectClear,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue
 } from '@/ui/components/ui/select';
+import { format } from 'date-fns';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 
 interface ActivityTabProps {
   device: Device;
 }
 
-interface ActivityHistory {
-  id: string;
-  deviceName: string;
-  activityType: string;
-  performer: string;
-  timestamp: string;
-}
-
-// Mock activity history - replace with actual API calls
-const mockActivityHistory: ActivityHistory[] = [
-  {
-    id: '1',
-    deviceName: 'Line 2',
-    activityType: 'Bảo trì định kỳ',
-    performer: 'Phạm Thị D',
-    timestamp: new Date().toISOString()
-  }
-];
-
 export function ActivityTab({ device }: ActivityTabProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
-  const [activityHistory] = useState(mockActivityHistory);
   const [requests, setRequests] = useState<Record<string, string>>({});
   const [pending, setPending] = useState<Record<string, boolean>>({});
   const [switchState, setSwitchState] = useState<Record<string, boolean>>({});
@@ -86,6 +73,16 @@ export function ActivityTab({ device }: ActivityTabProps) {
   const { mutate: setBrightness } = useSetBrightnessLight();
   const { mutate: syncDevices } = useSyncDevices();
 
+  // Fetch activity history (journals) - fetch all operations
+  const { data: journalsData, isLoading: isLoadingJournals } =
+    useGetJournalsByEntityId(String(device.id), {
+      with_attributes: true,
+      with_metadata: true,
+      limit: 10,
+      offset: 0,
+      operation: 'client.execute'
+    });
+
   // Get all sub-devices from the device
   const subDevices = useMemo(() => device.devices ?? [], [device]);
 
@@ -102,14 +99,6 @@ export function ActivityTab({ device }: ActivityTabProps) {
     () =>
       subDevices.filter(
         (d) => d.type === 'lms.devices.types.LIGHT'
-      ) as SubDevice[],
-    [subDevices]
-  );
-
-  const sensorDevices = useMemo(
-    () =>
-      subDevices.filter(
-        (d) => d.type === 'lms.devices.types.SENSOR'
       ) as SubDevice[],
     [subDevices]
   );
@@ -153,6 +142,94 @@ export function ActivityTab({ device }: ActivityTabProps) {
     () => [...switchDevices, ...lightDevices],
     [switchDevices, lightDevices]
   );
+
+  // Format activity history from journals
+  const activityHistory = useMemo(() => {
+    if (!journalsData?.journals) return [];
+
+    return journalsData.journals.map((journal: Journal) => {
+      // Get operation label
+      const operationLabel =
+        OPERATION_LABELS[journal.operation] || journal.operation;
+
+      // Get execution commands (only for operations that have execution)
+      const executions = journal.attributes?.execution || [];
+      const executionLabels =
+        executions.length > 0
+          ? executions
+              .map((exec) => {
+                const commandLabel =
+                  COMMAND_LABELS[exec.command] || exec.command;
+                const params = exec.params || {};
+
+                // Format params based on command
+                let paramText = '';
+                if (exec.command === 'lms.devices.commands.OnOff') {
+                  paramText =
+                    params.on !== undefined ? (params.on ? 'Bật' : 'Tắt') : '';
+                } else if (exec.command === 'lms.devices.commands.Brightness') {
+                  paramText =
+                    params.brightness !== undefined
+                      ? `Độ sáng: ${params.brightness}%`
+                      : '';
+                } else if (Object.keys(params).length > 0) {
+                  paramText = Object.entries(params)
+                    .map(([key, value]) => {
+                      // Format boolean values
+                      if (typeof value === 'boolean') {
+                        return `${key}: ${value ? 'Bật' : 'Tắt'}`;
+                      }
+                      return `${key}: ${value}`;
+                    })
+                    .join(', ');
+                }
+
+                return paramText
+                  ? `${commandLabel} - ${paramText}`
+                  : commandLabel;
+              })
+              .join(', ')
+          : undefined;
+
+      const deviceIds = journal.attributes?.children_clients || [];
+      const deviceNames =
+        deviceIds.length > 0
+          ? deviceIds
+              .map((deviceId) => {
+                const subDevice = subDevices.find(
+                  (d) => d.device_id === deviceId
+                );
+                return subDevice?.name || deviceId;
+              })
+              .join(', ')
+          : undefined;
+
+      // Format timestamp
+      const timestamp = journal.occurred_at
+        ? format(new Date(journal.occurred_at), 'dd/MM/yyyy HH:mm:ss')
+        : '';
+
+      return {
+        id:
+          journal.attributes?.request_id ||
+          journal.occurred_at ||
+          Math.random().toString(),
+        operation: operationLabel,
+        execution: executionLabels,
+        devices: deviceNames,
+        timestamp
+      };
+    });
+  }, [journalsData, subDevices]);
+
+  // Get icon for operation type based on operation label
+  const getOperationIcon = (operationLabel: string) => {
+    if (operationLabel.includes('Điều khiển')) return Settings;
+    if (operationLabel.includes('Đồng bộ') || operationLabel.includes('Query'))
+      return RefreshCw;
+    if (operationLabel.includes('lịch')) return Activity;
+    return Wrench;
+  };
 
   const totalDevices = allDevices.length;
 
@@ -253,18 +330,6 @@ export function ActivityTab({ device }: ActivityTabProps) {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  // Helper function to render sensor value
-  const renderSensorValue = (
-    value: number | number[] | undefined,
-    unit: string
-  ) => {
-    if (value === undefined || value === null) return 'N/A';
-    if (Array.isArray(value)) {
-      return `${value.map((v) => v.toFixed(1)).join(', ')} ${unit}`;
-    }
-    return `${typeof value === 'number' ? value.toFixed(1) : value} ${unit}`;
   };
 
   // Generate page numbers for pagination
@@ -588,29 +653,60 @@ export function ActivityTab({ device }: ActivityTabProps) {
 
         {/* Right Section - Activity History (1/3 width) */}
         <div className='flex-1 space-y-4 rounded-bl-lg border-b border-l'>
-          <div className='bg-card h-auto p-4'>
+          <div className='bg-card h-auto p-3'>
             <h3 className='mb-4 text-lg font-bold'>Lịch sử hoạt động</h3>
-            <div className='space-y-3'>
-              {activityHistory.map((activity) => (
-                <div
-                  key={activity.id}
-                  className='rounded-lg bg-blue-50 p-4 dark:bg-blue-950/20'
-                >
-                  <div className='flex items-start gap-3'>
-                    <div className='rounded-full bg-orange-500 p-2'>
-                      <Wrench className='h-4 w-4 text-white' />
-                    </div>
-                    <div className='flex-1 space-y-1'>
-                      <div className='font-medium'>
-                        {activity.deviceName} • {activity.activityType}
-                      </div>
-                      <div className='text-muted-foreground text-sm'>
-                        Người thực hiện: {activity.performer}
-                      </div>
-                    </div>
-                  </div>
+            <div className='max-h-[500px] overflow-y-auto'>
+              {isLoadingJournals ? (
+                <div className='space-y-3'>
+                  {[...Array(3)].map((_, index) => (
+                    <Skeleton key={index} className='h-20 w-full' />
+                  ))}
                 </div>
-              ))}
+              ) : activityHistory.length === 0 ? (
+                <div className='text-muted-foreground py-8 text-center text-sm'>
+                  Không có lịch sử hoạt động
+                </div>
+              ) : (
+                <div className='space-y-2'>
+                  {activityHistory.map((activity) => {
+                    const IconComponent = getOperationIcon(activity.operation);
+                    return (
+                      <div
+                        key={activity.id}
+                        className='rounded-md bg-blue-50 px-3 py-2 dark:bg-blue-950/20'
+                      >
+                        <div className='flex items-center gap-2'>
+                          <IconComponent className='h-3.5 w-3.5 shrink-0 text-orange-500' />
+                          <div className='min-w-0 flex-1 space-y-0.5'>
+                            <div className='flex items-center gap-2 text-sm'>
+                              <span className='truncate font-medium'>
+                                {activity.devices}
+                              </span>
+                              {activity.operation && (
+                                <span className='shrink-0'>
+                                  • {activity.operation}
+                                </span>
+                              )}
+                            </div>
+                            <div className='flex items-center justify-between'>
+                              <div className='text-muted-foreground flex items-center gap-2 text-xs'>
+                                {activity.execution && (
+                                  <span className='truncate'>
+                                    {activity.execution}
+                                  </span>
+                                )}
+                              </div>
+                              <span className='text-muted-foreground text-xs'>
+                                {activity.timestamp}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         </div>
