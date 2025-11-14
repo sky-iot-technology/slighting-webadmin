@@ -39,7 +39,15 @@ import Image from 'next/image';
 export type Icon = React.ComponentType<IconProps>;
 
 export const Icons = {
-  dashboard: IconLayoutDashboard,
+  dashboard: () => (
+    <Image
+      src={'/assets/icons/dashboard.svg'}
+      alt='dashboard'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
   logo: IconCommand,
   login: IconLogin,
   close: IconX,
@@ -131,6 +139,15 @@ export const Icons = {
       alt='role'
       width={14}
       height={14}
+      className='dark:invert'
+    />
+  ),
+  deviceMenu: () => (
+    <Image
+      src={'/assets/icons/device-menu.svg'}
+      alt='device-menu'
+      width={17}
+      height={17}
       className='dark:invert'
     />
   )

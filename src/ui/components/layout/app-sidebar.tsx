@@ -255,6 +255,7 @@ export default function AppSidebar() {
                 </Collapsible>
               ) : (
                 <MainMenuItem
+                  key={item.title}
                   item={item}
                   Icon={Icon}
                   pathname={pathname}

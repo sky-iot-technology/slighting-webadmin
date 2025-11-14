@@ -13,7 +13,12 @@ export default function SignInViewPage() {
     <div className='relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0'>
       {/* Left side - Background image */}
       <div className='bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r'>
-        <div className='absolute inset-0 bg-gradient-to-br from-blue-900 via-blue-800 to-purple-900'></div>
+        <Image
+          src='/assets/images/background-login.png'
+          alt='background-login'
+          fill
+          className='object-cover'
+        />
       </div>
 
       {/* Right side - Login form */}
@@ -22,8 +27,8 @@ export default function SignInViewPage() {
           <Image
             src='/assets/images/logo.png'
             alt='logo'
-            width={100}
-            height={100}
+            width={160}
+            height={160}
             className='mx-auto'
           />
           <SignInForm />
