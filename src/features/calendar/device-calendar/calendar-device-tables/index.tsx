@@ -50,12 +50,12 @@ export function CalendarTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className=''
-      wrapperClassName='mx-1 mt-1 rounded-none'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      className='bg-white'
+      wrapperClassName='mx-1 mt-1 rounded-none bg-white'
+      tableContainerClassName='!border-y-1 !border-x-0 rounded-none bg-white'
       paginationClassName='py-3'
       headerClassName='bg-white border-t-1'
-      rowClassName='text-xs font-normal'
+      rowClassName='text-xs font-normal bg-white'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
     >
       <div className='flex items-center gap-2 bg-white'>

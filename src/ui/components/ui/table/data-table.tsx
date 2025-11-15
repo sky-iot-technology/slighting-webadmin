@@ -49,12 +49,7 @@ export function DataTable<TData>({
     <div className={cn('flex flex-1 flex-col', className)}>
       {children}
       {/* Wrapper for table + pagination */}
-      <div
-        className={cn(
-          'flex flex-1 flex-col rounded-lg bg-white',
-          wrapperClassName
-        )}
-      >
+      <div className={cn('flex flex-1 flex-col rounded-lg', wrapperClassName)}>
         <div className='relative flex flex-1'>
           {/* Table container */}
           <div

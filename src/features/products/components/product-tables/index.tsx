@@ -79,7 +79,7 @@ export function ProductTable<TData, TValue>({
       // wrapperClassName='mx-1 mt-1 rounded-none'
       tableContainerClassName='border-none rounded-none'
       // paginationClassName='py-3'
-      headerClassName='bg-white border-t-1'
+      headerClassName='border-t-1 border-none shadow-none'
       actionBar={actionBar}
     >
       {/* <DataTableToolbar table={table} /> */}
