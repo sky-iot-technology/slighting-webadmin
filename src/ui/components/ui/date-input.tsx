@@ -142,6 +142,7 @@ const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
                 'h-9 w-full justify-start border bg-transparent px-2 text-left text-lg font-normal outline-none md:text-sm',
                 !value && 'text-muted-foreground',
                 error && 'border-destructive focus-visible:ring-destructive/20',
+                disabled && 'bg-muted cursor-not-allowed disabled:opacity-100',
                 className
               )}
               disabled={disabled}
@@ -156,7 +157,8 @@ const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
                 disabled={disabled}
                 className={cn(
                   'flex-1 border-none text-left outline-0',
-                  disabled && 'cursor-not-allowed opacity-50'
+                  disabled && 'cursor-not-allowed',
+                  'placeholder:text-muted-foreground'
                 )}
                 {...props}
               />

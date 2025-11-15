@@ -163,5 +163,19 @@ export const devicesApi = {
     } catch (error) {
       throw new Error('Failed to query devices');
     }
+  },
+
+  async updateDevice(
+    deviceId: string | number,
+    data: Partial<Device>
+  ): Promise<Device> {
+    try {
+      return await authenticatedApi.patch<Device>(
+        `/devices/things/${deviceId}`,
+        data
+      );
+    } catch (error) {
+      throw new Error('Failed to update device');
+    }
   }
 };

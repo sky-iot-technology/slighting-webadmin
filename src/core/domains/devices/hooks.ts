@@ -72,8 +72,6 @@ export const useGetDeviceById = (
     queryKey: [DEVICES_QUERY_KEY, 'detail', id],
     queryFn: () => devicesApi.getById(id),
     enabled: !!id,
-    gcTime: 30 * 60 * 1000,
-    staleTime: 5 * 60 * 1000,
     ...options
   });
 };
@@ -293,7 +291,6 @@ export const useSetParent = (
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      console.error('Failed to set devices parent: ', error);
       toast.error(error.message || 'Failed to set devices parent');
       options?.onError?.(error, variables, context);
     }
@@ -321,7 +318,6 @@ export const useDeleteDeviceParent = (
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
-      console.error('Failed to delete Group: ', error);
       toast.error(error.message || 'Failed to delete Group');
       options?.onError?.(error, variables, context);
     }
@@ -368,10 +364,39 @@ export const useSyncDevices = (
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      console.error('Failed to sync devices: ', error);
       toast.error(error.message || 'Không thể đồng bộ thiết bị');
       options?.onError?.(error, variables, context);
     },
     ...options
+  });
+};
+
+// Hook for updating a device
+export const useUpdateDevice = (
+  options?: UseMutationOptions<
+    Device,
+    Error,
+    { deviceId: string | number; data: Partial<Device> }
+  >
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Device,
+    Error,
+    { deviceId: string | number; data: Partial<Device> }
+  >({
+    mutationFn: ({ deviceId, data }) => devicesApi.updateDevice(deviceId, data),
+    onSuccess: (data, variables, context) => {
+      toast.success('Cập nhật thiết bị thành công!');
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY]
+      });
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      toast.error(error.message || 'Không thể cập nhật thiết bị');
+      options?.onError?.(error, variables, context);
+    }
   });
 };

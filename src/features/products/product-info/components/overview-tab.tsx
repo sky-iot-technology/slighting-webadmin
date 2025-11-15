@@ -1,16 +1,10 @@
 'use client';
 
 import { Device } from '@/core/domains/devices';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle
-} from '@/ui/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/ui/components/ui/card';
 import { Input } from '@/ui/components/ui/input';
 import { Label } from '@/ui/components/ui/label';
 import { Button } from '@/ui/components/ui/button';
-import { Badge } from '@/ui/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -24,21 +18,60 @@ import {
   AccordionItem,
   AccordionTrigger
 } from '@/ui/components/ui/accordion';
-import { IconDeviceDesktop, IconCircleCheck } from '@tabler/icons-react';
-import { CalendarIcon } from 'lucide-react';
-import { format } from 'date-fns';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormSchemaProvider
+} from '@/ui/components/ui/form';
+import { IconDeviceDesktop } from '@tabler/icons-react';
+import { Edit2, Save, X } from 'lucide-react';
+import { DateInput } from '@/ui/components/ui/date-input';
+import { format, parse } from 'date-fns';
 import { useGetGroups } from '@/core/domains/groups';
 import { useGetTags } from '@/core/domains/tags';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { useMemo } from 'react';
+import { useUpdateDevice } from '@/core/domains/devices';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
 
 interface OverviewTabProps {
   device: Device;
 }
 
+// Form schema for editable fields
+const overviewFormSchema = z.object({
+  // Required fields (matching deviceFormSchema)
+  name: z.string().min(2, { message: 'Tên thiết bị phải có ít nhất 2 ký tự' }),
+  type: z.string().min(1, { message: 'Loại thiết bị không được bỏ trống' }),
+  parent_group_id: z
+    .string()
+    .min(1, { message: 'Chi nhánh không được bỏ trống' }),
+  serial: z.string().min(1, { message: 'Serial không được bỏ trống' }),
+
+  // Optional fields
+  imei: z.string().optional(),
+  lat: z.string().optional(),
+  lon: z.string().optional(),
+  address: z.string().optional(),
+  note: z.string().optional(),
+  manufacturer: z.string().optional(),
+  installation_date: z.date().or(z.number()).optional(),
+  purchase_date: z.date().or(z.number()).optional(),
+  expiration_date: z.date().or(z.number()).optional()
+});
+
+type OverviewFormValues = z.infer<typeof overviewFormSchema>;
+
 export function OverviewTab({ device }: OverviewTabProps) {
+  const [isEditMode, setIsEditMode] = useState(false);
   const { data: groupsData } = useGetGroups({
     status: 'enabled'
   });
@@ -48,6 +81,11 @@ export function OverviewTab({ device }: OverviewTabProps) {
   });
 
   const { catalogues } = useCatalogueStore();
+  const updateDeviceMutation = useUpdateDevice({
+    onSuccess: () => {
+      setIsEditMode(false);
+    }
+  });
 
   const groupOptions = useMemo(() => {
     if (!groupsData?.groups) return [];
@@ -80,13 +118,6 @@ export function OverviewTab({ device }: OverviewTabProps) {
       })
       .filter(Boolean);
   }, [deviceTags, tagsData]);
-
-  const getDeviceTypeLabel = (type: string) => {
-    // Find the catalogue item that matches the device type
-    const catalogue = catalogues.find((cat) => cat.type === type);
-    // Return the catalogue name if found, otherwise return the type
-    return catalogue?.name || type;
-  };
 
   // Helper to format Unix timestamp to date
   const formatDate = (timestamp?: number) => {
@@ -125,274 +156,785 @@ export function OverviewTab({ device }: OverviewTabProps) {
   const hasReminders =
     expirationAttr?.reminder_ids && expirationAttr.reminder_ids.length > 0;
 
+  // Get catalogue options for device type
+  const catalogueOptions = useMemo(() => {
+    return catalogues.map((cat) => ({
+      value: cat.type,
+      label: cat.name
+    }));
+  }, [catalogues]);
+
+  // Helper to convert date string (dd/MM/yyyy) or Unix timestamp to Date object
+  const parseDateValue = (value?: string | number): Date | undefined => {
+    if (!value) return undefined;
+    if (typeof value === 'number') {
+      return new Date(value * 1000);
+    }
+    if (typeof value === 'string') {
+      try {
+        const parsed = parse(value, 'dd/MM/yyyy', new Date());
+        if (!isNaN(parsed.getTime())) {
+          return parsed;
+        }
+      } catch {
+        // If parsing fails, return undefined
+      }
+    }
+    return undefined;
+  };
+
+  // Initialize form with device data
+  const form = useForm<OverviewFormValues>({
+    resolver: zodResolver(overviewFormSchema),
+    defaultValues: {
+      name: device.name || '',
+      imei: device.device_info?.imei || '',
+      type: device.type || '',
+      parent_group_id: device.parent_group_id || '',
+      lat: device.device_info?.lat?.toString() || '0',
+      lon: device.device_info?.lon?.toString() || '0',
+      address: device.device_info?.region || '',
+      note: note,
+      serial: serial,
+      manufacturer: manufacturer,
+      installation_date: installationDate
+        ? parseDateValue(installationDate)
+        : undefined,
+      purchase_date: purchaseDate ? parseDateValue(purchaseDate) : undefined,
+      expiration_date: expirationDate
+        ? parseDateValue(expirationDate)
+        : undefined
+    }
+  });
+
+  // Helper to convert Date object or number to Unix timestamp
+  const dateToTimestamp = (dateValue?: Date | number): number | undefined => {
+    if (!dateValue) return undefined;
+    if (dateValue instanceof Date) {
+      return Math.floor(dateValue.getTime() / 1000);
+    }
+    if (typeof dateValue === 'number') {
+      // If it's already a timestamp in seconds, return it
+      // If it's in milliseconds, convert to seconds
+      return dateValue > 10000000000 ? Math.floor(dateValue / 1000) : dateValue;
+    }
+    return undefined;
+  };
+
+  // Helper to build asset_attribute array
+  const buildAssetAttributes = (values: OverviewFormValues) => {
+    const asset_attribute: any[] = [];
+    let index = 0;
+
+    // Preserve existing attributes that we're not editing
+    const existingAttrs = device.device_asset?.asset_attribute || [];
+    const editableIdentifiers = [
+      'installation_date',
+      'purchase_date',
+      'expiration_date',
+      'manufacturer',
+      'note'
+    ];
+
+    // Keep non-editable attributes
+    existingAttrs.forEach((attr) => {
+      if (!editableIdentifiers.includes(attr.identify)) {
+        asset_attribute.push(attr);
+        index = Math.max(index, attr.index);
+      }
+    });
+    index++;
+
+    // Add/update editable attributes
+    if (values.installation_date) {
+      const timestamp = dateToTimestamp(values.installation_date);
+      if (timestamp !== undefined) {
+        asset_attribute.push({
+          index: index++,
+          is_disabled: true,
+          identify: 'installation_date',
+          attr: 'Installation date',
+          type: 2,
+          content: timestamp,
+          reminder_ids: []
+        });
+      }
+    }
+
+    if (values.purchase_date) {
+      const timestamp = dateToTimestamp(values.purchase_date);
+      if (timestamp !== undefined) {
+        asset_attribute.push({
+          index: index++,
+          is_disabled: true,
+          identify: 'purchase_date',
+          attr: 'Purchase date',
+          type: 2,
+          content: timestamp,
+          reminder_ids: []
+        });
+      }
+    }
+
+    if (values.expiration_date) {
+      const timestamp = dateToTimestamp(values.expiration_date);
+      if (timestamp !== undefined) {
+        const existingExpiration = existingAttrs.find(
+          (a) => a.identify === 'expiration_date'
+        );
+        asset_attribute.push({
+          index: index++,
+          is_disabled: true,
+          identify: 'expiration_date',
+          attr: 'Expiration date',
+          type: 2,
+          content: timestamp,
+          reminder_ids: existingExpiration?.reminder_ids || []
+        });
+      }
+    }
+
+    if (values.manufacturer) {
+      asset_attribute.push({
+        index: index++,
+        is_disabled: true,
+        identify: 'manufacturer',
+        attr: 'Manufacturer',
+        type: 1,
+        content: values.manufacturer,
+        reminder_ids: []
+      });
+    }
+
+    if (values.note) {
+      asset_attribute.push({
+        index: index++,
+        is_disabled: true,
+        identify: 'note',
+        attr: 'Note',
+        type: 1,
+        content: values.note,
+        reminder_ids: []
+      });
+    }
+
+    return asset_attribute;
+  };
+
+  const onSubmit = (values: OverviewFormValues) => {
+    const asset_attribute = buildAssetAttributes(values);
+
+    const latValue = values.lat
+      ? parseFloat(values.lat) || (device.device_info?.lat ?? 0)
+      : (device.device_info?.lat ?? 0);
+    const lonValue = values.lon
+      ? parseFloat(values.lon) || (device.device_info?.lon ?? 0)
+      : (device.device_info?.lon ?? 0);
+
+    const updateData: Partial<Device> = {
+      name: values.name,
+      type: values.type,
+      parent_group_id: values.parent_group_id,
+      device_info: {
+        ...device.device_info,
+        imei: values.imei || device.device_info?.imei || '',
+        lat: latValue,
+        lon: lonValue,
+        region: values.address || device.device_info?.region || '',
+        serial_number: values.serial || device.device_info?.serial_number || '',
+        manufacturer:
+          values.manufacturer || device.device_info?.manufacturer || ''
+      }
+    };
+
+    // Only include device_asset if we have asset_attribute
+    if (asset_attribute.length > 0) {
+      updateData.device_asset = device.device_asset
+        ? {
+            ...device.device_asset,
+            asset_attribute
+          }
+        : {
+            id: String(device.id || ''),
+            name: device.name || '',
+            asset_attribute
+          };
+    }
+
+    updateDeviceMutation.mutate({
+      deviceId: device.id,
+      data: updateData
+    });
+  };
+
+  const handleCancel = () => {
+    form.reset({
+      name: device.name || '',
+      imei: device.device_info?.imei || '',
+      type: device.type || '',
+      parent_group_id: device.parent_group_id || '',
+      lat: device.device_info?.lat?.toString() || '0',
+      lon: device.device_info?.lon?.toString() || '0',
+      address: device.device_info?.region || '',
+      note: note,
+      serial: serial,
+      manufacturer: manufacturer,
+      installation_date: installationDate
+        ? parseDateValue(installationDate)
+        : undefined,
+      purchase_date: purchaseDate ? parseDateValue(purchaseDate) : undefined,
+      expiration_date: expirationDate
+        ? parseDateValue(expirationDate)
+        : undefined
+    });
+    setIsEditMode(false);
+  };
+
   return (
-    <div className='space-y-2'>
-      {/* Device Header */}
-      <Card className='border-none shadow-none'>
-        <div className='flex gap-6'>
-          {/* Device Image Placeholder */}
-          <div className='bg-muted flex h-40 w-64 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg'>
-            {device.device_asset?.asset_attribute?.find(
-              (a) =>
-                a.identify === 'image' ||
-                a.attr?.toLowerCase().includes('image')
-            )?.content ? (
-              <Image
-                src={String(
-                  device.device_asset.asset_attribute.find(
-                    (a) =>
-                      a.identify === 'image' ||
-                      a.attr?.toLowerCase().includes('image')
-                  )?.content
+    <FormSchemaProvider schema={overviewFormSchema}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {/* Device Header */}
+          <Card className='border-none py-1 shadow-none'>
+            <div className='flex gap-6'>
+              {/* Device Image Placeholder */}
+              <div className='bg-muted flex h-40 w-64 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg'>
+                {device.device_asset?.asset_attribute?.find(
+                  (a) =>
+                    a.identify === 'image' ||
+                    a.attr?.toLowerCase().includes('image')
+                )?.content ? (
+                  <Image
+                    src={String(
+                      device.device_asset.asset_attribute.find(
+                        (a) =>
+                          a.identify === 'image' ||
+                          a.attr?.toLowerCase().includes('image')
+                      )?.content
+                    )}
+                    alt={device.name || 'Device'}
+                    width={128}
+                    height={128}
+                    className='h-full w-full object-cover'
+                  />
+                ) : (
+                  <IconDeviceDesktop className='text-muted-foreground h-16 w-16' />
                 )}
-                alt={device.name || 'Device'}
-                width={128}
-                height={128}
-                className='h-full w-full object-cover'
-              />
+              </div>
+
+              {/* Device Information */}
+              <div className='flex-1'>
+                {!isEditMode ? (
+                  // View Mode
+                  <>
+                    <div>
+                      <h2 className='text-primary mb-2 text-xl font-bold'>
+                        {device.name}
+                      </h2>
+                    </div>
+                    <div className='grid grid-cols-2 gap-4 text-sm'>
+                      <div>
+                        <span className='text-muted-foreground'>
+                          Mã thiết bị:
+                        </span>
+                        <span className='ml-2 font-medium'>
+                          {device.device_info?.imei}
+                        </span>
+                      </div>
+                      <div>
+                        <span className='text-muted-foreground'>
+                          Loại thiết bị:
+                        </span>
+                        <span className='ml-2 font-medium'>
+                          {catalogueOptions.find(
+                            (opt) => opt.value === device.type
+                          )?.label || device.type}
+                        </span>
+                      </div>
+                      <div>
+                        <span className='text-muted-foreground'>Serial:</span>
+                        <span className='ml-2 font-medium'>{serial}</span>
+                      </div>
+                      <div>
+                        <span className='text-muted-foreground'>
+                          Nhà sản xuất:
+                        </span>
+                        <span className='ml-2 font-medium'>{manufacturer}</span>
+                      </div>
+                      <div>
+                        <span className='text-muted-foreground mr-2'>
+                          Trạng thái thiết bị:
+                        </span>
+                        {device.device_info?.online ? (
+                          <span className='text-green-600'>Online</span>
+                        ) : (
+                          <span className='text-red-600'>Offline</span>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  // Edit Mode
+                  <>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name='name'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-muted-foreground text-sm'>
+                              Tên thiết bị
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='Tên thiết bị'
+                                {...field}
+                                className='font-medium'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className='grid grid-cols-2 gap-2 text-sm'>
+                      <FormField
+                        control={form.control}
+                        name='imei'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-muted-foreground text-sm'>
+                              Mã thiết bị:
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='Mã thiết bị'
+                                {...field}
+                                className='font-medium'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='type'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-muted-foreground text-sm'>
+                              Loại thiết bị:
+                            </FormLabel>
+                            <Select
+                              value={field.value}
+                              onValueChange={field.onChange}
+                            >
+                              <FormControl>
+                                <SelectTrigger className='w-full font-medium'>
+                                  <SelectValue placeholder='Chọn loại thiết bị' />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {catalogueOptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='serial'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-muted-foreground text-sm'>
+                              Serial:
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='Serial'
+                                {...field}
+                                className='font-medium'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='manufacturer'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-muted-foreground text-sm'>
+                              Nhà sản xuất:
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder='Nhà sản xuất'
+                                {...field}
+                                className='font-medium'
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </Card>
+
+          {/* Device Information Section */}
+          <Card className='mt-4 border-none py-1 shadow-none'>
+            <CardTitle className='font-bold'>Thông tin thiết bị</CardTitle>
+            <CardContent className='space-y-2 px-0'>
+              {/* Row 1 */}
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                <div className='w-full space-y-2'>
+                  <Label>Nhóm yêu thích</Label>
+                  <Input
+                    value={tagNames.join(', ') || 'N/A'}
+                    disabled
+                    placeholder='Nhóm yêu thích'
+                    className='disabled:opacity-90'
+                  />
+                </div>
+                <div className='space-y-2 md:col-span-2'>
+                  <Label>Kinh độ & Vĩ độ</Label>
+                  <div className='flex gap-2'>
+                    <FormField
+                      control={form.control}
+                      name='lon'
+                      render={({ field }) => (
+                        <FormItem className='flex-1'>
+                          <FormControl>
+                            <Input
+                              type='number'
+                              placeholder='Kinh độ'
+                              disabled={!isEditMode}
+                              {...field}
+                              className={cn(
+                                'flex-1',
+                                !isEditMode && 'disabled:opacity-90'
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name='lat'
+                      render={({ field }) => (
+                        <FormItem className='flex-1'>
+                          <FormControl>
+                            <Input
+                              type='number'
+                              placeholder='Vĩ độ'
+                              disabled={!isEditMode}
+                              {...field}
+                              className={cn(
+                                'flex-1',
+                                !isEditMode && 'disabled:opacity-90'
+                              )}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button
+                      type='button'
+                      variant='default'
+                      className='bg-cyan-600 hover:bg-cyan-700'
+                      disabled={!isEditMode}
+                    >
+                      Vị trí bản đồ
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Row 2 */}
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='parent_group_id'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Chi nhánh</FormLabel>
+                        <Select
+                          value={field.value}
+                          onValueChange={field.onChange}
+                          disabled={!isEditMode}
+                        >
+                          <FormControl>
+                            <SelectTrigger
+                              className={cn(
+                                'w-full',
+                                !isEditMode && 'disabled:opacity-90'
+                              )}
+                            >
+                              <SelectValue placeholder='Chọn nhóm thiết bị' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {groupOptions.map((group) => (
+                              <SelectItem
+                                key={group.value}
+                                value={String(group.value)}
+                              >
+                                {group.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='address'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Địa chỉ</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={!isEditMode}
+                            placeholder='Địa chỉ'
+                            {...field}
+                            className={cn(!isEditMode && 'disabled:opacity-90')}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='note'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ghi chú</FormLabel>
+                        <FormControl>
+                          <Input
+                            disabled={!isEditMode}
+                            placeholder='Nhập ghi chú'
+                            {...field}
+                            className={cn(!isEditMode && 'disabled:opacity-90')}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Product Information Section */}
+          <Card className='border-none py-1 shadow-none'>
+            <CardTitle className='font-bold'>Thông tin sản phẩm</CardTitle>
+            <CardContent className='space-y-2 px-0'>
+              <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='installation_date'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ngày lắp đặt</FormLabel>
+                        <FormControl>
+                          <DateInput
+                            value={
+                              field.value instanceof Date
+                                ? field.value
+                                : field.value
+                                  ? new Date((field.value as number) * 1000)
+                                  : undefined
+                            }
+                            onChange={field.onChange}
+                            placeholder='Chọn ngày lắp đặt'
+                            disabled={!isEditMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='purchase_date'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ngày áp dụng bảo hành</FormLabel>
+                        <FormControl>
+                          <DateInput
+                            value={
+                              field.value instanceof Date
+                                ? field.value
+                                : field.value
+                                  ? new Date((field.value as number) * 1000)
+                                  : undefined
+                            }
+                            onChange={field.onChange}
+                            placeholder='Chọn ngày bảo hành'
+                            disabled={!isEditMode}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className='space-y-2'>
+                  <FormField
+                    control={form.control}
+                    name='expiration_date'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ngày hết hạn bảo hành</FormLabel>
+                        <div className='flex w-full items-center gap-2'>
+                          <FormControl>
+                            <DateInput
+                              value={
+                                field.value instanceof Date
+                                  ? field.value
+                                  : field.value
+                                    ? new Date((field.value as number) * 1000)
+                                    : undefined
+                              }
+                              onChange={field.onChange}
+                              placeholder='Chọn ngày hết hạn bảo hành'
+                              disabled={!isEditMode}
+                            />
+                          </FormControl>
+                          {!isEditMode && (
+                            <Button
+                              type='button'
+                              variant='link'
+                              className='text-green-600 hover:text-green-700'
+                            >
+                              Xem lời nhắc
+                            </Button>
+                          )}
+                        </div>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          {/* Action Buttons */}
+          <div className='flex justify-end gap-2'>
+            {!isEditMode ? (
+              <Button
+                type='button'
+                variant='default'
+                onClick={() => setIsEditMode(true)}
+                className='bg-primary hover:bg-primary/90'
+              >
+                <Edit2 className='mr-2 h-4 w-4' />
+                Chỉnh sửa
+              </Button>
             ) : (
-              <IconDeviceDesktop className='text-muted-foreground h-16 w-16' />
+              <>
+                <Button
+                  type='button'
+                  variant='outline'
+                  onClick={handleCancel}
+                  disabled={updateDeviceMutation.isPending}
+                >
+                  <X className='mr-2 h-4 w-4' />
+                  Hủy
+                </Button>
+                <Button
+                  type='submit'
+                  variant='default'
+                  disabled={updateDeviceMutation.isPending}
+                  className='bg-primary hover:bg-primary/90'
+                >
+                  <Save className='mr-2 h-4 w-4' />
+                  {updateDeviceMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+                </Button>
+              </>
             )}
           </div>
-
-          {/* Device Information */}
-          <div className='flex-1 space-y-3'>
-            <div>
-              <h2 className='text-primary text-xl font-bold'>{device.name}</h2>
-            </div>
-            <div className='grid grid-cols-2 gap-4 text-sm'>
-              <div>
-                <span className='text-muted-foreground'>Mã thiết bị:</span>
-                <span className='ml-2 font-medium'>
-                  {device.device_info?.imei}
-                </span>
-              </div>
-              <div>
-                <span className='text-muted-foreground'>Loại thiết bị:</span>
-                <span className='ml-2 font-medium'>
-                  {getDeviceTypeLabel(device.type)}
-                </span>
-              </div>
-              <div>
-                <span className='text-muted-foreground'>Serial:</span>
-                <span className='ml-2 font-medium'>{serial}</span>
-              </div>
-              <div>
-                <span className='text-muted-foreground mr-2'>
-                  Trạng thái thiết bị:
-                </span>
-                {device.device_info?.online ? (
-                  <span className='text-green-600'>Online</span>
-                ) : (
-                  <span className='text-red-600'>Offline</span>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </Card>
-
-      {/* Device Information Section */}
-      <Card className='border-none shadow-none'>
-        <CardTitle className='font-bold'>Thông tin thiết bị</CardTitle>
-        <CardContent className='space-y-6 px-0'>
-          {/* Row 1 */}
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            <div className='w-full space-y-2'>
-              <Label>Nhóm yêu thích</Label>
-              <Input
-                value={tagNames.join(', ') || 'N/A'}
-                disabled
-                placeholder='Nhóm yêu thích'
-                className='disabled:opacity-90'
-              />
-            </div>
-            <div className='space-y-2 md:col-span-2'>
-              <Label>Kinh độ & Vĩ độ</Label>
-              <div className='flex gap-2'>
-                <Input
-                  type='number'
-                  placeholder='Kinh độ'
-                  value={device.device_info?.lon?.toString() || ''}
-                  disabled
-                  className='flex-1 disabled:opacity-90'
-                />
-                <Input
-                  type='number'
-                  placeholder='Vĩ độ'
-                  value={device.device_info?.lat?.toString() || ''}
-                  disabled
-                  className='flex-1 disabled:opacity-90'
-                />
-                <Button
-                  variant='default'
-                  className='bg-cyan-600 hover:bg-cyan-700'
+          {/* Limit Parameters Section */}
+          {sensorInfo && (
+            <Card className='border-none p-0 shadow-none'>
+              <Accordion
+                type='single'
+                collapsible
+                className='p-0'
+                defaultValue='0'
+              >
+                <AccordionItem
+                  value='0'
+                  className='border-none p-0 shadow-none'
                 >
-                  Vị trí bản đồ
-                </Button>
-              </div>
-            </div>
-          </div>
+                  <AccordionTrigger>
+                    <CardTitle className='text-base font-bold'>
+                      Thông số thiết bị
+                    </CardTitle>
+                  </AccordionTrigger>
 
-          {/* Row 2 */}
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            <div className='space-y-2'>
-              <Label>Chi nhánh</Label>
-              <Select defaultValue={device.parent_group_id} disabled>
-                <SelectTrigger className='w-full disabled:opacity-90'>
-                  <SelectValue placeholder='Chọn nhóm thiết bị' />
-                </SelectTrigger>
-                <SelectContent>
-                  {groupOptions.map((group) => (
-                    <SelectItem key={group.value} value={String(group.value)}>
-                      {group.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className='space-y-2'>
-              <Label>Địa chỉ</Label>
-              <Input
-                value={device.device_info?.region || ''}
-                disabled
-                className='disabled:opacity-90'
-                placeholder='Địa chỉ'
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label>Ghi chú</Label>
-              <Input
-                value={note}
-                disabled
-                placeholder='Nhập ghi chú'
-                className='disabled:opacity-90'
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Product Information Section */}
-      <Card className='border-none shadow-none'>
-        <CardTitle className='font-bold'>Thông tin sản phẩm</CardTitle>
-        <CardContent className='px-0'>
-          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-            <div className='space-y-2'>
-              <Label>Serial</Label>
-              <Input
-                value={serial}
-                disabled
-                placeholder='Serial'
-                className='disabled:opacity-90'
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label>Nhà sản xuất</Label>
-              <Input
-                value={manufacturer}
-                disabled
-                className='disabled:opacity-90'
-                placeholder='Nhà sản xuất'
-              />
-            </div>
-            <div className='space-y-2'>
-              <Label>Ngày lắp đặt</Label>
-              <div className='relative'>
-                <Input
-                  value={installationDate}
-                  disabled
-                  placeholder='Chọn ngày lắp đặt'
-                  className='pr-10 disabled:opacity-90'
-                />
-                <CalendarIcon className='text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2' />
-              </div>
-            </div>
-            <div className='space-y-2'>
-              <Label>Ngày áp dụng bảo hành</Label>
-              <div className='relative'>
-                <Input
-                  value={purchaseDate}
-                  disabled
-                  placeholder='Chọn ngày bảo hành'
-                  className='pr-10 disabled:opacity-90'
-                />
-                <CalendarIcon className='text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2' />
-              </div>
-            </div>
-            <div className='space-y-2'>
-              <Label>Ngày hết hạn bảo hành</Label>
-              <div className='relative flex items-center gap-2'>
-                <Input
-                  value={expirationDate}
-                  disabled
-                  placeholder='Chọn ngày hết hạn bảo hành'
-                  className='pr-10 disabled:opacity-90'
-                />
-                <CalendarIcon className='text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2' />
-                {hasReminders && (
-                  <Button
-                    variant='link'
-                    className='text-green-600 hover:text-green-700'
-                  >
-                    Xem lời nhắc
-                  </Button>
-                )}
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Limit Parameters Section */}
-      {sensorInfo && (
-        <Card className='border-none p-0 shadow-none'>
-          <Accordion type='single' collapsible className='p-0'>
-            <AccordionItem
-              value='limit-params'
-              className='border-none p-0 shadow-none'
-            >
-              <AccordionTrigger>
-                <CardTitle className='text-base font-bold'>
-                  Thông số thiết bị
-                </CardTitle>
-              </AccordionTrigger>
-
-              <AccordionContent>
-                <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
-                  {Object.entries(sensorInfo.attributes || {}).map(
-                    ([key, value]) => {
-                      const valueType = sensorInfo.attributes?.[key]?.t;
-                      let _value = '';
-                      if (valueType === 1 || valueType === 2) {
-                        _value = sensorInfo.last_state?.[key]?.toString() || '';
-                      } else {
-                        _value = Array.isArray(sensorInfo.last_state?.[key])
-                          ? sensorInfo.last_state?.[key]?.join(', ')
-                          : '';
-                      }
-                      return (
-                        <div key={key} className='space-y-2'>
-                          <Label>{`${value.n} (${value.u})`}</Label>
-                          <Input
-                            value={_value}
-                            disabled
-                            className='disabled:opacity-90'
-                          />
-                        </div>
-                      );
-                    }
-                  )}
-                </CardContent>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </Card>
-      )}
-      {/* Action Button */}
-      <div className='flex justify-end'>
-        <Button variant='outline'>Đóng</Button>
-      </div>
-    </div>
+                  <AccordionContent>
+                    <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
+                      {Object.entries(sensorInfo.attributes || {}).map(
+                        ([key, value]) => {
+                          const valueType = sensorInfo.attributes?.[key]?.t;
+                          let _value = '';
+                          if (valueType === 1 || valueType === 2) {
+                            _value =
+                              sensorInfo.last_state?.[key]?.toString() || '';
+                          } else {
+                            _value = Array.isArray(sensorInfo.last_state?.[key])
+                              ? sensorInfo.last_state?.[key]?.join(' - ')
+                              : '';
+                          }
+                          return (
+                            <div key={key} className='space-y-2'>
+                              <Label>{`${value.n} (${value.u})`}</Label>
+                              <Input
+                                value={_value}
+                                disabled
+                                className='disabled:opacity-90'
+                              />
+                            </div>
+                          );
+                        }
+                      )}
+                    </CardContent>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
+            </Card>
+          )}
+        </form>
+      </Form>
+    </FormSchemaProvider>
   );
 }
