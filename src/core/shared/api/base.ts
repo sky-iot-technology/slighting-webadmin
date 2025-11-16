@@ -201,7 +201,7 @@ export abstract class BaseApiClient {
     config?: ApiRequestConfig
   ): Promise<T> {
     const client = this.getClient(config?.isAdmin);
-    const response = await client.delete<T>(url, data, config);
+    const response = await client.delete<T>(url, { data, ...config });
     return this.handleResponse(response);
   }
 

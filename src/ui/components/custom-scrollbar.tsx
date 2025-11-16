@@ -1,6 +1,5 @@
 // components/CustomScrollbar.tsx
-import React from 'react';
-import { FC, ReactNode, useCallback } from 'react';
+import React, { ReactNode, useCallback } from 'react';
 
 type CustomScrollbarProps = {
   children: ReactNode;
@@ -41,5 +40,7 @@ const CustomScrollbar = React.forwardRef<HTMLDivElement, CustomScrollbarProps>(
     );
   }
 );
+
+CustomScrollbar.displayName = 'CustomScrollbar';
 
 export default CustomScrollbar;

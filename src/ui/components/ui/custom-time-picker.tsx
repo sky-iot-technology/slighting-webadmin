@@ -7,7 +7,7 @@ import React, {
   useState
 } from 'react';
 import TimePicker from 'react-time-picker';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from 'motion/react';
 import CustomScrollbar from '../custom-scrollbar';
 
 interface CustomTimePickerProps {
@@ -176,8 +176,12 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
         <AnimatePresence>
           <motion.div
             ref={dropdownRef}
-            onWheelCapture={(e) => e.stopPropagation()}
-            onMouseDown={(e) => e.stopPropagation()}
+            onWheelCapture={(e: React.WheelEvent<HTMLDivElement>) =>
+              e.stopPropagation()
+            }
+            onMouseDown={(e: React.MouseEvent<HTMLDivElement>) =>
+              e.stopPropagation()
+            }
             initial={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
