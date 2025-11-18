@@ -142,10 +142,28 @@ export const Icons = {
       className='dark:invert'
     />
   ),
+  userAgent: () => (
+    <Image
+      src={'/assets/icons/user.svg'}
+      alt='user'
+      width={17}
+      height={24}
+      className='dark:invert'
+    />
+  ),
   deviceMenu: () => (
     <Image
       src={'/assets/icons/device-menu.svg'}
       alt='device-menu'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
+  love: () => (
+    <Image
+      src={'/assets/icons/love.svg'}
+      alt='love'
       width={17}
       height={17}
       className='dark:invert'

@@ -36,6 +36,8 @@ export type CreateRoleInput = {
   permission: UIRawPermission;
 };
 
+export interface UpdateRoleInput extends Partial<CreateRoleInput> {}
+
 export interface RoleListResponseDto {
   'ui-roles': UIRoleResponse[];
   limit: number;

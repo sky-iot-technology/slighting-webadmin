@@ -17,5 +17,9 @@ export const mapControllerProps = {
   touchAction: 'none',
   attributionControl: false,
   reuseMaps: true,
-  dragPan: { inertia: 200 }
+  dragPan: { inertia: 200 },
+  onTransitionStart: () => {},
+  onTransitionEnd: () => {},
+  onTransitionInterrupt: () => {},
+  onResize: () => {}
 };

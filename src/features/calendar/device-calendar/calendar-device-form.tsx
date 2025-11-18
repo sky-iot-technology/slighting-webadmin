@@ -138,9 +138,9 @@ export default function CalendarDeviceForm({
                         onValueChange={(val) => field.onChange(val)}
                         placeholder='Chọn thiết bị'
                         resetOnDefaultValueChange={true}
-                        className='!min-h-[31px] w-full !rounded-[4px] px-2 text-xs'
+                        className='!min-h-[31px] w-full !rounded-[4px] px-2'
                         popoverClassName='w-[var(--radix-popover-trigger-width)]'
-                        itemClassName='text-xs'
+                        textSize='!text-xs'
                         autoSize={true}
                         hideSelectAll
                       />

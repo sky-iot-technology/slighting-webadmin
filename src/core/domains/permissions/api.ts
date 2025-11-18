@@ -3,9 +3,9 @@ import {
   CreateRoleInput,
   GetRolesParamsDto,
   RoleListResponseDto,
-  UIRoleResponse
+  UIRoleResponse,
+  UpdateRoleInput
 } from './types';
-import { any } from 'zod';
 
 export const rolesApi = {
   async getAll(params?: GetRolesParamsDto): Promise<RoleListResponseDto> {
@@ -16,6 +16,12 @@ export const rolesApi = {
           ...params
         }
       }
+    );
+    return response;
+  },
+  async getById(id: string): Promise<UIRoleResponse> {
+    const response = await authenticatedApi.get<UIRoleResponse>(
+      `/system/ui-roles/${id}`
     );
     return response;
   },
@@ -35,10 +41,20 @@ export const rolesApi = {
       throw new Error(message);
     }
   },
-  async getById(id: string): Promise<UIRoleResponse> {
-    const response = await authenticatedApi.get<UIRoleResponse>(
-      `/system/ui-roles/${id}`
-    );
-    return response;
+  async updateRole(id: string, data: UpdateRoleInput): Promise<UIRoleResponse> {
+    try {
+      const response = await authenticatedApi.patch<UIRoleResponse>(
+        `/system/ui-roles/${id}`,
+        data
+      );
+      return response;
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Không thể cập nhật vai trò. Vui lòng thử lại.';
+      console.error('❌ update role error:', message);
+      throw new Error(message);
+    }
   }
 };

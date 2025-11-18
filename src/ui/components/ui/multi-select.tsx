@@ -275,6 +275,8 @@ interface MultiSelectProps
    * Optional, defaults to false.
    */
   closeOnSelect?: boolean;
+
+  textSize?: string;
 }
 
 /**
@@ -331,6 +333,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       deduplicateOptions = false,
       resetOnDefaultValueChange = true,
       closeOnSelect = false,
+      textSize,
       ...props
     },
     ref
@@ -997,7 +1000,12 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 </div>
               ) : (
                 <div className='mx-auto flex w-full items-center justify-between'>
-                  <span className='text-muted-foreground mx-1 text-sm'>
+                  <span
+                    className={cn(
+                      textSize,
+                      'text-muted-foreground mx-1 text-sm'
+                    )}
+                  >
                     {placeholder}
                   </span>
                   <ChevronDown className='text-muted-foreground mx-2 h-4 cursor-pointer' />
@@ -1178,7 +1186,9 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                               aria-hidden='true'
                             />
                           )}
-                          <span className='text-sm'>{option.label}</span>
+                          <span className={cn(textSize, 'text-sm')}>
+                            {option.label}
+                          </span>
                         </CommandItem>
                       );
                     })}

@@ -9,7 +9,8 @@ import {
   CreateRoleInput,
   GetRolesParamsDto,
   RoleListResponseDto,
-  UIRoleResponse
+  UIRoleResponse,
+  UpdateRoleInput
 } from './types';
 import { rolesApi } from './api';
 import { toast } from 'sonner';
@@ -88,6 +89,39 @@ export const useCreateRole = (
     onError: (error, variables, context) => {
       console.error('Failed to create role:', error);
       toast.error(error.message || 'Tạo vai trò thất bại');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useUpdateRole = (
+  options?: UseMutationOptions<
+    UIRoleResponse,
+    Error,
+    { id: string; data: UpdateRoleInput }
+  >
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    UIRoleResponse,
+    Error,
+    { id: string; data: UpdateRoleInput }
+  >({
+    ...options,
+    mutationFn: (data) => rolesApi.updateRole(data.id, data.data),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [ROLES_QUERY_KEY] });
+
+      queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
+
+      toast.success('Cập nhật vai trò thành công!');
+      options?.onSuccess?.(data, variables, context);
+    },
+
+    onError: (error, variables, context) => {
+      console.error('Failed to create role:', error);
+      toast.error(error.message || 'Cập nhật vai trò thất bại');
       options?.onError?.(error, variables, context);
     }
   });

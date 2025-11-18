@@ -255,6 +255,9 @@ importers:
       '@faker-js/faker':
         specifier: ^9.3.0
         version: 9.6.0
+      '@types/geojson':
+        specifier: ^7946.0.14
+        version: 7946.0.16
       '@types/node':
         specifier: 22.10.2
         version: 22.10.2

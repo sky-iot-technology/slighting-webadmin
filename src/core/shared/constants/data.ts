@@ -37,6 +37,12 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [
       {
+        title: 'Nhóm yêu thích',
+        url: '/dashboard/tag',
+        icon: 'love',
+        shortcut: ['m', 'm']
+      },
+      {
         title: 'Chi nhánh',
         url: '/dashboard/branch',
         icon: 'branch',
@@ -46,6 +52,12 @@ export const navItems: NavItem[] = [
         title: 'Vai trò',
         url: '/dashboard/role',
         icon: 'role',
+        shortcut: ['m', 'm']
+      },
+      {
+        title: 'Người dùng',
+        url: '/dashboard/user',
+        icon: 'userAgent',
         shortcut: ['m', 'm']
       }
     ]

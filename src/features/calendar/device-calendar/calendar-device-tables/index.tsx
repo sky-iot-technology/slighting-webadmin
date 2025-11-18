@@ -66,7 +66,7 @@ export function CalendarTable<TData, TValue>({
             <Button
               variant='default'
               size='sm'
-              className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[6px] text-white'
+              className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[4px] text-white'
               onClick={() => setOpen(true)}
             >
               <IconPlus className='h-3 w-3' />
