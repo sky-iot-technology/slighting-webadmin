@@ -41,6 +41,7 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { ReminderManagementModal } from './reminder-management-modal';
 
 interface OverviewTabProps {
   device: Device;
@@ -72,6 +73,7 @@ type OverviewFormValues = z.infer<typeof overviewFormSchema>;
 
 export function OverviewTab({ device }: OverviewTabProps) {
   const [isEditMode, setIsEditMode] = useState(false);
+  const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const { data: groupsData } = useGetGroups({
     status: 'enabled'
   });
@@ -149,13 +151,6 @@ export function OverviewTab({ device }: OverviewTabProps) {
   const serial =
     device.device_info?.serial_number || device.device_info?.imei || 'N/A';
 
-  // Check if there are reminder_ids for expiration_date
-  const expirationAttr = device.device_asset?.asset_attribute?.find(
-    (a) => a.identify === 'expiration_date'
-  );
-  const hasReminders =
-    expirationAttr?.reminder_ids && expirationAttr.reminder_ids.length > 0;
-
   // Get catalogue options for device type
   const catalogueOptions = useMemo(() => {
     return catalogues.map((cat) => ({
@@ -222,7 +217,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
   };
 
   // Helper to build asset_attribute array
-  const buildAssetAttributes = (values: OverviewFormValues) => {
+  const buildAssetAttributes = (
+    values: OverviewFormValues,
+    reminderMap?: Record<string, string[]>
+  ) => {
     const asset_attribute: any[] = [];
     let index = 0;
 
@@ -249,6 +247,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
     if (values.installation_date) {
       const timestamp = dateToTimestamp(values.installation_date);
       if (timestamp !== undefined) {
+        const existingInstallation = existingAttrs.find(
+          (a) => a.identify === 'installation_date'
+        );
         asset_attribute.push({
           index: index++,
           is_disabled: true,
@@ -256,7 +257,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
           attr: 'Installation date',
           type: 2,
           content: timestamp,
-          reminder_ids: []
+          reminder_ids:
+            reminderMap?.['installation_date'] ||
+            existingInstallation?.reminder_ids ||
+            []
         });
       }
     }
@@ -264,6 +268,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
     if (values.purchase_date) {
       const timestamp = dateToTimestamp(values.purchase_date);
       if (timestamp !== undefined) {
+        const existingPurchase = existingAttrs.find(
+          (a) => a.identify === 'purchase_date'
+        );
         asset_attribute.push({
           index: index++,
           is_disabled: true,
@@ -271,7 +278,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
           attr: 'Purchase date',
           type: 2,
           content: timestamp,
-          reminder_ids: []
+          reminder_ids:
+            reminderMap?.['purchase_date'] ||
+            existingPurchase?.reminder_ids ||
+            []
         });
       }
     }
@@ -289,7 +299,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
           attr: 'Expiration date',
           type: 2,
           content: timestamp,
-          reminder_ids: existingExpiration?.reminder_ids || []
+          reminder_ids:
+            reminderMap?.['expiration_date'] ||
+            existingExpiration?.reminder_ids ||
+            []
         });
       }
     }
@@ -388,6 +401,54 @@ export function OverviewTab({ device }: OverviewTabProps) {
         : undefined
     });
     setIsEditMode(false);
+  };
+
+  const handleSaveReminders = (reminderMap: Record<string, string[]>) => {
+    const currentValues = form.getValues();
+    const asset_attribute = buildAssetAttributes(currentValues, reminderMap);
+
+    const latValue = currentValues.lat
+      ? parseFloat(currentValues.lat) || (device.device_info?.lat ?? 0)
+      : (device.device_info?.lat ?? 0);
+    const lonValue = currentValues.lon
+      ? parseFloat(currentValues.lon) || (device.device_info?.lon ?? 0)
+      : (device.device_info?.lon ?? 0);
+
+    const updateData: Partial<Device> = {
+      name: currentValues.name,
+      type: currentValues.type,
+      parent_group_id: currentValues.parent_group_id,
+      device_info: {
+        ...device.device_info,
+        imei: currentValues.imei || device.device_info?.imei || '',
+        lat: latValue,
+        lon: lonValue,
+        region: currentValues.address || device.device_info?.region || '',
+        serial_number:
+          currentValues.serial || device.device_info?.serial_number || '',
+        manufacturer:
+          currentValues.manufacturer || device.device_info?.manufacturer || ''
+      }
+    };
+
+    // Only include device_asset if we have asset_attribute
+    if (asset_attribute.length > 0) {
+      updateData.device_asset = device.device_asset
+        ? {
+            ...device.device_asset,
+            asset_attribute
+          }
+        : {
+            id: String(device.id || ''),
+            name: device.name || '',
+            asset_attribute
+          };
+    }
+
+    updateDeviceMutation.mutate({
+      deviceId: device.id,
+      data: updateData
+    });
   };
 
   return (
@@ -834,6 +895,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               type='button'
                               variant='link'
                               className='text-green-600 hover:text-green-700'
+                              onClick={() => setIsReminderModalOpen(true)}
                             >
                               Xem lời nhắc
                             </Button>
@@ -935,6 +997,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
           )}
         </form>
       </Form>
+      <ReminderManagementModal
+        isOpen={isReminderModalOpen}
+        onClose={() => setIsReminderModalOpen(false)}
+        device={device}
+        onSave={handleSaveReminders}
+      />
     </FormSchemaProvider>
   );
 }
