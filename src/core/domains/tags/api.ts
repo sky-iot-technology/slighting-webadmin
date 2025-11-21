@@ -1,5 +1,10 @@
 import { authenticatedApi } from '@/core/shared/api';
-import { GetTagsParamsDto, TagListResponseDto } from './types';
+import {
+  CreateTagRequest,
+  GetTagsParamsDto,
+  Tag,
+  TagListResponseDto
+} from './types';
 
 export const tagsApi = {
   async getAll(params?: GetTagsParamsDto): Promise<TagListResponseDto> {
@@ -10,5 +15,13 @@ export const tagsApi = {
       }
     );
     return response;
+  },
+  async createTag(data: CreateTagRequest): Promise<Tag> {
+    try {
+      const response = await authenticatedApi.post<Tag>('/system/tags', data);
+      return response;
+    } catch (error) {
+      throw new Error('Failed to create tag');
+    }
   }
 };

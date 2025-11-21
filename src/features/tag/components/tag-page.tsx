@@ -8,13 +8,16 @@ import { cn } from '@/lib/utils';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { SelectedTag, TagSidebar } from './tag-sidebar';
 import Image from 'next/image';
+import { TagContent } from './tag-content';
+import { Device, GetDevicesParamsDto } from '@/core/domains/devices';
+import { Table } from '@tanstack/react-table';
+import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 
 export default function TagPage() {
   const [treeOpen, setTreeOpen] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedTag, setSelectedTag] = useState<SelectedTag>(null);
-
-  const [searchTerm, setSearchTerm] = useState('');
+  const [deviceTable, setDeviceTable] = useState<Table<Device> | null>(null);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -23,13 +26,11 @@ export default function TagPage() {
   const page = searchParams.get('page');
   const search = searchParams.get('name');
   const pageLimit = searchParams.get('perPage');
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
 
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Quản lý lịch</span>
+        <span className='text-lg font-bold'>Nhóm yêu thích</span>
       </div>
     ),
     []
@@ -37,39 +38,52 @@ export default function TagPage() {
 
   useCustomBreadcrumbContent(breadcrumbContent);
 
-  const filters = useMemo<GetCalendarsParamsDto>(
+  const filters = useMemo<GetDevicesParamsDto>(
     () => ({
       page: page ? parseInt(page.toString()) : 1,
       limit: pageLimit ? parseInt(pageLimit.toString()) : 10,
-      start_range: startDate ?? undefined,
-      end_range: endDate ?? undefined,
       ...(search && { name: search })
     }),
-    [page, pageLimit, startDate, endDate, search]
+    [page, pageLimit, search]
   );
 
-  // const handleRegionChange = useCallback(
-  //   (region: SelectedRegion) => {
-  //     const newUrl = new URL(pathname, window.location.origin);
-  //     if (selectedRegion?.id === region?.id) {
-  //       setSelectedRegion(null);
-  //       newUrl.searchParams.delete('page');
-  //     } else {
-  //       setSelectedRegion(region);
-  //       newUrl.searchParams.set('page', '1');
-  //     }
-  //     router.push(newUrl.toString());
-  //   },
-  //   [pathname, router, selectedRegion]
-  // );
+  const handleTagChange = useCallback(
+    (tag: SelectedTag) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      const isSame = tag && selectedTag && tag.id === selectedTag.id;
+
+      if (!tag || isSame) {
+        setSelectedTag(null);
+        params.delete('page');
+        router.push(`${pathname}?${params.toString()}`);
+        return;
+      }
+
+      setSelectedTag(tag);
+      params.set('page', '1');
+      router.push(`${pathname}?${params.toString()}`);
+    },
+    [pathname, router, searchParams, selectedTag]
+  );
 
   const handleToggleSidebar = useCallback(() => {
     setTreeOpen((prev) => !prev);
   }, []);
 
+  const tagContent = useMemo(() => {
+    return (
+      <TagContent
+        filters={filters}
+        selectedTag={selectedTag}
+        onTableReady={setDeviceTable}
+      />
+    );
+  }, [filters, selectedTag, setDeviceTable]);
+
   return (
-    <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
-      <div className='bg-calender-gray h-full w-full rounded-[4px] pb-[7px]'>
+    <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px] pb-3'>
+      <div className='h-full w-full rounded-[4px]'>
         <div className='flex h-full w-full'>
           <div
             className={cn(
@@ -81,13 +95,7 @@ export default function TagPage() {
               !treeOpen && 'md:w-0'
             )}
           >
-            {treeOpen && (
-              <TagSidebar
-                searchTerm={searchTerm}
-                setSearchTerm={setSearchTerm}
-                onTagChange={setSelectedTag}
-              />
-            )}
+            {treeOpen && <TagSidebar onTagChange={handleTagChange} />}
           </div>
 
           {treeOpen && (
@@ -126,47 +134,24 @@ export default function TagPage() {
                   </span>
                 </div>
 
-                {/* {(() => {
-                    if (activeTab === 'devices' && deviceTable) {
-                      return (
-                        <>
-                          <div className='flex w-full items-center gap-2 sm:w-auto sm:justify-end'>
-                            <DataTableToolbar
-                              table={deviceTable}
-                              className='w-auto'
-                              actions={
-                                <Button
-                                  variant='default'
-                                  size='sm'
-                                  className='bg-primary hover:bg-primary/90 flex h-7.5 w-7.5 items-center rounded-[4px] !px-3 text-white'
-                                  onClick={() => setOpen(true)}
-                                >
-                                  <IconPlus className='h-4 w-4' />
-                                </Button>
-                              }
-                              excel={true}
-                              onDeleteAll={() => console.log('2122121')}
-                            />
-
-                            <BranchAddDevice
-                              regionId={selectedRegion.id}
-                              open={open}
-                              onOpenChange={setOpen}
-                            />
-                          </div>
-                        </>
-                      );
-                    }
-                    return null;
-                  })()} */}
+                {selectedTag && deviceTable && (
+                  <div className='flex w-full items-center gap-2 sm:w-auto sm:justify-end'>
+                    <DataTableToolbar
+                      table={deviceTable}
+                      className='w-auto'
+                      excel={false}
+                      onDeleteAll={() => console.log('2122121')}
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
             <div
-              className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pt-3 pl-3'
+              className='flex w-full flex-1 flex-col overflow-hidden border-l-1 bg-white'
               ref={containerRef}
             >
-              ssss
+              {tagContent}
             </div>
           </div>
         </div>

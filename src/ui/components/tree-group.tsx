@@ -28,6 +28,7 @@ type RegionTreeProps = {
   overscanCount?: number;
   searchTerm?: string;
   searchMatch?: (node: any, term: string) => boolean;
+  filter?: boolean;
 };
 
 const nodeRenderers = {
@@ -49,14 +50,27 @@ export function RegionTree({
   padding,
   overscanCount,
   searchTerm = '',
-  searchMatch
+  searchMatch,
+  filter = false
 }: RegionTreeProps) {
+  const enhancedData: RegionNode[] = filter
+    ? [
+        {
+          id: '__all__',
+          slug: 'all',
+          name: 'Tất cả',
+          children: []
+        },
+        ...data
+      ]
+    : data;
+
   const renderFn =
     typeof renderNode === 'string' ? nodeRenderers[renderNode] : renderNode;
 
   return (
     <Tree
-      data={data}
+      data={enhancedData}
       searchTerm={searchTerm}
       searchMatch={searchMatch}
       openByDefault={false}
@@ -86,7 +100,9 @@ function DefaultNode({
   onSelect,
   selectedId
 }: NodeProps) {
-  const isSelected = node.data.id === selectedId;
+  const isSelected =
+    (selectedId == null && node.data.id === '__all__') ||
+    node.data.id === selectedId;
   const hasChildren =
     Array.isArray(node.data.children) && node.data.children.length > 0;
 

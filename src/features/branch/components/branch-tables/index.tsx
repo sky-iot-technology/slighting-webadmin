@@ -51,8 +51,8 @@ export function BranchTable<TData, TValue>({
       table={table}
       totalRows={totalItems}
       className=''
-      wrapperClassName='rounded-[8px]'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      wrapperClassName='rounded-[8px] bg-white'
+      tableContainerClassName='!border-x-0 rounded-[4px] border-none !border-b-1'
       paginationClassName='py-3'
       headerClassName='bg-white'
       rowClassName='text-xs font-normal'

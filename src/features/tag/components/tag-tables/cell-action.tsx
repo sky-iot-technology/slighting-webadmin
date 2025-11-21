@@ -10,31 +10,52 @@ import {
 } from '@/ui/components/ui/dropdown-menu';
 import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import Image from 'next/image';
+import { Device, useUpdateTagDevice } from '@/core/domains/devices';
+import { SelectedTag } from '../tag-sidebar';
 
 interface CellActionProps {
-  id: string;
+  data: Device;
+  selectedTag: SelectedTag;
   disabled?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+export const CellAction: React.FC<CellActionProps> = ({
+  data,
+  selectedTag,
+  disabled
+}) => {
   const [open, setOpen] = useState(false);
-  const [openView, setOpenView] = useState(false);
   const router = useRouter();
+  const updateDeviceTags = useUpdateTagDevice();
 
-  const handleConfirmDelete = () => {
-    if (!id) return;
-  };
+  const currentTags = data.tags ?? [];
+  const tagAlias = selectedTag?.alias;
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!data.id || !tagAlias) return;
+
+    const newTags = currentTags.filter((tag) => tag !== tagAlias);
+
+    updateDeviceTags.mutate(
+      { deviceId: data.id, tags: newTags },
+      {
+        onSuccess: () => {
+          setOpen(false);
+        }
+      }
+    );
+  }, [data.id, currentTags, tagAlias, selectedTag, updateDeviceTags]);
 
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
-        loading={deleteDeviceParent.isPending}
-      /> */}
+        loading={updateDeviceTags.isPending}
+      />
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -52,7 +73,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           className='flex w-31.5 flex-col gap-2 p-2'
         >
           <DropdownMenuItem
-            onClick={() => setOpenView(true)}
+            onClick={() => router.push(`/dashboard/product/info/${data.id}`)}
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>

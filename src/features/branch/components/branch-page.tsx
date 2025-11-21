@@ -200,7 +200,7 @@ export default function BranchPage() {
             </div>
 
             <div
-              className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pt-3 pl-3'
+              className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pt-1 pl-1'
               ref={containerRef}
             >
               {activeTab === 'detail' && selectedRegion ? (

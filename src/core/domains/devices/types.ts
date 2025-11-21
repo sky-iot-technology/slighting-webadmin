@@ -12,6 +12,7 @@ export interface Device extends BaseEntity {
   parent_group_id: string;
   device_info: DeviceInfo;
   device_asset?: DeviceAsset;
+  tags?: string[];
   product_info: ProductInfo[];
   devices: SubDevice[];
   updated_by: string;
@@ -133,6 +134,7 @@ export interface GetDevicesParamsDto
   dir?: 'asc' | 'desc';
   order?: string;
   metadata?: any;
+  tag?: string;
   group?: string | undefined;
   name?: string;
   status?: 'enabled' | 'disabled' | 'deleted' | 'all' | 'unknown';

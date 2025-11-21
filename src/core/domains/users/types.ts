@@ -17,10 +17,9 @@ export interface Credentials {
 export interface Metadata {
   about?: string;
   address?: string;
-  email?: string;
   phone?: string;
-  username?: string;
-  role?: string;
+  unit?: string;
+  department?: string;
 }
 
 export interface User {
@@ -36,7 +35,6 @@ export interface User {
   updated_by?: string;
   verified_at: string;
   metadata?: Metadata;
-  tags?: string[];
   profile_picture?: string;
 }
 
@@ -54,4 +52,19 @@ export interface GetUsersParamsDto
   > {
   status?: 'enabled' | 'disabled';
   //   only_total?: boolean;
+}
+
+export interface CreateUserCredentialsDto extends Credentials {
+  secret: string;
+}
+
+export interface CreateUserDto {
+  first_name: string;
+  last_name: string;
+  status: UserStatus;
+  role: UserRole;
+  credentials: CreateUserCredentialsDto;
+  email: string;
+  metadata?: Metadata;
+  profile_picture?: string;
 }

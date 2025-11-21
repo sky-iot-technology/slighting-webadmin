@@ -207,6 +207,7 @@ export function DataTableFilterOptions<TData>({
                       className='!h-9 !w-full'
                       buttonClassName='!bg-white'
                       treeClassName='!w-full'
+                      filter={true}
                       selectedRegion={(() => {
                         const slug = Array.isArray(value)
                           ? value.join('-')

@@ -19,3 +19,10 @@ export interface TagListResponseDto {
   limit: number;
   offset: number;
 }
+
+export interface CreateTagRequest {
+  name: string;
+  alias: string;
+  resource_type: string;
+  description?: string;
+}

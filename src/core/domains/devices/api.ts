@@ -177,5 +177,18 @@ export const devicesApi = {
     } catch (error) {
       throw new Error('Failed to update device');
     }
+  },
+
+  async updateDeviceTags(
+    deviceId: string | number,
+    tags: string[]
+  ): Promise<Device> {
+    try {
+      return await authenticatedApi.patch<Device>(`/clients/${deviceId}/tags`, {
+        tags
+      });
+    } catch (error) {
+      throw new Error('Failed to update device');
+    }
   }
 };

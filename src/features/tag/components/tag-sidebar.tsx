@@ -1,8 +1,7 @@
 'use client';
-import { SelectedRegion } from '@/ui/components/tree-group';
 import { Button } from '@/ui/components/ui/button';
-import { memo, useState } from 'react';
-import BranchDialog from './modal/branch-dialog';
+import { memo, useMemo, useState } from 'react';
+import BranchDialog from './modal/tag-dialog';
 import { IconPlus } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useGetTags } from '@/core/domains/tags';
@@ -14,18 +13,14 @@ export type SelectedTag = {
 } | null;
 
 interface TagSidebarProps {
-  searchTerm: string;
-  setSearchTerm: (val: string) => void;
   onTagChange: (tag: SelectedTag) => void;
 }
 
 export const TagSidebar = memo(function TagSidebar({
-  searchTerm,
-  setSearchTerm,
   onTagChange
 }: TagSidebarProps) {
   const [openNew, setOpenNew] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState<SelectedTag>(null);
 
   const { data, isLoading } = useGetTags({
@@ -43,6 +38,17 @@ export const TagSidebar = memo(function TagSidebar({
     setSelectedTag(updated);
     onTagChange(updated);
   };
+
+  const filteredTags = useMemo(() => {
+    if (!data?.tag) return [];
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) return data.tag;
+    return data.tag.filter(
+      (tag: any) =>
+        tag.name.toLowerCase().includes(term) ||
+        tag.alias.toLowerCase().includes(term)
+    );
+  }, [data?.tag, searchTerm]);
 
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
@@ -74,8 +80,7 @@ export const TagSidebar = memo(function TagSidebar({
       </div>
       <div>
         {!isLoading &&
-          (data?.total ?? 0) > 0 &&
-          data?.tag?.map((tag) => {
+          filteredTags.map((tag) => {
             const active = selectedTag?.id === tag.id;
             return (
               <button
@@ -87,7 +92,7 @@ export const TagSidebar = memo(function TagSidebar({
                     name: tag.name
                   })
                 }
-                className={`hover:bg-primary/5 flex w-full cursor-pointer gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary' : ''}`}
+                className={`hover:bg-primary/5 mb-1 flex w-full cursor-pointer gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary' : ''}`}
               >
                 <Image
                   src={'/assets/icons/heart.svg'}
@@ -103,10 +108,10 @@ export const TagSidebar = memo(function TagSidebar({
       </div>
 
       <BranchDialog
-        pageTitle='Thêm chi nhánh'
+        pageTitle='Thêm nhóm yêu thích'
         open={openNew}
         onOpenChange={setOpenNew}
-        groupId={null}
+        roleId={null}
       />
     </div>
   );

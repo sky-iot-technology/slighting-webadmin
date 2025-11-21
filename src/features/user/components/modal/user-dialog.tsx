@@ -7,6 +7,7 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import UserForm from '../form/user-form';
+import { useGetUserById } from '@/core/domains/users';
 
 type UserDialogProps = {
   pageTitle: string;
@@ -21,10 +22,9 @@ export default function UserDialog({
   onOpenChange,
   userId
 }: UserDialogProps) {
-  // const { data, isLoading } = useGetRoleById(roleId ?? '', {
-  //   enabled: !!roleId
-  // });
-
+  const { data, isLoading } = useGetUserById(userId ?? '', {
+    enabled: !!userId
+  });
   const isEditMode = !!userId;
 
   return (
@@ -43,11 +43,9 @@ export default function UserDialog({
           />
         )} */}
         <UserForm
-          // initialData={data}
+          initialData={data}
           pageTitle={pageTitle}
           onClose={() => onOpenChange && onOpenChange(false)}
-          isEditMode={isEditMode}
-          userId={userId}
         />
       </DialogContent>
     </Dialog>

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CreateUserDto, UserRole, UserStatus } from './types';
 
 const MAX_FILE_SIZE = 5000000;
 const ACCEPTED_IMAGE_TYPES = [
@@ -25,27 +26,26 @@ export const userFormSchema = z
     unit: z.string().optional(),
     department: z.string().optional(),
     address: z.string().optional(),
-    note: z.string().optional(),
+    note: z.string().optional()
 
-    profile_picture: z
-      .any()
-      .refine(
-        (files) => !files || files?.length === 0 || files?.length === 1,
-        'Image is optional.'
-      )
-      .refine(
-        (files) =>
-          !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
-        `Max file size is 5MB.`
-      )
-      .refine(
-        (files) =>
-          !files ||
-          files?.length === 0 ||
-          ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-        '.jpg, .jpeg, .png and .webp files are accepted.'
-      )
-      .optional()
+    // profile_picture: z
+    //   .any()
+    //   .refine(
+    //     (file) => !file || file instanceof File,
+    //     'Image is optional.'
+    //   )
+    //   .refine(
+    //     (file) =>
+    //       !file || file.size <= MAX_FILE_SIZE,
+    //     `Max file size is 5MB.`
+    //   )
+    //   .refine(
+    //     (file) =>
+    //       !file ||
+    //       ACCEPTED_IMAGE_TYPES.includes(file.type),
+    //     '.jpg, .jpeg, .png and .webp files are accepted.'
+    //   )
+    //   .optional()
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: 'Mật khẩu không khớp',
@@ -66,17 +66,24 @@ export type UserFormValues = z.infer<typeof userFormSchema>;
 
 export function convertUserFormToApiPayload(
   formValues: UserFormValues
-): Record<string, any> {
+): CreateUserDto {
+  const status =
+    formValues.status === UserStatus.ENABLED
+      ? UserStatus.ENABLED
+      : UserStatus.DISABLED;
+
   return {
-    // first_name: formValues.firstName,
-    // last_name: formValues.lastName,
-    // status: formValues.status,
-    // role: 'admin',
-    // credentials: {username: formValues.username},
-    // email: formValues.email,
-    // metadata: {
-    //     address: formValues.address,
-    //     e
-    // }
+    first_name: formValues.firstName,
+    last_name: formValues.lastName,
+    status: status,
+    role: UserRole.ADMIN,
+    credentials: { username: formValues.username, secret: formValues.password },
+    email: formValues.email,
+    metadata: {
+      address: formValues.address,
+      phone: formValues.phone,
+      unit: formValues.unit,
+      department: formValues.department
+    }
   };
 }

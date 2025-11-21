@@ -7,7 +7,12 @@ import {
 } from '@tanstack/react-query';
 import { usersApi } from './api';
 import { toast } from 'sonner';
-import { GetUsersParamsDto, UserListResponseDto } from './types';
+import {
+  CreateUserDto,
+  GetUsersParamsDto,
+  User,
+  UserListResponseDto
+} from './types';
 
 export const USERS_QUERY_KEY = 'users';
 
@@ -37,6 +42,31 @@ export const useGetUsers = (
   });
 };
 
+export const useGetUserById = (
+  id: string,
+  options?: Omit<
+    UseQueryOptions<
+      User,
+      Error,
+      User,
+      readonly [string, string, string | number]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    User,
+    Error,
+    User,
+    readonly [string, string, string | number]
+  >({
+    queryKey: [USERS_QUERY_KEY, 'detail', id],
+    queryFn: () => usersApi.getUserById(id),
+    enabled: !!id,
+    ...options
+  });
+};
+
 export const useChangePasswordByAdmin = (
   options?: UseMutationOptions<void, Error, { id: string; secret: string }>
 ) => {
@@ -58,78 +88,76 @@ export const useChangePasswordByAdmin = (
   });
 };
 
-// export const useGetRoleById = (
-//   roleId: string,
-//   options?: Omit<
-//     UseQueryOptions<
-//       UIRoleResponse,
-//       Error,
-//       UIRoleResponse,
-//       readonly [string, string, string]
-//     >,
-//     'queryKey' | 'queryFn'
-//   >
+export const useCreateUser = (
+  options?: UseMutationOptions<User, Error, CreateUserDto>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, Error, CreateUserDto>({
+    ...options,
+    mutationFn: (data) => usersApi.createUser(data),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
+      // queryClient.setQueryData({
+      //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
+      // });
+      toast.success('Tạo user thành công!');
+      options?.onSuccess?.(data, variables, context);
+    },
+
+    onError: (error, variables, context) => {
+      console.error('Failed to create user:', error);
+      toast.error(error.message || 'Tạo user thất bại');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useDeleteUser = (
+  options?: UseMutationOptions<void, Error, string>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    ...options,
+    mutationFn: (id) => usersApi.deleteUser(id),
+    onSuccess: (data, deleteId, context) => {
+      //Remove calendar from cache
+      // queryClient.removeQueries({
+      //   queryKey: [GROUPS_QUERY_KEY, deleteId]
+      // });
+
+      queryClient.invalidateQueries({
+        queryKey: [USERS_QUERY_KEY]
+      });
+
+      toast.success('User deleted successfully');
+      options?.onSuccess?.(data, deleteId, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to delete user: ', error);
+      toast.error(error.message || 'Failed to delete user');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+// export const useUploadAvatar = (
+//   options?: UseMutationOptions<{ url: string, path: string }, Error, File>
 // ) => {
-//   return useQuery<
-//     UIRoleResponse,
-//     Error,
-//     UIRoleResponse,
-//     readonly [string, string, string]
-//   >({
-//     queryKey: [ROLES_QUERY_KEY, 'detail', roleId],
-//     queryFn: () => rolesApi.getById(roleId),
-//     gcTime: 30 * 60 * 1000,
-//     staleTime: 5 * 60 * 1000,
+//   return useMutation({
+//     mutationFn: (file) => usersApi.uploadAvatar(file),
+//     onError: (err) => toast.error('Upload avatar failed'),
 //     ...options
 //   });
 // };
 
-// export const useCreateRole = (
-//   options?: UseMutationOptions<UIRoleResponse, Error, CreateRoleInput>
+// export const useDeleteAvatar = (
+//   options?: UseMutationOptions<void, Error, string>
 // ) => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation<UIRoleResponse, Error, CreateRoleInput>({
-//     ...options,
-//     mutationFn: (data) => rolesApi.createRole(data),
-//     onSuccess: (data, variables, context) => {
-//       queryClient.invalidateQueries({ queryKey: [ROLES_QUERY_KEY] });
-
-//       queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
-
-//       toast.success('Tạo vai trò thành công!');
-//       options?.onSuccess?.(data, variables, context);
-//     },
-
-//     onError: (error, variables, context) => {
-//       console.error('Failed to create role:', error);
-//       toast.error(error.message || 'Tạo vai trò thất bại');
-//       options?.onError?.(error, variables, context);
-//     }
-//   });
-// };
-
-// export const useUpdateRole = (
-//   options?: UseMutationOptions<UIRoleResponse, Error, { id: string; data: UpdateRoleInput }>
-// ) => {
-//   const queryClient = useQueryClient();
-
-//   return useMutation<UIRoleResponse, Error, { id: string; data: UpdateRoleInput }>({
-//     ...options,
-//     mutationFn: (data) => rolesApi.updateRole(data.id,data.data),
-//     onSuccess: (data, variables, context) => {
-//       queryClient.invalidateQueries({ queryKey: [ROLES_QUERY_KEY] });
-
-//       queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
-
-//       toast.success('Cập nhật vai trò thành công!');
-//       options?.onSuccess?.(data, variables, context);
-//     },
-
-//     onError: (error, variables, context) => {
-//       console.error('Failed to create role:', error);
-//       toast.error(error.message || 'Cập nhật vai trò thất bại');
-//       options?.onError?.(error, variables, context);
-//     }
+//   return useMutation<void, Error, string>({
+//     mutationFn: (path) => usersApi.deleteAvatar(path),
+//     onError: (err) => toast.error('Delete avatar failed'),
+//     ...options
 //   });
 // };

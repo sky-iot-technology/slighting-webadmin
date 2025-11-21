@@ -6,12 +6,14 @@ type RegionTreeProps = {
   data: RegionNode[];
   onSelect: (item: SelectedRegion) => void;
   selectedId?: string;
+  filter?: boolean;
 };
 
 export function RegionTreeWrapper({
   data,
   onSelect,
-  selectedId
+  selectedId,
+  filter
 }: RegionTreeProps) {
   return (
     <RegionTree
@@ -25,6 +27,7 @@ export function RegionTreeWrapper({
       rowHeight={36}
       overscanCount={1}
       paddingTop={4}
+      filter={filter}
     />
   );
 }

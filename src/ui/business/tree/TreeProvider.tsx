@@ -12,6 +12,7 @@ type TreeProviderProps = {
   className?: string;
   buttonClassName?: string;
   treeClassName?: string;
+  filter?: boolean;
 };
 
 export function TreeProvider({
@@ -19,7 +20,8 @@ export function TreeProvider({
   onRegionChange,
   className,
   buttonClassName,
-  treeClassName
+  treeClassName,
+  filter
 }: TreeProviderProps) {
   const [open, setOpen] = useState(false);
   const { treeData } = useRegionTreeStore();
@@ -45,7 +47,7 @@ export function TreeProvider({
             selectedRegion?.name ? 'text-foreground' : 'text-muted-foreground'
           }
         >
-          {selectedRegion?.name || 'Chọn khu vực'}
+          {selectedRegion?.name || 'Tất cả'}
         </span>
 
         <Image
@@ -74,6 +76,7 @@ export function TreeProvider({
             // setOpen(false);
           }}
           selectedId={selectedRegion?.id}
+          filter={filter}
         />
       </div>
     </div>

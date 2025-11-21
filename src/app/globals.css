@@ -84,7 +84,9 @@
   --green-1: oklch(0.985 0.0267 140.18);
   --purple-1: oklch(0.9745 0.0134 295.33);
   --yellow-1: oklch(0.9769 0.0186 75.33);
+  --yellow-2: oklch(0.7098 0.149251 75.7526);
   --blue-2: oklch(0.6407 0.1081 203.59);
+  --pink-1: oklch(0.5341 0.214 7.16);
 }
 
 .dark {
@@ -201,7 +203,9 @@
   --color-green-1: var(--green-1);
   --color-purple-1: var(--purple-1);
   --color-yellow-1: var(--yellow-1);
+  --color-yellow-2: var(--yellow-2);
   --color-blue-2: var(--blue-2);
+  --color-pink-1: var(--pink-1);
 }
 
 /* Table row selection styles */

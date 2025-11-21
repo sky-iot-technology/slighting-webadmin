@@ -7,10 +7,15 @@ import { Device, DeviceInfo } from '@/core/domains/devices';
 import { Catalogue } from '@/core/domains/catalogues';
 import { RegionNode } from '@/core/domains/groups';
 import { findNodeById, formatDateString } from '@/features/calendar/helper';
+import { Badge } from '@/ui/components/ui/badge';
+import { SelectedTag } from '../tag-sidebar';
+
+export type RequiredTag = Exclude<SelectedTag, null>;
 
 export const tagColumns = (
   catalogues: Catalogue[],
-  trees: RegionNode[]
+  trees: RegionNode[],
+  selectedTag: RequiredTag
 ): ColumnDef<Device>[] => [
   {
     id: 'dir',
@@ -110,13 +115,9 @@ export const tagColumns = (
     header: 'Trạng thái thiết bị',
     cell: ({ row }) => {
       const info = row.getValue('status') as string;
-      const color =
-        info === 'enabled'
-          ? 'text-calendar-blue'
-          : 'text-map-control-button-destructive';
-      const formatted =
-        info.charAt(0).toUpperCase() + info.slice(1).toLowerCase();
-      return <div className={color}>{formatted}</div>;
+      const label = info === 'enabled' ? 'Đã kích hoạt' : 'Chưa kích hoạt';
+      const color = info === 'enabled' ? 'text-calendar-blue' : 'text-yellow-2';
+      return <div className={color}>{label}</div>;
     },
     meta: {
       label: 'Trạng thái thiết bị',
@@ -129,13 +130,23 @@ export const tagColumns = (
     enableColumnFilter: true
   },
   {
+    id: 'alert',
+    accessorKey: 'alert',
+    header: 'Cảnh báo',
+    cell: ({ row }) => {
+      return <div>-</div>;
+    }
+  },
+  {
     id: 'tag',
     accessorKey: 'tag',
     header: 'Nhóm yêu thích',
     cell: ({ row }) => {
-      const id = row.getValue('parent_group_id');
-      const name = findNodeById(trees, String(id))?.name || '—';
-      return <div>{name}</div>;
+      return (
+        <div>
+          <Badge className='bg-pink-1/5 text-pink-1'>{selectedTag?.name}</Badge>
+        </div>
+      );
     }
   },
   {
@@ -145,7 +156,11 @@ export const tagColumns = (
     cell: ({ row }) => {
       const id = row.getValue('parent_group_id');
       const name = findNodeById(trees, String(id))?.name || '—';
-      return <div>{name}</div>;
+      return (
+        <div>
+          <Badge className='bg-primary/5 text-primary'>{name}</Badge>
+        </div>
+      );
     }
   },
   {
@@ -153,11 +168,9 @@ export const tagColumns = (
     header: 'Thao tác',
     size: 57,
     cell: ({ row }) => {
-      const isSubRow = row.depth > 0;
-
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction id={String(row.original.id)} />}
+          <CellAction data={row.original} selectedTag={selectedTag} />
         </div>
       );
     }

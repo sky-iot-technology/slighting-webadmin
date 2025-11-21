@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import UserDialog from '../modal/user-dialog';
+import { useDeleteUser } from '@/core/domains/users';
 
 interface CellActionProps {
   id: string;
@@ -25,19 +26,21 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [openView, setOpenView] = useState(false);
   const router = useRouter();
 
+  const deleteUser = useDeleteUser();
+
   const handleConfirmDelete = () => {
     if (!id) return;
-    // deleteCalendar.mutate(id);
+    deleteUser.mutate(id);
   };
 
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
-        loading={deleteCalendar.isPending}
-      /> */}
+        loading={deleteUser.isPending}
+      />
 
       {/* ✏️ Edit */}
       {openEdit && (

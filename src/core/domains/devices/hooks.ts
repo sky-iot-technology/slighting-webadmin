@@ -400,3 +400,34 @@ export const useUpdateDevice = (
     }
   });
 };
+
+//Hook for update tag device
+export const useUpdateTagDevice = (
+  options?: UseMutationOptions<
+    Device,
+    Error,
+    { deviceId: string | number; tags: string[] }
+  >
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Device,
+    Error,
+    { deviceId: string | number; tags: string[] }
+  >({
+    mutationFn: ({ deviceId, tags }) =>
+      devicesApi.updateDeviceTags(deviceId, tags),
+    onSuccess: (data, variables, context) => {
+      toast.success('Xóa thiết bị khỏi nhóm thành công!');
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY]
+      });
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      toast.error(error.message || 'Không thể xóa thiết bị khỏi nhóm');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

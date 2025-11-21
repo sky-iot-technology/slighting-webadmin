@@ -22,10 +22,12 @@ import { Input } from '@/ui/components/ui/input';
 import { useMemo, useState } from 'react';
 import {
   convertUserFormToApiPayload,
+  useCreateUser,
+  User,
   userFormSchema,
   UserFormValues
 } from '@/core/domains/users';
-import { Eye, EyeOff, User } from 'lucide-react';
+import { Eye, EyeOff, User as UserPic } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -41,19 +43,13 @@ import { useGetRoles } from '@/core/domains/permissions';
 type RoleFormProps = {
   pageTitle: string;
   onClose?: () => void;
-  // initialData?: UIRoleResponse | null;
-  isEditMode?: boolean;
-  //id for testing
-  userId?: string;
+  initialData?: User | null;
 };
 
 export default function UserForm({
   onClose,
   pageTitle,
-  // initialData
-  isEditMode,
-  //test
-  userId
+  initialData
 }: RoleFormProps) {
   const [selectedParent, setSelectedParent] = useState<{
     id: string;
@@ -96,14 +92,19 @@ export default function UserForm({
       unit: '',
       department: '',
       address: '',
-      note: '',
-      profile_picture: ''
+      note: ''
+    }
+  });
+
+  const createUser = useCreateUser({
+    onSuccess: () => {
+      onClose?.();
     }
   });
 
   const onSubmit = (values: UserFormValues) => {
     const apiPayload = convertUserFormToApiPayload(values);
-    console.log(apiPayload);
+    createUser.mutate(apiPayload);
   };
 
   return (
@@ -119,57 +120,22 @@ export default function UserForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className=''>
               <div className='flex gap-9'>
                 <div>
-                  <FormField
-                    control={form.control}
-                    name='profile_picture'
-                    render={({ field }) => {
-                      const file = field.value;
-                      const previewUrl =
-                        file instanceof File ? URL.createObjectURL(file) : null;
-                      return (
-                        <FormItem className='col-span-2'>
-                          <FormControl>
-                            <div className='relative'>
-                              <label className='cursor-pointer'>
-                                {previewUrl ? (
-                                  <img
-                                    src={previewUrl}
-                                    alt='Avatar'
-                                    className='h-38 w-38 rounded-full border object-cover shadow-sm'
-                                  />
-                                ) : (
-                                  <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
-                                    <User width={80} height={80} />
-                                  </div>
-                                )}
-
-                                <input
-                                  type='file'
-                                  accept='image/*'
-                                  className='hidden'
-                                  onChange={(e) =>
-                                    field.onChange(e.target.files?.[0] ?? null)
-                                  }
-                                />
-                              </label>
-
-                              {/* Nút xoá ảnh */}
-                              {previewUrl && (
-                                <button
-                                  type='button'
-                                  onClick={() => field.onChange(null)}
-                                  className='absolute -top-1 -right-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white'
-                                >
-                                  ×
-                                </button>
-                              )}
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
+                  <div className='flex-shrink-0'>
+                    {/* {initialData?.profile_picture ? (
+                      <img
+                        src={initialData.profile_picture}
+                        alt="Avatar"
+                        className="h-38 w-38 rounded-full border object-cover shadow-sm"
+                      />
+                    ) : (
+                      <div className="flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500">
+                        <User width={80} height={80} />
+                      </div>
+                    )} */}
+                    <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
+                      <UserPic width={80} height={80} />
+                    </div>
+                  </div>
                 </div>
 
                 <div className='flex-1'>
@@ -483,7 +449,7 @@ export default function UserForm({
                               Mật khẩu
                               <span className='ml-0.5 text-red-500'>*</span>
                             </span>
-                            {isEditMode && (
+                            {initialData && (
                               <>
                                 <Image
                                   src={'/assets/icons/edit.svg'}
@@ -521,7 +487,7 @@ export default function UserForm({
                         </FormItem>
                       )}
                     />
-                    {!isEditMode && (
+                    {!initialData && (
                       <FormField
                         control={form.control}
                         name='confirmPassword'
@@ -583,12 +549,12 @@ export default function UserForm({
               </div>
             </form>
           </Form>
-          {isEditMode && userId && (
+          {initialData && (
             <>
               <ChangepassDialog
                 open={open}
                 onOpenChange={setOpen}
-                userId={userId}
+                userId={initialData.id}
               />
             </>
           )}
