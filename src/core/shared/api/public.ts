@@ -27,6 +27,14 @@ export class PublicApiClient extends BaseApiClient {
   ): Promise<T> {
     return super.delete(url, data, config);
   }
+
+  public async patch<T>(
+    url: string,
+    data?: any,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    return super.patch(url, data, config);
+  }
 }
 
 // Export a singleton instance

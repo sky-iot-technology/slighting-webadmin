@@ -25,7 +25,6 @@ export default function UserDialog({
   const { data, isLoading } = useGetUserById(userId ?? '', {
     enabled: !!userId
   });
-  const isEditMode = !!userId;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,18 +34,13 @@ export default function UserDialog({
         className='!w-[90vw] !max-w-[1001px] rounded-xl p-0'
         hideCloseButton
       >
-        {/* {!isLoading && (
-          <RoleForm
+        {!isLoading && (
+          <UserForm
             initialData={data}
             pageTitle={pageTitle}
             onClose={() => onOpenChange && onOpenChange(false)}
           />
-        )} */}
-        <UserForm
-          initialData={data}
-          pageTitle={pageTitle}
-          onClose={() => onOpenChange && onOpenChange(false)}
-        />
+        )}
       </DialogContent>
     </Dialog>
   );

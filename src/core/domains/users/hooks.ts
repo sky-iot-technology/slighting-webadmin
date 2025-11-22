@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import {
   CreateUserDto,
   GetUsersParamsDto,
+  UpdateUserDto,
   User,
   UserListResponseDto
 } from './types';
@@ -113,6 +114,31 @@ export const useCreateUser = (
   });
 };
 
+export const useUpdateUser = (
+  options?: UseMutationOptions<User, Error, { id: string; data: UpdateUserDto }>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, Error, { id: string; data: UpdateUserDto }>({
+    ...options,
+    mutationFn: ({ id, data }) => usersApi.updateUser(id, data),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
+      // queryClient.setQueryData({
+      //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
+      // });
+      toast.success('Update user thành công!');
+      options?.onSuccess?.(data, variables, context);
+    },
+
+    onError: (error, variables, context) => {
+      console.error('Failed to update user:', error);
+      toast.error(error.message || 'Update user thất bại');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
 export const useDeleteUser = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
@@ -137,6 +163,37 @@ export const useDeleteUser = (
     onError: (error, variables, context) => {
       console.error('Failed to delete user: ', error);
       toast.error(error.message || 'Failed to delete user');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useUpdateUserStatus = (
+  options?: UseMutationOptions<User, Error, { id: string; enabled: boolean }>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, Error, { id: string; enabled: boolean }>({
+    ...options,
+    mutationFn: ({ id, enabled }) => {
+      if (enabled) {
+        return usersApi.enableUser(id);
+      } else {
+        return usersApi.disableUser(id);
+      }
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
+      // queryClient.setQueryData({
+      //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
+      // });
+      toast.success('Update user thành công!');
+      options?.onSuccess?.(data, variables, context);
+    },
+
+    onError: (error, variables, context) => {
+      console.error('Failed to update user:', error);
+      toast.error(error.message || 'Update user thất bại');
       options?.onError?.(error, variables, context);
     }
   });

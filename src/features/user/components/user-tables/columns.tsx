@@ -3,9 +3,9 @@
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { formatDateString } from '@/features/calendar/helper';
 import { User } from '@/core/domains/users/types';
-import { Badge } from '@/ui/components/ui/badge';
+import { Switch } from '@/ui/components/ui/switch';
+import { useUpdateUserStatus } from '@/core/domains/users';
 
 export const userColumns = (): ColumnDef<User>[] => [
   // {
@@ -112,22 +112,19 @@ export const userColumns = (): ColumnDef<User>[] => [
     accessorKey: 'status',
     header: 'Trạng thái',
     cell: ({ row }) => {
-      const status = row.getValue('status');
-      const label =
-        status === 'enabled'
-          ? 'Kích hoạt'
-          : status === 'disabled'
-            ? 'Chưa kích hoạt'
-            : 'Đã bị khóa';
-      const color =
-        status === 'enabled'
-          ? 'bg-ring/10 text-ring'
-          : status === 'disabled'
-            ? 'bg-map-control-button-danger/10 text-map-control-button-danger'
-            : 'bg-calendar-red/10 text-calendar-red';
-
-      // return <div className={color}>{label}</div>;
-      return <Badge className={color}>{label}</Badge>;
+      const user = row.original;
+      const isEnabled = user.status === 'enabled';
+      const useUpdateStatus = useUpdateUserStatus();
+      return (
+        <Switch
+          className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-6`}
+          checked={isEnabled}
+          disabled={useUpdateStatus.isPending}
+          onCheckedChange={(val) =>
+            useUpdateStatus.mutate({ id: user.id, enabled: val })
+          }
+        />
+      );
     }
   },
   {

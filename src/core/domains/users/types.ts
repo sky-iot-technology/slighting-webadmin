@@ -2,7 +2,8 @@ import { QueryParams } from '@/core/shared';
 
 export enum UserStatus {
   ENABLED = 'enabled',
-  DISABLED = 'disabled'
+  DISABLED = 'disabled',
+  ALL = 'all'
 }
 
 export enum UserRole {
@@ -50,7 +51,7 @@ export interface GetUsersParamsDto
     QueryParams,
     'order' | 'sort' | 'status' | 'search' | 'categories'
   > {
-  status?: 'enabled' | 'disabled';
+  status?: 'enabled' | 'disabled' | 'all';
   //   only_total?: boolean;
 }
 
@@ -68,3 +69,13 @@ export interface CreateUserDto {
   metadata?: Metadata;
   profile_picture?: string;
 }
+
+export interface UpdateUserDto {
+  first_name?: string;
+  last_name?: string;
+  role?: UserRole;
+  metadata?: Metadata;
+}
+
+export interface UpdateProfileDto extends Omit<UpdateUserDto, 'role'> {}
+export interface UpdateRoleDto extends Pick<UpdateUserDto, 'role'> {}
