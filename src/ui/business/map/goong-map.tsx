@@ -35,6 +35,11 @@ type GoongMapProps = {
   renderPopup?: (id: string | number, onClose: () => void) => React.ReactNode;
 };
 
+type FitBoundsOptions = {
+  zoom?: number;
+  saveLastViewport?: boolean;
+};
+
 export default function GoongMap({
   selectedRegion = null,
   devices = [],
@@ -80,6 +85,59 @@ export default function GoongMap({
     setTransitionDuration(600);
   }, []);
 
+  const fitBoundsToDevices = useCallback(
+    (devices: Device[], options: FitBoundsOptions = {}) => {
+      if (!devices.length) return;
+
+      const devicesWithCoords = devices.filter(
+        (d) => d.device_info?.lon && d.device_info?.lat
+      );
+      if (!devicesWithCoords.length) return;
+
+      const longs = devicesWithCoords.map((d) => d.device_info.lon);
+      const lats = devicesWithCoords.map((d) => d.device_info.lat);
+
+      const container = mapContainerRef.current;
+      if (!container) return;
+
+      const { longitude, latitude, zoom } = new WebMercatorViewport({
+        width: container.clientWidth || window.innerWidth,
+        height: container.clientHeight || window.innerHeight
+      }).fitBounds(
+        [
+          [Math.min(...longs), Math.min(...lats)],
+          [Math.max(...longs), Math.max(...lats)]
+        ],
+        { padding: 100 }
+      );
+
+      const nextZoom = options.zoom ?? zoom;
+
+      setViewport((prev) => ({
+        ...prev,
+        longitude,
+        latitude,
+        zoom: nextZoom || zoom,
+        transitionInterpolator: new FlyToInterpolator({ speed: 1.4 }),
+        transitionEasing: (t) => t
+      }));
+      setTransitionDuration(600);
+
+      if (options.saveLastViewport) {
+        setLastViewport((prev) => ({
+          ...prev,
+          longitude,
+          latitude,
+          zoom: nextZoom || zoom,
+          transitionInterpolator: new FlyToInterpolator({ speed: 1.4 }),
+          transitionEasing: (t) => t
+        }));
+        setTransitionDuration(600);
+      }
+    },
+    [setViewport, setTransitionDuration]
+  );
+
   const onClick = (event: MapEvent) => {
     if (renderPopup) return;
     if (!event.features?.length) return;
@@ -91,6 +149,17 @@ export default function GoongMap({
     if (feature.layer.id === 'devices-unclustered') {
       const { id, lon, lat } = feature.properties;
       flyToDevice(id, lon, lat);
+    } else if (feature.layer.id === 'devices-clusters') {
+      const clusterId = feature.properties.cluster_id;
+      const source = map.getSource('devices-source') as any;
+
+      source.getClusterLeaves(clusterId, 500, 0, (err: any, leaves: any[]) => {
+        if (err) return;
+        const ids = leaves.map((leaf) => leaf.properties.id);
+        const selectedDevices = devices.filter((d) => ids.includes(d.id));
+        if (!selectedDevices.length) return;
+        fitBoundsToDevices(selectedDevices);
+      });
     }
   };
 
@@ -109,42 +178,45 @@ export default function GoongMap({
         setNeedsInitialization(false);
         return;
       }
+      fitBoundsToDevices(devicesWithCoords, {
+        zoom: devicesWithCoords.length === 1 ? 14 : undefined,
+        saveLastViewport: true
+      });
+      // const longs = devicesWithCoords.map((x) => x.device_info.lon);
+      // const lats = devicesWithCoords.map((x) => x.device_info.lat);
 
-      const longs = devicesWithCoords.map((x) => x.device_info.lon);
-      const lats = devicesWithCoords.map((x) => x.device_info.lat);
+      // const container = mapContainerRef.current;
+      // if (!container) return;
 
-      const container = mapContainerRef.current;
-      if (!container) return;
+      // const { longitude, latitude, zoom } = new WebMercatorViewport({
+      //   width: container.clientWidth || window.innerWidth,
+      //   height: container.clientHeight || window.innerHeight
+      // }).fitBounds(
+      //   [
+      //     [Math.min(...longs), Math.min(...lats)],
+      //     [Math.max(...longs), Math.max(...lats)]
+      //   ],
+      //   {
+      //     padding: 100
+      //   }
+      // );
 
-      const { longitude, latitude, zoom } = new WebMercatorViewport({
-        width: container.clientWidth || window.innerWidth,
-        height: container.clientHeight || window.innerHeight
-      }).fitBounds(
-        [
-          [Math.min(...longs), Math.min(...lats)],
-          [Math.max(...longs), Math.max(...lats)]
-        ],
-        {
-          padding: 100
-        }
-      );
+      // const newViewport: ViewportProps = {
+      //   longitude,
+      //   latitude,
+      //   zoom: devicesWithCoords.length === 1 ? 14 : zoom,
+      //   transitionInterpolator: new FlyToInterpolator(),
+      //   transitionEasing: (t) => t
+      // };
 
-      const newViewport: ViewportProps = {
-        longitude,
-        latitude,
-        zoom: devicesWithCoords.length === 1 ? 14 : zoom,
-        transitionInterpolator: new FlyToInterpolator(),
-        transitionEasing: (t) => t
-      };
-
-      setViewport((prev) => ({
-        ...prev,
-        ...newViewport
-      }));
-      setLastViewport((prev) => ({
-        ...prev,
-        ...newViewport
-      }));
+      // setViewport((prev) => ({
+      //   ...prev,
+      //   ...newViewport
+      // }));
+      // setLastViewport((prev) => ({
+      //   ...prev,
+      //   ...newViewport
+      // }));
       setTransitionDuration(1000);
       setNeedsInitialization(false);
     } else if (
