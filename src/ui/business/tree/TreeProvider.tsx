@@ -13,6 +13,7 @@ type TreeProviderProps = {
   buttonClassName?: string;
   treeClassName?: string;
   filter?: boolean;
+  disabled?: boolean;
 };
 
 export function TreeProvider({
@@ -21,7 +22,8 @@ export function TreeProvider({
   className,
   buttonClassName,
   treeClassName,
-  filter
+  filter,
+  disabled
 }: TreeProviderProps) {
   const [open, setOpen] = useState(false);
   const { treeData } = useRegionTreeStore();
@@ -35,11 +37,13 @@ export function TreeProvider({
     >
       {/* Trigger button */}
       <button
+        disabled={disabled}
         type='button'
         onClick={() => setOpen((prev) => !prev)}
         className={cn(
           buttonClassName,
-          'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]'
+          'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
+          disabled && 'bg-muted opacity-60'
         )}
       >
         <span

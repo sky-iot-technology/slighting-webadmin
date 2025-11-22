@@ -47,12 +47,14 @@ type RoleFormProps = {
   pageTitle: string;
   onClose?: () => void;
   initialData?: User | null;
+  isView?: boolean;
 };
 
 export default function UserForm({
   onClose,
   pageTitle,
-  initialData
+  initialData,
+  isView
 }: RoleFormProps) {
   const [selectedParent, setSelectedParent] = useState<{
     id: string;
@@ -95,7 +97,8 @@ export default function UserForm({
       department: initialData?.metadata?.department || '',
       address: initialData?.metadata?.address || '',
       note: initialData?.metadata?.about || ''
-    }
+    },
+    disabled: isView
   });
 
   const createUser = useCreateUser({
@@ -242,7 +245,7 @@ export default function UserForm({
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
-                              disabled={isLoading}
+                              disabled={isLoading || isView}
                             >
                               <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                                 <SelectValue
@@ -285,6 +288,7 @@ export default function UserForm({
                           </FormLabel>
                           <FormControl>
                             <TreeProvider
+                              disabled={isView}
                               onRegionChange={(region) => {
                                 field.onChange(region?.id ?? '');
                                 setSelectedParent(
@@ -322,6 +326,7 @@ export default function UserForm({
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
+                              disabled={isView}
                             >
                               <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                                 <SelectValue placeholder='Chọn đơn vị' />
@@ -347,6 +352,7 @@ export default function UserForm({
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
+                              disabled={isView}
                             >
                               <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                                 <SelectValue placeholder='Chọn bộ phận' />
@@ -519,7 +525,7 @@ export default function UserForm({
                           )}
                         />
                       </>
-                    ) : (
+                    ) : !isView ? (
                       <div className='flex items-center'>
                         <Button
                           type='button'
@@ -530,6 +536,8 @@ export default function UserForm({
                           Reset mật khẩu
                         </Button>
                       </div>
+                    ) : (
+                      <></>
                     )}
                   </div>
                 </div>
@@ -542,14 +550,16 @@ export default function UserForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {isView ? 'Đóng' : 'Hủy'}
                 </Button>
-                <Button
-                  type='submit'
-                  className='h-full w-[91px] rounded-[4px] text-xs'
-                >
-                  Lưu
-                </Button>
+                {!isView && (
+                  <Button
+                    type='submit'
+                    className='h-full w-[91px] rounded-[4px] text-xs'
+                  >
+                    Lưu
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

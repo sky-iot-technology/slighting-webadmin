@@ -53,13 +53,15 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
       )}
 
       {/* View */}
-      {/* {openView && (
-        <CalendarViewDialog
+      {openView && (
+        <UserDialog
+          pageTitle='Thông tin người dùng'
           open={openView}
           onOpenChange={setOpenView}
-          id={id}
+          userId={id}
+          isView={true}
         />
-      )} */}
+      )}
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

@@ -14,13 +14,15 @@ type UserDialogProps = {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
   userId?: string;
+  isView?: boolean;
 };
 
 export default function UserDialog({
   pageTitle,
   open,
   onOpenChange,
-  userId
+  userId,
+  isView
 }: UserDialogProps) {
   const { data, isLoading } = useGetUserById(userId ?? '', {
     enabled: !!userId
@@ -39,6 +41,7 @@ export default function UserDialog({
             initialData={data}
             pageTitle={pageTitle}
             onClose={() => onOpenChange && onOpenChange(false)}
+            isView={isView}
           />
         )}
       </DialogContent>
