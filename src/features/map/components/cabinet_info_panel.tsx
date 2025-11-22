@@ -30,6 +30,7 @@ type InfoModalProps = {
 function CabinetInfoPanel(props: InfoModalProps) {
   const { data, isLoading } = useGetDeviceById(props.id);
   if (!data) return null;
+  console.log(data);
   const sensorAttrs = getSensorAttributes(data);
   const time = diffTimeHMS(data.updated_at);
 

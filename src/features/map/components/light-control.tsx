@@ -29,7 +29,9 @@ function LightControl(props: LightInfo) {
   const lightDevices = useMemo(
     () =>
       (props.device.devices ?? []).filter(
-        (device) => device.type === 'lms.devices.types.LIGHT'
+        (device) =>
+          device.type === 'lms.devices.types.LIGHT' ||
+          device.type === 'lms.devices.types.SWITCH'
       ),
     [props.device.devices]
   );
