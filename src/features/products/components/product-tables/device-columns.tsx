@@ -62,9 +62,9 @@ export const deviceColumns: ColumnDef<Device>[] = [
       placeholder: 'Tìm kiếm thiết bị',
       variant: 'text'
     },
+    enableColumnFilter: true,
     enableSorting: false,
-    enableHiding: false,
-    enableColumnFilter: true
+    enableHiding: false
   },
   {
     id: 'type',
@@ -114,7 +114,7 @@ export const deviceColumns: ColumnDef<Device>[] = [
     ),
     meta: {
       label: 'Chi nhánh',
-      variant: 'regionTree'
+      variant: 'select'
     },
     enableColumnFilter: true,
     enableSorting: false,

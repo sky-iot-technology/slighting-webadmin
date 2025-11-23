@@ -190,5 +190,13 @@ export const devicesApi = {
     } catch (error) {
       throw new Error('Failed to update device');
     }
+  },
+
+  async deleteDevice(deviceId: string | number): Promise<void> {
+    try {
+      await authenticatedApi.delete<void>(`/devices/things/${deviceId}`);
+    } catch (error) {
+      throw new Error('Failed to delete device');
+    }
   }
 };

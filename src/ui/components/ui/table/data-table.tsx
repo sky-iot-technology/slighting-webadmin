@@ -13,6 +13,7 @@ import {
 import { getCommonPinningStyles } from '@/lib/data-table';
 import { ScrollArea, ScrollBar } from '@/ui/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;
@@ -27,6 +28,9 @@ interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   cellClassName?: string; // <TableCell>
   paginationClassName?: string; // vùng pagination
   getRowClassName?: (row: TData) => string;
+  isLoading?: boolean;
+  error?: Error | null;
+  loadingRowCount?: number;
 }
 
 export function DataTable<TData>({
@@ -43,7 +47,10 @@ export function DataTable<TData>({
   rowClassName,
   cellClassName,
   paginationClassName,
-  getRowClassName
+  getRowClassName,
+  isLoading = false,
+  error = null,
+  loadingRowCount = 10
 }: DataTableProps<TData>) {
   return (
     <div className={cn('flex flex-1 flex-col', className)}>
@@ -89,7 +96,36 @@ export function DataTable<TData>({
                   ))}
                 </TableHeader>
                 <TableBody className={cn('', bodyClassName)}>
-                  {table.getRowModel().rows?.length ? (
+                  {isLoading ? (
+                    // Loading state: show skeleton rows
+                    Array.from({ length: loadingRowCount }).map((_, i) => (
+                      <TableRow key={i} className='hover:bg-transparent'>
+                        {table.getAllColumns().map((column, j) => (
+                          <TableCell key={j} className={cn(cellClassName)}>
+                            <Skeleton className='h-6 w-full' />
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : error ? (
+                    // Error state: show error message
+                    <TableRow>
+                      <TableCell
+                        colSpan={table.getAllColumns().length}
+                        className='h-64 text-center'
+                      >
+                        <div className='flex flex-col items-center justify-center gap-2'>
+                          <h3 className='text-destructive text-lg font-semibold'>
+                            Lỗi tải dữ liệu
+                          </h3>
+                          <p className='text-muted-foreground text-sm'>
+                            {error.message || 'Đã xảy ra lỗi khi tải dữ liệu'}
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ) : table.getRowModel().rows?.length ? (
+                    // Normal state: show data rows
                     table.getRowModel().rows.map((row) => (
                       <TableRow
                         key={row.id}
@@ -123,6 +159,7 @@ export function DataTable<TData>({
                       </TableRow>
                     ))
                   ) : (
+                    // Empty state
                     <TableRow>
                       <TableCell
                         colSpan={table.getAllColumns().length}

@@ -1,11 +1,8 @@
 'use client';
 
-import { Product } from '@/core/shared/constants/data';
 import { useDataTable } from '@/core/shared/hooks/use-data-table';
-import { AlertModal } from '@/ui/components/modal/alert-modal';
 import { DataTable } from '@/ui/components/ui/table/data-table';
-import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
-import { useState } from 'react';
+import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
@@ -18,17 +15,19 @@ interface ProductTableParams<TData, TValue> {
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
   actionBar?: React.ReactNode;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 
 export function ProductTable<TData, TValue>({
   data,
   totalItems,
   columns,
-  actionBar
+  actionBar,
+  isLoading = false,
+  error = null
 }: ProductTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const router = useRouter();
   const pageCount = Math.ceil(totalItems / pageSize);
 
@@ -41,37 +40,6 @@ export function ProductTable<TData, TValue>({
     enableColumnPinning: true
   });
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows;
-  const hasSelectedRows = selectedRows.length > 0;
-
-  const handleBulkDelete = async () => {
-    if (!hasSelectedRows) return;
-
-    setIsDeleting(true);
-    try {
-      const selectedProducts = selectedRows.map(
-        (row) => row.original as Product
-      );
-      const productIds = selectedProducts.map((product) => product.id);
-
-      // TODO: Implement bulk delete API call
-
-      // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      // Clear selection after delete
-      table.toggleAllPageRowsSelected(false);
-      setShowDeleteModal(false);
-    } catch (error) {
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const openDeleteModal = () => {
-    setShowDeleteModal(true);
-  };
-
   return (
     <DataTable
       table={table}
@@ -81,12 +49,15 @@ export function ProductTable<TData, TValue>({
       // paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'
       actionBar={actionBar}
+      isLoading={isLoading}
+      error={error}
+      loadingRowCount={pageSize}
     >
       {/* <DataTableToolbar table={table} /> */}
       <div className='flex items-center gap-2 py-6'>
-        <DataTableToolbar
+        <DataTableCustomToolbar
           table={table}
-          className='w-auto flex-1'
+          className='flex-1'
           actions={
             <Button
               variant='default'
@@ -101,14 +72,9 @@ export function ProductTable<TData, TValue>({
             </Button>
           }
           onDeleteAll={() => console.log('delete product')}
+          filter
         />
       </div>
-      <AlertModal
-        isOpen={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        onConfirm={handleBulkDelete}
-        loading={isDeleting}
-      />
     </DataTable>
   );
 }

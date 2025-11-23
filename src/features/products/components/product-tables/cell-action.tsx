@@ -1,5 +1,5 @@
 'use client';
-import { Device } from '@/core/domains/devices';
+import { Device, useDeleteDevice } from '@/core/domains/devices';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import { Button } from '@/ui/components/ui/button';
 import {
@@ -8,12 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from '@/ui/components/ui/dropdown-menu';
-import {
-  IconDotsVertical,
-  IconEdit,
-  IconTrash,
-  IconEye
-} from '@tabler/icons-react';
+import { IconDotsVertical } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -23,11 +18,17 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading] = useState(false);
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const deleteDevice = useDeleteDevice({
+    onSuccess: () => {
+      setOpen(false);
+    }
+  });
 
-  const onConfirm = async () => {};
+  const onConfirm = async () => {
+    await deleteDevice.mutateAsync(data.id);
+  };
 
   return (
     <>
@@ -35,7 +36,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
-        loading={loading}
+        loading={deleteDevice.isPending}
+        title='Xoá thiết bị'
+        description='Bạn có chắc chắn muốn xoá thiết bị này?'
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -46,21 +49,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             </Button>
           </div>
         </DropdownMenuTrigger>
-        {/* <DropdownMenuContent align='end'>
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/info/${data.id}`)}
-          >
-            <IconEye className='mr-2 h-4 w-4 text-primary' /> Xem chi tiết
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/${data.id}`)}
-          >
-            <IconEdit className='mr-2 h-4 w-4' /> Sửa
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <IconTrash className='mr-2 h-4 w-4' /> Xoá
-          </DropdownMenuItem>
-        </DropdownMenuContent> */}
         <DropdownMenuContent
           align='end'
           className='flex w-31.5 flex-col gap-2 p-2'
@@ -79,22 +67,6 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             </div>
             <span>Chi tiết</span>
           </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/info/${data.id}`)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-1 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
-          </DropdownMenuItem>
-
           <DropdownMenuItem
             variant='default'
             onClick={() => setOpen(true)}

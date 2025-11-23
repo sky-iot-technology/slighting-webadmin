@@ -327,12 +327,18 @@ export const useDeleteDeviceParent = (
 // Hook for getting device count by online status
 export const useGetDeviceCount = (
   online?: boolean,
+  filters?: Omit<GetDevicesParamsDto, 'only_total' | 'offset' | 'limit'>,
   options?: Omit<
     UseQueryOptions<
       DeviceListResponseDto,
       Error,
       DeviceListResponseDto,
-      readonly [string, string, boolean | undefined]
+      readonly [
+        string,
+        string,
+        boolean | undefined,
+        Omit<GetDevicesParamsDto, 'only_total' | 'offset' | 'limit'> | undefined
+      ]
     >,
     'queryKey' | 'queryFn'
   >
@@ -341,12 +347,18 @@ export const useGetDeviceCount = (
     DeviceListResponseDto,
     Error,
     DeviceListResponseDto,
-    readonly [string, string, boolean | undefined]
+    readonly [
+      string,
+      string,
+      boolean | undefined,
+      Omit<GetDevicesParamsDto, 'only_total' | 'offset' | 'limit'> | undefined
+    ]
   >({
-    queryKey: [DEVICES_QUERY_KEY, 'count', online],
+    queryKey: [DEVICES_QUERY_KEY, 'count', online, filters],
     queryFn: () =>
       devicesApi.getAll({
         only_total: true,
+        ...filters,
         metadata: `{ "device_info": { "online": ${online ? 'true' : 'false'} } }`
       }),
     ...options
@@ -427,6 +439,36 @@ export const useUpdateTagDevice = (
     },
     onError: (error, variables, context) => {
       toast.error(error.message || 'Không thể xóa thiết bị khỏi nhóm');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+// Hook for deleting a device
+export const useDeleteDevice = (
+  options?: UseMutationOptions<void, Error, string | number>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string | number>({
+    ...options,
+    mutationFn: (deviceId) => devicesApi.deleteDevice(deviceId),
+    onSuccess: (data, deletedId, context) => {
+      // Remove the device from the cache
+      queryClient.removeQueries({
+        queryKey: [DEVICES_QUERY_KEY, 'detail', deletedId]
+      });
+
+      // Invalidate devices list to reflect changes
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY]
+      });
+
+      toast.success('Xóa thiết bị thành công!');
+      options?.onSuccess?.(data, deletedId, context);
+    },
+    onError: (error, variables, context) => {
+      toast.error(error.message || 'Không thể xóa thiết bị');
       options?.onError?.(error, variables, context);
     }
   });

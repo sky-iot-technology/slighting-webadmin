@@ -8,13 +8,13 @@ import {
   useGetDevices,
   useGetDeviceCount
 } from '@/core/domains/devices';
-import { Skeleton } from '@/ui/components/ui/skeleton';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { useRegionTreeStore } from '@/core/domains/tree/store';
+// import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useGetGroups } from '@/core/domains/groups';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { Option } from '@/types/data-table';
 
 type ProductListingPage = {};
 
@@ -28,28 +28,39 @@ export default function ProductListingPage({}: ProductListingPage) {
   const status = searchParams.get('status') ?? undefined;
   const type = searchParams.get('type') ?? undefined;
   const serial_number = searchParams.get('serial_number') ?? undefined;
+  const parent_group_id = searchParams.get('parent_group_id') ?? undefined;
 
   const currentPage = page ? parseInt(page.toString()) : 1;
   const limit = pageLimit ? parseInt(pageLimit.toString()) : 10;
-  const filters = {
-    offset: (currentPage - 1) * limit,
-    limit,
+  // Fetch device counts with filters (excluding pagination)
+  const filtersExcludePagination = {
     ...(search && { name: search }),
-    dir: dir === 'asc' ? 'asc' : ('desc' as const),
-    order,
     ...(status && { status: status as any }),
     ...(type && { type }),
-    ...(serial_number && { serial_number })
+    ...(serial_number && { serial_number }),
+    ...(parent_group_id && { group: parent_group_id })
+  };
+  const filters = {
+    dir: dir === 'asc' ? 'asc' : ('desc' as const),
+    offset: (currentPage - 1) * limit,
+    limit,
+    order,
+    ...filtersExcludePagination
   } as const;
 
   const { data, isLoading, error } = useGetDevices(filters);
 
-  // Fetch device counts
-  const { data: onlineData } = useGetDeviceCount(true);
-  const { data: offlineData } = useGetDeviceCount(false);
+  const { data: onlineData } = useGetDeviceCount(
+    true,
+    filtersExcludePagination
+  );
+  const { data: offlineData } = useGetDeviceCount(
+    false,
+    filtersExcludePagination
+  );
 
   const { catalogues } = useCatalogueStore();
-  const { treeData } = useRegionTreeStore();
+  // const { treeData } = useRegionTreeStore();
   // Fetch groups from API
   const { data: groupsData } = useGetGroups({
     status: 'enabled'
@@ -87,10 +98,13 @@ export default function ProductListingPage({}: ProductListingPage) {
     }
     let parentGroupColumn = _columns.find((x) => x.id === 'parent_group_id');
     if (parentGroupColumn && parentGroupColumn.meta) {
-      parentGroupColumn.meta.options = treeData.map((node) => ({
-        label: node.name,
-        value: node.id
-      }));
+      parentGroupColumn.meta.options = groupsData?.groups.map(
+        (g) =>
+          ({
+            value: g.id,
+            label: g.name
+          }) as Option
+      );
       parentGroupColumn.cell = ({ cell }) => {
         const parent_group_id = cell.getValue<Device['parent_group_id']>();
         const node = groupsData?.groups.find((node) => {
@@ -100,36 +114,7 @@ export default function ProductListingPage({}: ProductListingPage) {
       };
     }
     return _columns;
-  }, [typeOptions, treeData, groupsData]);
-
-  if (isLoading) {
-    return (
-      <div className='space-y-4'>
-        <Skeleton className='h-8 w-48' />
-        <Skeleton className='h-4 w-96' />
-        <div className='space-y-2'>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className='h-16 w-full' />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className='flex h-64 items-center justify-center'>
-        <div className='text-center'>
-          <h3 className='text-destructive text-lg font-semibold'>
-            Error loading products
-          </h3>
-          <p className='text-muted-foreground text-sm'>
-            {error.message || 'Something went wrong'}
-          </p>
-        </div>
-      </div>
-    );
-  }
+  }, [groupsData, typeOptions]);
 
   const actionBar = (
     <div className='ml-4 flex items-center gap-6 py-2'>
@@ -169,6 +154,8 @@ export default function ProductListingPage({}: ProductListingPage) {
         totalItems={data?.total || 0}
         columns={columns as ColumnDef<Device, any>[]}
         actionBar={actionBar}
+        isLoading={isLoading}
+        error={error}
       />
     </div>
   );
