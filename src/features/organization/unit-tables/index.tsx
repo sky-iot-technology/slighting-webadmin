@@ -13,12 +13,16 @@ interface UnitTableParams<TData, TValue> {
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
   onTableReady?: (table: Table<TData>) => void;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 export function UnitTable<TData, TValue>({
   data,
   totalItems,
   columns,
-  onTableReady
+  onTableReady,
+  isLoading = false,
+  error = null
 }: UnitTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
@@ -57,6 +61,9 @@ export function UnitTable<TData, TValue>({
       headerClassName='bg-white'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      isLoading={isLoading}
+      error={error}
+      loadingRowCount={pageSize}
     ></DataTable>
   );
 }

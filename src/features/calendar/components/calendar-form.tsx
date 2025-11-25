@@ -105,7 +105,10 @@ export default function CalendarForm({
     }
   }, [repeat, setValue]);
 
-  const onSubmit = (values: z.infer<typeof calendarFormSchema>) => {
+  const onSubmit = (values: any) => {
+    console.log('hiiii');
+    console.log('VALUES AFTER ZOD:', values);
+    console.log('ERRORS:', form.formState.errors);
     console.log(values);
     onNext(values);
   };

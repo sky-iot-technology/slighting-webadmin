@@ -23,7 +23,7 @@ export function useDeviceFiltersFromParams(): GetDevicesParamsDto {
 
   const filters: GetDevicesParamsDto = {
     page: page ? parseInt(page) : 1,
-    limit: pageLimit ? parseInt(pageLimit) : 10,
+    limit: pageLimit ? parseInt(pageLimit) : 100,
     status: validStatuses.includes(statusParam as DeviceStatus)
       ? (statusParam as DeviceStatus)
       : 'all',

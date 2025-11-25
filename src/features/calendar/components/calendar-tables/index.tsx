@@ -27,6 +27,8 @@ interface ProductTableParams<TData, TValue> {
     name?: string;
     icon?: string;
   } | null;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 export function CalendarTable<TData, TValue>({
   data,
@@ -34,7 +36,9 @@ export function CalendarTable<TData, TValue>({
   columns,
   isSidebarOpen,
   onToggleSidebar,
-  region
+  region,
+  isLoading = false,
+  error = null
 }: ProductTableParams<TData, TValue>) {
   const [open, setOpen] = useState(false);
 
@@ -73,6 +77,9 @@ export function CalendarTable<TData, TValue>({
       headerClassName='bg-white'
       rowClassName='text-xs font-normal bg-white'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      isLoading={isLoading}
+      error={error}
+      loadingRowCount={pageSize}
     >
       <div className='flex items-center gap-2 bg-white'>
         {onToggleSidebar && (

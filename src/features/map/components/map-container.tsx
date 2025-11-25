@@ -30,11 +30,11 @@ export default function MapContainer() {
   const { treeData, isLoading: isRegionsLoading } = useRegionTreeStore();
 
   const { data, isLoading, isFetching, error } = useGetDevices(
-    { group: selectedRegion?.id },
+    { group: selectedRegion?.id, limit: 100 },
     { enabled: !!selectedRegion }
   );
   const devices = data?.devices ?? [];
-
+  console.log(devices);
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {
       setSelectedRegion({

@@ -25,7 +25,7 @@ export default function UserPage() {
     [page, pageLimit, search]
   );
 
-  const { data, isLoading } = useGetUsers({
+  const { data, isLoading, error } = useGetUsers({
     ...filters,
     dir: 'asc',
     status: 'all'
@@ -50,6 +50,8 @@ export default function UserPage() {
             data={data.users}
             totalItems={data?.total}
             columns={userColumns()}
+            isLoading={isLoading}
+            error={error}
           />
         )}
       </div>

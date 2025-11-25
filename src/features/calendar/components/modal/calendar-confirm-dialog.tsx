@@ -113,7 +113,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
           <div key={index} className='test-sm flex gap-8 font-medium'>
             <span>{index + 1}</span>
             <span>{item.time}</span>
-            {item.brightness ? (
+            {item.brightness !== undefined ? (
               <span>{item.brightness}%</span>
             ) : (
               <span>{item.onOff ? 'Bật' : 'Tắt'}</span>

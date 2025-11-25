@@ -112,7 +112,6 @@ export default function GoongMap({
       );
 
       const nextZoom = options.zoom ?? zoom;
-
       setViewport((prev) => ({
         ...prev,
         longitude,
@@ -173,6 +172,8 @@ export default function GoongMap({
       const devicesWithCoords = devices.filter(
         (x) => x.device_info?.lon && x.device_info?.lat
       );
+
+      console.log(devices);
 
       if (devicesWithCoords.length === 0) {
         setNeedsInitialization(false);

@@ -86,9 +86,11 @@ export default function BranchPage() {
     return (
       <BranchTable
         data={devices}
-        totalItems={Number(data?.total)}
+        totalItems={Number(data?.total ?? 0)}
         columns={branchColumns(catalogues, treeData)}
         onTableReady={setDeviceTable}
+        isLoading={isLoading}
+        error={error}
       />
     );
   }, [selectedRegion?.id, data?.total, devices, catalogues, treeData]);

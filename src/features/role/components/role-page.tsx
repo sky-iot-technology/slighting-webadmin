@@ -7,7 +7,7 @@ import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs'
 import { useGetRoles } from '@/core/domains/permissions';
 
 export default function RolePage() {
-  const { data, isLoading } = useGetRoles({
+  const { data, isLoading, error } = useGetRoles({
     status: 'enabled'
   });
 
@@ -30,6 +30,8 @@ export default function RolePage() {
             data={data?.['ui-roles']}
             totalItems={data?.total}
             columns={roleColumns()}
+            isLoading={isLoading}
+            error={error}
           />
         )}
       </div>

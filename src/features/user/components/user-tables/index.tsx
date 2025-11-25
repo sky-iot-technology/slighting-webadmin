@@ -17,11 +17,15 @@ interface UserTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
+  isLoading?: boolean;
+  error?: Error | null;
 }
 export function UserTable<TData, TValue>({
   data,
   totalItems,
-  columns
+  columns,
+  isLoading = false,
+  error = null
 }: UserTableParams<TData, TValue>) {
   const [open, setOpen] = useState(false);
 
@@ -54,6 +58,9 @@ export function UserTable<TData, TValue>({
       headerClassName='bg-white'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      isLoading={isLoading}
+      error={error}
+      loadingRowCount={pageSize}
     >
       <DataTableCustomToolbar
         table={table}

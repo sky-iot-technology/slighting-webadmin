@@ -4,7 +4,7 @@ import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
-import { Calendar } from '@/core/domains/calendars';
+import { Calendar, SubSchedule } from '@/core/domains/calendars';
 import { PRIORITY_LABELS } from '@/core/domains/calendars/constant';
 import { formatDateString } from '../../helper';
 
@@ -117,6 +117,31 @@ export const columns: ColumnDef<Calendar>[] = [
         );
         if (schedule) {
           return <div>{schedule.time}</div>;
+        }
+
+        const toMinutes = (timeStr: string) => {
+          const [h, m] = timeStr.split(':').map(Number);
+          if (Number.isNaN(h) || Number.isNaN(m)) return null;
+          return h * 60 + m;
+        };
+        const childTimes = schedules
+          ?.map((r: SubSchedule) => r.time as string | undefined)
+          .filter((t: any): t is string => Boolean(t))
+          .map((t: any) => ({ t, minutes: toMinutes(t) }))
+          .filter((x: any) => x.minutes !== null)
+          .sort((a: any, b: any) => a.minutes! - b.minutes!);
+
+        if (childTimes?.length > 0) {
+          const start = childTimes[0].t;
+          if (childTimes.length === 1) {
+            return <div>{start}</div>;
+          }
+          const end = childTimes[childTimes.length - 1].t;
+          return (
+            <div>
+              {start} - {end}
+            </div>
+          );
         }
         return <div>-</div>;
       }

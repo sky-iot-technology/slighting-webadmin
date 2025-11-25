@@ -82,7 +82,30 @@ export function TimeBrightnessForm({
                     render={({ field }) => (
                       <Select
                         value={field.value ?? ''}
-                        onValueChange={(v) => field.onChange(v)}
+                        onValueChange={(v) => {
+                          field.onChange(v);
+                          if (v === 'onOff') {
+                            form.setValue(`schedules.${index}.onOff`, false, {
+                              shouldValidate: true,
+                              shouldDirty: true
+                            });
+                            form.setValue(
+                              `schedules.${index}.brightness`,
+                              undefined
+                            );
+                          }
+
+                          if (v === 'brightness') {
+                            form.setValue(`schedules.${index}.brightness`, 0, {
+                              shouldValidate: true,
+                              shouldDirty: true
+                            });
+                            form.setValue(
+                              `schedules.${index}.onOff`,
+                              undefined
+                            );
+                          }
+                        }}
                         disabled={disabled}
                       >
                         <SelectTrigger className='!h-[24px] w-full rounded-[4px] text-xs'>
