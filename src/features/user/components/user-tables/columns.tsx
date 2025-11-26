@@ -117,7 +117,7 @@ export const userColumns = (): ColumnDef<User>[] => [
       const useUpdateStatus = useUpdateUserStatus();
       return (
         <Switch
-          className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-6`}
+          className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-3`}
           checked={isEnabled}
           disabled={useUpdateStatus.isPending}
           onCheckedChange={(val) =>

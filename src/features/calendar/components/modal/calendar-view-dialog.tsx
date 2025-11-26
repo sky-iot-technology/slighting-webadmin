@@ -20,6 +20,7 @@ import { RegionNode } from '@/core/domains/groups';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { CalendarRangePicker } from '../calendar-range-picker';
 import { TimeBrightnessForm } from '../calendar-time-brightness';
+import { useRouter } from 'next/navigation';
 
 type CalendarViewDialogProps = {
   open: boolean;
@@ -34,7 +35,7 @@ export function CalendarViewDialog({
 }: CalendarViewDialogProps) {
   const { treeData } = useRegionTreeStore();
   const { catalogues } = useCatalogueStore();
-
+  const router = useRouter();
   const { data, isLoading, error } = useGetCalendarById(id ?? '', {
     enabled: !!id
   });
@@ -188,7 +189,12 @@ export function CalendarViewDialog({
                 >
                   <span className='truncate'>{name}</span>
                   <span className='text-center text-green-600'>Online</span>
-                  <span className='cursor-pointer text-right text-blue-500 italic'>
+                  <span
+                    className='cursor-pointer text-right text-blue-500 italic'
+                    onClick={() =>
+                      router.push(`/dashboard/product/info/${data.id}`)
+                    }
+                  >
                     Xem chi tiết
                   </span>
                 </div>

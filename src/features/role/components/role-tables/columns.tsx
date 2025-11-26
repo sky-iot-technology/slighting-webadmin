@@ -99,11 +99,15 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ table }) => {
+      return (
+        <div className='flex w-full items-center justify-center'>Thao tác</div>
+      );
+    },
     size: 57,
     cell: ({ row }) => {
       return (
-        <div className='flex min-h-[32px] items-center justify-center'>
+        <div className=''>
           <CellAction id={String(row.original.id)} />
         </div>
       );

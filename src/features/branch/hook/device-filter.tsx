@@ -7,10 +7,13 @@ export function useDeviceFiltersFromParams(): GetDevicesParamsDto {
 
   const page = searchParams.get('page');
   const pageLimit = searchParams.get('perPage');
-  const statusParam = searchParams.get('status');
-  const dirParam = searchParams.get('dir');
-  const metadata = searchParams.get('metadata');
-  const type = searchParams.get('type');
+  const statusParam = searchParams.get('status') ?? undefined;
+  const dirParam = searchParams.get('dir') ?? 'desc';
+  const metadata = searchParams.get('metadata') ?? undefined;
+  const type = searchParams.get('type') ?? undefined;
+
+  const currentPage = page ? parseInt(page.toString()) : 1;
+  const limit = pageLimit ? parseInt(pageLimit.toString()) : 10;
 
   const validStatuses = [
     'enabled',
@@ -19,18 +22,19 @@ export function useDeviceFiltersFromParams(): GetDevicesParamsDto {
     'all',
     'unknown'
   ] as const;
-  type DeviceStatus = (typeof validStatuses)[number];
 
-  const filters: GetDevicesParamsDto = {
-    page: page ? parseInt(page) : 1,
-    limit: pageLimit ? parseInt(pageLimit) : 100,
-    status: validStatuses.includes(statusParam as DeviceStatus)
-      ? (statusParam as DeviceStatus)
-      : 'all',
-    dir: dirParam === 'desc' ? 'desc' : 'asc',
-    metadata: metadata ?? undefined,
-    type: type ?? undefined
+  const filtersExcludePagination = {
+    ...(statusParam && { status: statusParam as any }),
+    ...(type && { type }),
+    ...(metadata && { metadata })
   };
+
+  const filters = {
+    dir: dirParam === 'asc' ? 'asc' : ('desc' as const),
+    offset: (currentPage - 1) * limit,
+    limit,
+    ...filtersExcludePagination
+  } as const;
 
   return filters;
 }

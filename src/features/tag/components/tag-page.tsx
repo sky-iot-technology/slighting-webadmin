@@ -26,6 +26,28 @@ export default function TagPage() {
   const page = searchParams.get('page');
   const search = searchParams.get('name');
   const pageLimit = searchParams.get('perPage');
+  const dir = searchParams.get('dir') ?? 'desc';
+  const order = searchParams.get('order') ?? 'updated_at';
+  const status = searchParams.get('status') ?? undefined;
+  const type = searchParams.get('type') ?? undefined;
+  const metadata = searchParams.get('metadata') ?? undefined;
+
+  const currentPage = page ? parseInt(page.toString()) : 1;
+  const limit = pageLimit ? parseInt(pageLimit.toString()) : 10;
+  const filtersExcludePagination = {
+    ...(search && { name: search }),
+    ...(status && { status: status as any }),
+    ...(type && { type }),
+    ...(metadata && { metadata })
+  };
+
+  const filters = {
+    dir: dir === 'asc' ? 'asc' : ('desc' as const),
+    offset: (currentPage - 1) * limit,
+    limit,
+    order,
+    ...filtersExcludePagination
+  } as const;
 
   const breadcrumbContent = useMemo(
     () => (
@@ -37,15 +59,6 @@ export default function TagPage() {
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);
-
-  const filters = useMemo<GetDevicesParamsDto>(
-    () => ({
-      page: page ? parseInt(page.toString()) : 1,
-      limit: pageLimit ? parseInt(pageLimit.toString()) : 10,
-      ...(search && { name: search })
-    }),
-    [page, pageLimit, search]
-  );
 
   const handleTagChange = useCallback(
     (tag: SelectedTag) => {
