@@ -4,7 +4,7 @@ import { memo, useMemo, useState } from 'react';
 import BranchDialog from './modal/tag-dialog';
 import { IconPlus } from '@tabler/icons-react';
 import Image from 'next/image';
-import { useGetTags } from '@/core/domains/tags';
+import { useGetTags, useUpdateTag } from '@/core/domains/tags';
 
 export type SelectedTag = {
   id: string;
@@ -23,9 +23,14 @@ export const TagSidebar = memo(function TagSidebar({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState<SelectedTag>(null);
 
+  const [editingTagId, setEditingTagId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
+
   const { data, isLoading } = useGetTags({
     resource_type: 'device'
   });
+
+  const updateTag = useUpdateTag();
 
   const handleSelectTag = (tag: {
     id: string;
@@ -92,16 +97,94 @@ export const TagSidebar = memo(function TagSidebar({
                     name: tag.name
                   })
                 }
-                className={`hover:bg-primary/5 mb-1 flex w-full cursor-pointer gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary' : ''}`}
+                className={`group hover:bg-primary/5 mb-1 flex w-full cursor-pointer justify-between gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary' : ''}`}
               >
-                <Image
-                  src={'/assets/icons/heart.svg'}
-                  alt='heart'
-                  width={11}
-                  height={11}
-                  className=''
-                />
-                {tag.name}
+                <span className='flex items-center gap-2'>
+                  <Image
+                    src={'/assets/icons/tag.svg'}
+                    alt='tag'
+                    width={11}
+                    height={11}
+                  />
+                  {editingTagId === tag.id ? (
+                    <input
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      autoFocus
+                      className='border-primary w-auto max-w-[120px] border bg-transparent px-1 text-xs focus:outline-none'
+                    />
+                  ) : (
+                    <>{tag.name}</>
+                  )}
+                </span>
+
+                <span className='hidden items-baseline gap-3 group-hover:flex'>
+                  {editingTagId === tag.id ? (
+                    <>
+                      {/* Confirm */}
+                      <span
+                        role='button'
+                        className='cursor-pointer text-green-600 hover:text-green-700'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingTagId(null);
+                          updateTag.mutate({
+                            tagId: String(tag.id),
+                            name: editValue
+                          });
+                        }}
+                      >
+                        ✔
+                      </span>
+
+                      <span
+                        role='button'
+                        className='cursor-pointer text-red-600 hover:text-red-700'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingTagId(null);
+                        }}
+                      >
+                        ✖
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span
+                        role='button'
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingTagId(String(tag.id));
+                          setEditValue(tag.name);
+                        }}
+                      >
+                        <Image
+                          src={'/assets/icons/edit.svg'}
+                          alt='edit'
+                          width={12}
+                          height={12}
+                        />
+                      </span>
+
+                      {/* <span
+                        role="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // onDeleteTag(tag.id);
+                          console.log('delete');
+                        }}
+                      >
+                        <Image
+                          src={'/assets/icons/trash.svg'}
+                          alt='trash'
+                          width={12}
+                          height={12}
+                        />
+                      </span> */}
+                    </>
+                  )}
+                </span>
               </button>
             );
           })}

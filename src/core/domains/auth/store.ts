@@ -50,18 +50,23 @@ export const useAuthStore = create<AuthState>()(
           domainId: null
         }),
 
-      updateUser: (updates) => {
-        const currentUser = get().user;
-        if (currentUser) {
-          set({
+      updateUser: (updates) =>
+        set((state) => {
+          const currentUser = state.user;
+          if (!currentUser) return state;
+
+          return {
             user: {
               ...currentUser,
               ...updates,
-              updated_at: new Date().toISOString()
+              metadata: {
+                ...currentUser.metadata,
+                ...(updates as any).metadata
+              }
             }
-          });
-        }
-      },
+          };
+        }),
+
       setDomainId: (domainId) => set({ domainId }),
 
       get isAuthenticated() {

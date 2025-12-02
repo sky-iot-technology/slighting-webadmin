@@ -8,6 +8,7 @@ import {
 import { usersApi } from './api';
 import { toast } from 'sonner';
 import {
+  ChangePassDto,
   CreateUserDto,
   GetUsersParamsDto,
   UpdateUserDto,
@@ -75,6 +76,27 @@ export const useChangePasswordByAdmin = (
   return useMutation<void, Error, { id: string; secret: string }>({
     ...options,
     mutationFn: ({ id, secret }) => usersApi.changepassByAdmin(id, secret),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
+
+      toast.success('Update password successfully!');
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to update password:', error);
+      toast.error(error.message || 'Failed to update password');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useChangePassword = (
+  options?: UseMutationOptions<void, Error, ChangePassDto>
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<void, Error, ChangePassDto>({
+    ...options,
+    mutationFn: (data) => usersApi.changepass(data),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
 

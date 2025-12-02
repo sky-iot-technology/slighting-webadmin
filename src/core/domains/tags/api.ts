@@ -23,5 +23,19 @@ export const tagsApi = {
     } catch (error) {
       throw new Error('Failed to create tag');
     }
+  },
+  async updateTag(tagId: string, name: string): Promise<Tag> {
+    try {
+      const response = await authenticatedApi.patch<Tag>(
+        `/system/tags/${tagId}`,
+        {
+          name
+        }
+      );
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new Error('Failed to update tag');
+    }
   }
 };

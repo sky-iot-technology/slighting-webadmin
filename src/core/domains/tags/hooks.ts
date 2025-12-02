@@ -65,3 +65,27 @@ export const useCreateTag = (
     }
   });
 };
+
+export const useUpdateTag = (
+  options?: UseMutationOptions<Tag, Error, { tagId: string; name: string }>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<Tag, Error, { tagId: string; name: string }>({
+    ...options,
+    mutationFn: ({ tagId, name }) => tagsApi.updateTag(tagId, name),
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [TAGS_QUERY_KEY] });
+
+      queryClient.setQueryData([TAGS_QUERY_KEY, 'detail', data.id], data);
+
+      toast.success('Tag updated successfully!');
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to updated tag:', error);
+      toast.error(error.message || 'Failed to updated tag');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

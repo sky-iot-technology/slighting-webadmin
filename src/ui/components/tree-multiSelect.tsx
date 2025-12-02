@@ -226,16 +226,20 @@ function MultiDefaultNode({
   const isSelected = selectedIds?.has(node.data.id) ?? false;
   const hasChildren = !!node.data.children?.length;
 
-  const entireSubtreeSelected = hasChildren
-    ? isEntireSubtreeSelected(node.data, selectedIds ?? new Set())
-    : isSelected;
+  const entireSubtreeSelected =
+    selectedIds?.has(node.data.id) ||
+    (hasChildren &&
+      isEntireSubtreeSelected(node.data, selectedIds ?? new Set()));
 
   const someSelectedInSubtree = hasChildren
     ? hasSomeSelectedInSubtree(node.data, selectedIds ?? new Set())
     : false;
 
   const indeterminate =
-    hasChildren && someSelectedInSubtree && !entireSubtreeSelected;
+    hasChildren &&
+    someSelectedInSubtree &&
+    !selectedIds?.has(node.data.id) &&
+    !entireSubtreeSelected;
 
   const displayChecked = isSelected || entireSubtreeSelected;
 
@@ -292,7 +296,7 @@ function MultiDefaultNode({
           e.stopPropagation();
           onMultiSelect({ id: node.data.id, name: node.data.name }, node.data);
         }}
-        className='mr-1'
+        className='accent-primary mr-1'
       />
 
       <span

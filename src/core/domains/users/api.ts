@@ -1,5 +1,6 @@
 import { authenticatedApi, publicApi } from '@/core/shared/api';
 import {
+  ChangePassDto,
   CreateUserDto,
   GetUsersParamsDto,
   UpdateProfileDto,
@@ -21,6 +22,13 @@ export const usersApi = {
       }
     });
     return response;
+  },
+  async changepass(data: ChangePassDto): Promise<void> {
+    try {
+      await authenticatedApi.patch<void>(`/users/secret`, data);
+    } catch (error) {
+      throw new Error('Failed to update password');
+    }
   },
   async changepassByAdmin(userId: string, secret: string): Promise<void> {
     return await authenticatedApi.patch<void>(`/users/${userId}/secret`, {
@@ -88,34 +96,32 @@ export const usersApi = {
       throw new Error('Failed to disable user');
     }
   },
-  // async uploadAvatar(file: File): Promise<{ url: string, path: string }> {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
+  async uploadAvatar(file: File): Promise<{ url: string; path: string }> {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
 
-  //     const response = await publicApi.post<{ url: string, path: string }>(
-  //       '/d/upload',
-  //       formData,
-  //       {
-  //         headers: { 'Content-Type': 'multipart/form-data' }
-  //       }
-  //     );
+      const response = await publicApi.post<{ url: string; path: string }>(
+        '/d/upload',
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        }
+      );
 
-  //     return response;
-  //   } catch (error) {
-  //     throw new Error('Failed to upload avatar user');
-  //   }
-  // },
-  // async deleteAvatar(path: string): Promise<void> {
-  //   try {
-  //     return await publicApi.delete<void>(
-  //       `/d/delete/${path}`
-  //     );
-
-  //   } catch (error) {
-  //     throw new Error('Failed to delete avatar user');
-  //   }
-  // }
+      return response;
+    } catch (error) {
+      throw new Error('Failed to upload avatar user');
+    }
+  },
+  async deleteAvatar(url: string): Promise<void> {
+    try {
+      const path = extractPath(url);
+      return await publicApi.delete<void>(`/d/delete/${path}`);
+    } catch (error) {
+      throw new Error('Failed to delete avatar user');
+    }
+  },
   async getUserById(id: string): Promise<User> {
     try {
       const response = (await publicApi.get(`/users/${id}`)) as User;
@@ -125,3 +131,8 @@ export const usersApi = {
     }
   }
 };
+
+function extractPath(url: string): string {
+  const parts = url.split('/uploads/');
+  return parts[1] ? `/uploads/${parts[1]}` : '';
+}

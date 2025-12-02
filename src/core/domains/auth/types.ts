@@ -1,3 +1,5 @@
+import { User as UserType } from '../users';
+
 export interface LoginCredentials {
   username: string;
   password: string;
@@ -14,20 +16,19 @@ export interface AuthResponse {
   access_token: string;
   refresh_token: string;
 }
-
-export interface User {
+export interface User extends UserType {
   id: string;
   first_name: string;
   last_name: string;
-  status: string;
-  role: string;
+  // status: string;
+  // role: string;
   credentials: {
     username: string;
   };
   email: string;
   created_at: string;
   updated_at: string;
-  updated_by: string;
+  // updated_by: string;
 }
 
 export interface ProfileUpdateData {

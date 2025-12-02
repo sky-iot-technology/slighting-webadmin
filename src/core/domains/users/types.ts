@@ -79,3 +79,8 @@ export interface UpdateUserDto {
 
 export interface UpdateProfileDto extends Omit<UpdateUserDto, 'role'> {}
 export interface UpdateRoleDto extends Pick<UpdateUserDto, 'role'> {}
+
+export interface ChangePassDto {
+  old_secret: string;
+  new_secret: string;
+}

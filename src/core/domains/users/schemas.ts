@@ -30,6 +30,17 @@ export const userFormSchema = z
     }
   );
 
+export const changenewpassFormSchema = z
+  .object({
+    oldpassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
+    newpassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
+    confirmPassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự')
+  })
+  .refine((data) => data.newpassword === data.confirmPassword, {
+    message: 'Mật khẩu không khớp',
+    path: ['confirmPassword']
+  });
+
 export const changepassFormSchema = z
   .object({
     newpassword: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),

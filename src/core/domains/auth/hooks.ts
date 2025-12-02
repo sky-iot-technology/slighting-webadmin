@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient
+} from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { authApi } from './api';
@@ -9,6 +14,7 @@ import {
 } from './types';
 import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
+import { usersApi } from '../users';
 
 // Query keys
 export const authKeys = {
@@ -114,18 +120,54 @@ export function useLogout() {
   });
 }
 
-export function useUpdateProfile() {
-  const queryClient = useQueryClient();
-  const { updateUser, setLoading, setError, accessToken } = useAuthStore();
+// export function useUpdateProfile() {
+//   const queryClient = useQueryClient();
+//   const { updateUser, setLoading, setError, accessToken } = useAuthStore();
 
-  return useMutation({
-    mutationFn: ({
-      userId,
-      updates
-    }: {
-      userId: string;
-      updates: Partial<User>;
-    }) => authApi.updateProfile(accessToken || '', userId, updates),
+//   return useMutation({
+//     mutationFn: ({
+//       userId,
+//       updates
+//     }: {
+//       userId: string;
+//       updates: Partial<User>;
+//     }) => authApi.updateProfile(accessToken || '', userId, updates),
+//     onMutate: () => {
+//       setLoading(true);
+//       setError(null);
+//     },
+//     onSuccess: (updatedUser) => {
+//       updateUser(updatedUser);
+//       setLoading(false);
+//       queryClient.setQueryData(authKeys.user(), updatedUser);
+//       toast.success('Cập nhật thông tin thành công!');
+//     },
+//     onError: (error: Error) => {
+//       setLoading(false);
+//       setError(
+//         error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
+//       );
+//       toast.error(
+//         error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
+//       );
+//     }
+//   });
+// }
+
+export const useUpdateProfile = (
+  options?: UseMutationOptions<User, Error, Partial<User>>
+) => {
+  const queryClient = useQueryClient();
+  const { updateUser, setLoading, setError, user } = useAuthStore();
+
+  return useMutation<User, Error, Partial<User>>({
+    ...options,
+    mutationFn: (data) => {
+      if (!user) {
+        throw new Error('You must be logged in to update profile');
+      }
+      return usersApi.updateUserProfile(user.id, data);
+    },
     onMutate: () => {
       setLoading(true);
       setError(null);
@@ -146,7 +188,89 @@ export function useUpdateProfile() {
       );
     }
   });
-}
+};
+
+export const useUploadAvatar = (
+  options?: UseMutationOptions<{ url: string; path: string }, Error, File>
+) => {
+  const queryClient = useQueryClient();
+  const { updateUser, setLoading, setError, user } = useAuthStore();
+
+  return useMutation({
+    ...options,
+    mutationFn: async (file) => {
+      if (!user) throw new Error('You must be logged in');
+
+      const oldPath = user.profile_picture;
+      const uploaded = await usersApi.uploadAvatar(file);
+
+      await authApi.updateAvatar(user.id, uploaded.url);
+
+      if (oldPath) {
+        await usersApi.deleteAvatar(oldPath);
+      }
+
+      return uploaded;
+    },
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: ({ url }) => {
+      updateUser({
+        profile_picture: url
+      });
+      setLoading(false);
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user()
+      });
+      toast.success('Cập nhật ảnh đại diện thành công!');
+    },
+    onError: (err) => {
+      setLoading(false);
+      setError(err.message);
+      toast.error('Tải ảnh đại diện thất bại, vui lòng thử lại');
+    }
+  });
+};
+
+export const useDeleteAvatar = (
+  options?: UseMutationOptions<void, Error, string>
+) => {
+  const queryClient = useQueryClient();
+  const { updateUser, setLoading, setError, user } = useAuthStore();
+
+  return useMutation<void, Error, string>({
+    ...options,
+    mutationFn: async (path) => {
+      if (!user) throw new Error('You must be logged in');
+
+      await usersApi.deleteAvatar(path);
+      await authApi.updateAvatar(user.id, '');
+
+      return;
+    },
+    onMutate: () => {
+      setLoading(true);
+      setError(null);
+    },
+    onSuccess: () => {
+      updateUser({
+        profile_picture: ''
+      });
+      setLoading(false);
+      queryClient.invalidateQueries({
+        queryKey: authKeys.user()
+      });
+      toast.success('Xóa ảnh đại diện thành công!');
+    },
+    onError: (err) => {
+      setLoading(false);
+      setError(err.message);
+      toast.error('Không thể xóa ảnh đại diện!');
+    }
+  });
+};
 
 export function useCurrentUser() {
   const { accessToken } = useAuthStore();

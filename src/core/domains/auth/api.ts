@@ -80,5 +80,15 @@ export const authApi = {
     cookieUtils.setAuthCookies(response.access_token, response.refresh_token);
 
     return response;
+  },
+
+  async updateAvatar(id: string, picture: string): Promise<void> {
+    try {
+      return await authenticatedApi.patch<void>(`/users/${id}/picture`, {
+        profile_picture: picture
+      });
+    } catch (error) {
+      console.error('Can not update avatar', error);
+    }
   }
 };
