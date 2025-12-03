@@ -1,3 +1,4 @@
+'use client';
 import PageContainer from '@/ui/components/layout/page-container';
 import {
   Select,
@@ -7,6 +8,7 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { StatCard } from '../../../features/overview/components/stat-card';
+import { useGetOverView } from '@/core/domains/overview/hooks';
 
 const stats = [
   {
@@ -55,6 +57,47 @@ export default function Overview2({
   alert_stats: React.ReactNode;
   circle_stats: React.ReactNode;
 }) {
+  const { data, isLoading } = useGetOverView();
+  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  const mappedStats = data
+    ? [
+        {
+          icon: '/assets/icons/total-device.svg',
+          label: 'Tổng thiết bị',
+          value: data.device_summary.total_devices.toLocaleString(),
+          trend: 5.2,
+          trendType: 'up' as const,
+          shadow: '!shadow-primary',
+          bgColor: 'bg-card-primary'
+        },
+        {
+          icon: '/assets/icons/online.svg',
+          label: 'Thiết bị Online',
+          value: data.device_summary.online_devices.toLocaleString(),
+          trend: 5.2,
+          trendType: 'up' as const,
+          shadow: '!shadow-success',
+          bgColor: 'bg-card-success'
+        },
+        {
+          icon: '/assets/icons/offline.svg',
+          label: 'Thiết bị Offline',
+          value: data.device_summary.offline_devices.toLocaleString(),
+          trend: 1.8,
+          trendType: 'down' as const,
+          shadow: '!shadow-default'
+        },
+        {
+          icon: '/assets/icons/alert.svg',
+          label: 'Thiết bị lỗi',
+          value: data.device_summary.error_devices.toLocaleString(),
+          trend: 5.2,
+          trendType: 'down' as const,
+          shadow: '!shadow-danger',
+          bgColor: 'bg-card-danger'
+        }
+      ]
+    : stats;
   return (
     <PageContainer>
       <div className='flex flex-1 flex-col space-y-2 bg-white'>
@@ -74,7 +117,7 @@ export default function Overview2({
         </div>
 
         <div className='dark:*:data-[slot=card]:bg-card mr-[22px] ml-[28px] grid grid-cols-1 gap-6 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4'>
-          {stats.map((stat, index) => (
+          {mappedStats.map((stat, index) => (
             <StatCard key={index} {...stat} />
           ))}
         </div>

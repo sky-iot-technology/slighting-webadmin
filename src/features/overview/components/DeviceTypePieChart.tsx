@@ -19,45 +19,31 @@ import {
   ChartTooltipContent
 } from '@/ui/components/ui/chart';
 import Image from 'next/image';
+import { useGetOverView } from '@/core/domains/overview/hooks';
 
-const chartData = [
-  { browser: 'chrome', visitors: 275, fill: '#93c5fd' }, // blue-300
-  { browser: 'safari', visitors: 200, fill: '#c4b5fd' }, // violet-300
-  { browser: 'firefox', visitors: 287, fill: '#f9a8d4' }, // pink-300
-  { browser: 'edge', visitors: 173, fill: '#6ee7b7' }, // emerald-300
-  { browser: 'other', visitors: 190, fill: '#fcd34d' } // amber-300
+const colors = [
+  '#93c5fd',
+  '#c4b5fd',
+  '#f9a8d4',
+  '#6ee7b7',
+  '#fcd34d',
+  '#fdba74',
+  '#fca5a5'
 ];
 
-const chartConfig = {
-  visitors: {
-    label: 'Visitors'
-  },
-  chrome: {
-    label: 'Chrome',
-    color: 'var(--primary)'
-  },
-  safari: {
-    label: 'Safari',
-    color: 'var(--primary)'
-  },
-  firefox: {
-    label: 'Firefox',
-    color: 'var(--primary)'
-  },
-  edge: {
-    label: 'Edge',
-    color: 'var(--primary)'
-  },
-  other: {
-    label: 'Other',
-    color: 'var(--primary)'
-  }
-} satisfies ChartConfig;
-
 export function DeviceTypePieChart() {
-  const totalVisitors = React.useMemo(() => {
-    return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-  }, []);
+  const { data, isLoading } = useGetOverView();
+  if (!data || !data.device_distribution_by_type) {
+    return <div>Đang tải dữ liệu...</div>;
+  }
+
+  const chartData = data.device_distribution_by_type.map((item, index) => ({
+    name: item.type_name,
+    value: item.count,
+    fill: colors[index % colors.length]
+  }));
+
+  const totalCount = chartData.reduce((acc, cur) => acc + cur.value, 0);
 
   return (
     <Card className='!shadow-pie-chart @container/card border-none py-3'>
@@ -76,12 +62,9 @@ export function DeviceTypePieChart() {
         </div>
       </CardHeader>
       <CardContent className='px-2 pt-4 sm:px-6 sm:pt-6'>
-        <ChartContainer
-          config={chartConfig}
-          className='mx-auto aspect-square h-[250px]'
-        >
+        <ChartContainer config={{}} className='mx-auto aspect-square h-[250px]'>
           <PieChart>
-            <defs>
+            {/* <defs>
               {chartData.map(({ browser, fill }) => (
                 <linearGradient
                   key={browser}
@@ -95,18 +78,25 @@ export function DeviceTypePieChart() {
                   <stop offset='100%' stopColor={fill} stopOpacity={0.7} />
                 </linearGradient>
               ))}
-            </defs>
+            </defs> */}
             <ChartTooltip
               cursor={false}
-              content={<ChartTooltipContent hideLabel />}
+              content={({ payload }) => {
+                if (!payload || payload.length === 0) return null;
+                const { name, value } = payload[0];
+
+                return (
+                  <div className='rounded-md bg-white px-2 py-1 text-xs shadow'>
+                    <div className='font-semibold'>{name}</div>
+                    <div>{value} thiết bị</div>
+                  </div>
+                );
+              }}
             />
             <Pie
-              data={chartData.map((item) => ({
-                ...item,
-                fill: `url(#fill${item.browser})`
-              }))}
-              dataKey='visitors'
-              nameKey='browser'
+              data={chartData}
+              dataKey='value'
+              nameKey='name'
               innerRadius={60}
               strokeWidth={2}
               stroke='var(--background)'
@@ -126,14 +116,14 @@ export function DeviceTypePieChart() {
                           y={viewBox.cy}
                           className='fill-foreground text-3xl font-bold'
                         >
-                          {totalVisitors.toLocaleString()}
+                          {totalCount}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 24}
                           className='fill-muted-foreground text-sm'
                         >
-                          Total Visitors
+                          Tổng thiết bị
                         </tspan>
                       </text>
                     );
@@ -145,25 +135,33 @@ export function DeviceTypePieChart() {
         </ChartContainer>
       </CardContent>
       <CardFooter className='flex-col gap-2 text-sm'>
-        {/* <div className="grid grid-cols-2 gap-4 w-full pb-2 justify-items-center">
-            {chartData.map((item) => (
-                <div key={item.browser} className="flex items-center gap-2">
-                    <span
-                    className="h-3 w-3 rounded-sm"
+        {/* {!isLoading && (
+          <>
+            <div className='grid grid-cols-2 gap-4 w-full pb-2'>
+              {chartData.map((item) => (
+                <div
+                  key={item.name}
+                  className='flex items-center gap-2'
+                >
+                  <span
+                    className='h-3 w-3 rounded-sm'
                     style={{ background: item.fill }}
-                    />
-                    <span className="capitalize">{item.browser}</span>
+                  />
+                  <span className='truncate'>{item.name}</span>
                 </div>
-            ))}
-        </div> */}
-        <div className='flex items-center gap-2 leading-none font-medium'>
-          Chrome leads with{' '}
-          {((chartData[0].visitors / totalVisitors) * 100).toFixed(1)}%{' '}
-          <IconTrendingUp className='h-4 w-4' />
-        </div>
-        <div className='text-muted-foreground leading-none'>
-          Based on data from January - June 2024
-        </div>
+              ))}
+            </div>
+
+            <div className='flex items-center gap-2 leading-none font-medium'>
+              Loại phổ biến nhất:{' '}
+              {chartData[0].name} ({chartData[0].value})
+              <IconTrendingUp className='h-4 w-4' />
+            </div>
+            <div className='text-muted-foreground leading-none'>
+              Thống kê hiện tại
+            </div>
+          </>
+        )} */}
       </CardFooter>
     </Card>
   );

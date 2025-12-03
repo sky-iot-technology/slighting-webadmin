@@ -26,9 +26,10 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
+import { SettingModal } from '@/features/setting/modal/setting';
 
 // Reusable component for the active state SVG background
-function ActiveStateIcon({ children }: { children: React.ReactNode }) {
+export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
   return (
     <svg
       width='34'
@@ -198,28 +199,62 @@ function MainMenuItem({
   );
 }
 
+function MainMenuItemModal({
+  item,
+  Icon,
+  isActive,
+  onClick
+}: {
+  item: (typeof navItems)[0];
+  Icon: React.ComponentType;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton
+        tooltip={item.title}
+        isActive={isActive}
+        onClick={onClick}
+        asChild={false}
+      >
+        <div className='flex cursor-pointer items-center gap-2'>
+          <MenuItemIcon
+            icon={Icon}
+            isActive={isActive}
+            showActiveState={false}
+          />
+          <span>{item.title}</span>
+        </div>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+}
+
 export default function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
+  const [openSettingModal, setOpenSettingModal] = React.useState(false);
 
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [open]);
 
   return (
-    <Sidebar collapsible='icon'>
-      <SidebarHeader>
-        <SidebarLogo isOpen={open} />
-      </SidebarHeader>
-      <SidebarContent className='overflow-x-hidden'>
-        <SidebarGroup className='mt-4'>
-          <SidebarMenu>
-            {navItems.map((item) => {
+    <>
+      <Sidebar collapsible='icon'>
+        <SidebarHeader>
+          <SidebarLogo isOpen={open} />
+        </SidebarHeader>
+        <SidebarContent className='overflow-x-hidden'>
+          <SidebarGroup className='mt-4'>
+            <SidebarMenu>
+              {/* {navItems.map((item) => {
               const Icon = item.icon ? Icons[item.icon] : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible
                   key={item.title}
-                  asChild
+                  // asChild
                   defaultOpen={item.isActive}
                   className='group/collapsible'
                 >
@@ -262,14 +297,84 @@ export default function AppSidebar() {
                   open={open}
                 />
               );
-            })}
-          </SidebarMenu>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter>
-        <span className='text-center text-sm text-gray-500'>v1.0.0</span>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+            })} */}
+
+              {navItems.map((item) => {
+                const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+                const isActive = pathname === item.url;
+
+                if (item.modal) {
+                  return (
+                    <MainMenuItemModal
+                      key={item.title}
+                      item={item}
+                      Icon={Icon}
+                      isActive={isActive}
+                      onClick={() => {
+                        setOpenSettingModal(true);
+                        console.log('open');
+                      }}
+                    />
+                  );
+                }
+
+                if (item.items && item.items.length > 0) {
+                  return (
+                    <Collapsible
+                      key={item.title}
+                      defaultOpen={item.isActive}
+                      className='group/collapsible'
+                    >
+                      <SidebarMenuItem>
+                        <CollapsibleTrigger asChild>
+                          <SidebarMenuButton isActive={isActive}>
+                            <MenuItemIcon
+                              icon={Icon}
+                              isActive={isActive}
+                              showActiveState={false}
+                            />
+                            <span>{item.title}</span>
+                            <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                          </SidebarMenuButton>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent>
+                          <SidebarMenuSub>
+                            {item.items.map((sub) => (
+                              <SubMenuItem
+                                key={sub.title}
+                                subItem={sub}
+                                isActive={pathname === sub.url}
+                              />
+                            ))}
+                          </SidebarMenuSub>
+                        </CollapsibleContent>
+                      </SidebarMenuItem>
+                    </Collapsible>
+                  );
+                }
+
+                return (
+                  <MainMenuItem
+                    key={item.title}
+                    item={item}
+                    Icon={Icon}
+                    pathname={pathname}
+                    open={open}
+                  />
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroup>
+        </SidebarContent>
+        <SidebarFooter>
+          <span className='text-center text-sm text-gray-500'>v1.0.0</span>
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+      <SettingModal
+        open={openSettingModal}
+        onOpenChange={setOpenSettingModal}
+      />
+    </>
   );
 }

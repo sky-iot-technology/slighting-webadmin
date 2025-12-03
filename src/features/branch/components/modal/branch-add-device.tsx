@@ -189,7 +189,7 @@ export default function BranchAddDevice({
                     <div
                       className={cn(
                         'h-2.5 w-2.5 rounded-full',
-                        item.online ? 'bg-green-500' : 'bg-gray-400'
+                        item.online ? 'bg-green-500' : 'bg-red-500'
                       )}
                     />
                   </div>

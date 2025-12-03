@@ -25,10 +25,10 @@ export default function SignInViewPage() {
       <div className='flex h-full items-center justify-center bg-gradient-to-b from-white from-70% to-blue-300 p-4 lg:p-8 dark:from-gray-900 dark:to-blue-900'>
         <div className='flex w-full max-w-md flex-col space-y-6'>
           <Image
-            src='/assets/images/logo.png'
+            src='/assets/images/logo2.png'
             alt='logo'
-            width={160}
-            height={160}
+            width={250}
+            height={250}
             className='mx-auto'
           />
           <SignInForm />

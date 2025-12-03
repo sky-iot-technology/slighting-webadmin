@@ -168,5 +168,50 @@ export const Icons = {
       height={17}
       className='dark:invert'
     />
+  ),
+  setting: () => (
+    <Image
+      src={'/assets/icons/setting.svg'}
+      alt='setting'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
+  display: () => (
+    <Image
+      src={'/assets/icons/display.svg'}
+      alt='display'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
+  alertSetting: () => (
+    <Image
+      src={'/assets/icons/alert-setting.svg'}
+      alt='alertSetting'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
+  shield: () => (
+    <Image
+      src={'/assets/icons/shield.svg'}
+      alt='shield'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
+  system: () => (
+    <Image
+      src={'/assets/icons/system.svg'}
+      alt='system'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
   )
 };

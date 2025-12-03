@@ -1,5 +1,4 @@
-import { Icons } from "@/ui/components/icons";
-
+import { Icons } from '@/ui/components/icons';
 
 export interface NavItem {
   title: string;
@@ -12,6 +11,7 @@ export interface NavItem {
   description?: string;
   isActive?: boolean;
   items?: NavItem[];
+  modal?: boolean;
 }
 
 export interface NavItemWithChildren extends NavItem {
