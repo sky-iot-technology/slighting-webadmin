@@ -26,8 +26,10 @@ import {
   SheetTrigger
 } from '@/ui/components/ui/sheet';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
+import { useAcknowledgedAlarm } from '@/core/domains/alarms';
 
 interface CellActionProps {
+  active: boolean;
   id: string;
   lat: number;
   lng: number;
@@ -35,6 +37,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
+  active,
   id,
   lat,
   lng,
@@ -57,6 +60,10 @@ export const CellAction: React.FC<CellActionProps> = ({
     deleteDeviceParent.mutate(id);
   };
 
+  const acknowledge = useAcknowledgedAlarm();
+  const handleAcknowledge = () => {
+    acknowledge.mutate({ id: String(id) });
+  };
   return (
     <>
       <AlertModal
@@ -78,20 +85,22 @@ export const CellAction: React.FC<CellActionProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='flex flex-col gap-2 p-2'>
-          <DropdownMenuItem
-            onClick={() => setOpenView(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/view2.svg'}
-                alt='view2'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Xem giao việc</span>
-          </DropdownMenuItem>
+          {active && (
+            <DropdownMenuItem
+              onClick={() => setOpenView(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/view2.svg'}
+                  alt='view2'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Xem giao việc</span>
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem
             className='flex w-full items-center text-xs'
@@ -123,7 +132,10 @@ export const CellAction: React.FC<CellActionProps> = ({
 
             <DropdownMenuPortal>
               <DropdownMenuSubContent className='min-w-[140px] space-y-1.5 p-2'>
-                <DropdownMenuItem className='flex cursor-pointer gap-2 text-xs'>
+                <DropdownMenuItem
+                  onClick={handleAcknowledge}
+                  className='flex cursor-pointer gap-2 text-xs'
+                >
                   <div className='flex w-4 justify-center'>
                     <Image
                       src='/assets/icons/userGear.svg'

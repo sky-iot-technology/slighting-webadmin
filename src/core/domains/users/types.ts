@@ -52,6 +52,7 @@ export interface GetUsersParamsDto
     'order' | 'sort' | 'status' | 'search' | 'categories'
   > {
   status?: 'enabled' | 'disabled' | 'all';
+  tag?: string;
   //   only_total?: boolean;
 }
 

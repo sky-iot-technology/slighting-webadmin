@@ -17,7 +17,7 @@ import {
   FormMessage
 } from '@/ui/components/ui/form';
 import { Button } from '@/ui/components/ui/button';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
 import { maintenanceWorkFormSchema } from '@/core/domains/maintenances/schemas';
@@ -31,6 +31,7 @@ import {
 import { CalendarRangePicker } from '@/features/calendar/components/calendar-range-picker';
 import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
+import { useGetUsers } from '@/core/domains/users';
 
 type MaintenanceFormProps = {
   pageTitle: string;
@@ -41,32 +42,40 @@ export default function MaintenanceForm({
   onClose,
   pageTitle
 }: MaintenanceFormProps) {
-  //   const defaultValues = useMemo(() => {
-  //     return (
-  //       formData ??
-  //       ((initialData
-  //         ? {
-  //             name: initialData.name ?? '',
-  //             description: initialData.description ?? '',
-  //             parent_id: initialData.parent_id ?? '',
-  //             metadata: {
-  //               lat: initialData.metadata?.lat ?? undefined,
-  //               long: initialData.metadata?.long ?? undefined
-  //             }
-  //           }
-  //         : {
-  //             name: '',
-  //             description: '',
-  //             parent_id: '',
-  //             metadata: { lat: undefined, long: undefined }
-  //           }) as z.infer<typeof branchFormSchema>)
-  //     );
-  //   }, [formData, initialData]);
+  const defaultValues = {
+    name: '',
+    description: '',
+    handlingUnit: '',
+    supervisor: '',
+    executors: '',
+
+    expectedStartDate: '',
+    expectedEndDate: '',
+    expectedMethod: '',
+
+    attachments: []
+  };
 
   const form = useForm<z.infer<typeof maintenanceWorkFormSchema>>({
-    resolver: zodResolver(maintenanceWorkFormSchema)
-    // defaultValues
+    resolver: zodResolver(maintenanceWorkFormSchema),
+    defaultValues
   });
+
+  const { watch, setValue } = form;
+  const unit = watch('handlingUnit');
+
+  const { data: usersData, isLoading: usersLoading } = useGetUsers(
+    { tag: unit },
+    { enabled: !!unit }
+  );
+
+  const usersOptions = useMemo(() => {
+    if (!usersData?.users) return [];
+    return usersData.users.map((user) => ({
+      value: String(user.id),
+      label: `${user.first_name} ${user.last_name}`
+    }));
+  }, [usersData, unit]);
 
   const onSubmit = (values: z.infer<typeof maintenanceWorkFormSchema>) => {
     console.log(values);
@@ -140,7 +149,12 @@ export default function MaintenanceForm({
                             <SelectValue placeholder='Chọn đơn vị xử lý' />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                            <SelectItem value='test'>test</SelectItem>
+                            <SelectItem value='team:support'>
+                              Team Support
+                            </SelectItem>
+                            <SelectItem value='team:technical'>
+                              Team Technical
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -166,7 +180,16 @@ export default function MaintenanceForm({
                             <SelectValue placeholder='Chọn người giám sát' />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                            <SelectItem value='test'>test</SelectItem>
+                            {usersOptions.length > 0
+                              ? usersOptions.map((user) => (
+                                  <SelectItem
+                                    key={user.value}
+                                    value={user.value}
+                                  >
+                                    {user.label}
+                                  </SelectItem>
+                                ))
+                              : null}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -184,12 +207,24 @@ export default function MaintenanceForm({
                         Người thực hiện
                       </FormLabel>
                       <FormControl>
-                        <Select onValueChange={field.onChange}>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                             <SelectValue placeholder='Chọn người thực hiện' />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                            <SelectItem value='test'>test</SelectItem>
+                            {usersOptions.length > 0
+                              ? usersOptions.map((user) => (
+                                  <SelectItem
+                                    key={user.value}
+                                    value={user.value}
+                                  >
+                                    {user.label}
+                                  </SelectItem>
+                                ))
+                              : null}
                           </SelectContent>
                         </Select>
                       </FormControl>
@@ -201,7 +236,7 @@ export default function MaintenanceForm({
                 <FormField
                   control={form.control}
                   name='expectedStartDate'
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
                         Ngày bắt đầu dự kiến
@@ -211,6 +246,10 @@ export default function MaintenanceForm({
                           mode='single'
                           className='!w-full !rounded-[4px] text-xs'
                           textClassname='!text-left'
+                          onChange={(v) =>
+                            field.onChange(v?.from?.toISOString())
+                          }
+                          disablePastDate={true}
                         />
                       </FormControl>
                       <FormMessage />
@@ -241,7 +280,7 @@ export default function MaintenanceForm({
                 <FormField
                   control={form.control}
                   name='expectedEndDate'
-                  render={() => (
+                  render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
                         Ngày hoàn thành dự kiến
@@ -251,6 +290,10 @@ export default function MaintenanceForm({
                           mode='single'
                           className='!w-full !rounded-[4px] text-xs'
                           textClassname='!text-left'
+                          disablePastDate={true}
+                          onChange={(v) =>
+                            field.onChange(v?.from?.toISOString())
+                          }
                         />
                       </FormControl>
                       <FormMessage />

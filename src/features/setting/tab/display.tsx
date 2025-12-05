@@ -139,7 +139,7 @@ export function DisplaySetting() {
       {/* LANGUAGE */}
       <h2 className='mb-2 text-sm font-bold'>Ngôn ngữ</h2>
 
-      <div className='flex flex-col gap-3 rounded-[8px] bg-white p-4'>
+      <div className='flex flex-col justify-between gap-3 rounded-[8px] bg-white p-4 md:flex-row'>
         <span className='text-sm font-medium'>Thay đổi ngôn ngữ</span>
 
         <RadioGroup

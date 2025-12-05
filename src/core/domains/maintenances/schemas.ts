@@ -15,9 +15,7 @@ export const maintenanceWorkFormSchema = z.object({
 
   supervisor: z.string().min(1, 'Vui lòng chọn người giám sát'),
 
-  executors: z
-    .array(z.string())
-    .min(1, 'Vui lòng chọn ít nhất một người thực hiện'),
+  executors: z.string().min(1, 'Vui lòng chọn ít nhất một người thực hiện'),
 
   expectedStartDate: z
     .string()

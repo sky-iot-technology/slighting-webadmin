@@ -51,7 +51,7 @@ export function SignInForm() {
                   {...field}
                   type='text'
                   placeholder='Nhập tên đăng nhập'
-                  className='h-10 rounded-full'
+                  className='h-10 rounded-md'
                 />
               </FormControl>
               <FormMessage />
@@ -71,7 +71,7 @@ export function SignInForm() {
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                     placeholder='Nhập mật khẩu'
-                    className='h-10 rounded-full'
+                    className='h-10 rounded-md'
                   />
                   <button
                     type='button'
@@ -95,7 +95,7 @@ export function SignInForm() {
           control={form.control}
           name='rememberMe'
           render={({ field }) => (
-            <FormItem className='flex flex-row items-start space-y-0 space-x-3'>
+            <FormItem className='flex flex-row items-start space-y-0 space-x-0'>
               <FormControl>
                 <Checkbox
                   checked={field.value}

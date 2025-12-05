@@ -3,9 +3,21 @@
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { Maintenance } from '@/core/domains/maintenances/types';
+import {
+  Alarm,
+  AlarmSeverity,
+  AlarmSeverityLabel,
+  AlarmStatus,
+  AlarmStatusLabel
+} from '@/core/domains/alarms';
+import { formatDateTimeString } from '../../helper';
+import { User } from '@/core/domains/users';
+import { Device } from '@/core/domains/devices';
 
-export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
+export const maintenanceColumns = (
+  users: User[],
+  devices: Device[]
+): ColumnDef<Alarm>[] => [
   // {
   //   id: 'dir',
   //   accessorKey: 'dir',
@@ -50,19 +62,27 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     enableHiding: false
   },
   {
-    id: 'serial_number',
-    accessorKey: 'serial_number',
+    id: 'client_id',
+    accessorKey: 'client_id',
     header: 'Mã thiết bị',
     cell: ({ row }) => {
-      return <div>{row.getValue('serial_number')}</div>;
+      const clientId = row.getValue('client_id') as string;
+      const device = devices.find((d) => d.id === clientId);
+      return <div>{device?.device_info.imei}</div>;
     }
   },
   {
-    id: 'name',
-    accessorKey: 'name',
+    id: 'measurement',
+    accessorKey: 'measurement',
     header: 'Tên cảnh báo',
     cell: ({ row }) => {
-      return <div>{row.getValue('name')}</div>;
+      const measurement = row.getValue('measurement') as string;
+      const cause = row.original.cause;
+      return (
+        <div>
+          {measurement} {cause}
+        </div>
+      );
     },
     meta: {
       label: 'name',
@@ -72,19 +92,31 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     enableColumnFilter: true
   },
   {
-    id: 'priority',
-    accessorKey: 'priority',
+    id: 'severity',
+    accessorKey: 'severity',
     header: 'Ưu tiên',
     cell: ({ row }) => {
-      return <div>{row.getValue('priority')}</div>;
+      const severity = row.getValue('severity') as AlarmSeverity;
+      const color =
+        severity === 2
+          ? 'text-yellow-2'
+          : severity === 1
+            ? 'text-calendar-blue'
+            : 'text-calendar-gray';
+      return (
+        <div className={`font-bold ${color}`}>
+          {AlarmSeverityLabel[severity]}
+        </div>
+      );
     }
   },
   {
-    id: 'time',
-    accessorKey: 'time',
+    id: 'created_at',
+    accessorKey: 'created_at',
     header: 'Thời gian gửi cảnh báo',
     cell: ({ row }) => {
-      return <div>{row.getValue('time')}</div>;
+      const time = formatDateTimeString(row.getValue('created_at') as string);
+      return <div>{time}</div>;
     },
     meta: {
       label: 'Thời gian bắt đầu',
@@ -105,7 +137,7 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     accessorKey: 'sendBy',
     header: 'Người gửi',
     cell: ({ row }) => {
-      return <div>{row.getValue('sendBy')}</div>;
+      return <div>Hệ thống</div>;
     }
   },
   {
@@ -113,7 +145,16 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     accessorKey: 'status',
     header: 'Trạng thái xử lý',
     cell: ({ row }) => {
-      return <div>{row.getValue('status')}</div>;
+      const status = row.getValue('status') as AlarmStatus;
+      const color =
+        status === 'open'
+          ? 'text-calendar-red'
+          : status === 'active'
+            ? 'text-yellow-2'
+            : 'text-calendar-green';
+      return (
+        <div className={`${color} font-bold`}>{AlarmStatusLabel[status]}</div>
+      );
     }
   },
   {
@@ -121,7 +162,37 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     accessorKey: 'method',
     header: 'Phương thức xử lý',
     cell: ({ row }) => {
-      return <div>{row.getValue('method')}</div>;
+      return <div>-</div>;
+    }
+  },
+  {
+    id: 'assignee_id',
+    accessorKey: 'assignee_id',
+    header: 'Người xử lý',
+    cell: ({ row }) => {
+      const assigneeId = row.getValue('assignee_id') as string;
+      if (!assigneeId) {
+        return <div>-</div>;
+      }
+      const user = users.find((u) => u.id === assigneeId);
+      return (
+        <div>
+          {user?.last_name} {user?.first_name}
+        </div>
+      );
+    }
+  },
+  {
+    id: 'resolved_at',
+    accessorKey: 'resolved_at',
+    header: 'Thời gian kết thúc',
+    cell: ({ row }) => {
+      const resolved = row.getValue('resolved_at') as string;
+      if (!resolved || resolved === '0001-01-01T00:00:00Z') {
+        return '-';
+      }
+      const time = formatDateTimeString(resolved);
+      return <div>{time}</div>;
     }
   },
   {
@@ -130,14 +201,16 @@ export const maintenanceColumns = (): ColumnDef<Maintenance>[] => [
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
-
+      const device = devices.find((d) => d.id === row.original.client_id);
+      const status = row.getValue('status') as AlarmStatus;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
           {!isSubRow && (
             <CellAction
+              active={!['open', 'ignored'].includes(status)}
               id={String(row.original.id)}
-              lat={row.original.lat}
-              lng={row.original.lng}
+              lat={device?.device_info.lat || 0}
+              lng={device?.device_info.lon || 0}
             />
           )}
         </div>

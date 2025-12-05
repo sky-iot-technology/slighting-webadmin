@@ -9,12 +9,14 @@ import {
 import MaintenanceForm from '../form/maintenance-form';
 
 type MaintenanceDialogProps = {
+  alertId: string;
   pageTitle: string;
   open: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
 export default function MaintenanceDialog({
+  alertId,
   pageTitle,
   open,
   onOpenChange
