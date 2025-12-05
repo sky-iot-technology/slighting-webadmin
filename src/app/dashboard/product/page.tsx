@@ -1,13 +1,7 @@
 import ProductListingPage from '@/features/products/components/product-listing';
 import { searchParamsCache } from '@/lib/searchparams';
-import { cn } from '@/lib/utils';
 import PageContainer from '@/ui/components/layout/page-container';
-import { buttonVariants } from '@/ui/components/ui/button';
-import { Heading } from '@/ui/components/ui/heading';
-import { Separator } from '@/ui/components/ui/separator';
 import { DataTableSkeleton } from '@/ui/components/ui/table/data-table-skeleton';
-import { IconPlus } from '@tabler/icons-react';
-import Link from 'next/link';
 import { SearchParams } from 'nuqs/server';
 import { Suspense } from 'react';
 

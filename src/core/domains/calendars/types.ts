@@ -1,8 +1,4 @@
-import type {
-  BaseEntity,
-  PaginationParams,
-  QueryParams
-} from '@/core/shared/types';
+import type { PaginationParams } from '@/core/shared/types';
 
 export type CalendarRepeat = 'Không' | 'Hàng ngày' | 'Hàng tuần' | 'Hàng tháng';
 

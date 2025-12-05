@@ -9,7 +9,6 @@ import { calendarApi } from './api';
 import {
   Calendar,
   CalendarListResponseDto,
-  CalendarDetailResponseDto,
   GetCalendarsParamsDto,
   CreateCalendarDto,
   UpdateCalendarDto,

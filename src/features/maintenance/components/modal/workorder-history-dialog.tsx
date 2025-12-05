@@ -1,4 +1,4 @@
-import { WorkOrder } from '@/core/domains/maintenances/types';
+import { WorkOrder } from '@/core/domains/workorders';
 import { Button } from '@/ui/components/ui/button';
 import {
   Card,

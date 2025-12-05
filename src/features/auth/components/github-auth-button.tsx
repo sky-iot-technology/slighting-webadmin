@@ -4,6 +4,7 @@ import { useSearchParams } from 'next/navigation';
 import { Button } from '@/ui/components/ui/button';
 import { Icons } from '@/ui/components/icons';
 
+// eslint-disable-next-line
 export default function GithubSignInButton() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');

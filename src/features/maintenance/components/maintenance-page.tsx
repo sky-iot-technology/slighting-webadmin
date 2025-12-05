@@ -9,12 +9,7 @@ import {
 } from '@/ui/components/ui/table/data-table-toolbar';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
-import { Maintenance, WorkOrder } from '@/core/domains/maintenances/types';
 import { MaintenanceTable } from './maintenance-tables';
-import {
-  fakeMaintenances,
-  fakeWorkOrders
-} from '@/core/domains/maintenances/fake';
 import { maintenanceColumns } from './maintenance-tables/columns';
 import MaintenanceDialog from './modal/maintenance-dialog';
 import { WorkorderTable } from './workorder-tables';
@@ -23,6 +18,7 @@ import { Alarm, useGetAlarms } from '@/core/domains/alarms';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { useGetUsers } from '@/core/domains/users';
 import { useGetDevices } from '@/core/domains/devices';
+import { useGetWorkOrders, WorkOrder } from '@/core/domains/workorders';
 
 export default function MaintenancePage() {
   const [selectedData, setSelectedData] = useState<
@@ -60,6 +56,12 @@ export default function MaintenancePage() {
   const loadingAll = isLoading || usersLoad || devicesLoad;
   const errorAll = error || usersErr || devicesErr;
 
+  const {
+    data: workorderData,
+    isLoading: workorderLoading,
+    error: workorderError
+  } = useGetWorkOrders();
+
   const maintenanceTableMemo = useMemo(() => {
     const alarms = data?.alarms ?? [];
     const totalItems = data?.total ?? 0;
@@ -77,12 +79,16 @@ export default function MaintenancePage() {
   }, [data, loadingAll, error]);
 
   const workorderTableMemo = useMemo(() => {
+    const workorders = workorderData?.woker_orders ?? [];
+    const totalItems = workorderData?.total ?? 0;
     return (
       <WorkorderTable
-        data={fakeWorkOrders}
-        totalItems={fakeWorkOrders.length}
+        data={workorders}
+        totalItems={totalItems}
         columns={workorderColumns()}
         onTableReady={setWorkoderTable}
+        isLoading={workorderLoading}
+        error={workorderError}
       />
     );
   }, []);

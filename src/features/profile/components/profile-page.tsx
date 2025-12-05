@@ -7,7 +7,7 @@ import {
   CardTitle
 } from '@/ui/components/ui/card';
 import { LockKeyhole, LogOut, User, UserCog } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import Profile from './profile-tab/profile';
 import PasswordForm from './form/password-form';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
@@ -24,13 +24,6 @@ export default function ProfilePage() {
   const [tab, setTab] = useState<'profile' | 'account' | 'password'>('profile');
   const logoutMutation = useLogout();
   const { user } = useAuthStore();
-  if (!user) {
-    return (
-      <Card className='bg-background mx-auto w-full border-0 py-0 shadow-none'>
-        <div className='p-6'>Đang tải...</div>
-      </Card>
-    );
-  }
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -48,6 +41,14 @@ export default function ProfilePage() {
   useCustomBreadcrumbContent(breadcrumbContent);
 
   const uploadAvatar = useUploadAvatar();
+
+  if (!user) {
+    return (
+      <Card className='bg-background mx-auto w-full border-0 py-0 shadow-none'>
+        <div className='p-6'>Đang tải...</div>
+      </Card>
+    );
+  }
 
   return (
     <Card className='bg-background mx-auto flex w-full gap-1.5 border-0 py-0 shadow-none'>

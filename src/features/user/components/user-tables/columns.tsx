@@ -4,8 +4,7 @@ import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { User } from '@/core/domains/users/types';
-import { Switch } from '@/ui/components/ui/switch';
-import { useUpdateUserStatus } from '@/core/domains/users';
+import StatusCell from './statusCell';
 
 export const userColumns = (): ColumnDef<User>[] => [
   // {
@@ -107,25 +106,31 @@ export const userColumns = (): ColumnDef<User>[] => [
       return <div>-</div>;
     }
   },
+  // {
+  //   id: 'status',
+  //   accessorKey: 'status',
+  //   header: 'Trạng thái',
+  //   cell: ({ row }) => {
+  //     const user = row.original;
+  //     const isEnabled = user.status === 'enabled';
+  //     const useUpdateStatus = useUpdateUserStatus();
+  //     return (
+  //       <Switch
+  //         className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-3`}
+  //         checked={isEnabled}
+  //         disabled={useUpdateStatus.isPending}
+  //         onCheckedChange={(val) =>
+  //           useUpdateStatus.mutate({ id: user.id, enabled: val })
+  //         }
+  //       />
+  //     );
+  //   }
+  // },
   {
     id: 'status',
     accessorKey: 'status',
     header: 'Trạng thái',
-    cell: ({ row }) => {
-      const user = row.original;
-      const isEnabled = user.status === 'enabled';
-      const useUpdateStatus = useUpdateUserStatus();
-      return (
-        <Switch
-          className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-3`}
-          checked={isEnabled}
-          disabled={useUpdateStatus.isPending}
-          onCheckedChange={(val) =>
-            useUpdateStatus.mutate({ id: user.id, enabled: val })
-          }
-        />
-      );
-    }
+    cell: ({ row }) => <StatusCell user={row.original} />
   },
   {
     id: 'actions',

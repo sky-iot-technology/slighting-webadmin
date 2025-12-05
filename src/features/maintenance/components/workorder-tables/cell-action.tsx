@@ -12,8 +12,8 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import { WorkOrder } from '@/core/domains/maintenances/types';
 import WorkorderHistory from '../modal/workorder-history-dialog';
+import { WorkOrder } from '@/core/domains/workorders';
 
 interface CellActionProps {
   id: string;

@@ -7,11 +7,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { authApi } from './api';
-import {
-  type LoginCredentials,
-  type SignupCredentials,
-  type User
-} from './types';
+import { type User } from './types';
 import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { usersApi } from '../users';
@@ -109,6 +105,7 @@ export function useLogout() {
       router.push('/auth/sign-in');
     },
     onError: (error: Error) => {
+      console.log(error);
       // Even if logout API fails, clear local state and cookies
       clearAuth();
       cookieUtils.clearAuthCookies();

@@ -3,7 +3,7 @@
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { WorkOrder } from '@/core/domains/maintenances/types';
+import { WorkOrder } from '@/core/domains/workorders';
 
 export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
   // {
@@ -49,36 +49,36 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
     enableSorting: false,
     enableHiding: false
   },
-  {
-    id: 'jobName',
-    accessorKey: 'jobName',
-    header: 'Tên công việc',
-    cell: ({ row }) => {
-      return <div>{row.getValue('jobName')}</div>;
-    },
-    meta: {
-      label: 'jobName',
-      placeholder: 'Tìm tên lịch',
-      variant: 'text'
-    },
-    enableColumnFilter: true
-  },
-  {
-    id: 'alertName',
-    accessorKey: 'alertName',
-    header: 'Tên cảnh báo',
-    cell: ({ row }) => {
-      return <div>{row.getValue('alertName')}</div>;
-    }
-  },
-  {
-    id: 'priority',
-    accessorKey: 'priority',
-    header: 'Ưu tiên',
-    cell: ({ row }) => {
-      return <div>{row.getValue('priority')}</div>;
-    }
-  },
+  // {
+  //   id: 'jobName',
+  //   accessorKey: 'jobName',
+  //   header: 'Tên công việc',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('jobName')}</div>;
+  //   },
+  //   meta: {
+  //     label: 'jobName',
+  //     placeholder: 'Tìm tên lịch',
+  //     variant: 'text'
+  //   },
+  //   enableColumnFilter: true
+  // },
+  // {
+  //   id: 'alertName',
+  //   accessorKey: 'alertName',
+  //   header: 'Tên cảnh báo',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('alertName')}</div>;
+  //   }
+  // },
+  // {
+  //   id: 'priority',
+  //   accessorKey: 'priority',
+  //   header: 'Ưu tiên',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('priority')}</div>;
+  //   }
+  // },
   {
     id: 'status',
     accessorKey: 'status',
@@ -87,43 +87,43 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
       return <div>{row.getValue('status')}</div>;
     }
   },
-  {
-    id: 'startTime',
-    accessorKey: 'startTime',
-    header: 'Thời gian bắt đầu',
-    cell: ({ row }) => {
-      return <div>{row.getValue('startTime')}</div>;
-    },
-    meta: {
-      label: 'Thời gian bắt đầu',
-      variant: 'dateRangeSingle'
-    },
-    enableColumnFilter: true
-  },
-  {
-    id: 'handlingUnit',
-    accessorKey: 'handlingUnit',
-    header: 'Đơn vị xử lý',
-    cell: ({ row }) => {
-      return <div>{row.getValue('handlingUnit')}</div>;
-    }
-  },
-  {
-    id: 'executor',
-    accessorKey: 'executor',
-    header: 'Người xử lý',
-    cell: ({ row }) => {
-      return <div>{row.getValue('executor')}</div>;
-    }
-  },
-  {
-    id: 'supervisionStatus',
-    accessorKey: 'supervisionStatus',
-    header: 'Trạng thái giám sát',
-    cell: ({ row }) => {
-      return <div>{row.getValue('supervisionStatus')}</div>;
-    }
-  },
+  // {
+  //   id: 'startTime',
+  //   accessorKey: 'startTime',
+  //   header: 'Thời gian bắt đầu',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('startTime')}</div>;
+  //   },
+  //   meta: {
+  //     label: 'Thời gian bắt đầu',
+  //     variant: 'dateRangeSingle'
+  //   },
+  //   enableColumnFilter: true
+  // },
+  // {
+  //   id: 'handlingUnit',
+  //   accessorKey: 'handlingUnit',
+  //   header: 'Đơn vị xử lý',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('handlingUnit')}</div>;
+  //   }
+  // },
+  // {
+  //   id: 'executor',
+  //   accessorKey: 'executor',
+  //   header: 'Người xử lý',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('executor')}</div>;
+  //   }
+  // },
+  // {
+  //   id: 'supervisionStatus',
+  //   accessorKey: 'supervisionStatus',
+  //   header: 'Trạng thái giám sát',
+  //   cell: ({ row }) => {
+  //     return <div>{row.getValue('supervisionStatus')}</div>;
+  //   }
+  // },
   {
     id: 'actions',
     header: 'Thao tác',

@@ -1,11 +1,8 @@
 import { authenticatedApi } from '@/core/shared/api';
 import {
   Calendar,
-  CalendarDetailResponseDto,
   CalendarListResponseDto,
   GetCalendarsParamsDto,
-  ScheduleStatus,
-  DeviceType,
   CreateCalendarDto,
   UpdateCalendarDto,
   GetDeivceCalendarsParamsDto

@@ -18,7 +18,7 @@ export const usersApi = {
       params: {
         offset,
         limit,
-        ...params
+        ...rest
       }
     });
     return response;

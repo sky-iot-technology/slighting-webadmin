@@ -43,15 +43,15 @@ export const authApi = {
     return response;
   },
 
-  async updateProfile(
-    token: string,
-    userId: string,
-    updates: ProfileUpdateData
-  ): Promise<User> {
-    // Note: The provided API doesn't have a profile update endpoint
-    // This is a placeholder - you'll need to implement this based on your backend
-    throw new Error('Profile update endpoint not available in current API');
-  },
+  // async updateProfile(
+  //   token: string,
+  //   userId: string,
+  //   updates: ProfileUpdateData
+  // ): Promise<User> {
+  //   // Note: The provided API doesn't have a profile update endpoint
+  //   // This is a placeholder - you'll need to implement this based on your backend
+  //   throw new Error('Profile update endpoint not available in current API');
+  // },
 
   async logout(): Promise<void> {
     try {
