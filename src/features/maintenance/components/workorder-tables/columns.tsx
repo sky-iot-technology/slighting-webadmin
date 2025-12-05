@@ -129,6 +129,20 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
     }
   },
   {
+    id: 'end_date',
+    accessorKey: 'end_date',
+    header: 'Thời gian kết thúc',
+    cell: ({ row }) => {
+      const time = formatDateTimeString(row.getValue('end_date') as string);
+      return <div>{time}</div>;
+    },
+    meta: {
+      label: 'Thời gian bắt đầu',
+      variant: 'dateRangeSingle'
+    },
+    enableColumnFilter: true
+  },
+  {
     id: 'actions',
     header: 'Thao tác',
     size: 57,
