@@ -8,7 +8,7 @@ import { BootstrapProviders } from './bootstrap/bootstrap-providers';
 import { BreadcrumbsProvider } from '@/core/shared/context/breadcrumbs-context';
 
 export const metadata: Metadata = {
-  title: 'Next Shadcn Dashboard Starter',
+  title: 'Admin Dashboard',
   description: 'Basic dashboard with Next.js and Shadcn'
 };
 

@@ -81,6 +81,7 @@ export default function MaintenancePage() {
   const workorderTableMemo = useMemo(() => {
     const workorders = workorderData?.woker_orders ?? [];
     const totalItems = workorderData?.total ?? 0;
+    console.log(workorders);
     return (
       <WorkorderTable
         data={workorders}
@@ -91,7 +92,7 @@ export default function MaintenancePage() {
         error={workorderError}
       />
     );
-  }, []);
+  }, [workorderData, workorderLoading, workorderError]);
 
   return (
     <div className='h-full w-full p-3'>

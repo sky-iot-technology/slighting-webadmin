@@ -4,6 +4,7 @@ import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { WorkOrder } from '@/core/domains/workorders';
+import { formatDateTimeString } from '../../helper';
 
 export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
   // {
@@ -49,28 +50,28 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
     enableSorting: false,
     enableHiding: false
   },
-  // {
-  //   id: 'jobName',
-  //   accessorKey: 'jobName',
-  //   header: 'Tên công việc',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('jobName')}</div>;
-  //   },
-  //   meta: {
-  //     label: 'jobName',
-  //     placeholder: 'Tìm tên lịch',
-  //     variant: 'text'
-  //   },
-  //   enableColumnFilter: true
-  // },
-  // {
-  //   id: 'alertName',
-  //   accessorKey: 'alertName',
-  //   header: 'Tên cảnh báo',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('alertName')}</div>;
-  //   }
-  // },
+  {
+    id: 'work_order_name',
+    accessorKey: 'work_order_name',
+    header: 'Tên công việc',
+    cell: ({ row }) => {
+      return <div>{row.getValue('work_order_name')}</div>;
+    },
+    meta: {
+      label: 'work_order_name',
+      placeholder: 'Tìm tên lịch',
+      variant: 'text'
+    },
+    enableColumnFilter: true
+  },
+  {
+    id: 'measurement',
+    accessorKey: 'measurement',
+    header: 'Tên cảnh báo',
+    cell: ({ row }) => {
+      return <div>{row.getValue('measurement')}</div>;
+    }
+  },
   // {
   //   id: 'priority',
   //   accessorKey: 'priority',
@@ -80,34 +81,37 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
   //   }
   // },
   {
-    id: 'status',
-    accessorKey: 'status',
+    id: 'work_order_status',
+    accessorKey: 'work_order_status',
     header: 'Trạng thái xử lý',
     cell: ({ row }) => {
-      return <div>{row.getValue('status')}</div>;
+      return <div>{row.getValue('work_order_status')}</div>;
     }
   },
-  // {
-  //   id: 'startTime',
-  //   accessorKey: 'startTime',
-  //   header: 'Thời gian bắt đầu',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('startTime')}</div>;
-  //   },
-  //   meta: {
-  //     label: 'Thời gian bắt đầu',
-  //     variant: 'dateRangeSingle'
-  //   },
-  //   enableColumnFilter: true
-  // },
-  // {
-  //   id: 'handlingUnit',
-  //   accessorKey: 'handlingUnit',
-  //   header: 'Đơn vị xử lý',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('handlingUnit')}</div>;
-  //   }
-  // },
+  {
+    id: 'start_date',
+    accessorKey: 'start_date',
+    header: 'Thời gian bắt đầu',
+    cell: ({ row }) => {
+      const time = formatDateTimeString(row.getValue('start_date') as string);
+      return <div>{time}</div>;
+    },
+    meta: {
+      label: 'Thời gian bắt đầu',
+      variant: 'dateRangeSingle'
+    },
+    enableColumnFilter: true
+  },
+  {
+    id: 'department',
+    accessorKey: 'department',
+    header: 'Đơn vị xử lý',
+    cell: ({ row }) => {
+      const department = row.getValue('department') as string;
+      const name = department.split(':')[1];
+      return <div>{name}</div>;
+    }
+  },
   // {
   //   id: 'executor',
   //   accessorKey: 'executor',
@@ -116,14 +120,14 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
   //     return <div>{row.getValue('executor')}</div>;
   //   }
   // },
-  // {
-  //   id: 'supervisionStatus',
-  //   accessorKey: 'supervisionStatus',
-  //   header: 'Trạng thái giám sát',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('supervisionStatus')}</div>;
-  //   }
-  // },
+  {
+    id: 'action',
+    accessorKey: 'action',
+    header: 'Trạng thái giám sát',
+    cell: ({ row }) => {
+      return <div>{row.getValue('action')}</div>;
+    }
+  },
   {
     id: 'actions',
     header: 'Thao tác',
