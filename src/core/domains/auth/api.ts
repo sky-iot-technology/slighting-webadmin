@@ -34,8 +34,12 @@ export const authApi = {
 
   async getDomain(): Promise<string> {
     const response = await publicApi.get<DomainsResponse>(`/domains`);
-
-    return response.domains[2].id;
+    const domainRoute =
+      process.env.NEXT_PUBLIC_DOMAIN_ROUTE_DEFAULT || 'develop';
+    const domain = response.domains.find(
+      (domain) => domain.route === domainRoute
+    );
+    return domain?.id || response.domains[1]?.id;
   },
 
   async getCurrentUser(token: string): Promise<User> {
