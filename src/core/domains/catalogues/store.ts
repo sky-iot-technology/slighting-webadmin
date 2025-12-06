@@ -25,7 +25,7 @@ export const useCatalogueStore = create<CatalogueState>()(
       try {
         const response = await catalogueApi.getAll();
         set({
-          catalogues: response.devices,
+          catalogues: response.devices ?? [],
           total: response.total,
           isLoading: false
         });
