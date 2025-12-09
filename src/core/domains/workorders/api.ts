@@ -2,6 +2,8 @@ import { authenticatedApi } from '@/core/shared/api';
 import {
   createWorkOrderDTO,
   GetWorkOrderParamsDto,
+  WorkOrder,
+  WorkOrderHistoryResponse,
   WorkOrderListResponse
 } from './types';
 import { usersApi } from '../users';
@@ -56,6 +58,28 @@ export const workorderApi = {
         }));
     } catch (error) {
       throw new Error('Failed to upload attachments');
+    }
+  },
+  async getHistory(id: string): Promise<WorkOrderHistoryResponse> {
+    try {
+      const response = await authenticatedApi.get<WorkOrderHistoryResponse>(
+        `/alarms/work_order/${id}`
+      );
+      return response;
+    } catch (error: any) {
+      console.error(error.message);
+      throw new Error(`Failed to get Work Order history`);
+    }
+  },
+  async getWorkOrder(id: string): Promise<WorkOrder> {
+    try {
+      const response = await authenticatedApi.get<WorkOrder>(
+        `/alarms/work_order/${id}`
+      );
+      return response;
+    } catch (error: any) {
+      console.error(error.message);
+      throw new Error(`Failed to get Work Order`);
     }
   }
 };

@@ -168,7 +168,8 @@ export function CalendarRangePicker({
       <div
         className={cn(
           className,
-          'border-input bg-background flex h-[31px] w-[200px] items-center justify-between rounded-[6px] border px-2 text-xs'
+          'border-input bg-background flex h-[31px] items-center rounded-[6px] border px-2 text-xs',
+          'w-[36px] justify-center lg:w-[200px] lg:justify-between'
         )}
       >
         <Popover open={openFrom} onOpenChange={setOpenFrom}>
@@ -177,7 +178,7 @@ export function CalendarRangePicker({
               type='button'
               className={cn(
                 textClassname,
-                'flex-1 cursor-pointer bg-transparent text-center text-xs font-medium outline-none',
+                'hidden flex-1 cursor-pointer bg-transparent text-left text-xs font-medium outline-none lg:block',
                 !formattedSingle && 'text-muted-foreground'
               )}
               onClick={() => setOpenFrom(true)}
@@ -185,6 +186,7 @@ export function CalendarRangePicker({
               {formattedSingle || 'Chọn ngày áp dụng'}
             </button>
           </PopoverTrigger>
+
           <PopoverContent align='start' className='w-auto p-0'>
             <Calendar
               mode='single'
@@ -195,7 +197,10 @@ export function CalendarRangePicker({
           </PopoverContent>
         </Popover>
 
-        <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4' />
+        <CalendarIcon
+          className='text-muted-foreground h-4 w-4 cursor-pointer'
+          onClick={() => setOpenFrom(true)}
+        />
       </div>
     );
   }

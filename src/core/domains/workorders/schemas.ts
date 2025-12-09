@@ -30,3 +30,42 @@ export const workOrderFormSchema = z
   });
 
 export type WorkOrderFormSchema = z.infer<typeof workOrderFormSchema>;
+
+export const maintenanceProgressSchema = z
+  .object({
+    /* -------- Thông tin thiết bị -------- */
+    work_order_name: z.string().min(1, 'Vui lòng nhập tên công việc'),
+
+    assignee_id: z.string().min(1, 'Vui lòng chọn người xử lý'),
+
+    remarks: z.string().optional().default(''),
+
+    attachments: z
+      .array(FileSchema)
+      .max(3, 'Chỉ được tải lên tối đa 3 tập tin')
+      .optional(),
+
+    /* -------- Cập nhật tiến độ -------- */
+    work_order_status: z.string().min(1, 'Vui lòng chọn trạng thái thiết bị'),
+
+    description: z.string().optional().default(''),
+
+    start_date: z.string().min(1, 'Vui lòng chọn ngày bắt đầu'),
+
+    end_date: z.string().min(1, 'Vui lòng chọn ngày kết thúc'),
+
+    images: z.array(FileSchema).max(5, 'Tối đa 5 hình ảnh').optional(),
+
+    /* -------- Xác nhận tiến độ -------- */
+    action: z.string().min(1, 'Vui lòng chọn trạng thái xử lý'),
+
+    confirm_note: z.string().optional().default('')
+  })
+  .refine((data) => new Date(data.end_date) >= new Date(data.start_date), {
+    path: ['end_date'],
+    message: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu'
+  });
+
+export type MaintenanceProgressFormValues = z.infer<
+  typeof maintenanceProgressSchema
+>;

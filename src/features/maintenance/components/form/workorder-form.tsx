@@ -33,9 +33,11 @@ import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
 import { ImageUpload } from '@/ui/components/image-upload';
 import { useRouter } from 'next/navigation';
+import { WorkOrder } from '@/core/domains/workorders';
 
 type MaintenanceFormProps = {
   pageTitle: string;
+  data: WorkOrder;
 };
 
 export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
@@ -204,7 +206,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Trạng thái thiết bị
+                        Trạng thái tiến độ
                       </FormLabel>
                       <FormControl>
                         <Input

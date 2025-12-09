@@ -9,6 +9,9 @@ import {
   Attachment,
   createWorkOrderDTO,
   GetWorkOrderParamsDto,
+  History,
+  WorkOrder,
+  WorkOrderHistoryResponse,
   WorkOrderListResponse,
   WorkOrderStatus
 } from './types';
@@ -91,5 +94,55 @@ export const useCreateWorkOrder = (
       toast.error(error.message || 'Failed to create WorkOrder');
       options?.onError?.(error, variables, context);
     }
+  });
+};
+
+export const useGetHistoryById = (
+  id: string | number,
+  options?: Omit<
+    UseQueryOptions<
+      WorkOrderHistoryResponse,
+      Error,
+      WorkOrderHistoryResponse,
+      readonly [string, string, string | number]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    WorkOrderHistoryResponse,
+    Error,
+    WorkOrderHistoryResponse,
+    readonly [string, string, string | number]
+  >({
+    queryKey: [WORKORDER_QUERY_KEY, 'history', String(id)],
+    queryFn: () => workorderApi.getHistory(String(id)),
+    enabled: !!id,
+    ...options
+  });
+};
+
+export const useGetWorkOrderById = (
+  id: string | number,
+  options?: Omit<
+    UseQueryOptions<
+      WorkOrder,
+      Error,
+      WorkOrder,
+      readonly [string, string, string | number]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    WorkOrder,
+    Error,
+    WorkOrder,
+    readonly [string, string, string | number]
+  >({
+    queryKey: [WORKORDER_QUERY_KEY, 'detail', String(id)],
+    queryFn: () => workorderApi.getWorkOrder(String(id)),
+    enabled: !!id,
+    ...options
   });
 };

@@ -13,19 +13,13 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import WorkorderHistory from '../modal/workorder-history-dialog';
-import { WorkOrder } from '@/core/domains/workorders';
 
 interface CellActionProps {
   id: string;
-  data: WorkOrder;
   disabled?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({
-  id,
-  data,
-  disabled
-}) => {
+export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -44,12 +38,13 @@ export const CellAction: React.FC<CellActionProps> = ({
         onConfirm={handleConfirmDelete}
         loading={deleteDeviceParent.isPending}
       /> */}
-
-      <WorkorderHistory
-        open={openHistory}
-        onOpenChange={setOpenHistory}
-        data={data}
-      />
+      {openHistory && (
+        <WorkorderHistory
+          open={openHistory}
+          onOpenChange={setOpenHistory}
+          id={id}
+        />
+      )}
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

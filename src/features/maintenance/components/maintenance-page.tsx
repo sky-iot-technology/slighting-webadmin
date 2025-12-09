@@ -85,7 +85,7 @@ export default function MaintenancePage() {
       <WorkorderTable
         data={workorders}
         totalItems={totalItems}
-        columns={workorderColumns()}
+        columns={workorderColumns(users?.users || [])}
         onTableReady={setWorkoderTable}
         isLoading={workorderLoading}
         error={workorderError}

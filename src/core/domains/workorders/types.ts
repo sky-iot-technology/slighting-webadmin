@@ -110,3 +110,20 @@ export interface createWorkOrderDTO {
   end_date: string;
   admin_attachments?: Attachment[] | null;
 }
+
+export interface WorkOrderHistoryResponse {
+  offset: number;
+  limit: number;
+  total: number;
+
+  histories: History[];
+}
+
+export interface History {
+  id: number;
+  status: string;
+  timestamp: string;
+  changed_by: string;
+  note: string;
+  work_order_id: string;
+}

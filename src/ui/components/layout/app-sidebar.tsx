@@ -38,10 +38,10 @@ export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
     >
-      <path
+      {/* <path
         d='M15 36C9.78439 28.7027 -1.28398e-06 29.3741 -7.97296e-07 18.24C-3.1061e-07 7.10594 8.79889 5.83784 15 -8.30516e-07C26.7638 -3.16304e-07 34 7.10594 34 18.24C34 29.3741 26.7638 36 15 36Z'
         fill='#072645'
-      />
+      /> */}
       <rect
         x='29'
         y='6'

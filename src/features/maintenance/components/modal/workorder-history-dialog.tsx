@@ -1,4 +1,4 @@
-import { WorkOrder } from '@/core/domains/workorders';
+import { useGetHistoryById, WorkOrder } from '@/core/domains/workorders';
 import { Button } from '@/ui/components/ui/button';
 import {
   Card,
@@ -16,21 +16,25 @@ import {
 import { Progress } from '@/ui/components/ui/progress';
 
 type WorkorderHistoryProps = {
-  data: WorkOrder;
+  id: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 };
 
 export default function WorkorderHistory({
-  data,
+  id,
   open,
   onOpenChange
 }: WorkorderHistoryProps) {
+  const { data, isLoading } = useGetHistoryById(id, {
+    enabled: open
+  });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTitle className='hidden'>Thêm Nhiều thiết bị</DialogTitle>
+      <DialogTitle className='hidden'>Lịch sử giao việc</DialogTitle>
       <DialogDescription className='hidden'>
-        Thêm Nhiều thiết bị
+        Lịch sử giao việc
       </DialogDescription>
       <DialogContent
         className='!w-[90vw] !max-w-[472px] gap-0 !border-none !bg-transparent p-0'

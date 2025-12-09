@@ -472,12 +472,15 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
   );
 }
 
+// const activeBackgroudStyle =
+//   ' data-[active=true]:bg-linear-to-r data-[active=true]:from-white data-[active=true]:from-1% data-[active=true]:to-sidebar-accent data-[active=true]:to-65% data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:h-11 data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#072645]';
 const activeBackgroudStyle =
-  ' data-[active=true]:bg-linear-to-r data-[active=true]:from-white data-[active=true]:from-1% data-[active=true]:to-sidebar-accent data-[active=true]:to-65% data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:h-11 data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#072645]';
+  ' data-[active=true]:bg-primary data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#072645]';
+
 const hoverBackgroudStyle =
   ' hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground';
 const sidebarMenuButtonVariants = cva(
-  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent/50 data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0' +
+  'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm outline-hidden ring-sidebar-ring transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:bg-sidebar-accent data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent/50 data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-8 [&>svg]:shrink-0' +
     activeBackgroudStyle +
     hoverBackgroudStyle,
   {
@@ -489,7 +492,7 @@ const sidebarMenuButtonVariants = cva(
           'bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]'
       },
       size: {
-        default: 'h-8 text-sm',
+        default: 'h-9 text-sm',
         sm: 'h-7 text-xs',
         lg: 'h-12 text-sm group-data-[collapsible=icon]:p-0!'
       }
@@ -525,8 +528,8 @@ function SidebarMenuButton({
       data-active={isActive}
       className={cn(
         sidebarMenuButtonVariants({ variant, size }),
-        className,
-        isActive && open && 'data-[active=true]:[&>svg]:size-10'
+        className
+        // isActive && open && 'data-[active=true]:[&>svg]:size-10'
       )}
       {...props}
     />

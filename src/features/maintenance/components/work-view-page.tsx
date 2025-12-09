@@ -1,18 +1,76 @@
+'use client';
+
+import { useGetWorkOrderById } from '@/core/domains/workorders';
 import WorkorderForm from './form/workorder-form';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { Skeleton } from '@/ui/components/ui/skeleton';
+import { Button } from '@/ui/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useMemo } from 'react';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
-type TProductViewPageProps = {
-  workOrderId: string;
-};
+export default function WorkOrderViewPage() {
+  const router = useRouter();
+  const params = useParams();
+  const searchParams = useSearchParams();
+  const id = params?.maintenanceId as string;
 
-export default async function WorkOrderViewPage({
-  workOrderId
-}: TProductViewPageProps) {
-  //   let workOrder = null;
   let pageTitle = 'Chi tiết';
+  const { data, isLoading, error } = useGetWorkOrderById(id);
+  console.log(data);
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>
+          Chi tiết công việc:{' '}
+          <span className='text-primary'>
+            {data?.work_order_name || 'Loading...'}
+          </span>
+        </span>
+      </div>
+    ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data?.work_order_name]
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
+
+  if (isLoading) {
+    return (
+      <div className='space-y-6 p-6'>
+        <Skeleton className='h-8 w-64' />
+        <Skeleton className='h-96 w-full' />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className='flex h-64 items-center justify-center p-6'>
+        <div className='text-center'>
+          <h3 className='text-destructive text-lg font-semibold'>
+            Error loading work order
+          </h3>
+          <p className='text-muted-foreground text-sm'>
+            {error?.message || 'Device not found'}
+          </p>
+          <Button
+            variant='outline'
+            className='mt-4'
+            onClick={() => router.push('/dashboard/maintenance')}
+          >
+            <ArrowLeft className='mr-2 h-4 w-4' />
+            Quay lại
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='h-full w-full p-3'>
       <div className={`flex h-fit w-full flex-1 flex-col bg-white pt-1`}>
-        <WorkorderForm pageTitle={pageTitle} />
+        <WorkorderForm pageTitle={pageTitle} data={data} />
       </div>
     </div>
   );

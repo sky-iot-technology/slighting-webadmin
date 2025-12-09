@@ -13,8 +13,9 @@ import {
   WorkOrderStatusLabel
 } from '@/core/domains/workorders';
 import { formatDateTimeString } from '../../helper';
+import { User } from '@/core/domains/users';
 
-export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
+export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
   // {
   //   id: 'dir',
   //   accessorKey: 'dir',
@@ -149,7 +150,16 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
     accessorKey: 'assignee_id',
     header: 'Người xử lý',
     cell: ({ row }) => {
-      return <div>{row.getValue('assignee_id')}</div>;
+      const assigneeId = row.getValue('assignee_id') as string;
+      if (!assigneeId) {
+        return <div>-</div>;
+      }
+      const user = users.find((u) => u.id === assigneeId);
+      return (
+        <div>
+          {user?.last_name} {user?.first_name}
+        </div>
+      );
     }
   },
   {
@@ -193,10 +203,10 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
-      const workOrder = row.original;
+      const id = row.original.id;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction data={workOrder} id={workOrder.id} />}
+          {!isSubRow && <CellAction id={id} />}
         </div>
       );
     }
