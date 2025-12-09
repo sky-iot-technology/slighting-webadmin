@@ -1,6 +1,6 @@
 'use client';
 
-import { Device } from '@/core/domains/devices';
+import { Device, useSyncDevices } from '@/core/domains/devices';
 import { Card, CardContent, CardTitle } from '@/ui/components/ui/card';
 import { Input } from '@/ui/components/ui/input';
 import { Label } from '@/ui/components/ui/label';
@@ -28,7 +28,7 @@ import {
   FormSchemaProvider
 } from '@/ui/components/ui/form';
 import { IconDeviceDesktop } from '@tabler/icons-react';
-import { Edit2, Save, X } from 'lucide-react';
+import { Edit2, RefreshCw, Save, X } from 'lucide-react';
 import { DateInput } from '@/ui/components/ui/date-input';
 import { format, parse } from 'date-fns';
 import { useGetGroups } from '@/core/domains/groups';
@@ -42,6 +42,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { ReminderManagementModal } from './reminder-management-modal';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/ui/components/ui/sheet';
+import GoongMapMarker from '@/ui/business/map/goong-marker';
+import { RequestWatcher } from '@/features/map/components/RequestWatcher';
 
 interface OverviewTabProps {
   device: Device;
@@ -74,6 +83,13 @@ type OverviewFormValues = z.infer<typeof overviewFormSchema>;
 export function OverviewTab({ device }: OverviewTabProps) {
   const [isEditMode, setIsEditMode] = useState(false);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
+  const [syncRequestId, setSyncRequestId] = useState<string | undefined>(
+    undefined
+  );
+  const [syncPollInterval, setSyncPollInterval] = useState<number | undefined>(
+    undefined
+  );
+  const { mutate: syncDevices } = useSyncDevices();
   const { data: groupsData } = useGetGroups({
     status: 'enabled'
   });
@@ -120,6 +136,35 @@ export function OverviewTab({ device }: OverviewTabProps) {
       })
       .filter(Boolean);
   }, [deviceTags, tagsData]);
+
+  const handleSyncStopped = (reason: string) => {
+    if (reason === 'completed') {
+      // Device state is already updated via useQueryStatus
+      // The component will re-render automatically when device prop updates
+    }
+    setSyncRequestId(undefined);
+    setSyncPollInterval(undefined);
+  };
+
+  const handleSyncDevices = () => {
+    const children_ids = device.devices?.map((d) => d.device_id) ?? [];
+
+    if (children_ids.length === 0) return;
+
+    syncDevices(
+      {
+        device_id: String(device.id),
+        children_ids,
+        channel_route: device.ctrl_channel_id
+      },
+      {
+        onSuccess: (data) => {
+          setSyncRequestId(data.request_id);
+          setSyncPollInterval(data.poll_interval * 1000);
+        }
+      }
+    );
+  };
 
   // Helper to format Unix timestamp to date
   const formatDate = (timestamp?: number) => {
@@ -715,14 +760,40 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         </FormItem>
                       )}
                     />
-                    <Button
-                      type='button'
-                      variant='default'
-                      className='bg-cyan-600 hover:bg-cyan-700'
-                      disabled={!isEditMode}
-                    >
-                      Vị trí bản đồ
-                    </Button>
+                    <Sheet>
+                      <SheetTrigger asChild>
+                        <Button
+                          type='button'
+                          className='bg-blue-2 rounded-sm hover:!bg-cyan-600 hover:!brightness-95'
+                          disabled={!isEditMode}
+                        >
+                          Vị trí bản đồ
+                        </Button>
+                      </SheetTrigger>
+                      <SheetContent side='right' className='gap-0'>
+                        <SheetHeader>
+                          <SheetTitle className='mx-auto'>
+                            Chọn vị trí bản đồ
+                          </SheetTitle>
+                        </SheetHeader>
+                        <div className='relative h-full w-full overflow-hidden'>
+                          <GoongMapMarker
+                            lat={Number(form.watch('lat'))}
+                            long={Number(form.watch('lon'))}
+                            onSelectLocation={({ lat, long }) => {
+                              form.setValue(
+                                'lat',
+                                String(Number(lat.toFixed(6)))
+                              );
+                              form.setValue(
+                                'lon',
+                                String(Number(long.toFixed(6)))
+                              );
+                            }}
+                          />
+                        </div>
+                      </SheetContent>
+                    </Sheet>
                   </div>
                 </div>
               </div>
@@ -964,6 +1035,17 @@ export function OverviewTab({ device }: OverviewTabProps) {
                   </AccordionTrigger>
 
                   <AccordionContent>
+                    <div className='mb-2 flex w-full justify-end'>
+                      <Button
+                        className='bg-[#0859AA] hover:bg-[#064488]'
+                        type='button'
+                        onClick={handleSyncDevices}
+                      >
+                        <RefreshCw className='mr-2 h-4 w-4' />
+                        Đồng bộ
+                      </Button>
+                    </div>
+
                     <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
                       {Object.entries(sensorInfo.attributes || {}).map(
                         ([key, value]) => {
@@ -1003,6 +1085,14 @@ export function OverviewTab({ device }: OverviewTabProps) {
         device={device}
         onSave={handleSaveReminders}
       />
+      {syncRequestId && (
+        <RequestWatcher
+          requestId={syncRequestId}
+          deviceId={String(device.id)}
+          pollInterval={syncPollInterval}
+          onStopped={handleSyncStopped}
+        />
+      )}
     </FormSchemaProvider>
   );
 }

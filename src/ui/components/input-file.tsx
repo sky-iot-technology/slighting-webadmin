@@ -9,14 +9,12 @@ function formatFileSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   const size = bytes / Math.pow(k, i);
-  console.log(`${parseFloat(size.toFixed(1))} ${units[i]}`);
-  console.log('hihihihi');
   return `${parseFloat(size.toFixed(1))} ${units[i]}`;
 }
 
 type FileUploadProps = {
-  value?: FileList | null;
-  onChange?: (files: FileList | null) => void;
+  value?: File[];
+  onChange?: (files: File[]) => void;
   accept?: string;
   multiple?: boolean;
   className?: string;
@@ -33,14 +31,25 @@ export function FileUpload({
 }: FileUploadProps) {
   const [files, setFiles] = useState<File[]>([]);
 
+  useEffect(() => {
+    if (value) {
+      setFiles(value);
+    }
+  }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const selectedFiles = Array.from(e.target.files);
-    setFiles((prev) => [...prev, ...selectedFiles]);
+    const nextFiles = multiple ? [...files, ...selectedFiles] : selectedFiles;
+
+    setFiles(nextFiles);
+    onChange?.(nextFiles);
   };
 
   const handleRemove = (name: string) => {
-    setFiles((prev) => prev.filter((f) => f.name !== name));
+    const nextFiles = files.filter((f) => f.name !== name);
+    setFiles(nextFiles);
+    onChange?.(nextFiles);
   };
 
   return (

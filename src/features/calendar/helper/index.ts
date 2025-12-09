@@ -7,6 +7,10 @@ import {
   SubSchedule,
   subScheduleSchema
 } from '@/core/domains/calendars';
+import {
+  PRIORITY_LABELS_NUMS,
+  PRIORITY_LABELS_STRINGS
+} from '@/core/domains/calendars/constant';
 import { RegionNode } from '@/core/domains/groups';
 import { z } from 'zod';
 
@@ -86,7 +90,7 @@ export function mapFormToCreateCalendarDto(
     device_type: formData.device_type,
     group_ids: formData.group_ids ?? [],
     client_id: formData.client_id,
-    priority: formData.priority as SchedulePriority,
+    priority: PRIORITY_LABELS_NUMS[formData.priority] as SchedulePriority,
     action: formData.action as ScheduleAction,
     schedules: formData.schedules.map((s) => {
       let payload: { command: string; params: Record<string, any> };
@@ -197,7 +201,7 @@ export function mapCalendarToFormData(
     device_type: initialData.device_type ?? '',
     group_ids: initialData.group_ids ?? [],
     ids: firstSchedule?.ids ?? [],
-    priority: initialData.priority ?? 2,
+    priority: PRIORITY_LABELS_STRINGS[initialData.priority ?? 'normal'],
     action: initialData.action ?? 'PLAY',
     recurring,
     weekly,

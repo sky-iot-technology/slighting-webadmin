@@ -40,6 +40,14 @@ import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { useMemo } from 'react';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger
+} from '@/ui/components/ui/sheet';
+import GoongMapMarker from '@/ui/business/map/goong-marker';
 
 interface Device {
   id?: string;
@@ -321,9 +329,36 @@ export default function ProductForm({
                     />
                     <FormItem>
                       <div className='md:h-3.5'></div>
-                      <Button variant={'default'} className='bg-cyan-1'>
+                      {/* <Button variant={'default'} className='bg-cyan-1'>
                         Vị trí bản đồ
-                      </Button>
+                      </Button> */}
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <Button
+                            type='button'
+                            className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
+                          >
+                            Vị trí bản đồ
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side='right' className='gap-0'>
+                          <SheetHeader>
+                            <SheetTitle className='mx-auto'>
+                              Chọn vị trí bản đồ
+                            </SheetTitle>
+                          </SheetHeader>
+                          <div className='relative h-full w-full overflow-hidden'>
+                            <GoongMapMarker
+                              lat={Number(form.watch('lat'))}
+                              long={Number(form.watch('lon'))}
+                              onSelectLocation={({ lat, long }) => {
+                                form.setValue('lat', Number(lat.toFixed(6)));
+                                form.setValue('lon', Number(long.toFixed(6)));
+                              }}
+                            />
+                          </div>
+                        </SheetContent>
+                      </Sheet>
                       <div className='md:h-4'></div>
                     </FormItem>
                   </div>

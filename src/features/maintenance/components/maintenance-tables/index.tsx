@@ -70,7 +70,7 @@ export function MaintenanceTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className='mt-3'
+      className='mt-1'
       wrapperClassName='rounded-[8px]'
       tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
       paginationClassName='py-3'

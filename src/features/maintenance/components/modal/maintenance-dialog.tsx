@@ -9,14 +9,14 @@ import {
 import MaintenanceForm from '../form/maintenance-form';
 
 type MaintenanceDialogProps = {
-  alertId: string;
+  alarmId: string;
   pageTitle: string;
   open: boolean;
   onOpenChange?: (open: boolean) => void;
 };
 
 export default function MaintenanceDialog({
-  alertId,
+  alarmId,
   pageTitle,
   open,
   onOpenChange
@@ -30,6 +30,7 @@ export default function MaintenanceDialog({
         hideCloseButton
       >
         <MaintenanceForm
+          alarmId={alarmId}
           pageTitle={pageTitle}
           onClose={() => onOpenChange && onOpenChange(false)}
         />

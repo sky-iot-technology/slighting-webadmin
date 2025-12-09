@@ -4,6 +4,7 @@ import { z } from 'zod';
 import {
   dayofweek,
   PRIORITY_LABELS,
+  PRIORITY_LABELS_NUMS,
   RECURRING_LABELS
 } from '@/core/domains/calendars/constant';
 import { DateRange } from 'react-day-picker';
@@ -31,7 +32,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
       <div className='flex gap-2'>
         <span className=''>Loại lịch:</span>
         <span className='text-right font-medium'>
-          {PRIORITY_LABELS[data.priority]}
+          {PRIORITY_LABELS_NUMS[data.priority]}
         </span>
       </div>
 

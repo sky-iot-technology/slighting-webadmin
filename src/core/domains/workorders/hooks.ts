@@ -1,8 +1,22 @@
-import { useQuery, UseQueryOptions } from '@tanstack/react-query';
-import { GetWorkOrderParamsDto, WorkOrderListResponse } from './types';
+import {
+  useMutation,
+  UseMutationOptions,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions
+} from '@tanstack/react-query';
+import {
+  Attachment,
+  createWorkOrderDTO,
+  GetWorkOrderParamsDto,
+  WorkOrderListResponse,
+  WorkOrderStatus
+} from './types';
 import { workorderApi } from './api';
+import { toast } from 'sonner';
+import { WorkOrderFormSchema } from '@/core/domains/workorders';
 
-export const ALARMS_QUERY_KEY = 'workorders';
+export const WORKORDER_QUERY_KEY = 'workorders';
 
 export const useGetWorkOrders = (
   params?: GetWorkOrderParamsDto,
@@ -22,7 +36,7 @@ export const useGetWorkOrders = (
     WorkOrderListResponse,
     readonly [string, Partial<GetWorkOrderParamsDto>?]
   >({
-    queryKey: [ALARMS_QUERY_KEY, params],
+    queryKey: [WORKORDER_QUERY_KEY, params],
     queryFn: () => workorderApi.getAll(params),
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
@@ -30,41 +44,52 @@ export const useGetWorkOrders = (
   });
 };
 
-// export const useAcknowledgedAlarm = (
-//   options?: UseMutationOptions<Alarm, Error, { id: string }>
-// ) => {
-//   const queryClient = useQueryClient();
+export const useCreateWorkOrder = (
+  options?: UseMutationOptions<
+    void,
+    Error,
+    { alarmId: string; data: WorkOrderFormSchema }
+  >
+) => {
+  const queryClient = useQueryClient();
 
-//   const { user } = useAuthStore();
+  return useMutation<
+    void,
+    Error,
+    { alarmId: string; data: WorkOrderFormSchema }
+  >({
+    ...options,
+    mutationFn: async ({ alarmId, data }) => {
+      let attachments: Attachment[] = [];
+      if (data.admin_attachments?.length) {
+        attachments = (
+          await workorderApi.uploadAttachments(data.admin_attachments)
+        ).map((file) => ({
+          file_name: file.name,
+          file_url: file.url
+        }));
+      }
 
-//   return useMutation<Alarm, Error, { id: string }>({
-//     ...options,
-//     mutationFn: ({ id }) => {
-//       if (!user) {
-//         throw new Error('User is not authenticated');
-//       }
+      const payload: createWorkOrderDTO = {
+        ...data,
+        alarm_id: alarmId,
+        source: 'SYSTEM',
+        work_order_status: WorkOrderStatus.OPEN,
+        admin_attachments: attachments
+      };
 
-//       const payload: AcknowledgedAlarm = {
-//         status: 'active',
-//         acknowledged_by: user?.id,
-//         acknowledged_at: new Date().toISOString()
-//       };
-//       return alarmApi.AcknowledgedAlarm(id, payload);
-//     },
-//     onSuccess: (data, variables, context) => {
-//       queryClient.invalidateQueries({ queryKey: [ALARMS_QUERY_KEY] });
+      return workorderApi.createWorkOrder(payload);
+    },
+    onSuccess: (data, variables, context) => {
+      queryClient.invalidateQueries({ queryKey: [WORKORDER_QUERY_KEY] });
 
-//       // queryClient.setQueryData(
-//       //   [ALARMS_QUERY_KEY, 'detail', variables.id], data
-//       // );
-
-//       toast.success('Acknowleged alarm successfully!');
-//       options?.onSuccess?.(data, variables, context);
-//     },
-//     onError: (error, variables, context) => {
-//       console.error('Failed to acknowleged alarm:', error);
-//       toast.error(error.message || 'Failed to acknowleged alarm');
-//       options?.onError?.(error, variables, context);
-//     }
-//   });
-// };
+      toast.success('Create WorkOrder successfully!');
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to create WorkOrder:', error);
+      toast.error(error.message || 'Failed to create WorkOrder');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

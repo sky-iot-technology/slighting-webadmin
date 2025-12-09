@@ -83,8 +83,12 @@ function NavIcon({
 function SidebarLogo({ isOpen }: { isOpen: boolean }) {
   return (
     <div className='flex flex-row items-center justify-center'>
-      <Image src='/assets/images/logo.png' alt='logo' width={44} height={44} />
-      {isOpen && <span className='pl-2 text-xl font-bold'>{'Slighting'}</span>}
+      <Image
+        src='/assets/images/logo2.png'
+        alt='logo'
+        width={130}
+        height={130}
+      />
     </div>
   );
 }
@@ -218,14 +222,8 @@ function MainMenuItemModal({
         onClick={onClick}
         asChild={false}
       >
-        <div className='flex cursor-pointer items-center gap-2'>
-          <MenuItemIcon
-            icon={Icon}
-            isActive={isActive}
-            showActiveState={false}
-          />
-          <span>{item.title}</span>
-        </div>
+        <MenuItemIcon icon={Icon} isActive={isActive} showActiveState={false} />
+        <span>{item.title}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -247,58 +245,8 @@ export default function AppSidebar() {
           <SidebarLogo isOpen={open} />
         </SidebarHeader>
         <SidebarContent className='overflow-x-hidden'>
-          <SidebarGroup className='mt-4'>
+          <SidebarGroup>
             <SidebarMenu>
-              {/* {navItems.map((item) => {
-              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
-              return item?.items && item?.items?.length > 0 ? (
-                <Collapsible
-                  key={item.title}
-                  // asChild
-                  defaultOpen={item.isActive}
-                  className='group/collapsible'
-                >
-                  <SidebarMenuItem>
-                    <CollapsibleTrigger asChild>
-                      <SidebarMenuButton
-                        tooltip={item.title}
-                        isActive={pathname === item.url}
-                      >
-                        {item.icon && (
-                          <MenuItemIcon
-                            icon={Icon}
-                            isActive={pathname === item.url}
-                            showActiveState={false}
-                          />
-                        )}
-                        <span>{item.title}</span>
-                        <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
-                      </SidebarMenuButton>
-                    </CollapsibleTrigger>
-                    <CollapsibleContent>
-                      <SidebarMenuSub>
-                        {item.items?.map((subItem) => (
-                          <SubMenuItem
-                            key={subItem.title}
-                            subItem={subItem}
-                            isActive={pathname === subItem.url}
-                          />
-                        ))}
-                      </SidebarMenuSub>
-                    </CollapsibleContent>
-                  </SidebarMenuItem>
-                </Collapsible>
-              ) : (
-                <MainMenuItem
-                  key={item.title}
-                  item={item}
-                  Icon={Icon}
-                  pathname={pathname}
-                  open={open}
-                />
-              );
-            })} */}
-
               {navItems.map((item) => {
                 const Icon = item.icon ? Icons[item.icon] : Icons.logo;
                 const isActive = pathname === item.url;
@@ -333,8 +281,10 @@ export default function AppSidebar() {
                               isActive={isActive}
                               showActiveState={false}
                             />
-                            <span>{item.title}</span>
-                            <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+                            <span className='group-data-[collapsible=icon]:hidden'>
+                              {item.title}
+                            </span>
+                            <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90' />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent>

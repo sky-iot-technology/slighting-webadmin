@@ -1,7 +1,19 @@
-export const PRIORITY_LABELS: Record<number, string> = {
-  1: 'Khẩn cấp',
-  2: 'Theo lịch',
-  3: 'Thấp'
+export const PRIORITY_LABELS: Record<string, string> = {
+  emergency: 'Khẩn cấp',
+  normal: 'Theo lịch',
+  lower: 'Thấp'
+};
+
+export const PRIORITY_LABELS_NUMS: Record<number, string> = {
+  1: 'emergency',
+  2: 'normal',
+  3: 'lower'
+};
+
+export const PRIORITY_LABELS_STRINGS: Record<string, number> = {
+  emergency: 1,
+  normal: 2,
+  lower: 3
 };
 
 export const RECURRING_LABELS: Record<string, string> = {

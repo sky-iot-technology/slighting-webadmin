@@ -25,15 +25,13 @@ export default function RolePage() {
   return (
     <div className='h-full w-full p-3'>
       <div className='flex h-full w-full flex-1 bg-white'>
-        {data && (
-          <RoleTable
-            data={data?.['ui-roles']}
-            totalItems={data?.total}
-            columns={roleColumns()}
-            isLoading={isLoading}
-            error={error}
-          />
-        )}
+        <RoleTable
+          data={data?.['ui-roles'] ?? []}
+          totalItems={data?.total ?? 0}
+          columns={roleColumns()}
+          isLoading={isLoading}
+          error={error}
+        />
       </div>
     </div>
   );

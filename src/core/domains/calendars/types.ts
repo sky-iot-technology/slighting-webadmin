@@ -5,7 +5,8 @@ export type CalendarRepeat = 'Không' | 'Hàng ngày' | 'Hàng tuần' | 'Hàng 
 export type ScheduleStatus = 'active' | 'inactive';
 export type ScheduleSync = 'waiting' | 'synced';
 export type ScheduleAction = 'PLAY' | 'STOP';
-export type SchedulePriority = 1 | 2 | 3;
+export type SchedulePriority = 'emergency' | 'nomarl' | 'lower';
+
 export type ScheduleRecurring =
   | 'none'
   | 'daily'

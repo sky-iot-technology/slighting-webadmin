@@ -81,7 +81,6 @@ export default function MaintenancePage() {
   const workorderTableMemo = useMemo(() => {
     const workorders = workorderData?.woker_orders ?? [];
     const totalItems = workorderData?.total ?? 0;
-    console.log(workorders);
     return (
       <WorkorderTable
         data={workorders}
@@ -153,7 +152,7 @@ export default function MaintenancePage() {
 
         {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
         <MaintenanceDialog
-          alertId={selectedData.length === 1 ? selectedData[0].id : ''}
+          alarmId={selectedData.length === 1 ? selectedData[0].id : ''}
           pageTitle={`Tạo công việc: ${selectedData.length === 1 ? selectedData[0].name : ''}`}
           open={open}
           onOpenChange={setOpen}

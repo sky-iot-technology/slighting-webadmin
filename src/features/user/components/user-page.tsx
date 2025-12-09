@@ -45,15 +45,13 @@ export default function UserPage() {
   return (
     <div className='h-full w-full p-3'>
       <div className='flex h-full w-full flex-1 bg-white'>
-        {data && (
-          <UserTable
-            data={data.users}
-            totalItems={data?.total}
-            columns={userColumns()}
-            isLoading={isLoading}
-            error={error}
-          />
-        )}
+        <UserTable
+          data={data?.users ?? []}
+          totalItems={data?.total ?? 0}
+          columns={userColumns()}
+          isLoading={isLoading}
+          error={error}
+        />
       </div>
     </div>
   );

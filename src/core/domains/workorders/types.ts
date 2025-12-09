@@ -21,7 +21,7 @@ export interface WorkOrderListResponse {
   woker_orders: WorkOrder[];
 }
 
-export interface WorkOrderAttachment {
+export interface Attachment {
   file_name: string;
   file_url: string;
 }
@@ -31,9 +31,10 @@ export interface WorkOrder {
   alarm_id: string;
   cause: string;
   measurement: string;
+  severity: WorkOrderSeverity;
   work_order_name: string;
   source: string; // vd: "SYTEM"
-  work_order_status: string; // vd: "open" | "process" | "completed" | "closed"
+  work_order_status: WorkOrderStatus; // vd: "open" | "process" | "completed" | "closed"
   assignee_content: string;
   description: string;
   department: string; // vd: "team:support"
@@ -44,8 +45,9 @@ export interface WorkOrder {
   created_at: string;
   updated_by: string;
   updated_at: string;
-  action: string; // vd: "open" | "forward" | "comfirmed" | "cancel"
-  attachments: WorkOrderAttachment[] | null;
+  action: WorkOrderAction; // vd: "open" | "forward" | "comfirmed" | "cancel"
+  attachments: Attachment[] | null;
+  admin_attachments: Attachment[] | null;
   assignee_id: string;
   assigned_at: string;
   assigned_by: string;
@@ -54,13 +56,57 @@ export interface WorkOrder {
   resolved_at: string;
 }
 
+export enum WorkOrderSeverity {
+  Low = 0,
+  Medium = 1,
+  High = 2
+}
+
+export const WorkOderSeverityLabel: Record<WorkOrderSeverity, string> = {
+  [WorkOrderSeverity.High]: 'Cao',
+  [WorkOrderSeverity.Medium]: 'Trung bình',
+  [WorkOrderSeverity.Low]: 'Thấp'
+};
+
+export enum WorkOrderStatus {
+  OPEN = 'open',
+  PROCESS = 'process',
+  COMPLETED = 'completed',
+  CLOSED = 'closed'
+}
+
+export const WorkOrderStatusLabel: Record<WorkOrderStatus, string> = {
+  [WorkOrderStatus.OPEN]: 'Chưa xử lý',
+  [WorkOrderStatus.PROCESS]: 'Đang xử lý',
+  [WorkOrderStatus.COMPLETED]: 'Đã xử lý',
+  [WorkOrderStatus.CLOSED]: 'Đã đóng'
+};
+
+export enum WorkOrderAction {
+  OPEN = 'open',
+  FORWARD = 'forward',
+  CONFIRMED = 'confirmed',
+  CANCEL = 'cancel'
+}
+
+export const WorkOrderActionLabel: Record<WorkOrderAction, string> = {
+  [WorkOrderAction.OPEN]: 'Chưa xử lý',
+  [WorkOrderAction.FORWARD]: 'Chuyển giao',
+  [WorkOrderAction.CONFIRMED]: 'Xác nhận hoàn thành',
+  [WorkOrderAction.CANCEL]: 'Đã hủy'
+};
+
 export interface createWorkOrderDTO {
   alarm_id: string;
   assigned_by: string;
   assignee_id: string;
-  description: string;
+  remarks: string;
   work_order_name: string;
   source: string;
   department: string;
-  work_order_status: string;
+  work_order_status: WorkOrderStatus;
+  assignee_content: string;
+  start_date: string;
+  end_date: string;
+  admin_attachments?: Attachment[] | null;
 }

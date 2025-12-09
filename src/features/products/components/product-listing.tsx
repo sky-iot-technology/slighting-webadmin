@@ -15,6 +15,9 @@ import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { useGetGroups } from '@/core/domains/groups';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { Option } from '@/types/data-table';
+import { Button } from '@/ui/components/ui/button';
+import { RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 
 type ProductListingPage = {};
 
@@ -48,13 +51,13 @@ export default function ProductListingPage({}: ProductListingPage) {
     ...filtersExcludePagination
   } as const;
 
-  const { data, isLoading, error } = useGetDevices(filters);
+  const { data, isLoading, error, refetch } = useGetDevices(filters);
 
-  const { data: onlineData } = useGetDeviceCount(
+  const { data: onlineData, refetch: refetchOnline } = useGetDeviceCount(
     true,
     filtersExcludePagination
   );
-  const { data: offlineData } = useGetDeviceCount(
+  const { data: offlineData, refetch: refetchOffline } = useGetDeviceCount(
     false,
     filtersExcludePagination
   );
@@ -147,8 +150,13 @@ export default function ProductListingPage({}: ProductListingPage) {
     </div>
   );
 
+  const handleRefetch = async () => {
+    toast.success('Đồng bộ thiết bị đã được khởi tạo');
+    await Promise.all([refetch(), refetchOnline(), refetchOffline()]);
+  };
+
   return (
-    <div className='flex min-h-[700px] w-full flex-col'>
+    <div className='flex h-full w-full flex-col'>
       <ProductTable
         data={(data?.devices as Device[]) || []}
         totalItems={data?.total || 0}
@@ -156,6 +164,18 @@ export default function ProductListingPage({}: ProductListingPage) {
         actionBar={actionBar}
         isLoading={isLoading}
         error={error}
+        action={
+          <>
+            <Button
+              variant='default'
+              size='sm'
+              className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+              onClick={handleRefetch}
+            >
+              <RefreshCw className='h-4 w-4' />
+            </Button>
+          </>
+        }
       />
     </div>
   );

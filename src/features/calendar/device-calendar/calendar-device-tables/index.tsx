@@ -16,12 +16,16 @@ interface ProductTableParams<TData, TValue> {
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
   clientId: string;
+  isLoading?: boolean;
+  error?: Error | null;
 }
 export function CalendarTable<TData, TValue>({
   data,
   totalItems,
   columns,
-  clientId
+  clientId,
+  isLoading = false,
+  error = null
 }: ProductTableParams<TData, TValue>) {
   const [open, setOpen] = useState(false);
 
@@ -57,6 +61,8 @@ export function CalendarTable<TData, TValue>({
       headerClassName='bg-white border-t-1'
       rowClassName='text-xs font-normal bg-white'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      isLoading={isLoading}
+      error={error}
     >
       <div className='flex items-center gap-2 bg-white'>
         <DataTableCustomToolbar

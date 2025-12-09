@@ -96,18 +96,20 @@ export const usersApi = {
       throw new Error('Failed to disable user');
     }
   },
-  async uploadAvatar(file: File): Promise<{ url: string; path: string }> {
+  async upload(
+    file: File
+  ): Promise<{ url: string; path: string; name: string }> {
     try {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await publicApi.post<{ url: string; path: string }>(
-        '/d/upload',
-        formData,
-        {
-          headers: { 'Content-Type': 'multipart/form-data' }
-        }
-      );
+      const response = await publicApi.post<{
+        url: string;
+        path: string;
+        name: string;
+      }>('/d/upload', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
 
       return response;
     } catch (error) {

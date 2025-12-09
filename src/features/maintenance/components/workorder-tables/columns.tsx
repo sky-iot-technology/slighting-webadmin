@@ -3,7 +3,15 @@
 import { Checkbox } from '@/ui/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
-import { WorkOrder } from '@/core/domains/workorders';
+import {
+  WorkOderSeverityLabel,
+  WorkOrder,
+  WorkOrderAction,
+  WorkOrderActionLabel,
+  WorkOrderSeverity,
+  WorkOrderStatus,
+  WorkOrderStatusLabel
+} from '@/core/domains/workorders';
 import { formatDateTimeString } from '../../helper';
 
 export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
@@ -72,20 +80,44 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
       return <div>{row.getValue('measurement')}</div>;
     }
   },
-  // {
-  //   id: 'priority',
-  //   accessorKey: 'priority',
-  //   header: 'Ưu tiên',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('priority')}</div>;
-  //   }
-  // },
+  {
+    id: 'severity',
+    accessorKey: 'severity',
+    header: 'Ưu tiên',
+    cell: ({ row }) => {
+      const severity = row.getValue('severity') as WorkOrderSeverity;
+      const color =
+        severity === 2
+          ? 'text-yellow-2'
+          : severity === 1
+            ? 'text-calendar-blue'
+            : 'text-calendar-gray';
+      return (
+        <div className={`font-bold ${color}`}>
+          {WorkOderSeverityLabel[severity]}
+        </div>
+      );
+    }
+  },
   {
     id: 'work_order_status',
     accessorKey: 'work_order_status',
     header: 'Trạng thái xử lý',
     cell: ({ row }) => {
-      return <div>{row.getValue('work_order_status')}</div>;
+      const status = row.getValue('work_order_status') as WorkOrderStatus;
+      const color =
+        status === 'open'
+          ? 'text-calendar-red'
+          : status === 'process'
+            ? 'text-yellow-2'
+            : status === 'completed'
+              ? 'text-calendar-green'
+              : 'text-calendar-gray';
+      return (
+        <div className={`font-bold ${color}`}>
+          {WorkOrderStatusLabel[status]}
+        </div>
+      );
     }
   },
   {
@@ -112,20 +144,33 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
       return <div>{name}</div>;
     }
   },
-  // {
-  //   id: 'executor',
-  //   accessorKey: 'executor',
-  //   header: 'Người xử lý',
-  //   cell: ({ row }) => {
-  //     return <div>{row.getValue('executor')}</div>;
-  //   }
-  // },
+  {
+    id: 'assignee_id',
+    accessorKey: 'assignee_id',
+    header: 'Người xử lý',
+    cell: ({ row }) => {
+      return <div>{row.getValue('assignee_id')}</div>;
+    }
+  },
   {
     id: 'action',
     accessorKey: 'action',
     header: 'Trạng thái giám sát',
     cell: ({ row }) => {
-      return <div>{row.getValue('action')}</div>;
+      const actions = row.getValue('action') as WorkOrderAction;
+      const color =
+        actions === 'open'
+          ? 'text-calendar-red'
+          : actions === 'forward'
+            ? 'text-yellow-2'
+            : actions === 'confirmed'
+              ? 'text-calendar-green'
+              : 'text-calendar-gray';
+      return (
+        <div className={`font-bold ${color}`}>
+          {WorkOrderActionLabel[actions]}
+        </div>
+      );
     }
   },
   {

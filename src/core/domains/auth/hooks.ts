@@ -199,7 +199,7 @@ export const useUploadAvatar = (
       if (!user) throw new Error('You must be logged in');
 
       const oldPath = user.profile_picture;
-      const uploaded = await usersApi.uploadAvatar(file);
+      const uploaded = await usersApi.upload(file);
 
       await authApi.updateAvatar(user.id, uploaded.url);
 

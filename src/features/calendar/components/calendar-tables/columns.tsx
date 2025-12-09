@@ -88,12 +88,12 @@ export const columns: ColumnDef<Calendar>[] = [
     header: 'Loại lịch',
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
-      const priority = row.getValue('priority') as number;
+      const priority = row.getValue('priority') as string;
       const label = PRIORITY_LABELS[priority] || 'Không xác định';
       const color =
-        priority === 1
+        priority === 'emergency'
           ? 'text-calendar-red'
-          : priority === 2
+          : priority === 'normal'
             ? 'text-calendar-blue'
             : 'text-calendar-gray';
 

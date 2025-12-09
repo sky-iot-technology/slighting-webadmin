@@ -282,7 +282,7 @@ export default function BranchForm({
                         <SheetTrigger asChild>
                           <Button
                             type='button'
-                            className='bg-blue-2 h-[31px] w-[111px] rounded-[4px] text-xs'
+                            className='bg-blue-2 h-[31px] w-[111px] rounded-[4px] text-xs hover:!bg-cyan-600 hover:!brightness-95'
                           >
                             Chọn vị trí bản đồ
                           </Button>

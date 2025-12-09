@@ -20,7 +20,6 @@ import { Button } from '@/ui/components/ui/button';
 import { useEffect, useMemo, useState } from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
-import { maintenanceWorkFormSchema } from '@/core/domains/maintenances/schemas';
 import {
   Select,
   SelectContent,
@@ -32,42 +31,56 @@ import { CalendarRangePicker } from '@/features/calendar/components/calendar-ran
 import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
 import { useGetUsers } from '@/core/domains/users';
+import {
+  createWorkOrderDTO,
+  useCreateWorkOrder,
+  workOrderFormSchema,
+  WorkOrderStatus
+} from '@/core/domains/workorders';
 
 type MaintenanceFormProps = {
+  alarmId: string;
   pageTitle: string;
   onClose?: () => void;
 };
 
 export default function MaintenanceForm({
+  alarmId,
   onClose,
   pageTitle
 }: MaintenanceFormProps) {
   const defaultValues = {
-    name: '',
-    description: '',
-    handlingUnit: '',
-    supervisor: '',
-    executors: '',
+    work_order_name: '',
+    remarks: '',
+    department: '',
+    assigned_by: '',
+    assignee_id: '',
 
-    expectedStartDate: '',
-    expectedEndDate: '',
-    expectedMethod: '',
+    start_date: '',
+    end_date: '',
+    assignee_content: '',
 
-    attachments: []
+    admin_attachments: []
   };
 
-  const form = useForm<z.infer<typeof maintenanceWorkFormSchema>>({
-    resolver: zodResolver(maintenanceWorkFormSchema),
+  const form = useForm<z.infer<typeof workOrderFormSchema>>({
+    resolver: zodResolver(workOrderFormSchema),
     defaultValues
   });
 
   const { watch, setValue } = form;
-  const unit = watch('handlingUnit');
+  const unit = watch('department');
 
   const { data: usersData, isLoading: usersLoading } = useGetUsers(
     { tag: unit },
     { enabled: !!unit }
   );
+
+  const useCreateWork = useCreateWorkOrder({
+    onSuccess: () => {
+      onClose && onClose();
+    }
+  });
 
   const usersOptions = useMemo(() => {
     if (!usersData?.users) return [];
@@ -77,8 +90,8 @@ export default function MaintenanceForm({
     }));
   }, [usersData, unit]);
 
-  const onSubmit = (values: z.infer<typeof maintenanceWorkFormSchema>) => {
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof workOrderFormSchema>) => {
+    useCreateWork.mutate({ alarmId: alarmId, data: values });
   };
 
   return (
@@ -94,7 +107,7 @@ export default function MaintenanceForm({
             <form onSubmit={form.handleSubmit(onSubmit)} className=''>
               <FormField
                 control={form.control}
-                name='name'
+                name='work_order_name'
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
@@ -114,7 +127,7 @@ export default function MaintenanceForm({
 
               <FormField
                 control={form.control}
-                name='description'
+                name='remarks'
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
@@ -134,7 +147,7 @@ export default function MaintenanceForm({
                 {/* Hàng 1 */}
                 <FormField
                   control={form.control}
-                  name='handlingUnit'
+                  name='department'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
@@ -165,7 +178,7 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='supervisor'
+                  name='assigned_by'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
@@ -200,7 +213,7 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='executors'
+                  name='assignee_id'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
@@ -235,9 +248,9 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='expectedStartDate'
+                  name='start_date'
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='order-4 md:order-none'>
                       <FormLabel className='text-xs font-bold'>
                         Ngày bắt đầu dự kiến
                       </FormLabel>
@@ -259,9 +272,9 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='expectedMethod'
+                  name='assignee_content'
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='order-6 md:order-none'>
                       <FormLabel className='text-xs font-bold'>
                         Phương án xử lý dự kiến
                       </FormLabel>
@@ -279,9 +292,9 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='expectedEndDate'
+                  name='end_date'
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className='order-5 md:order-none'>
                       <FormLabel className='text-xs font-bold'>
                         Ngày hoàn thành dự kiến
                       </FormLabel>
@@ -301,10 +314,10 @@ export default function MaintenanceForm({
                   )}
                 />
 
-                <div className='md:col-span-2'>
+                <div className='order-10 md:order-none md:col-span-2'>
                   <FormField
                     control={form.control}
-                    name='attachments'
+                    name='admin_attachments'
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className='!gap-1 text-xs font-bold'>
@@ -318,8 +331,14 @@ export default function MaintenanceForm({
                         </FormLabel>
                         <FormControl>
                           <FileUpload
-                            // value={field.value}
-                            onChange={field.onChange}
+                            onChange={(files) => {
+                              if (!files) {
+                                field.onChange([]);
+                                return;
+                              }
+
+                              field.onChange(Array.from(files));
+                            }}
                             multiple
                             accept='.jpg,.png,.pdf,.doc,.docx'
                           />

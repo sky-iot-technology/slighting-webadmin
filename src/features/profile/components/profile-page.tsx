@@ -11,12 +11,7 @@ import { useMemo, useState } from 'react';
 import Profile from './profile-tab/profile';
 import PasswordForm from './form/password-form';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
-import {
-  useAuthStore,
-  useDeleteAvatar,
-  useLogout,
-  useUploadAvatar
-} from '@/core/domains/auth';
+import { useAuthStore, useLogout, useUploadAvatar } from '@/core/domains/auth';
 import AccountForm from './form/account-form';
 
 export default function ProfilePage() {
