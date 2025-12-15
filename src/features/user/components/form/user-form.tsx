@@ -42,6 +42,7 @@ import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 import Image from 'next/image';
 import ChangepassDialog from './changepass-form';
 import { useGetRoles } from '@/core/domains/permissions';
+import { MultiSelect } from '@/ui/components/ui/multi-select';
 
 type RoleFormProps = {
   pageTitle: string;
@@ -93,7 +94,7 @@ export default function UserForm({
 
       // optional
       phone: initialData?.metadata?.phone || '',
-      unit: initialData?.metadata?.unit || '',
+      unit: initialData?.tags || [],
       department: initialData?.metadata?.department || '',
       address: initialData?.metadata?.address || '',
       note: initialData?.metadata?.about || ''
@@ -323,18 +324,49 @@ export default function UserForm({
                             Đơn vị
                           </FormLabel>
                           <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
+                            {/* <MultiSelect
+                              options={
+                                [{ value: 'team:support', label: 'Team Support' },
+                                { value: 'team:technical', label: 'Team Technical' }
+                                ]
+                              }
+                              defaultValue={field.value ?? []}
+                              onValueChange={(val) => field.onChange(val)}
+                              placeholder='Chọn đơn vị xử lý'
+                              resetOnDefaultValueChange={true}
+                              className='!min-h-[31px] !h-auto !rounded-[4px] px-2'
+                              popoverClassName='w-[var(--radix-popover-trigger-width)]'
+                              autoSize={true}
+                              textSize='!text-xs'
+                              hideSelectAll
                               disabled={isView}
-                            >
-                              <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                                <SelectValue placeholder='Chọn đơn vị' />
-                              </SelectTrigger>
-                              <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                                <SelectItem value='test'>test</SelectItem>
-                              </SelectContent>
-                            </Select>
+                            /> */}
+                            <MultiSelect
+                              options={[
+                                {
+                                  value: 'team:support',
+                                  label: 'Team Support'
+                                },
+                                {
+                                  value: 'team:technical',
+                                  label: 'Team Technical'
+                                }
+                              ]}
+                              defaultValue={field.value ?? []}
+                              onValueChange={field.onChange}
+                              placeholder='Chọn đơn vị xử lý'
+                              resetOnDefaultValueChange
+                              className='flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 flex-wrap gap-1 !rounded-[4px]'
+                              popoverClassName='
+                                w-[var(--radix-popover-trigger-width)]
+                                max-w-[95vw]
+                                sm:max-w-none
+                              '
+                              autoSize
+                              textSize='!text-xs'
+                              hideSelectAll
+                              disabled={isView}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

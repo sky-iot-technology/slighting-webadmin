@@ -16,7 +16,6 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useDeleteDeviceParent } from '@/core/domains/devices';
 import { Check } from 'lucide-react';
 import {
   Sheet,
@@ -26,7 +25,13 @@ import {
   SheetTrigger
 } from '@/ui/components/ui/sheet';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
-import { useAcknowledgedAlarm } from '@/core/domains/alarms';
+import {
+  useAcknowledgedAlarm,
+  useCompletedAlarm,
+  useDeleteAlarm
+} from '@/core/domains/alarms';
+import { useGetWorkOrders } from '@/core/domains/workorders';
+import { toast } from 'sonner';
 
 interface CellActionProps {
   active: boolean;
@@ -46,31 +51,58 @@ export const CellAction: React.FC<CellActionProps> = ({
   const [openMap, setOpenMap] = useState(false);
 
   const [open, setOpen] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openView, setOpenView] = useState(false);
   const router = useRouter();
 
-  const deleteDeviceParent = useDeleteDeviceParent({
+  const workOrder = useGetWorkOrders(
+    {
+      offset: 0,
+      limit: 1,
+      dir: 'asc',
+      alarm_id: id
+    },
+    {
+      enabled: false
+    }
+  );
+
+  const handleView = async () => {
+    if (!id) return;
+    const res = await workOrder.refetch();
+    const workOrderId = res.data?.woker_orders?.[0]?.id;
+    if (!workOrderId) {
+      toast.error('Do not have any work order for this alarm');
+      return;
+    }
+    router.push(`/dashboard/maintenance/${workOrderId}`);
+  };
+
+  const deleteAlarm = useDeleteAlarm({
     onSuccess: () => {
       setOpen(false);
     }
   });
   const handleConfirmDelete = () => {
     if (!id) return;
-    deleteDeviceParent.mutate(id);
+    deleteAlarm.mutate(id);
   };
 
   const acknowledge = useAcknowledgedAlarm();
   const handleAcknowledge = () => {
     acknowledge.mutate({ id: String(id) });
   };
+
+  const completed = useCompletedAlarm();
+  const handleCompleted = () => {
+    completed.mutate({ id: String(id) });
+  };
+
   return (
     <>
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
-        loading={deleteDeviceParent.isPending}
+        loading={deleteAlarm.isPending}
       />
 
       <DropdownMenu modal={false}>
@@ -87,7 +119,7 @@ export const CellAction: React.FC<CellActionProps> = ({
         <DropdownMenuContent align='end' className='flex flex-col gap-2 p-2'>
           {active && (
             <DropdownMenuItem
-              onClick={() => setOpenView(true)}
+              onClick={handleView}
               className='flex w-full items-center text-xs'
             >
               <div className='flex w-4 justify-center'>
@@ -147,7 +179,10 @@ export const CellAction: React.FC<CellActionProps> = ({
                   <span>Đang xử lý</span>
                 </DropdownMenuItem>
 
-                <DropdownMenuItem className='flex cursor-pointer gap-2 text-xs'>
+                <DropdownMenuItem
+                  onClick={handleCompleted}
+                  className='flex cursor-pointer gap-2 text-xs'
+                >
                   <div className='flex w-4 justify-center'>
                     <Check width={12} height={12} className='text-green-600' />
                   </div>

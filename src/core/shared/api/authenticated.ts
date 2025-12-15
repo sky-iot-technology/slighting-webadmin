@@ -20,7 +20,12 @@ export class AuthenticatedApiClient extends BaseApiClient {
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;
             const { domainId } = useAuthStore.getState();
-            if (domainId && !config.url?.startsWith('/users')) {
+            const NO_DOMAIN_PREFIX = ['/users', '/d/'];
+            if (
+              domainId &&
+              config.url &&
+              !NO_DOMAIN_PREFIX.some((prefix) => config.url!.startsWith(prefix))
+            ) {
               config.url = `${domainId}${config.url}`;
             }
           }

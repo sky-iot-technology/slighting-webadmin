@@ -10,7 +10,7 @@ import {
   AlarmStatus,
   AlarmStatusLabel
 } from '@/core/domains/alarms';
-import { formatDateTimeString } from '../../helper';
+import { diffTimeBetween, formatDateTimeString } from '../../helper';
 import { User } from '@/core/domains/users';
 import { Device } from '@/core/domains/devices';
 
@@ -18,21 +18,6 @@ export const maintenanceColumns = (
   users: User[],
   devices: Device[]
 ): ColumnDef<Alarm>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
@@ -85,8 +70,8 @@ export const maintenanceColumns = (
       );
     },
     meta: {
-      label: 'name',
-      placeholder: 'Tìm tên lịch',
+      label: 'measurement',
+      placeholder: 'Tìm tên cảnh báo',
       variant: 'text'
     },
     enableColumnFilter: true
@@ -129,7 +114,14 @@ export const maintenanceColumns = (
     accessorKey: 'timeSpend',
     header: 'Thời gian kéo dài',
     cell: ({ row }) => {
-      return <div>{row.getValue('timeSpend')}</div>;
+      const resolvedTime = row.original.resolved_at;
+      const alarmTime = row.original.created_at;
+      if (!resolvedTime || resolvedTime === '0001-01-01T00:00:00Z') {
+        return <div>-</div>;
+      }
+      const time = diffTimeBetween(alarmTime, resolvedTime);
+
+      return <div>{time}</div>;
     }
   },
   {
@@ -155,14 +147,6 @@ export const maintenanceColumns = (
       return (
         <div className={`${color} font-bold`}>{AlarmStatusLabel[status]}</div>
       );
-    }
-  },
-  {
-    id: 'method',
-    accessorKey: 'method',
-    header: 'Phương thức xử lý',
-    cell: ({ row }) => {
-      return <div>-</div>;
     }
   },
   {

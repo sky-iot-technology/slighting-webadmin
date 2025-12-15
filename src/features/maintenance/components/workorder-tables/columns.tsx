@@ -16,21 +16,6 @@ import { formatDateTimeString } from '../../helper';
 import { User } from '@/core/domains/users';
 
 export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
@@ -128,12 +113,7 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('start_date') as string);
       return <div>{time}</div>;
-    },
-    meta: {
-      label: 'Thời gian bắt đầu',
-      variant: 'dateRangeSingle'
-    },
-    enableColumnFilter: true
+    }
   },
   {
     id: 'department',
@@ -173,7 +153,7 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
           ? 'text-calendar-red'
           : actions === 'forward'
             ? 'text-yellow-2'
-            : actions === 'confirmed'
+            : actions === 'comfirmed'
               ? 'text-calendar-green'
               : 'text-calendar-gray';
       return (
@@ -190,12 +170,7 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('end_date') as string);
       return <div>{time}</div>;
-    },
-    meta: {
-      label: 'Thời gian bắt đầu',
-      variant: 'dateRangeSingle'
-    },
-    enableColumnFilter: true
+    }
   },
   {
     id: 'actions',

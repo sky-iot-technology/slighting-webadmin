@@ -84,9 +84,9 @@ export const WorkOrderStatusLabel: Record<WorkOrderStatus, string> = {
 
 export enum WorkOrderAction {
   OPEN = 'open',
-  FORWARD = 'forward',
-  CONFIRMED = 'confirmed',
-  CANCEL = 'cancel'
+  CONFIRMED = 'comfirmed',
+  CANCEL = 'cancel',
+  FORWARD = 'forward'
 }
 
 export const WorkOrderActionLabel: Record<WorkOrderAction, string> = {
@@ -105,10 +105,11 @@ export interface createWorkOrderDTO {
   source: string;
   department: string;
   work_order_status: WorkOrderStatus;
-  assignee_content: string;
   start_date: string;
   end_date: string;
   admin_attachments?: Attachment[] | null;
+  updated_by?: string;
+  updated_at?: string;
 }
 
 export interface WorkOrderHistoryResponse {
@@ -126,4 +127,45 @@ export interface History {
   changed_by: string;
   note: string;
   work_order_id: string;
+  alarm_id: string;
+}
+
+export interface WorkOrderUpdateForm {
+  work_order_name?: string;
+  department?: string;
+  assignee_id?: string;
+  description?: string;
+  admin_attachments?: {
+    new?: File[];
+    keep?: Attachment[];
+    delete?: Attachment[];
+  };
+  work_order_status?: WorkOrderStatus;
+  assignee_content?: string;
+  start_date?: string;
+  end_date?: string;
+  attachments?: {
+    new?: File[];
+    keep?: Attachment[];
+    delete?: Attachment[];
+  };
+  action?: WorkOrderAction;
+  remarks?: string;
+}
+
+export interface WorkOrderUpdatePayload {
+  work_order_name?: string;
+  department?: string;
+  assignee_id?: string;
+  description?: string;
+  admin_attachments?: Attachment[];
+  work_order_status?: WorkOrderStatus;
+  assignee_content?: string;
+  start_date?: string;
+  end_date?: string;
+  attachments?: Attachment[];
+  action?: WorkOrderAction;
+  remarks?: string;
+  updated_by?: string;
+  updated_at?: string;
 }

@@ -77,6 +77,7 @@ export default function ProfilePage() {
                 accept='image/*'
                 className='hidden'
                 onChange={async (e) => {
+                  console.log('FIRE upload event');
                   const file = e.target.files?.[0];
                   if (!file) return;
                   uploadAvatar.mutate(file);

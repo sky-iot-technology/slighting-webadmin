@@ -37,6 +37,7 @@ export interface User {
   verified_at: string;
   metadata?: Metadata;
   profile_picture?: string;
+  tags?: string[];
 }
 
 export interface UserListResponseDto {
@@ -69,6 +70,7 @@ export interface CreateUserDto {
   email: string;
   metadata?: Metadata;
   profile_picture?: string;
+  tags?: string[];
 }
 
 export interface UpdateUserDto {
@@ -84,4 +86,18 @@ export interface UpdateRoleDto extends Pick<UpdateUserDto, 'role'> {}
 export interface ChangePassDto {
   old_secret: string;
   new_secret: string;
+}
+
+export interface SearchUsersParamsDto
+  extends Omit<
+    QueryParams,
+    'order' | 'sort' | 'status' | 'search' | 'categories'
+  > {
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  tag?: string;
+  id?: string;
+  order?: string;
+  dir?: 'asc' | 'desc';
 }

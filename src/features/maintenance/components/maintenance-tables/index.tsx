@@ -15,9 +15,7 @@ interface MaintenanceTableParams<TData, TValue> {
   onTableReady?: (table: Table<TData>) => void;
   isLoading?: boolean;
   error?: Error | null;
-  onSelectionChange?: (
-    data: { id: string; name: string; status: boolean }[]
-  ) => void;
+  onSelectionChange?: (ids: string[]) => void;
 }
 export function MaintenanceTable<TData, TValue>({
   data,
@@ -57,14 +55,12 @@ export function MaintenanceTable<TData, TValue>({
   React.useEffect(() => {
     if (!onSelectionChange) return;
 
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedData = selectedRows.map((row) => ({
-      id: row.original.id,
-      name: row.original.measurement,
-      status: row.original.status === 'active'
-    }));
-    onSelectionChange(selectedData);
-  }, [table.getState().rowSelection]);
+    const selectedIds = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original.id as string);
+
+    onSelectionChange(selectedIds);
+  }, [table.getState().rowSelection, table.options.data]);
 
   return (
     <DataTable

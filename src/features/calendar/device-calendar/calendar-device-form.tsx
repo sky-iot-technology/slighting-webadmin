@@ -108,149 +108,110 @@ export default function CalendarDeviceForm({
   }, [data, setValue]);
 
   return (
-    <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
-      <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
-        <CardHeader className='px-0'>
-          <CardTitle className='text-primary text-left text-[16px] font-bold'>
-            {pageTitle}
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='px-0'>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-              <FormField
-                control={form.control}
-                name='ids'
-                render={({ field }) => (
-                  <FormItem className='col-span-2'>
-                    <FormLabel className='text-xs font-bold'>
-                      Chọn nhánh thiết bị
-                    </FormLabel>
-                    <FormControl>
-                      <MultiSelect
-                        options={
-                          data?.devices.map((b) => ({
-                            value: b.device_id,
-                            label: b.name
-                          })) ?? []
-                        }
-                        defaultValue={field.value ?? []}
-                        onValueChange={(val) => field.onChange(val)}
-                        placeholder='Chọn thiết bị'
-                        resetOnDefaultValueChange={true}
-                        className='!min-h-[31px] w-full !rounded-[4px] px-2'
-                        popoverClassName='w-[var(--radix-popover-trigger-width)]'
-                        textSize='!text-xs'
-                        autoSize={true}
-                        hideSelectAll
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='name'
-                render={({ field }) => (
-                  <FormItem className='col-span-2'>
-                    <FormLabel className='text-xs font-bold'>
-                      Tên lịch
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên lịch'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name='description'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
-                    <FormControl>
-                      <Input
-                        className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập mô tả'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='priority'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='mb-1 text-xs font-bold'>
-                      Loại lịch
-                    </FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={(val) => field.onChange(Number(val))}
-                        value={String(field.value)}
-                        defaultValue='2'
-                        className={cn(
-                          `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-3.5 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
-                        )}
-                      >
-                        <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='2' id='2' />
-                          <Label htmlFor='Theo lịch'>Theo lịch</Label>
-                        </div>
-                        <div className='flex items-center space-x-2'>
-                          <RadioGroupItem value='1' id='1' />
-                          <Label htmlFor='Khẩn cấp'>Khẩn cấp</Label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              {showRepeatAndDate && (
+    <div className='overflow-hidden rounded-[10px]'>
+      <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
+        <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+          <CardHeader className='px-0'>
+            <CardTitle className='text-primary text-left text-[16px] font-bold'>
+              {pageTitle}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className='px-0'>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className=''>
                 <FormField
                   control={form.control}
-                  name='recurring'
+                  name='ids'
+                  render={({ field }) => (
+                    <FormItem className='col-span-2'>
+                      <FormLabel className='text-xs font-bold'>
+                        Chọn nhánh thiết bị
+                      </FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          options={
+                            data?.devices.map((b) => ({
+                              value: b.device_id,
+                              label: b.name
+                            })) ?? []
+                          }
+                          defaultValue={field.value ?? []}
+                          onValueChange={(val) => field.onChange(val)}
+                          placeholder='Chọn thiết bị'
+                          resetOnDefaultValueChange={true}
+                          className='!min-h-[31px] w-full !rounded-[4px] px-2'
+                          popoverClassName='w-[var(--radix-popover-trigger-width)]'
+                          textSize='!text-xs'
+                          autoSize={true}
+                          hideSelectAll
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='name'
+                  render={({ field }) => (
+                    <FormItem className='col-span-2'>
+                      <FormLabel className='text-xs font-bold'>
+                        Tên lịch
+                      </FormLabel>
+                      <FormControl>
+                        <Input
+                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                          placeholder='Nhập tên lịch'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name='description'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                      <FormControl>
+                        <Input
+                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                          placeholder='Nhập mô tả'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='priority'
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='mb-1 text-xs font-bold'>
-                        Lặp lại
+                        Loại lịch
                       </FormLabel>
                       <FormControl>
                         <RadioGroup
-                          onValueChange={field.onChange}
-                          value={field.value}
-                          defaultValue='none'
+                          onValueChange={(val) => field.onChange(Number(val))}
+                          value={String(field.value)}
+                          defaultValue='2'
                           className={cn(
-                            `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
+                            `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-3.5 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
                           )}
                         >
                           <div className='flex items-center space-x-2'>
-                            <RadioGroupItem value='none' id='none' />
-                            <Label htmlFor='Không'>Không</Label>
+                            <RadioGroupItem value='2' id='2' />
+                            <Label htmlFor='Theo lịch'>Theo lịch</Label>
                           </div>
                           <div className='flex items-center space-x-2'>
-                            <RadioGroupItem value='daily' id='daily' />
-                            <Label htmlFor='Hàng ngày'>Hàng ngày</Label>
-                          </div>
-                          <div className='flex items-center space-x-2'>
-                            <RadioGroupItem value='weekly' id='weekly' />
-                            <Label htmlFor='Hàng tuần'>Hàng tuần</Label>
-                          </div>
-                          <div className='flex items-center space-x-2'>
-                            <RadioGroupItem value='monthly' id='monthly' />
-                            <Label htmlFor='Hàng tháng'>Hàng tháng</Label>
+                            <RadioGroupItem value='1' id='1' />
+                            <Label htmlFor='Khẩn cấp'>Khẩn cấp</Label>
                           </div>
                         </RadioGroup>
                       </FormControl>
@@ -258,142 +219,183 @@ export default function CalendarDeviceForm({
                     </FormItem>
                   )}
                 />
-              )}
-
-              {showRepeatAndDate && (
-                <FormField
-                  control={form.control}
-                  name='date'
-                  render={({ field }) => {
-                    return (
-                      <FormItem className='flex flex-col'>
-                        <div className='flex justify-between'>
-                          <FormLabel className='text-xs font-bold'>
-                            Ngày áp dụng:
-                          </FormLabel>
-                          <FormControl>
-                            <CalendarRangePicker
-                              mode={showRange ? 'range' : 'single'}
-                              value={
-                                field.value
-                                  ? {
-                                      from: field.value?.from,
-                                      to: field.value?.to
-                                    }
-                                  : undefined
-                              }
-                              onChange={(v) => field.onChange(v)}
-                              disablePastDate={true}
-                            />
-                          </FormControl>
-                        </div>
+                {showRepeatAndDate && (
+                  <FormField
+                    control={form.control}
+                    name='recurring'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='mb-1 text-xs font-bold'>
+                          Lặp lại
+                        </FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            value={field.value}
+                            defaultValue='none'
+                            className={cn(
+                              `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
+                            )}
+                          >
+                            <div className='flex items-center space-x-2'>
+                              <RadioGroupItem value='none' id='none' />
+                              <Label htmlFor='Không'>Không</Label>
+                            </div>
+                            <div className='flex items-center space-x-2'>
+                              <RadioGroupItem value='daily' id='daily' />
+                              <Label htmlFor='Hàng ngày'>Hàng ngày</Label>
+                            </div>
+                            <div className='flex items-center space-x-2'>
+                              <RadioGroupItem value='weekly' id='weekly' />
+                              <Label htmlFor='Hàng tuần'>Hàng tuần</Label>
+                            </div>
+                            <div className='flex items-center space-x-2'>
+                              <RadioGroupItem value='monthly' id='monthly' />
+                              <Label htmlFor='Hàng tháng'>Hàng tháng</Label>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
-                    );
-                  }}
-                />
-              )}
-
-              {repeat === 'weekly' && (
-                <FormField
-                  control={form.control}
-                  name='weekly'
-                  render={({ field }) => (
-                    <FormItem className='col-span-2'>
-                      <FormLabel className='text-xs font-bold'>
-                        Chọn ngày trong tuần
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          options={
-                            dayofweek.map((d, index) => ({
-                              value: String(index),
-                              label: d
-                            })) ?? []
-                          }
-                          defaultValue={field.value ?? []}
-                          onValueChange={(val) => field.onChange(val)}
-                          placeholder='Chọn ngày'
-                          resetOnDefaultValueChange={true}
-                          className='!min-h-[31px] w-full !rounded-[4px] px-2 text-xs'
-                          popoverClassName='w-[var(--radix-popover-trigger-width)]'
-                          itemClassName='text-xs'
-                          autoSize={true}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              {repeat === 'monthly' && (
-                <FormField
-                  control={form.control}
-                  name='monthly'
-                  render={({ field }) => (
-                    <FormItem className='col-span-2'>
-                      <FormLabel className='text-xs font-bold'>
-                        Chọn ngày trong tháng
-                      </FormLabel>
-                      <FormControl>
-                        <MultiSelect
-                          options={Array.from({ length: 31 }, (_, index) => ({
-                            value: String(index + 1),
-                            label: String(index + 1)
-                          }))}
-                          defaultValue={field.value ?? []}
-                          onValueChange={(val) => field.onChange(val)}
-                          placeholder='Chọn ngày'
-                          resetOnDefaultValueChange={true}
-                          className='!min-h-[31px] w-full !rounded-[4px] px-2 text-xs'
-                          popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
-                          itemClassName='text-xs'
-                          autoSize={false}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-
-              <FormField
-                control={form.control}
-                name='schedules'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className='text-xs font-bold'>
-                      Thời gian & Hành động
-                    </FormLabel>
-                    <FormControl>
-                      <TimeBrightnessForm />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    )}
+                  />
                 )}
-              />
 
-              <div className='flex h-[30px] items-center justify-end gap-1'>
-                <Button
-                  onClick={onClose}
-                  variant={'outline'}
-                  type='button'
-                  className='h-full w-16 rounded-[4px] text-xs'
-                >
-                  Hủy
-                </Button>
-                <Button
-                  type='submit'
-                  className='h-full w-[70px] rounded-[4px] text-xs'
-                >
-                  Tiếp theo
-                </Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </CustomScrollbar>
+                {showRepeatAndDate && (
+                  <FormField
+                    control={form.control}
+                    name='date'
+                    render={({ field }) => {
+                      return (
+                        <FormItem className='flex flex-col'>
+                          <div className='flex justify-between'>
+                            <FormLabel className='text-xs font-bold'>
+                              Ngày áp dụng:
+                            </FormLabel>
+                            <FormControl>
+                              <CalendarRangePicker
+                                mode={showRange ? 'range' : 'single'}
+                                value={
+                                  field.value
+                                    ? {
+                                        from: field.value?.from,
+                                        to: field.value?.to
+                                      }
+                                    : undefined
+                                }
+                                onChange={(v) => field.onChange(v)}
+                                disablePastDate={true}
+                              />
+                            </FormControl>
+                          </div>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                )}
+
+                {repeat === 'weekly' && (
+                  <FormField
+                    control={form.control}
+                    name='weekly'
+                    render={({ field }) => (
+                      <FormItem className='col-span-2'>
+                        <FormLabel className='text-xs font-bold'>
+                          Chọn ngày trong tuần
+                        </FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            options={
+                              dayofweek.map((d, index) => ({
+                                value: String(index),
+                                label: d
+                              })) ?? []
+                            }
+                            defaultValue={field.value ?? []}
+                            onValueChange={(val) => field.onChange(val)}
+                            placeholder='Chọn ngày'
+                            resetOnDefaultValueChange={true}
+                            className='!min-h-[31px] w-full !rounded-[4px] px-2 text-xs'
+                            popoverClassName='w-[var(--radix-popover-trigger-width)]'
+                            itemClassName='text-xs'
+                            autoSize={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                {repeat === 'monthly' && (
+                  <FormField
+                    control={form.control}
+                    name='monthly'
+                    render={({ field }) => (
+                      <FormItem className='col-span-2'>
+                        <FormLabel className='text-xs font-bold'>
+                          Chọn ngày trong tháng
+                        </FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            options={Array.from({ length: 31 }, (_, index) => ({
+                              value: String(index + 1),
+                              label: String(index + 1)
+                            }))}
+                            defaultValue={field.value ?? []}
+                            onValueChange={(val) => field.onChange(val)}
+                            placeholder='Chọn ngày'
+                            resetOnDefaultValueChange={true}
+                            className='!min-h-[31px] w-full !rounded-[4px] px-2 text-xs'
+                            popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
+                            itemClassName='text-xs'
+                            autoSize={false}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+
+                <FormField
+                  control={form.control}
+                  name='schedules'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className='text-xs font-bold'>
+                        Thời gian & Hành động
+                      </FormLabel>
+                      <FormControl>
+                        <TimeBrightnessForm />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className='flex h-[30px] items-center justify-end gap-1'>
+                  <Button
+                    onClick={onClose}
+                    variant={'outline'}
+                    type='button'
+                    className='h-full w-16 rounded-[4px] text-xs'
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    type='submit'
+                    className='h-full w-[70px] rounded-[4px] text-xs'
+                  >
+                    Tiếp theo
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+      </CustomScrollbar>
+    </div>
   );
 }

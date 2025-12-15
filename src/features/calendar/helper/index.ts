@@ -48,7 +48,7 @@ export const formatDateString = (dateString?: string | null): string => {
   return `${day}/${month}/${year}`;
 };
 
-function parseLocalDate(dateStr?: string): Date | undefined {
+export function parseLocalDate(dateStr?: string): Date | undefined {
   if (!dateStr) return undefined;
   const cleaned = dateStr.replace('Z', '');
   const [datePart, timePart = '00:00:00'] = cleaned.split(/[T ]/);

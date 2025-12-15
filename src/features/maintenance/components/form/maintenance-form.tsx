@@ -30,13 +30,14 @@ import {
 import { CalendarRangePicker } from '@/features/calendar/components/calendar-range-picker';
 import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
-import { useGetUsers } from '@/core/domains/users';
+import { useGetUsers, useSearchUsers } from '@/core/domains/users';
 import {
   createWorkOrderDTO,
   useCreateWorkOrder,
   workOrderFormSchema,
   WorkOrderStatus
 } from '@/core/domains/workorders';
+import { normalizeStartEndDate } from '../../helper';
 
 type MaintenanceFormProps = {
   alarmId: string;
@@ -58,8 +59,6 @@ export default function MaintenanceForm({
 
     start_date: '',
     end_date: '',
-    assignee_content: '',
-
     admin_attachments: []
   };
 
@@ -71,7 +70,7 @@ export default function MaintenanceForm({
   const { watch, setValue } = form;
   const unit = watch('department');
 
-  const { data: usersData, isLoading: usersLoading } = useGetUsers(
+  const { data: usersData, isLoading: usersLoading } = useSearchUsers(
     { tag: unit },
     { enabled: !!unit }
   );
@@ -88,9 +87,18 @@ export default function MaintenanceForm({
       value: String(user.id),
       label: `${user.first_name} ${user.last_name}`
     }));
-  }, [usersData, unit]);
+  }, [usersData, usersLoading, unit]);
 
   const onSubmit = (values: z.infer<typeof workOrderFormSchema>) => {
+    if (values.start_date && values.end_date) {
+      const { startDate, endDate } = normalizeStartEndDate(
+        values.start_date,
+        values.end_date
+      );
+
+      values.start_date = startDate;
+      values.end_date = endDate;
+    }
     useCreateWork.mutate({ alarmId: alarmId, data: values });
   };
 
@@ -144,7 +152,6 @@ export default function MaintenanceForm({
               />
 
               <div className='grid grid-cols-1 gap-x-3 md:grid-cols-2'>
-                {/* Hàng 1 */}
                 <FormField
                   control={form.control}
                   name='department'
@@ -272,26 +279,6 @@ export default function MaintenanceForm({
 
                 <FormField
                   control={form.control}
-                  name='assignee_content'
-                  render={({ field }) => (
-                    <FormItem className='order-6 md:order-none'>
-                      <FormLabel className='text-xs font-bold'>
-                        Phương án xử lý dự kiến
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          className='!h-[31px] w-full !rounded-[4px] text-xs placeholder:text-xs'
-                          placeholder='Nhập phương án'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
                   name='end_date'
                   render={({ field }) => (
                     <FormItem className='order-5 md:order-none'>
@@ -341,6 +328,7 @@ export default function MaintenanceForm({
                             }}
                             multiple
                             accept='.jpg,.png,.pdf,.doc,.docx'
+                            maxFiles={5}
                           />
                         </FormControl>
                         <FormMessage />

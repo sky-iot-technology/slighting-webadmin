@@ -15,7 +15,9 @@ export const userFormSchema = z
     confirmPassword: z.string().min(6, 'Xác nhận mật khẩu không đúng'),
     // optional fields
     phone: z.string().optional(),
-    unit: z.string().optional(),
+    //unit still testing
+    unit: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất 1 đơn vị'),
+    //
     department: z.string().optional(),
     address: z.string().optional(),
     note: z.string().optional()
@@ -57,10 +59,12 @@ export const updateUserSchema = z.object({
   lastName: z.string().min(1),
   email: z.string().email().optional(),
   role: z.string().min(1),
-  group: z.string().min(1),
+  group: z.string().optional(),
   username: z.string().optional(),
   phone: z.string().optional(),
-  unit: z.string().optional(),
+  //unit still testing
+  unit: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất 1 đơn vị'),
+  //
   department: z.string().optional(),
   address: z.string().optional(),
   note: z.string().optional()
@@ -79,10 +83,11 @@ export function convertUserFormToApiPayload(
     first_name: formValues.firstName,
     last_name: formValues.lastName,
     role: formValues.role as UserRole,
+    tags: formValues.unit,
     metadata: {
       address: formValues.address,
       phone: formValues.phone,
-      unit: formValues.unit,
+      // unit: formValues.unit,
       department: formValues.department
     }
   };

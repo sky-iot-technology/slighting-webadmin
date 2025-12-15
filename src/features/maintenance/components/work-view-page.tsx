@@ -9,20 +9,27 @@ import { ArrowLeft } from 'lucide-react';
 import { useMemo } from 'react';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
-export default function WorkOrderViewPage() {
+type WorkOrderViewPageProps = {
+  pageTitle: string;
+  isView?: boolean;
+};
+
+export default function WorkOrderViewPage({
+  pageTitle,
+  isView = true
+}: WorkOrderViewPageProps) {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params?.maintenanceId as string;
 
-  let pageTitle = 'Chi tiết';
   const { data, isLoading, error } = useGetWorkOrderById(id);
-  console.log(data);
+
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
         <span className='text-lg font-bold'>
-          Chi tiết công việc:{' '}
+          {pageTitle}:{' '}
           <span className='text-primary'>
             {data?.work_order_name || 'Loading...'}
           </span>
@@ -70,7 +77,11 @@ export default function WorkOrderViewPage() {
   return (
     <div className='h-full w-full p-3'>
       <div className={`flex h-fit w-full flex-1 flex-col bg-white pt-1`}>
-        <WorkorderForm pageTitle={pageTitle} data={data} />
+        <WorkorderForm
+          pageTitle={pageTitle}
+          initialData={data}
+          isView={isView}
+        />
       </div>
     </div>
   );

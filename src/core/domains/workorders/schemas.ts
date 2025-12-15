@@ -10,18 +10,16 @@ export const workOrderFormSchema = z
     assignee_id: z.string().min(1, 'Người được giao không được để trống'),
 
     work_order_name: z.string().min(1, 'Tên công việc không được để trống'),
-    remarks: z.string().optional().default(''),
+    remarks: z.string().min(1, 'Mô tả không được để trống'),
 
     department: z.string().min(1, 'Đơn vị không được để trống'),
-
-    assignee_content: z.string().optional().default(''),
 
     start_date: z.string().min(1, 'Vui lòng nhập ngày bắt đầu'),
     end_date: z.string().min(1, 'Vui lòng nhập ngày hoàn thành'),
 
     admin_attachments: z
       .array(FileSchema)
-      .max(3, 'Chỉ được tải lên tối đa 3 tập tin')
+      .max(5, 'Chỉ được tải lên tối đa 5 tập tin')
       .optional()
   })
   .refine((data) => new Date(data.end_date) >= new Date(data.start_date), {
@@ -33,38 +31,95 @@ export type WorkOrderFormSchema = z.infer<typeof workOrderFormSchema>;
 
 export const maintenanceProgressSchema = z
   .object({
+    id: z.string().min(1, { message: 'Mã không được bỏ trống' }),
     /* -------- Thông tin thiết bị -------- */
     work_order_name: z.string().min(1, 'Vui lòng nhập tên công việc'),
 
     assignee_id: z.string().min(1, 'Vui lòng chọn người xử lý'),
 
-    remarks: z.string().optional().default(''),
+    department: z.string().min(1, 'Đơn vị không được để trống'),
 
-    attachments: z
-      .array(FileSchema)
-      .max(3, 'Chỉ được tải lên tối đa 3 tập tin')
-      .optional(),
+    description: z.string().optional().default(''),
+
+    admin_attachments: z
+      .object({
+        new: z.array(FileSchema).default([]),
+        keep: z.array(z.any()).optional().default([]),
+        delete: z.array(z.any()).optional().default([])
+      })
+      .superRefine((val, ctx) => {
+        const total = val.new.length + val.keep.length;
+
+        if (total > 5) {
+          ctx.addIssue({
+            path: [],
+            code: z.ZodIssueCode.custom,
+            message: 'Chỉ được tối đa 5 tập tin (bao gồm cả file cũ và mới)'
+          });
+        }
+        const totalSize = val.new.reduce((sum, file) => sum + file.size, 0);
+
+        if (totalSize > 5 * 1024 * 1024) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Tổng dung lượng file tải lên không vượt quá 5MB',
+            path: []
+          });
+        }
+      }),
 
     /* -------- Cập nhật tiến độ -------- */
     work_order_status: z.string().min(1, 'Vui lòng chọn trạng thái thiết bị'),
 
-    description: z.string().optional().default(''),
+    assignee_content: z.string().optional().default(''),
 
-    start_date: z.string().min(1, 'Vui lòng chọn ngày bắt đầu'),
+    start_date: z.string().min(1, 'Vui lòng nhập ngày bắt đầu'),
+    end_date: z.string().min(1, 'Vui lòng nhập ngày hoàn thành'),
 
-    end_date: z.string().min(1, 'Vui lòng chọn ngày kết thúc'),
+    attachments: z
+      .object({
+        new: z.array(FileSchema).default([]),
+        keep: z.array(z.any()).optional().default([]),
+        delete: z.array(z.any()).optional().default([])
+      })
+      .superRefine((val, ctx) => {
+        const total = val.new.length + val.keep.length;
 
-    images: z.array(FileSchema).max(5, 'Tối đa 5 hình ảnh').optional(),
+        if (total > 5) {
+          ctx.addIssue({
+            path: [],
+            code: z.ZodIssueCode.custom,
+            message: 'Chỉ được tối đa 5 hình ảnh (bao gồm cả file cũ và mới)'
+          });
+        }
+        const totalSize = val.new.reduce((sum, file) => sum + file.size, 0);
+
+        if (totalSize > 5 * 1024 * 1024) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Tổng dung lượng file tải lên không vượt quá 5MB',
+            path: []
+          });
+        }
+      }),
 
     /* -------- Xác nhận tiến độ -------- */
     action: z.string().min(1, 'Vui lòng chọn trạng thái xử lý'),
 
-    confirm_note: z.string().optional().default('')
+    remarks: z.string().optional().default('')
   })
-  .refine((data) => new Date(data.end_date) >= new Date(data.start_date), {
-    path: ['end_date'],
-    message: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu'
-  });
+  .refine(
+    (data) => {
+      const start = data.start_date.split('T')[0];
+      const end = data.end_date.split('T')[0];
+
+      return end >= start;
+    },
+    {
+      path: ['end_date'],
+      message: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu'
+    }
+  );
 
 export type MaintenanceProgressFormValues = z.infer<
   typeof maintenanceProgressSchema
