@@ -136,27 +136,25 @@ export default function UserForm({
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className=''>
               <div className='flex gap-9'>
-                <div>
-                  <div className='flex-shrink-0'>
-                    {initialData?.profile_picture ? (
-                      <img
-                        src={initialData.profile_picture}
-                        alt='Avatar'
-                        className='h-38 w-38 rounded-full border object-cover shadow-sm'
-                      />
-                    ) : (
-                      <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
-                        <UserPic width={80} height={80} />
-                      </div>
-                    )}
-                  </div>
+                <div className='hidden flex-shrink-0 md:block'>
+                  {initialData?.profile_picture ? (
+                    <img
+                      src={initialData.profile_picture}
+                      alt='Avatar'
+                      className='h-38 w-38 rounded-full border object-cover shadow-sm'
+                    />
+                  ) : (
+                    <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
+                      <UserPic width={80} height={80} />
+                    </div>
+                  )}
                 </div>
 
                 <div className='flex-1'>
                   <h3 className='pb-2 text-[16px] font-bold'>
                     Thông tin cá nhân
                   </h3>
-                  <div className='grid grid-cols-3 gap-x-3'>
+                  <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
                     <FormField
                       control={form.control}
                       name='firstName'
@@ -442,7 +440,7 @@ export default function UserForm({
                   <h3 className='pb-2 text-[16px] font-bold'>
                     Thông tin tài khoản
                   </h3>
-                  <div className='grid grid-cols-3 gap-x-3'>
+                  <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
                     <FormField
                       control={form.control}
                       disabled={!!initialData}

@@ -205,7 +205,7 @@ export function CalendarRangePicker({
               <span className='text-xs font-medium lg:hidden'>
                 {formattedSingle}
               </span>
-              <CalendarIcon className='text-muted-foreground h-4 w-4 cursor-pointer' />
+              <CalendarIcon className='text-muted-foreground mb-0.5 h-4 w-4 cursor-pointer' />
             </div>
           </>
         )}

@@ -102,7 +102,6 @@ export default function Profile({ user }: ProfileProps) {
         data={fakeData}
         totalItems={fakeData.length}
         columns={UserColumns()}
-        // onTableReady={setDepartmentTable}
       />
     );
   }, []);
@@ -113,79 +112,87 @@ export default function Profile({ user }: ProfileProps) {
         data={workData}
         totalItems={workData.length}
         columns={WorkColumns()}
-        // onTableReady={setDepartmentTable}
       />
     );
   }, []);
 
   return (
-    <>
-      <div className='flex h-full w-full pr-2'>
-        <div className='w-[282px] py-2.5 pr-2.5 pl-6'>
-          <span className='text-primary text-[20px] font-bold'>
-            Hồ sơ cá nhân
-          </span>
-          <div className='mt-8 flex flex-col gap-3.5'>
-            <span className='text-[16px] font-bold'>Thông tin</span>
-            <div className='flex flex-col gap-5 pl-1 text-[14px]'>
-              <p>
-                <span className='font-bold'>Họ tên: </span> {user?.first_name}{' '}
-                {user?.last_name}
-              </p>
-              <p>
-                <span className='font-bold'>Vai trò: </span> {user?.role}
-              </p>
-              <p>
-                <span className='font-bold'>Đơn vị: </span> ...
-              </p>
-              <p>
-                <span className='font-bold'>Bộ phận: </span> ...
-              </p>
-              <p>
-                <span className='font-bold'>Điện thoại: </span> Nguyễn Văn An
-              </p>
-              <p>
-                <span className='font-bold'>Email: </span> {user?.email}
-              </p>
-              <p>
-                <span className='font-bold'>Địa chỉ: </span> Nguyễn Văn An
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className='flex min-h-0 flex-1 flex-col pt-2.5'>
-          <span className='pl-2 text-[20px] font-bold'>Lịch sử hoạt động</span>
-          <div className='mt-5 flex h-full w-full flex-col gap-3.5 border-l-2 pl-2'>
-            <Tabs
-              defaultValue='user'
-              className='!bg-card-primary max-w-[277px] flex-shrink-0 rounded-[8px] p-2 shadow-[0_4px_4px_rgba(0,0,0,0.25)] sm:w-auto'
-              onValueChange={(v) => setTab(v as any)}
-            >
-              <TabsList className='flex !bg-transparent text-[12px]'>
-                <TabsTrigger
-                  value='user'
-                  className='group data-[state=active]:bg-primary !h-[38px] !w-[129px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
-                >
-                  Người dùng
-                </TabsTrigger>
-                <TabsTrigger
-                  value='work'
-                  className='group data-[state=active]:bg-primary !h-[38px] !w-[129px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
-                >
-                  Công việc
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-            <div className='min-h-0 flex-1'>
-              {tab === 'user' ? (
-                <div className='flex h-full w-full pl-6'>{userTableMemo}</div>
-              ) : (
-                <div className='flex h-full w-full pl-6'>{workTableMemo}</div>
-              )}
-            </div>
+    <div className='flex w-full flex-col md:h-full md:flex-row'>
+      {/* Left panel - User info */}
+      <div className='w-full px-4 py-2.5 md:w-[282px] md:py-2.5 md:pr-2.5 md:pl-6'>
+        <span className='text-primary text-[20px] font-bold'>
+          Hồ sơ cá nhân
+        </span>
+        <div className='mt-6 flex flex-col gap-3.5 md:mt-8'>
+          <span className='text-[16px] font-bold'>Thông tin</span>
+          <div className='flex flex-col gap-4 pl-1 text-[14px] md:gap-5'>
+            <p className='break-words'>
+              <span className='font-bold'>Họ tên: </span>
+              {user?.first_name} {user?.last_name}
+            </p>
+            <p>
+              <span className='font-bold'>Vai trò: </span>
+              {user?.role}
+            </p>
+            <p>
+              <span className='font-bold'>Đơn vị: </span> ...
+            </p>
+            <p>
+              <span className='font-bold'>Bộ phận: </span> ...
+            </p>
+            <p>
+              <span className='font-bold'>Điện thoại: </span>
+              {'Nguyễn Văn An'}
+            </p>
+            <p className='break-all'>
+              <span className='font-bold'>Email: </span>
+              {user?.email}
+            </p>
+            <p className='break-words'>
+              <span className='font-bold'>Địa chỉ: </span>
+              {'Nguyễn Văn An'}
+            </p>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Right panel - Activity history */}
+      <div className='flex flex-col px-4 pt-2.5 md:min-h-0 md:flex-1 md:px-0'>
+        <span className='text-[20px] font-bold'>Lịch sử hoạt động</span>
+
+        <div className='mt-5 flex w-full flex-col gap-3.5 md:h-full md:border-l-2 md:pl-2'>
+          {/* Tabs - Responsive */}
+          <Tabs
+            defaultValue='user'
+            className='!bg-card-primary w-full rounded-[8px] p-2 shadow-[0_4px_4px_rgba(0,0,0,0.25)] md:max-w-[277px]'
+            onValueChange={(v) => setTab(v as any)}
+          >
+            <TabsList className='flex w-full !bg-transparent text-[12px]'>
+              <TabsTrigger
+                value='user'
+                className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
+              >
+                Người dùng
+              </TabsTrigger>
+              <TabsTrigger
+                value='work'
+                className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
+              >
+                Công việc
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+
+          {/* Table container */}
+          <div className='h-[calc(100vh-400px)] min-h-[300px] w-full md:h-[500px] md:min-h-0 md:flex-1'>
+            {tab === 'user' ? (
+              <div className='flex h-full w-full md:pl-6'>{userTableMemo}</div>
+            ) : (
+              <div className='flex h-full w-full md:pl-6'>{workTableMemo}</div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

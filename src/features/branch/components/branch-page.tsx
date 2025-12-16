@@ -12,7 +12,7 @@ import { BranchTable } from './branch-tables';
 import { branchColumns } from './branch-tables/columns';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { BranchConfigTab } from './branch-tabs/branch-config-tab';
-import { Table } from '@tanstack/react-table';
+import { ColumnDef, Table } from '@tanstack/react-table';
 import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
@@ -87,7 +87,9 @@ export default function BranchPage() {
       <BranchTable
         data={devices}
         totalItems={Number(data?.total ?? 0)}
-        columns={branchColumns(catalogues, treeData)}
+        columns={
+          branchColumns(catalogues, treeData) as ColumnDef<Device, any>[]
+        }
         onTableReady={setDeviceTable}
         isLoading={isLoading}
         error={error}

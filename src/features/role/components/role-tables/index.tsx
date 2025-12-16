@@ -55,9 +55,9 @@ export function RoleTable<TData, TValue>({
       totalRows={totalItems}
       className=''
       wrapperClassName='mx-1 mt-1 rounded-[4px]'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}

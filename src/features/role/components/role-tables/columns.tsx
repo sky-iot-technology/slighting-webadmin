@@ -1,59 +1,46 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { UIRoleResponse } from '@/core/domains/permissions';
 import { formatDateString } from '@/features/calendar/helper';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
 export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
   {
-    accessorKey: 'check_box',
-    header: ({ table }) => {
-      return (
+    id: 'select',
+    header: ({ table }) => (
+      <div className='flex items-center justify-center'>
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
-      );
-    },
-    size: 50,
-    cell: ({ row }) => {
-      return (
-        <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
-        </div>
-      );
-    },
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center justify-center'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
+    ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    maxSize: 50
   },
   {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên vai trò',
+    header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên vai trò' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
@@ -62,55 +49,46 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
       placeholder: 'Tìm kiếm vai trò',
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'created_at',
     accessorKey: 'created_at',
-    header: 'Ngày tạo',
+    header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ngày tạo' />
+    ),
     cell: ({ row }) => {
       return <div>{formatDateString(row.getValue('created_at'))}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'description',
     accessorKey: 'description',
-    header: 'Ghi chú',
+    header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ghi chú' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('description')}</div>;
-    }
-  },
-  {
-    id: 'status',
-    accessorKey: 'status',
-    header: 'Trạng thái',
-    cell: ({ row }) => {
-      return <div>{row.getValue('status')}</div>;
     },
-    meta: {
-      label: 'Trạng thái thiết bị',
-      variant: 'select',
-      options: [
-        { label: 'Kích hoạt', value: 'enabled' },
-        { label: 'Chưa kích hoạt', value: 'disabled' }
-      ]
-    },
-    enableColumnFilter: true
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: ({ table }) => {
-      return (
-        <div className='flex w-full items-center justify-center'>Thao tác</div>
-      );
-    },
+    header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
+      <DataTableColumnHeader
+        className='flex w-full items-center justify-center'
+        column={column}
+        title='Ghi chú'
+      />
+    ),
     size: 57,
     cell: ({ row }) => {
-      return (
-        <div className=''>
-          <CellAction id={String(row.original.id)} />
-        </div>
-      );
+      return <CellAction id={String(row.original.id)} />;
     }
   }
 ];

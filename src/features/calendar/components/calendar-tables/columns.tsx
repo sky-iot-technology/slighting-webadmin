@@ -1,12 +1,13 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import Image from 'next/image';
 import { Calendar, SubSchedule } from '@/core/domains/calendars';
 import { PRIORITY_LABELS } from '@/core/domains/calendars/constant';
 import { formatDateString } from '../../helper';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
 export const columns: ColumnDef<Calendar>[] = [
   {
@@ -17,7 +18,6 @@ export const columns: ColumnDef<Calendar>[] = [
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
       );
     },
@@ -32,7 +32,6 @@ export const columns: ColumnDef<Calendar>[] = [
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label='Select row'
-              className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
             />
           )}
           {canExpand ? (
@@ -70,7 +69,9 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên lịch',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên lịch' />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       return <div>{row.getValue('name')}</div>;
@@ -80,12 +81,16 @@ export const columns: ColumnDef<Calendar>[] = [
       placeholder: 'Tìm tên lịch',
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'priority',
     accessorKey: 'priority',
-    header: 'Loại lịch',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Loại lịch' />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const priority = row.getValue('priority') as string;
@@ -98,11 +103,15 @@ export const columns: ColumnDef<Calendar>[] = [
             : 'text-calendar-gray';
 
       return <div className={color}>{label}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'time',
-    header: 'Thời gian',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thời gian' />
+    ),
     cell: ({ row }) => {
       if (row.depth === 0) {
         const { last_execution_status, schedules } = row.original as any;
@@ -147,11 +156,15 @@ export const columns: ColumnDef<Calendar>[] = [
       }
 
       return <div>{row.getValue('time')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'status',
-    header: 'Trạng thái',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Trạng thái' />
+    ),
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
       let schedule: any;
@@ -203,12 +216,16 @@ export const columns: ColumnDef<Calendar>[] = [
           <span>{label}</span>
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'startDate',
     accessorKey: 'startDate',
-    header: 'Ngày bắt đầu',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ngày bắt đầu' />
+    ),
     meta: {
       label: '',
       variant: 'dateRangeFrom',
@@ -221,12 +238,16 @@ export const columns: ColumnDef<Calendar>[] = [
         row.original.schedules[0].start_datetime.replace(/Z$/, '')
       );
       return <div>{date}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'endDate',
     accessorKey: 'endDate',
-    header: 'Ngày kết thúc',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ngày kết thúc' />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const date = formatDateString(
@@ -239,20 +260,28 @@ export const columns: ColumnDef<Calendar>[] = [
       variant: 'dateRangeTo',
       rangeGroup: 'scheduleDate'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'createdDate',
-    header: 'Ngày tạo',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ngày tạo' />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const date = formatDateString(row.original.created_at);
       return <div>{date}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: Column<Calendar, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thao tác' />
+    ),
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
@@ -262,6 +291,8 @@ export const columns: ColumnDef<Calendar>[] = [
           {!isSubRow && <CellAction id={row.original.id} />}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

@@ -1,58 +1,45 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Department, Unit } from '@/core/domains/organizations/type';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
 export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
   {
-    accessorKey: 'check_box',
-    header: ({ table }) => {
-      return (
+    id: 'select',
+    header: ({ table }) => (
+      <div className='flex items-center justify-center'>
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
-      );
-    },
-    size: 50,
-    cell: ({ row }) => {
-      return (
-        <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
-        </div>
-      );
-    },
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center justify-center'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
+    ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    maxSize: 50
   },
   {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên bộ phận',
+    header: ({ column }: { column: Column<Department, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên bộ phận' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
@@ -61,29 +48,41 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
       placeholder: 'Tìm kiếm',
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'unitId',
     accessorKey: 'unitId',
-    header: 'Thuộc đơn vị',
+    header: ({ column }: { column: Column<Department, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thuộc đơn vị' />
+    ),
     cell: ({ row }) => {
       const unitId = row.getValue('unitId') as string;
       const unitName = units.find((u) => u.id === unitId)?.name ?? '-';
       return <div>{unitName}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'note',
     accessorKey: 'note',
-    header: 'Ghi chú',
+    header: ({ column }: { column: Column<Department, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ghi chú' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('note')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: Column<Department, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thao tác' />
+    ),
     size: 57,
     cell: ({ row }) => {
       return (
@@ -91,6 +90,8 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
           <CellAction id={String(row.original.id)} />
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

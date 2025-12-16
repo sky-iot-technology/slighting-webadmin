@@ -54,11 +54,10 @@ export function TagTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className=''
       wrapperClassName='rounded-[8px] bg-white'
-      tableContainerClassName='!border-y-[1px] !border-x-0 rounded-none'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}

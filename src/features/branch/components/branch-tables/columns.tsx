@@ -1,12 +1,13 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Device, DeviceInfo } from '@/core/domains/devices';
 import { Catalogue } from '@/core/domains/catalogues';
 import { RegionNode } from '@/core/domains/groups';
 import { findNodeById, formatDateString } from '@/features/calendar/helper';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
 export const branchColumns = (
   catalogues: Catalogue[],
@@ -28,55 +29,65 @@ export const branchColumns = (
     enableColumnFilter: true
   },
   {
-    accessorKey: 'check_box',
-    header: ({ table }) => {
-      return (
+    id: 'select',
+    header: ({ table }) => (
+      <div className='flex items-center justify-center'>
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
-      );
-    },
-    size: 50,
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center justify-center'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
+    ),
+    enableSorting: false,
+    enableHiding: false,
+    maxSize: 50
+  },
+  {
+    id: 'serial_number',
+    accessorKey: 'device_info',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Mã thiết bị' />
+    ),
     cell: ({ row }) => {
-      return (
-        <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
-        </div>
-      );
+      const id = row.original.id;
+      const formattedId = id ? `...${String(id).slice(-4)}` : '';
+
+      return <div>{formattedId}</div>;
     },
     enableSorting: false,
     enableHiding: false
   },
   {
-    id: 'serial_number',
-    accessorKey: 'device_info',
-    header: 'Mã thiết bị',
-    cell: ({ row }) => {
-      const info = row.original.device_info as DeviceInfo;
-
-      return <div>{info.serial_number}</div>;
-    }
-  },
-  {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên thiết bị',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên thiết bị' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'type',
     accessorKey: 'type',
-    header: 'Loại thiết bị',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Loại thiết bị' />
+    ),
     cell: ({ row }) => {
       const type = row.getValue('type');
       const name = catalogues.find((s) => s.type === type)?.name || 'undefined';
@@ -90,12 +101,16 @@ export const branchColumns = (
         value: c.type
       }))
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'metadata',
     accessorKey: 'device_info',
-    header: 'Trạng thái',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Trạng thái' />
+    ),
     cell: ({ row }) => {
       const info = row.original.device_info as DeviceInfo;
       const label = info.online ? 'Online' : 'Offline';
@@ -112,12 +127,16 @@ export const branchColumns = (
         { label: 'Offline', value: '{"device_info": {"online": false}}' }
       ]
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'status',
     accessorKey: 'status',
-    header: 'Trạng thái thiết bị',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Trạng thái thiết bị' />
+    ),
     cell: ({ row }) => {
       const info = row.getValue('status') as string;
       const color =
@@ -136,21 +155,29 @@ export const branchColumns = (
         { label: 'Chưa kích hoạt', value: 'disabled' }
       ]
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'parent_group_id',
     accessorKey: 'parent_group_id',
-    header: 'Nhóm chi nhánh',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Nhóm chi nhánh' />
+    ),
     cell: ({ row }) => {
       const id = row.getValue('parent_group_id');
       const name = findNodeById(trees, String(id))?.name || '—';
       return <div>{name}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'expiration_date',
-    header: 'Hết bảo hành',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Hết bảo hành' />
+    ),
     cell: ({ row }) => {
       const attributes = row.original.device_asset?.asset_attribute;
       const expAttr = attributes?.find(
@@ -166,11 +193,15 @@ export const branchColumns = (
       );
 
       return <div>{formattedDate}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thao tác' />
+    ),
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
@@ -180,6 +211,8 @@ export const branchColumns = (
           {!isSubRow && <CellAction id={String(row.original.id)} />}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

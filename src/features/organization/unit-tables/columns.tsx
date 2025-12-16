@@ -1,58 +1,45 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { Unit } from '@/core/domains/organizations/type';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
 export const unitColumns = (): ColumnDef<Unit>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
   {
-    accessorKey: 'check_box',
-    header: ({ table }) => {
-      return (
+    id: 'select',
+    header: ({ table }) => (
+      <div className='flex items-center justify-center'>
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
-      );
-    },
-    size: 50,
-    cell: ({ row }) => {
-      return (
-        <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
-        </div>
-      );
-    },
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center justify-center'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
+    ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    maxSize: 50
   },
   {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên đơn vị',
+    header: ({ column }: { column: Column<Unit, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên đơn vị' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
@@ -61,27 +48,39 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
       placeholder: 'Tìm kiếm',
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'address',
     accessorKey: 'address',
-    header: 'Địa chỉ',
+    header: ({ column }: { column: Column<Unit, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Địa chỉ' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('address')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'note',
     accessorKey: 'note',
-    header: 'Ghi chú',
+    header: ({ column }: { column: Column<Unit, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ghi chú' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('note')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: Column<Unit, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thao tác' />
+    ),
     size: 57,
     cell: ({ row }) => {
       return (
@@ -89,6 +88,8 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
           <CellAction id={String(row.original.id)} />
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

@@ -1,4 +1,4 @@
-'use client';
+// 'use client';
 import {
   Device,
   useSetBrightnessLight,
@@ -41,7 +41,7 @@ function LightControl(props: LightInfo) {
     [lightDevices]
   );
 
-  const [requests, setRequests] = useState<Record<string, string>>({});
+  const [requests, setRequests] = useState<Record<string, string[]>>({});
   const [brightnessMap, setBrightnessMap] = useState<Record<string, number>>(
     {}
   );
@@ -52,27 +52,26 @@ function LightControl(props: LightInfo) {
   const { mutate: setBrightness } = useSetBrightnessLight();
 
   useEffect(() => {
-    const newSwitchState = Object.fromEntries(
-      lightDevices.map((device) => [device.device_id, !!device.last_state?.on])
-    );
-    const newBrightnessMap = Object.fromEntries(
-      lightDevices.map((d) => [d.device_id, d.last_state?.brightness ?? 0])
-    ) as Record<string, number>;
+    const newSwitchState: Record<string, boolean> = {};
+    const newBrightnessMap: Record<string, number> = {};
 
-    setSwitchState((prev) => {
-      if (JSON.stringify(prev) !== JSON.stringify(newSwitchState)) {
-        return newSwitchState;
-      }
-      return prev;
+    lightDevices.forEach((device) => {
+      const id = device.device_id;
+
+      if (pending[id]) return;
+
+      newSwitchState[id] = !!device.last_state?.on;
+      const rawBrightness = device.last_state?.brightness;
+
+      newBrightnessMap[id] =
+        typeof rawBrightness === 'number'
+          ? rawBrightness
+          : Number(rawBrightness) || 0;
     });
 
-    setBrightnessMap((prev) => {
-      if (JSON.stringify(prev) !== JSON.stringify(newBrightnessMap)) {
-        return newBrightnessMap;
-      }
-      return prev;
-    });
-  }, [lightDevices]);
+    setSwitchState((prev) => ({ ...prev, ...newSwitchState }));
+    setBrightnessMap((prev) => ({ ...prev, ...newBrightnessMap }));
+  }, [lightDevices, pending]);
 
   const handleToggleLight = useCallback(
     (deviceIds: string[], status: boolean) => {
@@ -91,24 +90,19 @@ function LightControl(props: LightInfo) {
         },
         {
           onSuccess: (data) => {
-            setRequests((prev) => {
-              const updated = { ...prev };
-              deviceIds.forEach((id) => (updated[id] = data.request_id));
-              return updated;
-            });
+            const requestId = data.request_id;
+            setRequests((prev) => ({
+              ...prev,
+              [requestId]: deviceIds
+            }));
 
             setSwitchState((prev) => {
               const updated = { ...prev };
               deviceIds.forEach((id) => (updated[id] = status));
               return updated;
             });
-
-            setPending((p) => {
-              const updated = { ...p };
-              deviceIds.forEach((id) => (updated[id] = false));
-              return updated;
-            });
           },
+
           onError: () => {
             //clear pending
             setPending((p) => {
@@ -155,7 +149,7 @@ function LightControl(props: LightInfo) {
                   <TableCell className='flex items-center space-x-4 p-1 pt-2'>
                     <Switch
                       className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-6`}
-                      checked={switchState[device.device_id] ?? false}
+                      checked={switchState[device.device_id]}
                       disabled={!isOnline || pending[device.device_id]}
                       onCheckedChange={(val) =>
                         handleToggleLight([device.device_id], val)
@@ -195,25 +189,40 @@ function LightControl(props: LightInfo) {
                           }}
                           onValueCommit={() => {
                             if (!isOnline) return;
+
+                            const prevBrightness =
+                              brightnessMap[device.device_id];
+
+                            setPending((p) => ({
+                              ...p,
+                              [device.device_id]: true
+                            }));
+
                             setBrightness(
                               {
                                 device_id: String(props.device.id),
                                 channel_route: props.device.ctrl_channel_id,
                                 devices: [device.device_id],
-                                brightness: brightness
+                                brightness
                               },
                               {
-                                onSuccess(data, variables, context) {
+                                onSuccess(data) {
+                                  const requestId = data.request_id;
+
                                   setRequests((prev) => ({
                                     ...prev,
-                                    [device.device_id]: data.request_id
+                                    [requestId]: [device.device_id]
                                   }));
                                 },
                                 onError() {
-                                  // rollback
                                   setBrightnessMap((prev) => ({
                                     ...prev,
-                                    [device.device_id]: brightness
+                                    [device.device_id]: prevBrightness
+                                  }));
+
+                                  setPending((p) => ({
+                                    ...p,
+                                    [device.device_id]: false
                                   }));
                                 }
                               }
@@ -275,17 +284,22 @@ function LightControl(props: LightInfo) {
         {activeLights} / {lightDevices.length} line đang bật
       </p>
 
-      {Object.entries(requests).map(([deviceId, requestId]) => (
+      {Object.entries(requests).map(([requestId, deviceIds]) => (
         <RequestWatcher
-          key={deviceId}
+          key={requestId}
           requestId={requestId}
           onStopped={() => {
             setRequests((prev) => {
               const updated = { ...prev };
-              delete updated[deviceId];
+              delete updated[requestId];
               return updated;
             });
-            setPending((p) => ({ ...p, [deviceId]: false }));
+
+            setPending((p) => {
+              const updated = { ...p };
+              deviceIds.forEach((id) => (updated[id] = false));
+              return updated;
+            });
           }}
         />
       ))}
