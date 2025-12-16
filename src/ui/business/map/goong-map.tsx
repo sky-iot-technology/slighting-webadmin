@@ -313,7 +313,7 @@ export default function GoongMap({
       )}
 
       {popupInfo && (
-        <div className='absolute top-[80px] right-1.5 z-10 md:top-[34px]'>
+        <div className='absolute top-[80px] right-1.5 z-10 lg:top-[34px]'>
           {renderPopup ? (
             renderPopup(popupInfo, () => {
               setPopupInfo(null);
