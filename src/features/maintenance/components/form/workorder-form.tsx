@@ -1,5 +1,4 @@
 'use client';
-import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -18,9 +17,7 @@ import {
 } from '@/ui/components/ui/form';
 import { Button } from '@/ui/components/ui/button';
 import { useMemo, useState } from 'react';
-import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
-import { maintenanceWorkFormSchema } from '@/core/domains/maintenances/schemas';
 import {
   Select,
   SelectContent,
@@ -33,41 +30,196 @@ import { FileUpload } from '@/ui/components/input-file';
 import Image from 'next/image';
 import { ImageUpload } from '@/ui/components/image-upload';
 import { useRouter } from 'next/navigation';
+import {
+  Attachment,
+  MaintenanceProgressFormValues,
+  maintenanceProgressSchema,
+  useUpdateWorkOrder,
+  WorkOrder,
+  WorkOrderAction,
+  WorkOrderActionLabel,
+  WorkOrderStatus,
+  WorkOrderStatusLabel,
+  WorkOrderUpdateForm
+} from '@/core/domains/workorders';
+import { useGetUsers, useSearchUsers } from '@/core/domains/users';
+import { useAuthStore } from '@/core/domains/auth';
+import {
+  CARD_FIELDS,
+  normalizeStartEndDate,
+  pickAllowedFields
+} from '../../helper';
 
 type MaintenanceFormProps = {
   pageTitle: string;
+  initialData: WorkOrder;
+  isView?: boolean;
 };
 
-export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
-  //   const defaultValues = useMemo(() => {
-  //     return (
-  //       formData ??
-  //       ((initialData
-  //         ? {
-  //             name: initialData.name ?? '',
-  //             description: initialData.description ?? '',
-  //             parent_id: initialData.parent_id ?? '',
-  //             metadata: {
-  //               lat: initialData.metadata?.lat ?? undefined,
-  //               long: initialData.metadata?.long ?? undefined
-  //             }
-  //           }
-  //         : {
-  //             name: '',
-  //             description: '',
-  //             parent_id: '',
-  //             metadata: { lat: undefined, long: undefined }
-  //           }) as z.infer<typeof branchFormSchema>)
-  //     );
-  //   }, [formData, initialData]);
+export default function WorkorderForm({
+  pageTitle,
+  initialData,
+  isView
+}: MaintenanceFormProps) {
+  const [newFiles, setNewFiles] = useState<File[]>([]);
+  const [existingFiles, setExistingFiles] = useState<Attachment[]>(
+    initialData.admin_attachments ?? []
+  );
+
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<Attachment[]>(
+    initialData.attachments ?? []
+  );
+
+  const { user } = useAuthStore();
+
+  const isAssignedBy =
+    !!user?.id &&
+    (user.id === initialData.assigned_by ||
+      user.id === initialData.acknowledged_by);
+
+  const isAssignee = user?.id !== null && user?.id === initialData.assignee_id;
+
+  const isCompleted =
+    initialData.work_order_status === WorkOrderStatus.COMPLETED;
+
+  const isOpen = initialData.action === WorkOrderAction.OPEN;
+
+  const permissions = {
+    assignedBy: isAssignedBy && !isView && isOpen,
+    assignee: (isAssignedBy || isAssignee) && !isView && !isCompleted && isOpen
+  };
+
+  const defaultValues: Partial<MaintenanceProgressFormValues> = {
+    id: initialData?.id || '',
+    work_order_name: initialData?.work_order_name || '',
+    assignee_id: initialData?.assignee_id || '',
+    department: initialData?.department || '',
+    description: initialData?.description || '',
+
+    work_order_status: initialData?.work_order_status || '',
+    assignee_content: initialData?.assignee_content || '',
+    start_date: initialData.start_date,
+
+    end_date: initialData.end_date,
+    action: initialData?.action || '',
+    remarks: initialData?.remarks || '',
+    attachments: {
+      new: [],
+      keep: initialData.attachments ?? [],
+      delete: []
+    },
+    admin_attachments: {
+      new: [],
+      keep: initialData.admin_attachments ?? [],
+      delete: []
+    }
+  };
+
   const router = useRouter();
-  const form = useForm<z.infer<typeof maintenanceWorkFormSchema>>({
-    resolver: zodResolver(maintenanceWorkFormSchema)
-    // defaultValues
+  const form = useForm<MaintenanceProgressFormValues>({
+    resolver: zodResolver(maintenanceProgressSchema),
+    defaultValues
   });
 
-  const onSubmit = (values: z.infer<typeof maintenanceWorkFormSchema>) => {
-    console.log(values);
+  const { watch, setValue } = form;
+  const unit = watch('department');
+
+  const { data: usersData, isLoading: usersLoading } = useSearchUsers(
+    { tag: unit },
+    { enabled: !!unit }
+  );
+
+  const usersOptions = useMemo(() => {
+    if (!usersData?.users) return [];
+    return usersData.users.map((user) => ({
+      value: String(user.id),
+      label: `${user.first_name} ${user.last_name}`
+    }));
+  }, [usersData, usersLoading, unit]);
+
+  const actionsOptions = useMemo(() => {
+    return Object.values(WorkOrderAction).map((action) => ({
+      value: action,
+      label: WorkOrderActionLabel[action]
+    }));
+  }, []);
+
+  const statusOptions = useMemo(() => {
+    return Object.values(WorkOrderStatus)
+      .filter((status) => status !== WorkOrderStatus.CLOSED)
+      .map((status) => ({
+        value: status,
+        label: WorkOrderStatusLabel[status]
+      }));
+  }, []);
+
+  const updateWorkOrder = useUpdateWorkOrder();
+  const onSubmit = (values: MaintenanceProgressFormValues) => {
+    let payload: WorkOrderUpdateForm = {};
+    if (values.start_date && values.end_date) {
+      const { startDate, endDate } = normalizeStartEndDate(
+        values.start_date,
+        values.end_date
+      );
+      values.start_date = startDate;
+      values.end_date = endDate;
+    }
+    if (isAssignedBy) {
+      payload = {
+        ...payload,
+        ...values,
+        admin_attachments: {
+          new: newFiles,
+          keep: existingFiles,
+          delete:
+            initialData.admin_attachments?.filter(
+              (attach) =>
+                !existingFiles.some(
+                  (file) => file.file_name === attach.file_name
+                )
+            ) ?? []
+        },
+        attachments: {
+          new: newImages,
+          keep: existingImages,
+          delete:
+            initialData.attachments?.filter(
+              (attach) =>
+                !existingImages.some(
+                  (file) => file.file_name === attach.file_name
+                )
+            ) ?? []
+        },
+        work_order_status: values.work_order_status as WorkOrderStatus,
+        action: values.action as WorkOrderAction
+      };
+    }
+    if (isAssignee && !isAssignedBy) {
+      const {
+        attachments: _ignore1,
+        admin_attachments: _ignore2,
+        action: _ignore3,
+        ...safeValues
+      } = pickAllowedFields(values, CARD_FIELDS.card2);
+
+      payload = {
+        ...safeValues,
+        attachments: {
+          new: newImages,
+          keep: existingImages,
+          delete:
+            initialData.attachments?.filter(
+              (attach) =>
+                !existingImages.some(
+                  (file) => file.file_name === attach.file_name
+                )
+            ) ?? []
+        },
+        work_order_status: values.work_order_status as WorkOrderStatus
+      };
+    }
+    updateWorkOrder.mutateAsync({ workOrderId: initialData.id, data: payload });
   };
 
   return (
@@ -75,7 +227,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
       <span className='text-[16px] font-bold'>{pageTitle}</span>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='mt-2'>
-          <div className='flex items-start justify-between gap-8'>
+          <div className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8'>
             <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
@@ -85,7 +237,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
               <CardContent className='px-0'>
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='work_order_name'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
@@ -96,6 +248,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder='Nhập tên công việc'
                           {...field}
+                          disabled={!permissions.assignedBy}
                         />
                       </FormControl>
                       <FormMessage />
@@ -105,18 +258,30 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='department'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Đơn vị xử lý
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
-                          {...field}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={!permissions.assignedBy}
+                        >
+                          <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                            <SelectValue placeholder='Chọn đơn vị xử lý' />
+                          </SelectTrigger>
+                          <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                            <SelectItem value='team:support'>
+                              Team Support
+                            </SelectItem>
+                            <SelectItem value='team:technical'>
+                              Team Technical
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -125,18 +290,34 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='assignee_id'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Người xử lý
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
-                          {...field}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={!permissions.assignedBy}
+                        >
+                          <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                            <SelectValue placeholder='Chọn người thực hiện' />
+                          </SelectTrigger>
+                          <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                            {usersOptions.length > 0
+                              ? usersOptions.map((user) => (
+                                  <SelectItem
+                                    key={user.value}
+                                    value={user.value}
+                                  >
+                                    {user.label}
+                                  </SelectItem>
+                                ))
+                              : null}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -145,12 +326,13 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='description'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
                       <FormControl>
                         <Input
+                          disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder='Nhập tên công việc'
                           {...field}
@@ -163,7 +345,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='admin_attachments'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='!gap-1 text-xs font-bold'>
@@ -177,11 +359,29 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                       </FormLabel>
                       <FormControl>
                         <FileUpload
-                          // value={field.value}
-                          onChange={field.onChange}
+                          value={newFiles}
+                          onChange={(files) => {
+                            setNewFiles(files);
+                            form.setValue('admin_attachments.new', files);
+                          }}
                           multiple
-                          accept='.jpg,.png,.pdf,.doc,.docx'
+                          accept='.jpg,.png,.pdf,.doc,.docx,.xlsx,.xls'
                           maxHeight={105}
+                          existingFiles={existingFiles?.map((file) => ({
+                            file_name: file.file_name,
+                            file_url: file.file_url
+                          }))}
+                          onRemoveExisting={(file) => {
+                            setExistingFiles((prev) => {
+                              const updated = prev.filter(
+                                (f) => f.file_url !== file.file_url
+                              );
+                              form.setValue('admin_attachments.keep', updated);
+                              return updated;
+                            });
+                          }}
+                          maxFiles={5}
+                          disabled={!permissions.assignedBy}
                         />
                       </FormControl>
                       <FormMessage />
@@ -200,18 +400,36 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
               <CardContent className='px-0'>
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='work_order_status'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Trạng thái thiết bị
+                        Trạng thái tiến độ
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
-                          {...field}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={
+                            !permissions.assignee && !permissions.assignedBy
+                          }
+                        >
+                          <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                            <SelectValue placeholder='Chọn người thực hiện' />
+                          </SelectTrigger>
+                          <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                            {statusOptions.length > 0
+                              ? statusOptions.map((status) => (
+                                  <SelectItem
+                                    key={status.value}
+                                    value={status.value}
+                                  >
+                                    {status.label}
+                                  </SelectItem>
+                                ))
+                              : null}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -220,7 +438,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='assignee_content'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
@@ -228,6 +446,9 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={
+                            !permissions.assignee && !permissions.assignedBy
+                          }
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder='Nhập tên công việc'
                           {...field}
@@ -242,7 +463,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                   <div className='flex-1'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='start_date'
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
                           <FormLabel className='text-xs font-bold'>
@@ -253,6 +474,26 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                               mode='single'
                               className='!w-full !rounded-[4px] text-xs'
                               textClassname='!text-left'
+                              disablePastDate
+                              value={
+                                field.value
+                                  ? { from: new Date(field.value) }
+                                  : undefined
+                              }
+                              onChange={(val) => {
+                                if (!val?.from) return field.onChange(null);
+
+                                const d = val.from;
+                                const yyyy = d.getFullYear();
+                                const mm = String(d.getMonth() + 1).padStart(
+                                  2,
+                                  '0'
+                                );
+                                const dd = String(d.getDate()).padStart(2, '0');
+
+                                field.onChange(`${yyyy}-${mm}-${dd}`);
+                              }}
+                              disabled={!permissions.assignedBy}
                             />
                           </FormControl>
                           <FormMessage />
@@ -263,7 +504,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                   <div className='flex-1'>
                     <FormField
                       control={form.control}
-                      name='name'
+                      name='end_date'
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
                           <FormLabel className='text-xs font-bold'>
@@ -274,6 +515,26 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                               mode='single'
                               className='!w-full !rounded-[4px] text-xs'
                               textClassname='!text-left'
+                              disablePastDate
+                              value={
+                                field.value
+                                  ? { from: new Date(field.value) }
+                                  : undefined
+                              }
+                              onChange={(val) => {
+                                if (!val?.from) return field.onChange(null);
+
+                                const d = val.from;
+                                const yyyy = d.getFullYear();
+                                const mm = String(d.getMonth() + 1).padStart(
+                                  2,
+                                  '0'
+                                );
+                                const dd = String(d.getDate()).padStart(2, '0');
+
+                                field.onChange(`${yyyy}-${mm}-${dd}`);
+                              }}
+                              disabled={!permissions.assignedBy}
                             />
                           </FormControl>
                           <FormMessage />
@@ -285,14 +546,34 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='attachments'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Hình ảnh
                       </FormLabel>
                       <FormControl>
-                        <ImageUpload maxHeight={164} />
+                        <ImageUpload
+                          maxHeight={164}
+                          disabled={
+                            !permissions.assignee && !permissions.assignedBy
+                          }
+                          existingImages={existingImages}
+                          onRemoveExisting={(img) => {
+                            setExistingImages((prev) => {
+                              const updated = prev.filter(
+                                (i) => i.file_url !== img.file_url
+                              );
+                              form.setValue('attachments.keep', updated);
+                              return updated;
+                            });
+                          }}
+                          value={newImages}
+                          onChange={(files) => {
+                            setNewImages(files);
+                            form.setValue('attachments.new', files);
+                          }}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -310,18 +591,34 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
               <CardContent className='px-0'>
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='action'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
                         Trạng thái xử lý
                       </FormLabel>
                       <FormControl>
-                        <Input
-                          className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
-                          {...field}
-                        />
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          disabled={!permissions.assignedBy}
+                        >
+                          <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                            <SelectValue placeholder='Chọn người thực hiện' />
+                          </SelectTrigger>
+                          <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                            {actionsOptions.length > 0
+                              ? actionsOptions.map((action) => (
+                                  <SelectItem
+                                    key={action.value}
+                                    value={action.value}
+                                  >
+                                    {action.label}
+                                  </SelectItem>
+                                ))
+                              : null}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -330,7 +627,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
 
                 <FormField
                   control={form.control}
-                  name='name'
+                  name='remarks'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
@@ -338,6 +635,7 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
                       </FormLabel>
                       <FormControl>
                         <Input
+                          disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder='Nhập tên công việc'
                           {...field}
@@ -352,14 +650,36 @@ export default function WorkorderForm({ pageTitle }: MaintenanceFormProps) {
           </div>
 
           <div className='mt-2 mr-2.5 mb-3.5 flex h-[30px] items-center justify-end gap-4'>
-            <Button
-              onClick={() => router.push(`/dashboard/maintenance`)}
-              variant={'outline'}
-              type='button'
-              className='h-full w-16 rounded-[4px] text-xs'
-            >
-              Đóng
-            </Button>
+            {isView ? (
+              <Button
+                onClick={() => router.push(`/dashboard/maintenance`)}
+                variant={'outline'}
+                type='button'
+                className='h-full w-16 rounded-[4px] text-xs'
+              >
+                Đóng
+              </Button>
+            ) : (
+              <>
+                <Button
+                  onClick={() => router.push(`/dashboard/maintenance`)}
+                  variant={'outline'}
+                  type='button'
+                  className='h-full w-16 rounded-[4px] text-xs'
+                >
+                  Hủy
+                </Button>
+
+                <Button
+                  variant={'default'}
+                  type='submit'
+                  className='h-full w-[136px] rounded-[4px] text-xs'
+                  disabled={updateWorkOrder.isPending}
+                >
+                  {updateWorkOrder.isPending ? 'Đang cập nhật' : 'Cập nhật'}
+                </Button>
+              </>
+            )}
           </div>
         </form>
       </Form>

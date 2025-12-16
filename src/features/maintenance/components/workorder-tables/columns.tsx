@@ -1,7 +1,7 @@
 'use client';
 
 import { Checkbox } from '@/ui/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
+import { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import {
   WorkOderSeverityLabel,
@@ -13,55 +13,43 @@ import {
   WorkOrderStatusLabel
 } from '@/core/domains/workorders';
 import { formatDateTimeString } from '../../helper';
+import { User } from '@/core/domains/users';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
-  // {
-  //   id: 'dir',
-  //   accessorKey: 'dir',
-  //   header: 'Sắp xếp',
-  //   cell: () => {},
-  //   meta: {
-  //     label: 'Sắp xếp',
-  //     variant: 'select',
-  //     options: [
-  //       { label: 'Mới nhất', value: 'asc' },
-  //       { label: 'Cũ nhất', value: 'desc' }
-  //     ]
-  //   },
-  //   enableColumnFilter: true
-  // },
+export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
   {
-    accessorKey: 'check_box',
-    header: ({ table }) => {
-      return (
+    id: 'select',
+    header: ({ table }) => (
+      <div className='flex items-center justify-center'>
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
-      );
-    },
-    size: 50,
-    cell: ({ row }) => {
-      return (
-        <div className='flex w-full items-center gap-2'>
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label='Select row'
-            className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
-          />
-        </div>
-      );
-    },
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className='flex items-center justify-center'>
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label='Select row'
+        />
+      </div>
+    ),
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    maxSize: 50
   },
   {
     id: 'work_order_name',
     accessorKey: 'work_order_name',
-    header: 'Tên công việc',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên công việc' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('work_order_name')}</div>;
     },
@@ -70,20 +58,28 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
       placeholder: 'Tìm tên lịch',
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'measurement',
     accessorKey: 'measurement',
-    header: 'Tên cảnh báo',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Tên cảnh báo' />
+    ),
     cell: ({ row }) => {
       return <div>{row.getValue('measurement')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'severity',
     accessorKey: 'severity',
-    header: 'Ưu tiên',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Ưu tiên' />
+    ),
     cell: ({ row }) => {
       const severity = row.getValue('severity') as WorkOrderSeverity;
       const color =
@@ -97,12 +93,16 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
           {WorkOderSeverityLabel[severity]}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'work_order_status',
     accessorKey: 'work_order_status',
-    header: 'Trạng thái xử lý',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Trạng thái xử lý' />
+    ),
     cell: ({ row }) => {
       const status = row.getValue('work_order_status') as WorkOrderStatus;
       const color =
@@ -118,44 +118,64 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
           {WorkOrderStatusLabel[status]}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'start_date',
     accessorKey: 'start_date',
-    header: 'Thời gian bắt đầu',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thời gian bắt đầu' />
+    ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('start_date') as string);
       return <div>{time}</div>;
     },
-    meta: {
-      label: 'Thời gian bắt đầu',
-      variant: 'dateRangeSingle'
-    },
-    enableColumnFilter: true
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'department',
     accessorKey: 'department',
-    header: 'Đơn vị xử lý',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Đơn vị xử lý' />
+    ),
     cell: ({ row }) => {
       const department = row.getValue('department') as string;
       const name = department.split(':')[1];
       return <div>{name}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'assignee_id',
     accessorKey: 'assignee_id',
-    header: 'Người xử lý',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Người xử lý' />
+    ),
     cell: ({ row }) => {
-      return <div>{row.getValue('assignee_id')}</div>;
-    }
+      const assigneeId = row.getValue('assignee_id') as string;
+      if (!assigneeId) {
+        return <div>-</div>;
+      }
+      const user = users.find((u) => u.id === assigneeId);
+      return (
+        <div>
+          {user?.last_name} {user?.first_name}
+        </div>
+      );
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'action',
     accessorKey: 'action',
-    header: 'Trạng thái giám sát',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Trạng thái giám sát' />
+    ),
     cell: ({ row }) => {
       const actions = row.getValue('action') as WorkOrderAction;
       const color =
@@ -163,7 +183,7 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
           ? 'text-calendar-red'
           : actions === 'forward'
             ? 'text-yellow-2'
-            : actions === 'confirmed'
+            : actions === 'comfirmed'
               ? 'text-calendar-green'
               : 'text-calendar-gray';
       return (
@@ -171,34 +191,39 @@ export const workorderColumns = (): ColumnDef<WorkOrder>[] => [
           {WorkOrderActionLabel[actions]}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'end_date',
     accessorKey: 'end_date',
-    header: 'Thời gian kết thúc',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thời gian kết thúc' />
+    ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('end_date') as string);
       return <div>{time}</div>;
     },
-    meta: {
-      label: 'Thời gian bắt đầu',
-      variant: 'dateRangeSingle'
-    },
-    enableColumnFilter: true
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thao tác' />
+    ),
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
-      const workOrder = row.original;
+      const id = row.original.id;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction data={workOrder} id={workOrder.id} />}
+          {!isSubRow && <CellAction id={id} />}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

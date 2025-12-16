@@ -13,43 +13,44 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import WorkorderHistory from '../modal/workorder-history-dialog';
-import { WorkOrder } from '@/core/domains/workorders';
+import { useDeleteWorkOrder } from '@/core/domains/workorders';
 
 interface CellActionProps {
   id: string;
-  data: WorkOrder;
   disabled?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({
-  id,
-  data,
-  disabled
-}) => {
+export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [open, setOpen] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openView, setOpenView] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
 
-  // const handleConfirmDelete = () => {
-  //   if (!data) return;
-  // };
+  const deleteWorkOrder = useDeleteWorkOrder({
+    onSuccess: () => {
+      setOpen(false);
+    }
+  });
+
+  const handleConfirmDelete = () => {
+    if (!id) return;
+    deleteWorkOrder.mutate(id);
+  };
 
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
-        loading={deleteDeviceParent.isPending}
-      /> */}
-
-      <WorkorderHistory
-        open={openHistory}
-        onOpenChange={setOpenHistory}
-        data={data}
+        loading={deleteWorkOrder.isPending}
       />
+      {openHistory && (
+        <WorkorderHistory
+          open={openHistory}
+          onOpenChange={setOpenHistory}
+          id={id}
+        />
+      )}
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -82,7 +83,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
+            onClick={() => router.push(`/dashboard/maintenance/${id}/edit`)}
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>

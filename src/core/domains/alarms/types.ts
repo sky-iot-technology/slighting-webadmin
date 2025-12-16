@@ -10,6 +10,7 @@ export interface GetAlarmsParamsDto
   created_from?: string;
   created_to?: string;
   measurement?: string;
+  status?: string;
 }
 
 export interface AlarmResponse {
@@ -42,6 +43,15 @@ export interface Alarm {
   acknowledged_at: string;
   acknowledged_by: string;
   resolved_at: string;
+  metadata: Metadata;
+}
+
+export interface Metadata {
+  client_name: string;
+  imei: string;
+  model: string;
+  parent_group_id: string;
+  parent_group_path: string;
 }
 
 export type AlarmStatus = 'active' | 'open' | 'resolved' | 'ignored';
@@ -69,4 +79,13 @@ export interface AcknowledgedAlarm {
   status: AlarmStatus;
   acknowledged_by: string;
   acknowledged_at: string;
+  updated_by: string;
+  updated_at: string;
+}
+
+export interface CompletedAlarm {
+  status: AlarmStatus;
+  updated_by: string;
+  updated_at: string;
+  resolved_at: string;
 }

@@ -61,7 +61,7 @@ export default function PasswordForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className='flex h-full flex-col gap-3'
+            className='flex h-full w-full max-w-[420px] flex-col gap-3'
           >
             <FormField
               control={form.control}
@@ -72,12 +72,12 @@ export default function PasswordForm() {
                     Mật khẩu cũ
                   </FormLabel>
                   <FormControl>
-                    <div className='relative'>
+                    <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showOldPassword ? 'text' : 'password'}
                         placeholder='Nhập mật khẩu mới'
-                        className='!h-[51px] !w-[392px] !text-sm'
+                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='newpassword'
                       />
                       <button
@@ -107,12 +107,12 @@ export default function PasswordForm() {
                     Mật khẩu mới
                   </FormLabel>
                   <FormControl>
-                    <div className='relative'>
+                    <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showNewPassword ? 'text' : 'password'}
                         placeholder='Nhập mật khẩu mới'
-                        className='!h-[51px] !w-[392px] !text-sm'
+                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='newpassword'
                       />
                       <button
@@ -142,12 +142,12 @@ export default function PasswordForm() {
                     Xác nhận mật khẩu mới
                   </FormLabel>
                   <FormControl>
-                    <div className='relative'>
+                    <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showConfirmPassword ? 'text' : 'password'}
                         placeholder='Xác nhận mật khẩu mới'
-                        className='!h-[51px] !w-[392px] !text-sm'
+                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='confirmPassword'
                       />
                       <button

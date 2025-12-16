@@ -15,9 +15,7 @@ interface MaintenanceTableParams<TData, TValue> {
   onTableReady?: (table: Table<TData>) => void;
   isLoading?: boolean;
   error?: Error | null;
-  onSelectionChange?: (
-    data: { id: string; name: string; status: boolean }[]
-  ) => void;
+  onSelectionChange?: (ids: string[]) => void;
 }
 export function MaintenanceTable<TData, TValue>({
   data,
@@ -57,14 +55,12 @@ export function MaintenanceTable<TData, TValue>({
   React.useEffect(() => {
     if (!onSelectionChange) return;
 
-    const selectedRows = table.getSelectedRowModel().rows;
-    const selectedData = selectedRows.map((row) => ({
-      id: row.original.id,
-      name: row.original.measurement,
-      status: row.original.status === 'active'
-    }));
-    onSelectionChange(selectedData);
-  }, [table.getState().rowSelection]);
+    const selectedIds = table
+      .getSelectedRowModel()
+      .rows.map((row) => row.original.id as string);
+
+    onSelectionChange(selectedIds);
+  }, [table.getState().rowSelection, table.options.data]);
 
   return (
     <DataTable
@@ -72,9 +68,9 @@ export function MaintenanceTable<TData, TValue>({
       totalRows={totalItems}
       className='mt-1'
       wrapperClassName='rounded-[8px]'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}

@@ -222,18 +222,14 @@ export default function BranchForm({
                             {...field}
                             value={field.value ?? ''}
                             onChange={(e) => {
-                              let value = e.target.value.replace(/[^\d-]/g, '');
-                              const isNegative = value.startsWith('-');
-                              if (isNegative) value = value.slice(1);
-
-                              if (value.length > 2) {
-                                value = `${value.slice(0, 2)}.${value.slice(2)}`;
-                              }
-
-                              field.onChange(isNegative ? `-${value}` : value);
+                              const value = e.target.value.replace(
+                                /[^0-9.-]/g,
+                                ''
+                              );
+                              field.onChange(value);
                             }}
                             onBlur={() => {
-                              const num = parseFloat(String(field.value ?? ''));
+                              const num = Number(field.value);
                               if (!isNaN(num)) {
                                 const limited = Math.max(
                                   -180,
@@ -255,18 +251,14 @@ export default function BranchForm({
                             {...field}
                             value={field.value ?? ''}
                             onChange={(e) => {
-                              let value = e.target.value.replace(/[^\d-]/g, '');
-                              const isNegative = value.startsWith('-');
-                              if (isNegative) value = value.slice(1);
-
-                              if (value.length > 2) {
-                                value = `${value.slice(0, 2)}.${value.slice(2)}`;
-                              }
-
-                              field.onChange(isNegative ? `-${value}` : value);
+                              const value = e.target.value.replace(
+                                /[^0-9.-]/g,
+                                ''
+                              );
+                              field.onChange(value);
                             }}
                             onBlur={() => {
-                              const num = parseFloat(String(field.value ?? ''));
+                              const num = Number(field.value);
                               if (!isNaN(num)) {
                                 const limited = Math.max(
                                   -90,

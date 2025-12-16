@@ -56,9 +56,9 @@ export function BranchTable<TData, TValue>({
       totalRows={totalItems}
       className=''
       wrapperClassName='rounded-[8px] bg-white'
-      tableContainerClassName='!border-x-0 rounded-[4px] border-none !border-b-1'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}

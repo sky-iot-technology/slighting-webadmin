@@ -50,9 +50,9 @@ export default function ProfilePage() {
       <CardHeader className='px-0'>
         <CardTitle className='text-primary text-left text-[16px] font-bold'></CardTitle>
       </CardHeader>
-      <CardContent className='flex gap-1.5 px-0'>
-        <div className='h-[519px] w-[378px] rounded-[4px] bg-white px-[22px] pt-[44px]'>
-          <div className='mb-6 flex items-center gap-8'>
+      <CardContent className='flex flex-col gap-4 px-0 md:flex-row md:gap-1.5'>
+        <div className='w-full rounded-[4px] bg-white px-[22px] pt-[24px] md:h-[519px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
+          <div className='mb-6 flex flex-col items-center gap-4 md:flex-row md:gap-8'>
             <div className='group relative cursor-pointer'>
               <label htmlFor='avatar-upload' className='cursor-pointer'>
                 {user.profile_picture ? (
@@ -77,6 +77,7 @@ export default function ProfilePage() {
                 accept='image/*'
                 className='hidden'
                 onChange={async (e) => {
+                  console.log('FIRE upload event');
                   const file = e.target.files?.[0];
                   if (!file) return;
                   uploadAvatar.mutate(file);
@@ -84,14 +85,14 @@ export default function ProfilePage() {
               />
             </div>
 
-            <div className='flex flex-col'>
+            <div className='flex flex-col items-center md:items-start'>
               <span className='text-[26px] font-bold'>
                 {user.first_name} {user.last_name}
               </span>
               <span className='text-[14px] font-bold'>{user.email}</span>
             </div>
           </div>
-          <div className='flex flex-col items-start text-[14px]'>
+          <div className='flex flex-col items-center text-[14px] md:items-start'>
             <button
               type='button'
               onClick={() => setTab('profile')}

@@ -11,6 +11,7 @@ import {
   ChangePassDto,
   CreateUserDto,
   GetUsersParamsDto,
+  SearchUsersParamsDto,
   UpdateUserDto,
   User,
   UserListResponseDto
@@ -38,6 +39,32 @@ export const useGetUsers = (
   >({
     queryKey: [USERS_QUERY_KEY, params],
     queryFn: () => usersApi.getAll(params),
+    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    ...options
+  });
+};
+
+export const useSearchUsers = (
+  params?: SearchUsersParamsDto,
+  options?: Omit<
+    UseQueryOptions<
+      UserListResponseDto,
+      Error,
+      UserListResponseDto,
+      readonly [string, SearchUsersParamsDto?]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    UserListResponseDto,
+    Error,
+    UserListResponseDto,
+    readonly [string, SearchUsersParamsDto?]
+  >({
+    queryKey: [USERS_QUERY_KEY, params],
+    queryFn: () => usersApi.searchUser(params),
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
     ...options

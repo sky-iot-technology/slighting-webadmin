@@ -129,11 +129,18 @@ export function DataTableCustomToolbar<TData>({
       {...props}
     >
       <div className='flex flex-1 flex-wrap items-center justify-end gap-2'>
-        {columns
+        {/* {columns
           .filter((col) => col.id === 'name')
           .map((column) => (
             <DataTableToolbarFilter key={column.id} column={column} />
-          ))}
+          ))
+        } */}
+        {columns.map((column) => {
+          const columnMeta = column.columnDef.meta;
+          if (columnMeta?.variant === 'text') {
+            return <DataTableToolbarFilter key={column.id} column={column} />;
+          }
+        })}
 
         {columns.map((column) => {
           const meta: any = column.columnDef.meta;

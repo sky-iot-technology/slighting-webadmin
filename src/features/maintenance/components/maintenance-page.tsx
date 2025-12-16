@@ -18,12 +18,17 @@ import { Alarm, useGetAlarms } from '@/core/domains/alarms';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { useGetUsers } from '@/core/domains/users';
 import { useGetDevices } from '@/core/domains/devices';
-import { useGetWorkOrders, WorkOrder } from '@/core/domains/workorders';
+import {
+  useGetWorkOrders,
+  WorkOrder,
+  WorkOrderAction
+} from '@/core/domains/workorders';
+import { useAlarmFiltersFromParams } from '../hook/alarm-filter';
+import { useRouter } from 'next/navigation';
+import { useWorkOrderFiltersFromParams } from '../hook/work-filter';
 
 export default function MaintenancePage() {
-  const [selectedData, setSelectedData] = useState<
-    { id: string; name: string; status: boolean }[]
-  >([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const [activeTab, setActiveTab] = useState<string>('alert');
   const [open, setOpen] = useState(false);
@@ -33,6 +38,7 @@ export default function MaintenancePage() {
   const [workoderTable, setWorkoderTable] = useState<Table<WorkOrder> | null>(
     null
   );
+  const router = useRouter();
 
   const breadcrumbContent = useMemo(
     () => (
@@ -42,10 +48,11 @@ export default function MaintenancePage() {
     ),
     []
   );
-
   useCustomBreadcrumbContent(breadcrumbContent);
 
-  const { data, isLoading, error } = useGetAlarms();
+  const filters = useAlarmFiltersFromParams();
+  const { data, isLoading, error } = useGetAlarms({ ...filters });
+
   const { data: users, isLoading: usersLoad, error: usersErr } = useGetUsers();
   const {
     data: devices,
@@ -56,11 +63,12 @@ export default function MaintenancePage() {
   const loadingAll = isLoading || usersLoad || devicesLoad;
   const errorAll = error || usersErr || devicesErr;
 
+  const filtersWork = useWorkOrderFiltersFromParams();
   const {
     data: workorderData,
     isLoading: workorderLoading,
     error: workorderError
-  } = useGetWorkOrders();
+  } = useGetWorkOrders({ ...filtersWork });
 
   const maintenanceTableMemo = useMemo(() => {
     const alarms = data?.alarms ?? [];
@@ -71,7 +79,7 @@ export default function MaintenancePage() {
         totalItems={totalItems}
         columns={maintenanceColumns(users?.users || [], devices?.devices || [])}
         onTableReady={setMaintenanceTable}
-        onSelectionChange={(data) => setSelectedData(data)}
+        onSelectionChange={(data) => setSelectedIds(data)}
         isLoading={loadingAll}
         error={errorAll}
       />
@@ -85,7 +93,7 @@ export default function MaintenancePage() {
       <WorkorderTable
         data={workorders}
         totalItems={totalItems}
-        columns={workorderColumns()}
+        columns={workorderColumns(users?.users || [])}
         onTableReady={setWorkoderTable}
         isLoading={workorderLoading}
         error={workorderError}
@@ -93,13 +101,55 @@ export default function MaintenancePage() {
     );
   }, [workorderData, workorderLoading, workorderError]);
 
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const { pathname } = window.location;
+    const newUrl = new URL(pathname, window.location.origin);
+    router.replace(newUrl.toString());
+  };
+
+  const selectedAlarm = useMemo(() => {
+    if (selectedIds.length !== 1) return null;
+
+    return data?.alarms.find((alarm) => alarm.id === selectedIds[0]) ?? null;
+  }, [selectedIds, data?.alarms]);
+
+  const { data: selectedWorkOrderData, isLoading: loadingSelectedWorkOrder } =
+    useGetWorkOrders(
+      {
+        offset: 0,
+        limit: 1,
+        alarm_id: selectedAlarm?.id
+      },
+      {
+        enabled: !!selectedAlarm?.id
+      }
+    );
+
+  const selectedWorkOrder = useMemo(() => {
+    return selectedWorkOrderData?.woker_orders?.[0] ?? null;
+  }, [selectedWorkOrderData]);
+
+  const canCreateWorkOrder = useMemo(() => {
+    if (!selectedAlarm) return false;
+
+    if (selectedAlarm.status !== 'active') return false;
+
+    if (!selectedWorkOrder) return true;
+
+    return (
+      selectedWorkOrder.action === WorkOrderAction.FORWARD ||
+      selectedWorkOrder.action === WorkOrderAction.CANCEL
+    );
+  }, [selectedAlarm, selectedWorkOrder, loadingSelectedWorkOrder]);
+
   return (
     <div className='h-full w-full p-3'>
       <div className={`flex h-full w-full flex-1 flex-col bg-white pt-1`}>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
           <Tabs
             value={activeTab}
-            onValueChange={setActiveTab}
+            onValueChange={handleTabChange}
             className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
           >
             <TabsList className='flex !bg-transparent text-[12px]'>
@@ -126,10 +176,7 @@ export default function MaintenancePage() {
                   variant='default'
                   size='sm'
                   className='bg-primary hover:bg-primary/90 flex h-7.5 items-center !rounded-[4px] !px-2 text-white'
-                  disabled={
-                    selectedData.length !== 1 ||
-                    selectedData[0].status === false
-                  }
+                  disabled={!canCreateWorkOrder}
                   onClick={() => setOpen(true)}
                 >
                   <IconPlus className='h-4 w-4' />
@@ -152,8 +199,12 @@ export default function MaintenancePage() {
 
         {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
         <MaintenanceDialog
-          alarmId={selectedData.length === 1 ? selectedData[0].id : ''}
-          pageTitle={`Tạo công việc: ${selectedData.length === 1 ? selectedData[0].name : ''}`}
+          alarmId={selectedAlarm?.id ?? ''}
+          pageTitle={
+            selectedAlarm
+              ? `Tạo công việc: ${selectedAlarm.measurement}`
+              : 'Tạo công việc'
+          }
           open={open}
           onOpenChange={setOpen}
         />

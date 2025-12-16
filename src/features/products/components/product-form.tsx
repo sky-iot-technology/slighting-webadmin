@@ -284,7 +284,7 @@ export default function ProductForm({
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Kinh độ'
+                              placeholder='Vĩ độ'
                               {...field}
                               value={field.value || ''}
                               onChange={(e) =>
@@ -310,7 +310,7 @@ export default function ProductForm({
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Vĩ độ'
+                              placeholder='Kinh độ'
                               {...field}
                               value={field.value || ''}
                               onChange={(e) =>

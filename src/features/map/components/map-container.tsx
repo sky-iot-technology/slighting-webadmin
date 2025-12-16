@@ -8,8 +8,11 @@ import { SelectedRegion } from '@/ui/components/tree-group';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import GoongMap from '@/ui/business/map/goong-map';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { deviceDataLayer } from '../layer/device-data-layer';
 
 export default function MapContainer() {
+  // const [devices, setDevices] = useState<Device[]>([]);
+
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
@@ -26,7 +29,6 @@ export default function MapContainer() {
     ts: number;
   }>({ device: null, ts: 0 });
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion>(null);
-
   const { treeData, isLoading: isRegionsLoading } = useRegionTreeStore();
 
   const { data, isLoading, isFetching, error } = useGetDevices(
@@ -34,7 +36,6 @@ export default function MapContainer() {
     { enabled: !!selectedRegion }
   );
   const devices = data?.devices ?? [];
-  console.log(devices);
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {
       setSelectedRegion({
@@ -47,6 +48,36 @@ export default function MapContainer() {
   const handleRegionChange = useCallback((region: SelectedRegion) => {
     setSelectedRegion(region);
   }, []);
+
+  // useEffect(() => {
+  //   if (!selectedRegion) return;
+
+  //   setDevices([]);
+
+  //   const offDevice = deviceDataLayer.onDevice((device) => {
+  //     setDevices((prev) => [...prev, device]);
+  //   });
+
+  //   const offDone = deviceDataLayer.onDone(() => {
+  //     console.log('Load devices xong');
+  //   });
+
+  //   const offError = deviceDataLayer.onError((err) => {
+  //     console.error('Load device error', err);
+  //   });
+
+  //   deviceDataLayer.load({
+  //     group: selectedRegion.id,
+  //     limit: 10
+  //   });
+
+  //   return () => {
+  //     offDevice();
+  //     offDone();
+  //     offError();
+  //     deviceDataLayer.stop();
+  //   };
+  // }, [selectedRegion]);
 
   return (
     <div className='relative h-[calc(100dvh-52px)] w-full'>

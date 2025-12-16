@@ -1,8 +1,9 @@
-import { authenticatedApi, publicApi } from '@/core/shared/api';
+import { authenticatedApi } from '@/core/shared/api';
 import {
   ChangePassDto,
   CreateUserDto,
   GetUsersParamsDto,
+  SearchUsersParamsDto,
   UpdateProfileDto,
   UpdateRoleDto,
   UpdateUserDto,
@@ -23,6 +24,19 @@ export const usersApi = {
     });
     return response;
   },
+  async searchUser(
+    params?: SearchUsersParamsDto
+  ): Promise<UserListResponseDto> {
+    const response = await authenticatedApi.get<UserListResponseDto>(
+      `/users/search`,
+      {
+        params: {
+          ...params
+        }
+      }
+    );
+    return response;
+  },
   async changepass(data: ChangePassDto): Promise<void> {
     try {
       await authenticatedApi.patch<void>(`/users/secret`, data);
@@ -37,7 +51,7 @@ export const usersApi = {
   },
   async createUser(data: CreateUserDto): Promise<User> {
     try {
-      const response = await publicApi.post<User>(`/users`, data);
+      const response = await authenticatedApi.post<User>(`/users`, data);
       return response;
     } catch (error) {
       throw new Error('Failed to create user');
@@ -45,14 +59,14 @@ export const usersApi = {
   },
   async deleteUser(id: string): Promise<void> {
     try {
-      return await publicApi.delete(`/users/${id}`);
+      return await authenticatedApi.delete(`/users/${id}`);
     } catch (error) {
       throw new Error('Failed to delete user');
     }
   },
   async updateUserProfile(id: string, data: UpdateProfileDto): Promise<User> {
     try {
-      const response = await publicApi.patch<User>(`/users/${id}`, data);
+      const response = await authenticatedApi.patch<User>(`/users/${id}`, data);
       return response;
     } catch (error) {
       throw new Error('Failed to update profile user');
@@ -60,7 +74,10 @@ export const usersApi = {
   },
   async updateUserRole(id: string, data: UpdateRoleDto): Promise<User> {
     try {
-      const response = await publicApi.patch<User>(`/users/${id}/role`, data);
+      const response = await authenticatedApi.patch<User>(
+        `/users/${id}/role`,
+        data
+      );
       return response;
     } catch (error) {
       throw new Error('Failed to update role user');
@@ -84,14 +101,14 @@ export const usersApi = {
   },
   async enableUser(id: string): Promise<any> {
     try {
-      return await publicApi.post<any>(`/users/${id}/enable`);
+      return await authenticatedApi.post<any>(`/users/${id}/enable`);
     } catch (error) {
       throw new Error('Failed to enable user');
     }
   },
   async disableUser(id: string): Promise<any> {
     try {
-      return await publicApi.post<any>(`/users/${id}/disable`);
+      return await authenticatedApi.post<any>(`/users/${id}/disable`);
     } catch (error) {
       throw new Error('Failed to disable user');
     }
@@ -103,7 +120,7 @@ export const usersApi = {
       const formData = new FormData();
       formData.append('file', file);
 
-      const response = await publicApi.post<{
+      const response = await authenticatedApi.post<{
         url: string;
         path: string;
         name: string;
@@ -119,14 +136,14 @@ export const usersApi = {
   async deleteAvatar(url: string): Promise<void> {
     try {
       const path = extractPath(url);
-      return await publicApi.delete<void>(`/d/delete/${path}`);
+      return await authenticatedApi.delete<void>(`/d/delete/${path}`);
     } catch (error) {
       throw new Error('Failed to delete avatar user');
     }
   },
   async getUserById(id: string): Promise<User> {
     try {
-      const response = (await publicApi.get(`/users/${id}`)) as User;
+      const response = (await authenticatedApi.get(`/users/${id}`)) as User;
       return response;
     } catch (error) {
       throw new Error('Failed to view user');

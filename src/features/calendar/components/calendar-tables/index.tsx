@@ -71,10 +71,10 @@ export function CalendarTable<TData, TValue>({
       table={table}
       totalRows={totalItems}
       className='bg-background'
-      wrapperClassName='mx-1 mt-1 rounded-[4px]'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      wrapperClassName='rounded-[8px] bg-white'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal bg-white'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}

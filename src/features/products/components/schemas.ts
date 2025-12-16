@@ -31,6 +31,12 @@ const deviceAssetSchema = z.object({
   asset_attribute: z.array(assetAttributeSchema)
 });
 
+const numberOrUndefined = (val: unknown) => {
+  if (val === '' || val === undefined || val === null) return undefined;
+  const n = Number(val);
+  return isNaN(n) ? val : n;
+};
+
 // Main device form schema
 export const deviceFormSchema = z.object({
   // Image upload (optional)
@@ -68,26 +74,43 @@ export const deviceFormSchema = z.object({
 
   // Device info fields
   device_info: deviceInfoSchema.optional(),
-  lat: z
-    .number()
-    .or(z.string())
-    .optional()
-    .transform((val) => {
-      if (typeof val === 'string') {
-        return val === '' ? 0 : parseFloat(val);
-      }
-      return val || 0;
-    }),
-  lon: z
-    .number()
-    .or(z.string())
-    .optional()
-    .transform((val) => {
-      if (typeof val === 'string') {
-        return val === '' ? 0 : parseFloat(val);
-      }
-      return val || 0;
-    }),
+  // lat: z
+  //   .number()
+  //   .or(z.string())
+  //   .optional()
+  //   .transform((val) => {
+  //     if (typeof val === 'string') {
+  //       return val === '' ? 0 : parseFloat(val);
+  //     }
+  //     return val || 0;
+  //   }),
+  // lon: z
+  //   .number()
+  //   .or(z.string())
+  //   .optional()
+  //   .transform((val) => {
+  //     if (typeof val === 'string') {
+  //       return val === '' ? 0 : parseFloat(val);
+  //     }
+  //     return val || 0;
+  //   }),
+
+  lat: z.preprocess(
+    numberOrUndefined,
+    z
+      .number({ invalid_type_error: 'Vĩ độ phải là số' })
+      .min(-90, 'Vĩ độ phải ≥ -90')
+      .max(90, 'Vĩ độ phải ≤ 90')
+      .optional()
+  ),
+  lon: z.preprocess(
+    numberOrUndefined,
+    z
+      .number({ invalid_type_error: 'Kinh độ phải là số' })
+      .min(-180, 'Kinh độ phải ≥ -180')
+      .max(180, 'Kinh độ phải ≤ 180')
+      .optional()
+  ),
 
   // Additional fields
   address: z.string().optional(),

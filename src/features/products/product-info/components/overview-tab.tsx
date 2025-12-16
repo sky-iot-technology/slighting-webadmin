@@ -56,6 +56,15 @@ interface OverviewTabProps {
   device: Device;
 }
 
+const isValidLat = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -90 && n <= 90;
+};
+
+const isValidLon = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -180 && n <= 180;
+};
 // Form schema for editable fields
 const overviewFormSchema = z.object({
   // Required fields (matching deviceFormSchema)
@@ -68,8 +77,19 @@ const overviewFormSchema = z.object({
 
   // Optional fields
   imei: z.string().optional(),
-  lat: z.string().optional(),
-  lon: z.string().optional(),
+  lat: z
+    .string()
+    .optional()
+    .refine((v) => v === undefined || v === '' || isValidLat(v), {
+      message: 'Vĩ độ phải là số trong khoảng -90 đến 90'
+    }),
+
+  lon: z
+    .string()
+    .optional()
+    .refine((v) => v === undefined || v === '' || isValidLon(v), {
+      message: 'Kinh độ phải là số trong khoảng -180 đến 180'
+    }),
   address: z.string().optional(),
   note: z.string().optional(),
   manufacturer: z.string().optional(),
@@ -1056,7 +1076,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               sensorInfo.last_state?.[key]?.toString() || '';
                           } else {
                             _value = Array.isArray(sensorInfo.last_state?.[key])
-                              ? sensorInfo.last_state?.[key]?.join(' - ')
+                              ? sensorInfo.last_state?.[key]?.join(' _ ')
                               : '';
                           }
                           return (

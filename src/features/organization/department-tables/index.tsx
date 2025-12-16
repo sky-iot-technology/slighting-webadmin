@@ -54,11 +54,11 @@ export function DepartmentTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className='mt-3'
+      className='mt-1'
       wrapperClassName='rounded-[8px]'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}
