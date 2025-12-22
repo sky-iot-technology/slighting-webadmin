@@ -442,12 +442,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
           };
     }
 
-    console.log(updateData);
-
-    // updateDeviceMutation.mutate({
-    //   deviceId: device.id,
-    //   data: updateData
-    // });
+    updateDeviceMutation.mutate({
+      deviceId: device.id,
+      data: updateData
+    });
   };
 
   const handleCancel = () => {
