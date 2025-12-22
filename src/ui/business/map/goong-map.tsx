@@ -21,7 +21,7 @@ import {
 import Cabinet_info_panel from '@/features/map/components/cabinet_info_panel';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 
-const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
+const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_web.json';
 type SelectedRegion = { id: string; name: string } | null;
 
 type GoongMapProps = {
@@ -238,7 +238,13 @@ export default function GoongMap({
   useMapResize(mapContainerRef, mapRef, setViewport);
 
   return (
-    <div ref={mapContainerRef} className='absolute inset-0'>
+    <div
+      ref={mapContainerRef}
+      className='absolute inset-0'
+      onMouseDown={(e) => e.stopPropagation()}
+      onClick={(e) => e.stopPropagation()}
+      onContextMenu={(e) => e.preventDefault()}
+    >
       <ReactMapGL
         {...mapControllerProps}
         {...viewport}

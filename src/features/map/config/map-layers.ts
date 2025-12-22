@@ -18,12 +18,7 @@ export const createDeivcesGeoJSON = (
           id: device.id,
           lon: device.device_info.lon,
           lat: device.device_info.lat,
-          online:
-            device.warning && device.warning.trim() !== ''
-              ? 'warning'
-              : device.device_info.online
-                ? 'online'
-                : 'offline'
+          online: device.device_info.online ? 'online' : 'offline'
         }
       })
     )
@@ -76,8 +71,8 @@ export const unclusteredPointLayer: LayerProps = {
   layout: {
     'icon-image': [
       'case',
-      ['==', ['get', 'online'], 'warning'],
-      'cabinet-warning',
+      // ['==', ['get', 'online'], 'warning'],
+      // 'cabinet-warning',
       ['==', ['get', 'online'], 'online'],
       'cabinet-online',
       'cabinet-offline'

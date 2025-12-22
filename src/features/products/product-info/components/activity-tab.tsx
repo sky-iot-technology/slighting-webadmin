@@ -104,21 +104,21 @@ export function ActivityTab({ device }: ActivityTabProps) {
   );
 
   // Initialize switch states from device data (for both SWITCH and LIGHT devices)
-  useEffect(() => {
-    const devicesWithOnOff = [...switchDevices, ...lightDevices];
-    const newSwitchState = Object.fromEntries(
-      devicesWithOnOff.map((d) => [
-        d.device_id,
-        !!(d.last_state?.on as boolean | undefined)
-      ])
-    );
-    setSwitchState((prev) => {
-      if (JSON.stringify(prev) !== JSON.stringify(newSwitchState)) {
-        return newSwitchState;
-      }
-      return prev;
-    });
-  }, [switchDevices, lightDevices]);
+  // useEffect(() => {
+  //   const devicesWithOnOff = [...switchDevices, ...lightDevices];
+  //   const newSwitchState = Object.fromEntries(
+  //     devicesWithOnOff.map((d) => [
+  //       d.device_id,
+  //       !!(d.last_state?.on as boolean | undefined)
+  //     ])
+  //   );
+  //   setSwitchState((prev) => {
+  //     if (JSON.stringify(prev) !== JSON.stringify(newSwitchState)) {
+  //       return newSwitchState;
+  //     }
+  //     return prev;
+  //   });
+  // }, [switchDevices, lightDevices]);
 
   // Initialize brightness map from device data
   useEffect(() => {
@@ -269,7 +269,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
               ...prev,
               [deviceId]: status
             }));
-            setPending((p) => ({ ...p, [deviceId]: false }));
+            // setPending((p) => ({ ...p, [deviceId]: false }));
           },
           onError: () => {
             setPending((p) => ({ ...p, [deviceId]: false }));
