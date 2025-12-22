@@ -88,7 +88,7 @@ export default function OrganizationPage() {
           {activeTab === 'unit' && unitTable && (
             <DataTableCustomToolbar
               table={unitTable}
-              className='w-auto flex-1'
+              className='w-auto flex-1 py-3'
               actions={
                 <Button
                   variant='default'

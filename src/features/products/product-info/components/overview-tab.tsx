@@ -402,12 +402,15 @@ export function OverviewTab({ device }: OverviewTabProps) {
   const onSubmit = (values: OverviewFormValues) => {
     const asset_attribute = buildAssetAttributes(values);
 
-    const latValue = values.lat
-      ? parseFloat(values.lat) || (device.device_info?.lat ?? 0)
-      : (device.device_info?.lat ?? 0);
-    const lonValue = values.lon
-      ? parseFloat(values.lon) || (device.device_info?.lon ?? 0)
-      : (device.device_info?.lon ?? 0);
+    const latValue =
+      values.lat !== undefined && values.lat !== ''
+        ? Number(values.lat)
+        : (device.device_info?.lat ?? 0);
+
+    const lonValue =
+      values.lon !== undefined && values.lon !== ''
+        ? Number(values.lon)
+        : (device.device_info?.lon ?? 0);
 
     const updateData: Partial<Device> = {
       name: values.name,
@@ -439,10 +442,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
           };
     }
 
-    updateDeviceMutation.mutate({
-      deviceId: device.id,
-      data: updateData
-    });
+    console.log(updateData);
+
+    // updateDeviceMutation.mutate({
+    //   deviceId: device.id,
+    //   data: updateData
+    // });
   };
 
   const handleCancel = () => {

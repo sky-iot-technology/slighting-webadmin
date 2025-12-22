@@ -1,75 +1,72 @@
 'use client';
 
-import { useDataTable } from '@/core/shared/hooks/use-data-table';
 import { DataTable } from '@/ui/components/ui/table/data-table';
-import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 
+import { useDataTable } from '@/core/shared/hooks/use-data-table';
+
+import { ColumnDef, getExpandedRowModel, Table } from '@tanstack/react-table';
+import { parseAsInteger, useQueryState } from 'nuqs';
+import React, { useState } from 'react';
+import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
-import { ColumnDef } from '@tanstack/react-table';
-import { useRouter } from 'next/navigation';
-import { parseAsInteger, useQueryState } from 'nuqs';
+import OtaDialog from '../modal/ota-dialog';
 
-interface ProductTableParams<TData, TValue> {
+interface OtaTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
-  action?: React.ReactNode;
-  actionBar?: React.ReactNode;
   isLoading?: boolean;
   error?: Error | null;
 }
-
-export function ProductTable<TData, TValue>({
+export function OtaTable<TData, TValue>({
   data,
   totalItems,
   columns,
-  action,
-  actionBar,
   isLoading = false,
   error = null
-}: ProductTableParams<TData, TValue>) {
+}: OtaTableParams<TData, TValue>) {
+  const [open, setOpen] = useState(false);
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
-  const router = useRouter();
+
   const pageCount = Math.ceil(totalItems / pageSize);
 
   const { table } = useDataTable({
-    data, // product data
-    columns, // product columns
-    pageCount: pageCount,
-    shallow: false, //Setting to false triggers a network request with the updated querystring.
+    data,
+    columns,
+    pageCount,
+    shallow: false,
     debounceMs: 200,
-    enableColumnPinning: true
+    defaultVisibility: {
+      dir: false
+    }
   });
 
   return (
     <DataTable
       table={table}
       totalRows={totalItems}
-      // wrapperClassName='mx-1 mt-1 rounded-none'
+      className='mt-1'
+      wrapperClassName='rounded-[8px]'
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'
-      actionBar={actionBar}
+      rowClassName='text-xs font-normal'
       isLoading={isLoading}
       error={error}
       loadingRowCount={pageSize}
     >
-      {/* <DataTableToolbar table={table} /> */}
       <div className='flex items-center gap-2 py-3'>
         <DataTableCustomToolbar
           table={table}
           className='flex-1'
           actions={
             <>
-              {action}
               <Button
                 variant='default'
                 size='sm'
-                className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
-                onClick={() => {
-                  router.push('/dashboard/product/new');
-                }}
+                className='bg-primary hover:bg-primary/90 flex items-center rounded-[4px] text-white'
+                onClick={() => setOpen(true)}
               >
                 <IconPlus className='h-3 w-3' />
                 Thêm
@@ -80,6 +77,7 @@ export function ProductTable<TData, TValue>({
           filter
         />
       </div>
+      <OtaDialog pageTitle='Tạo mới Ota' open={open} onOpenChange={setOpen} />
     </DataTable>
   );
 }

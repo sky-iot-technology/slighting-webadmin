@@ -311,7 +311,7 @@
 //   return prevProps.device === nextProps.device;
 // });
 
-// 'use client';
+'use client';
 import {
   Device,
   useSetBrightnessLight,
@@ -477,17 +477,17 @@ function LightControl(props: LightInfo) {
                   key={device.device_id}
                   className='text-[9px] leading-5 hover:!bg-transparent'
                 >
-                  <TableCell className='flex items-center gap-3 px-2 py-2'>
+                  <TableCell className='flex items-center gap-4 p-1 pt-2'>
                     {/* Switch */}
                     <Switch
-                      className='data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-4'
+                      className='data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-6'
                       checked={isOn}
                       disabled={!isOnline || pending[id]}
                       onCheckedChange={(val) => handleToggleLight([id], val)}
                     />
 
                     {/* Icon + content */}
-                    <div className='flex flex-1 items-center gap-2'>
+                    <div className='flex w-full gap-1'>
                       {/* Icon */}
                       <Image
                         src={
@@ -498,7 +498,6 @@ function LightControl(props: LightInfo) {
                         alt={isOn ? 'lightOn' : 'lightOff'}
                         width={16}
                         height={16}
-                        className='shrink-0'
                       />
 
                       {/* Name + control */}
@@ -506,7 +505,7 @@ function LightControl(props: LightInfo) {
                         className={cn(
                           'grid items-center gap-1',
                           isLight
-                            ? 'w-[190px] grid-cols-[1fr_80px_36px]'
+                            ? 'w-[180px] grid-cols-[1fr_75px_32px]'
                             : 'w-[150px] grid-cols-[1fr]'
                         )}
                       >
@@ -523,6 +522,11 @@ function LightControl(props: LightInfo) {
                               step={1}
                               value={[brightness]}
                               disabled={!isOnline || !isOn || isPending}
+                              className={`[&_[data-slot=slider-thumb]]:border-primary ml-2 w-[75px] self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-2 [&_[data-slot=slider-thumb]]:!w-2 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px] ${
+                                device.last_state?.on
+                                  ? `[&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active`
+                                  : `[&_[data-slot=slider-track]]:bg-inactive-badge [&_[data-slot=slider-range]]:bg-map-range-slider-inactive`
+                              } `}
                               onValueChange={([val]) => {
                                 setBrightnessMap((prev) => ({
                                   ...prev,
@@ -562,10 +566,9 @@ function LightControl(props: LightInfo) {
                                   }
                                 );
                               }}
-                              className='self-center'
                             />
 
-                            <span className='min-w-[32px] text-right leading-none'>
+                            <span className='text-right leading-none'>
                               {brightness}%
                             </span>
                           </>
@@ -578,12 +581,12 @@ function LightControl(props: LightInfo) {
                   {idx === 0 && (
                     <TableCell
                       rowSpan={controllableDevices.length}
-                      className='pr-2 align-middle'
+                      className='pt-2 pr-[3px] align-top'
                     >
                       <div className='flex flex-col items-end gap-2'>
                         <Button
                           size='sm'
-                          className='bg-map-control-button-success h-4 w-[62px] rounded-[4px] text-[9px]'
+                          className='bg-map-control-button-success h-4 w-[58px] rounded-[4px] text-[9px]'
                           onClick={() =>
                             handleToggleLight(
                               controllableDevices.map((d) => d.device_id),
@@ -597,7 +600,7 @@ function LightControl(props: LightInfo) {
 
                         <Button
                           size='sm'
-                          className='bg-map-control-button-destructive h-4 w-[62px] rounded-[4px] text-[9px]'
+                          className='bg-map-control-button-destructive h-4 w-[58px] rounded-[4px] text-[9px]'
                           onClick={() =>
                             handleToggleLight(
                               controllableDevices.map((d) => d.device_id),

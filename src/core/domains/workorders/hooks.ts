@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { WorkOrderFormSchema } from '@/core/domains/workorders';
 import { useAuthStore } from '../auth';
 import { ALARMS_QUERY_KEY } from '../alarms/hooks';
+import { storageApi } from '../storage';
 
 export const WORKORDER_QUERY_KEY = 'workorders';
 
@@ -73,7 +74,7 @@ export const useCreateWorkOrder = (
       let attachments: Attachment[] = [];
       if (data.admin_attachments?.length) {
         attachments = (
-          await workorderApi.uploadAttachments(domainId, data.admin_attachments)
+          await storageApi.uploadAttachments(domainId, data.admin_attachments)
         ).map((file) => ({
           file_name: file.name,
           file_url: file.url
@@ -118,14 +119,14 @@ async function processAttachmentUpdate(
 
   //delete old files
   if (data.delete?.length) {
-    await workorderApi.deleteAttachments(
+    await storageApi.deleteAttachments(
       data.delete.map((file) => file.file_url)
     );
   }
 
   // 2. UPLOAD new files
   if (data.new?.length) {
-    const uploaded = await workorderApi.uploadAttachments(domainId, data.new);
+    const uploaded = await storageApi.uploadAttachments(domainId, data.new);
     finalList = [
       ...finalList,
       ...uploaded.map((f) => ({

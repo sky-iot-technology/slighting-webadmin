@@ -14,6 +14,9 @@ type TreeProviderProps = {
   treeClassName?: string;
   filter?: boolean;
   disabled?: boolean;
+
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 export function TreeProvider({
@@ -23,9 +26,19 @@ export function TreeProvider({
   buttonClassName,
   treeClassName,
   filter,
-  disabled
+  disabled,
+  open: openProp,
+  onOpenChange
 }: TreeProviderProps) {
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = openProp ?? internalOpen;
+
+  const setOpen = (value: boolean) => {
+    if (openProp === undefined) {
+      setInternalOpen(value);
+    }
+    onOpenChange?.(value);
+  };
   const { treeData } = useRegionTreeStore();
 
   return (
@@ -39,7 +52,7 @@ export function TreeProvider({
       <button
         disabled={disabled}
         type='button'
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => setOpen(!open)}
         className={cn(
           buttonClassName,
           'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',

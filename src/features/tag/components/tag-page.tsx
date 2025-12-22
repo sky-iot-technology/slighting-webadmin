@@ -119,7 +119,7 @@ export default function TagPage() {
           )}
 
           <div className='flex w-full flex-col'>
-            <div className='bg-white py-[6px]'>
+            <div className='bg-white py-3'>
               <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
                 <div className='flex items-center gap-2'>
                   <button

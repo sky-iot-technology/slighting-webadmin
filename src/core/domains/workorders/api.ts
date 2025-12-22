@@ -7,7 +7,6 @@ import {
   WorkOrderListResponse,
   WorkOrderUpdatePayload
 } from './types';
-import { usersApi } from '../users';
 
 export const workorderApi = {
   async getAll(params?: GetWorkOrderParamsDto): Promise<WorkOrderListResponse> {
@@ -45,77 +44,6 @@ export const workorderApi = {
     } catch (error: any) {
       console.error(error.message);
       throw new Error(`Failed to update Work Order`);
-    }
-  },
-  async uploadToDomain(
-    domainId: string,
-    file: File
-  ): Promise<{ url: string; path: string; name: string }> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await authenticatedApi.post<{
-        url: string;
-        path: string;
-        name: string;
-      }>(`/d/upload?domain=${domainId}`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      return response;
-    } catch (error) {
-      throw new Error('Failed to upload avatar user');
-    }
-  },
-  async uploadAttachments(
-    domainId: string,
-    files: File[]
-  ): Promise<{ url: string; path: string; name: string }[]> {
-    try {
-      const result = await Promise.allSettled(
-        files.map(async (file) => {
-          const res = this.uploadToDomain(domainId, file);
-          return res;
-        })
-      );
-
-      return result
-        .filter(
-          (
-            r
-          ): r is PromiseFulfilledResult<{
-            url: string;
-            path: string;
-            name: string;
-          }> => r.status === 'fulfilled'
-        )
-        .map((r) => ({
-          name: r.value.name,
-          url: r.value.url,
-          path: r.value.path
-        }));
-    } catch (error) {
-      throw new Error('Failed to upload attachments');
-    }
-  },
-  async deleteAttachments(
-    urls: string[]
-  ): Promise<{ path: string; success: boolean }[]> {
-    try {
-      const results = await Promise.allSettled(
-        urls.map(async (url) => {
-          await usersApi.deleteAvatar(url);
-          return { url, success: true };
-        })
-      );
-
-      return results.map((r, i) => ({
-        path: urls[i],
-        success: r.status === 'fulfilled'
-      }));
-    } catch (error) {
-      throw new Error('Failed to delete attachments');
     }
   },
   async getHistory(id: string): Promise<WorkOrderHistoryResponse> {

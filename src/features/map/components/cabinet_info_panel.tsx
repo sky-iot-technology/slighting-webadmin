@@ -39,7 +39,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
   }
 
   return (
-    <CustomScrollbar className='bg-background flex max-h-[calc(100dvh-140px)] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px]'>
+    <CustomScrollbar className='bg-background flex max-h-[600px] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
       <div className='bg-background sticky top-0 z-10'>
         <div className='my-2 ml-[20px] flex h-[67px] items-center gap-2.5'>
           <div className='relative flex-shrink-0'>

@@ -11,6 +11,7 @@ import { type User } from './types';
 import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { usersApi } from '../users';
+import { storageApi } from '../storage';
 
 // Query keys
 export const authKeys = {
@@ -199,12 +200,12 @@ export const useUploadAvatar = (
       if (!user) throw new Error('You must be logged in');
 
       const oldPath = user.profile_picture;
-      const uploaded = await usersApi.upload(file);
+      const uploaded = await storageApi.upload(file);
 
       await authApi.updateAvatar(user.id, uploaded.url);
 
       if (oldPath) {
-        await usersApi.deleteAvatar(oldPath);
+        await storageApi.deletefile(oldPath);
       }
 
       return uploaded;
@@ -242,7 +243,7 @@ export const useDeleteAvatar = (
     mutationFn: async (path) => {
       if (!user) throw new Error('You must be logged in');
 
-      await usersApi.deleteAvatar(path);
+      await storageApi.deletefile(path);
       await authApi.updateAvatar(user.id, '');
 
       return;

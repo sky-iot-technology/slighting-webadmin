@@ -64,7 +64,7 @@ export function UserTable<TData, TValue>({
     >
       <DataTableCustomToolbar
         table={table}
-        className='w-auto'
+        className='w-auto py-3'
         actions={
           <Button
             variant='default'

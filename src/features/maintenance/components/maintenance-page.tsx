@@ -170,7 +170,7 @@ export default function MaintenancePage() {
           {activeTab === 'alert' && maintenanceTable && (
             <DataTableCustomToolbar
               table={maintenanceTable}
-              className='w-auto flex-1'
+              className='w-auto flex-1 py-3'
               actions={
                 <Button
                   variant='default'
@@ -190,7 +190,7 @@ export default function MaintenancePage() {
           {activeTab === 'workorder' && workoderTable && (
             <DataTableCustomToolbar
               table={workoderTable}
-              className='w-auto flex-1'
+              className='w-auto flex-1 py-3'
               excel={false}
               onDeleteAll={() => alert('Fake delete triggered')}
             />

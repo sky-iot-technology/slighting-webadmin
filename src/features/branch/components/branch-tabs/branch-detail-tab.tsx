@@ -4,6 +4,7 @@ import { BranchActionMenu } from '../modal/action';
 import { findParentNode } from '@/features/calendar/helper';
 import { parseIsoDate } from '../../helper';
 import GoongMap from '@/ui/business/map/goong-map';
+import { cn } from '@/lib/utils';
 
 type BranchDetailTabProps = {
   selectedRegionId?: string;
@@ -30,16 +31,16 @@ export function BranchDetailTab({
   const hasRegion = !!selectedRegionId;
 
   return (
-    <div
-      className={`grid w-full flex-1 grid-cols-[var(--sidebar-width,285px)_1fr] overflow-hidden rounded-[8px] transition-all duration-200 ease-in-out`}
-      style={
-        {
-          '--sidebar-width': hasRegion ? '285px' : '0px'
-        } as React.CSSProperties
-      }
-    >
+    <div className='relative flex h-[calc(100dvh-52px)] w-full flex-col overflow-hidden rounded-[8px] md:h-full md:flex-row'>
       <div
-        className={`h-full w-[285px] rounded-l-[4px] bg-white px-6 pt-3 pb-5 transition-all duration-300 ease-in-out ${hasRegion ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'} `}
+        className={cn(
+          'bg-white px-6 pt-3 pb-5 transition-transform duration-300',
+          'w-full md:w-[285px]',
+          'relative',
+          hasRegion
+            ? 'translate-y-0 md:translate-x-0'
+            : '-translate-y-full md:-translate-x-full'
+        )}
       >
         <div className='flex flex-col gap-5 text-xs'>
           <div className='flex items-center justify-between'>
@@ -86,7 +87,7 @@ export function BranchDetailTab({
       </div>
 
       {/* Bản đồ */}
-      <div className='relative h-full w-full min-w-0 overflow-hidden rounded-r-[4px]'>
+      <div className='relative min-h-[300px] min-w-[1px] flex-1'>
         <GoongMap
           selectedRegion={{
             id: selectedRegionId ?? '',

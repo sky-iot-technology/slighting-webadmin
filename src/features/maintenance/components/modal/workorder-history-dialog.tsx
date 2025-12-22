@@ -151,7 +151,7 @@ export default function WorkorderHistory({
             </div>
 
             <div className='rounded-b-[8px] bg-white'>
-              <CustomScrollbar className='max-h-[30vw] max-w-[100vw] overflow-y-auto px-4 py-2'>
+              <CustomScrollbar className='max-h-[50dvh] max-w-[100vw] overflow-y-auto px-4 py-2'>
                 <div className='space-y-3'>
                   {historyData?.histories.map((data, index) => {
                     const user = usersData?.users.find(

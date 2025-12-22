@@ -22,6 +22,7 @@ import { useDeviceFiltersFromParams } from '../hook/device-filter';
 import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { cn } from '@/lib/utils';
 
 export default function BranchPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -111,21 +112,38 @@ export default function BranchPage() {
       <div className='h-full w-full rounded-[4px] pb-[7px]'>
         <div className='flex h-full w-full'>
           <div
-            className={`overflow-hidden rounded-[1px_1px_4px_4px] bg-white transition-all duration-300 ${treeOpen ? 'w-64' : 'w-0'}`}
+            className={cn(
+              'bg-white transition-all duration-300 ease-in-out',
+              'overflow-hidden rounded-[1px_1px_4px_4px]',
+              // mobile drawer
+              'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full',
+              // desktop static
+              'md:static md:z-auto md:w-64 md:translate-x-0 md:overflow-visible',
+              treeOpen && 'translate-x-0 md:w-64',
+              !treeOpen && 'md:w-0'
+            )}
           >
-            <BranchSidebar
-              selectedRegion={selectedRegion}
-              onRegionChange={handleRegionChange}
-            />
+            {treeOpen && (
+              <BranchSidebar
+                selectedRegion={selectedRegion}
+                onRegionChange={handleRegionChange}
+              />
+            )}
           </div>
+          {treeOpen && (
+            <div
+              className='fixed inset-0 z-40 bg-black/40 backdrop-blur-sm md:hidden'
+              onClick={() => setTreeOpen(false)}
+            />
+          )}
           <div className='flex w-full flex-col'>
-            <div className='bg-white py-[6px]'>
+            <div className='bg-white py-3'>
               {selectedRegion && (
                 <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
                   <div className='flex items-center gap-2'>
                     <button
                       onClick={handleToggleSidebar}
-                      className='cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                      className='flex cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                     >
                       <Image
                         src={
@@ -141,7 +159,7 @@ export default function BranchPage() {
                     <Tabs
                       value={activeTab}
                       onValueChange={setActiveTab}
-                      className='w-full flex-shrink-0 sm:w-auto'
+                      className='min-w-0 flex-1 sm:w-auto'
                     >
                       <TabsList className='flex bg-transparent text-[14px] font-medium'>
                         <TabsTrigger

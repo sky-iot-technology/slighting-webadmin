@@ -169,6 +169,15 @@ export const Icons = {
       className='dark:invert'
     />
   ),
+  firmware: () => (
+    <Image
+      src={'/assets/icons/firmware.svg'}
+      alt='firmware'
+      width={17}
+      height={17}
+      className='dark:invert'
+    />
+  ),
   setting: () => (
     <Image
       src={'/assets/icons/setting.svg'}

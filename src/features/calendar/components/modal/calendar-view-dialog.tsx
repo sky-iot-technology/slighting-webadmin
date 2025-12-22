@@ -192,7 +192,7 @@ export function CalendarViewDialog({
                   <span
                     className='cursor-pointer text-right text-blue-500 italic'
                     onClick={() =>
-                      router.push(`/dashboard/product/info/${data.id}`)
+                      router.push(`/dashboard/product/info/${data.client_id}`)
                     }
                   >
                     Xem chi tiết

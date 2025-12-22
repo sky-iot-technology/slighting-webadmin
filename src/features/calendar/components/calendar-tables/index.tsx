@@ -81,44 +81,46 @@ export function CalendarTable<TData, TValue>({
       error={error}
       loadingRowCount={pageSize}
     >
-      <div className='flex items-center gap-2 bg-white'>
-        {onToggleSidebar && (
-          <button
-            onClick={onToggleSidebar}
-            className='min-h-[12px] min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
-          >
-            {isSidebarOpen ? (
+      <div className='flex flex-col gap-2 bg-white py-3 md:flex-row md:items-center md:gap-2'>
+        <div className='flex gap-2'>
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className='min-h-[12px] min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
+            >
+              {isSidebarOpen ? (
+                <Image
+                  src='/assets/icons/chevronLeft.svg'
+                  alt='chevronLeft'
+                  width={4.5}
+                  height={8.25}
+                  className='shrink-0'
+                />
+              ) : (
+                <Image
+                  src='/assets/icons/chevronRight.svg'
+                  alt='chevronRight'
+                  width={4.5}
+                  height={8.25}
+                  className='shrink-0'
+                />
+              )}
+            </button>
+          )}
+          <h3 className='text-xl font-bold'>Danh sách lịch</h3>
+          {region && region.icon && (
+            <Badge className='bg-gray-1'>
               <Image
-                src='/assets/icons/chevronLeft.svg'
-                alt='chevronLeft'
-                width={4.5}
-                height={8.25}
-                className='shrink-0'
+                src={region.icon || '/assets/icons/default-region.svg'}
+                alt='region icon'
+                width={14}
+                height={14}
+                className='h-[14px] w-[14px]'
               />
-            ) : (
-              <Image
-                src='/assets/icons/chevronRight.svg'
-                alt='chevronRight'
-                width={4.5}
-                height={8.25}
-                className='shrink-0'
-              />
-            )}
-          </button>
-        )}
-        <h3 className='text-xl font-bold'>Danh sách lịch</h3>
-        {region && region.icon && (
-          <Badge className='bg-gray-1'>
-            <Image
-              src={region.icon || '/assets/icons/default-region.svg'}
-              alt='region icon'
-              width={14}
-              height={14}
-              className='h-[14px] w-[14px]'
-            />
-            <span className='text-xs text-black'>{region.name}</span>
-          </Badge>
-        )}
+              <span className='text-xs text-black'>{region.name}</span>
+            </Badge>
+          )}
+        </div>
 
         <DataTableCustomToolbar
           table={table}

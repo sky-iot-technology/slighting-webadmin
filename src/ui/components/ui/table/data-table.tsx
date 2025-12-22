@@ -126,38 +126,73 @@ export function DataTable<TData>({
                     </TableRow>
                   ) : table.getRowModel().rows?.length ? (
                     // Normal state: show data rows
-                    table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && 'selected'}
-                        className={cn(
-                          'data-[state=selected]:bg-calendar-table-select',
-                          rowClassName,
-                          row.depth > 0 && 'bg-calendar-table-children',
-                          getRowClassName?.(row.original)
-                        )}
-                      >
-                        {row.getVisibleCells().map((cell, cellIndex) => (
-                          <TableCell
-                            key={cell.id}
-                            style={{
-                              ...getCommonPinningStyles({
-                                column: cell.column
-                              }),
-                              ...(cellIndex === 0 && row.depth > 0
-                                ? { paddingLeft: `${row.depth * 20 + 8}px` }
-                                : {})
-                            }}
-                            className={cn(cellClassName)}
+                    table.getRowModel().rows.map((row) => {
+                      const original = row.original as any;
+                      const spanColumns = table
+                        .getVisibleLeafColumns()
+                        .filter((col) => col.id !== 'select').length;
+                      if (original?.isProgress) {
+                        return (
+                          <TableRow
+                            key={row.id}
+                            className='!border-none hover:!bg-transparent'
                           >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))
+                            <TableCell className='w-[40px] border-none' />
+                            <TableCell
+                              colSpan={spanColumns}
+                              className='px-3 py-1'
+                            >
+                              <div className='flex w-full items-center gap-2'>
+                                {/* Progress bar */}
+                                <div className='h-1 flex-1 overflow-hidden rounded bg-gray-200'>
+                                  <div
+                                    className='bg-map-filter h-1 transition-all'
+                                    style={{ width: `${original.progress}%` }}
+                                  />
+                                </div>
+
+                                {/* Percent text */}
+                                <span className='text-muted-foreground text-xs whitespace-nowrap'>
+                                  {original.progress}%
+                                </span>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      }
+                      return (
+                        <TableRow
+                          key={row.id}
+                          data-state={row.getIsSelected() && 'selected'}
+                          className={cn(
+                            'data-[state=selected]:bg-calendar-table-select',
+                            rowClassName,
+                            row.depth > 0 && 'bg-calendar-table-children',
+                            getRowClassName?.(row.original)
+                          )}
+                        >
+                          {row.getVisibleCells().map((cell, cellIndex) => (
+                            <TableCell
+                              key={cell.id}
+                              style={{
+                                ...getCommonPinningStyles({
+                                  column: cell.column
+                                }),
+                                ...(cellIndex === 0 && row.depth > 0
+                                  ? { paddingLeft: `${row.depth * 20 + 8}px` }
+                                  : {})
+                              }}
+                              className={cn(cellClassName)}
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      );
+                    })
                   ) : (
                     // Empty state
                     <TableRow>

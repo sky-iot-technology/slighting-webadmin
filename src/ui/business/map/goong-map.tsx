@@ -57,7 +57,6 @@ export default function GoongMap({
     zoom: 5
   });
   const [lastViewport, setLastViewport] = useState<ViewportProps>({});
-  const [isScrollZoom, setIsScrollZoom] = useState(true);
   const [popupInfo, setPopupInfo] = useState<number | string | null>(null);
   const [needsInitialization, setNeedsInitialization] = useState(true);
 
@@ -73,7 +72,6 @@ export default function GoongMap({
     if (!lon || !lat) return;
 
     setPopupInfo(id);
-    setIsScrollZoom(false);
 
     setViewport((prev) => ({
       ...prev,
@@ -89,9 +87,21 @@ export default function GoongMap({
     (devices: Device[], options: FitBoundsOptions = {}) => {
       if (!devices.length) return;
 
-      const devicesWithCoords = devices.filter(
-        (d) => d.device_info?.lon && d.device_info?.lat
-      );
+      const devicesWithCoords = devices.filter((d) => {
+        const lon = d.device_info?.lon;
+        const lat = d.device_info?.lat;
+
+        return (
+          typeof lon === 'number' &&
+          typeof lat === 'number' &&
+          Number.isFinite(lon) &&
+          Number.isFinite(lat) &&
+          lon >= -180 &&
+          lon <= 180 &&
+          lat >= -90 &&
+          lat <= 90
+        );
+      });
       if (!devicesWithCoords.length) return;
 
       const longs = devicesWithCoords.map((d) => d.device_info.lon);
@@ -100,9 +110,15 @@ export default function GoongMap({
       const container = mapContainerRef.current;
       if (!container) return;
 
+      const width = container.clientWidth || window.innerWidth;
+      const height = container.clientHeight || window.innerHeight;
+
+      if (!width || !height) {
+        return;
+      }
       const { longitude, latitude, zoom } = new WebMercatorViewport({
-        width: container.clientWidth || window.innerWidth,
-        height: container.clientHeight || window.innerHeight
+        width,
+        height
       }).fitBounds(
         [
           [Math.min(...longs), Math.min(...lats)],
@@ -169,11 +185,21 @@ export default function GoongMap({
       !isFetching &&
       devices.length > 0
     ) {
-      const devicesWithCoords = devices.filter(
-        (x) => x.device_info?.lon && x.device_info?.lat
-      );
+      const devicesWithCoords = devices.filter((x) => {
+        const lon = x.device_info?.lon;
+        const lat = x.device_info?.lat;
 
-      console.log(devices);
+        return (
+          typeof lon === 'number' &&
+          typeof lat === 'number' &&
+          !Number.isNaN(lon) &&
+          !Number.isNaN(lat) &&
+          lon >= -180 &&
+          lon <= 180 &&
+          lat >= -90 &&
+          lat <= 90
+        );
+      });
 
       if (devicesWithCoords.length === 0) {
         setNeedsInitialization(false);
@@ -183,41 +209,6 @@ export default function GoongMap({
         zoom: devicesWithCoords.length === 1 ? 14 : undefined,
         saveLastViewport: true
       });
-      // const longs = devicesWithCoords.map((x) => x.device_info.lon);
-      // const lats = devicesWithCoords.map((x) => x.device_info.lat);
-
-      // const container = mapContainerRef.current;
-      // if (!container) return;
-
-      // const { longitude, latitude, zoom } = new WebMercatorViewport({
-      //   width: container.clientWidth || window.innerWidth,
-      //   height: container.clientHeight || window.innerHeight
-      // }).fitBounds(
-      //   [
-      //     [Math.min(...longs), Math.min(...lats)],
-      //     [Math.max(...longs), Math.max(...lats)]
-      //   ],
-      //   {
-      //     padding: 100
-      //   }
-      // );
-
-      // const newViewport: ViewportProps = {
-      //   longitude,
-      //   latitude,
-      //   zoom: devicesWithCoords.length === 1 ? 14 : zoom,
-      //   transitionInterpolator: new FlyToInterpolator(),
-      //   transitionEasing: (t) => t
-      // };
-
-      // setViewport((prev) => ({
-      //   ...prev,
-      //   ...newViewport
-      // }));
-      // setLastViewport((prev) => ({
-      //   ...prev,
-      //   ...newViewport
-      // }));
       setTransitionDuration(1000);
       setNeedsInitialization(false);
     } else if (
@@ -259,10 +250,9 @@ export default function GoongMap({
         ref={mapRef}
         mapStyle={mapStyle}
         onViewportChange={handleViewportChange}
-        scrollZoom={isScrollZoom}
+        scrollZoom={true}
         transitionDuration={transitionDuration}
         onClick={(e) => {
-          setIsScrollZoom(true);
           setPopupInfo(null);
           onClick(e);
         }}

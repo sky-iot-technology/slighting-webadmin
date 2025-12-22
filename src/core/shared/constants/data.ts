@@ -95,6 +95,14 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
+    title: 'Quản lý Firmware',
+    url: '/dashboard/ota',
+    icon: 'firmware',
+    shortcut: ['m', 'm'],
+    isActive: false,
+    items: []
+  },
+  {
     title: 'Cài đặt',
     url: '/dashboard/setting',
     icon: 'setting',

@@ -113,34 +113,6 @@ export const usersApi = {
       throw new Error('Failed to disable user');
     }
   },
-  async upload(
-    file: File
-  ): Promise<{ url: string; path: string; name: string }> {
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const response = await authenticatedApi.post<{
-        url: string;
-        path: string;
-        name: string;
-      }>('/d/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      return response;
-    } catch (error) {
-      throw new Error('Failed to upload avatar user');
-    }
-  },
-  async deleteAvatar(url: string): Promise<void> {
-    try {
-      const path = extractPath(url);
-      return await authenticatedApi.delete<void>(`/d/delete/${path}`);
-    } catch (error) {
-      throw new Error('Failed to delete avatar user');
-    }
-  },
   async getUserById(id: string): Promise<User> {
     try {
       const response = (await authenticatedApi.get(`/users/${id}`)) as User;
@@ -150,8 +122,3 @@ export const usersApi = {
     }
   }
 };
-
-function extractPath(url: string): string {
-  const parts = url.split('/uploads/');
-  return parts[1] ? `/uploads/${parts[1]}` : '';
-}
