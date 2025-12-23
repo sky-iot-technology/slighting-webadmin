@@ -20,7 +20,7 @@ export const useRegionTreeStore = create<RegionTreeState>()(
     fetchTree: async () => {
       set({ isLoading: true, error: null });
       try {
-        const res = await groupsApi.getAll();
+        const res = await groupsApi.getAll({ limit: 100 });
         const tree = buildRegionTree(res.groups);
         set({ treeData: tree, isLoading: false });
       } catch (err: any) {

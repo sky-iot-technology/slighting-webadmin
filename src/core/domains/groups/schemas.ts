@@ -6,9 +6,16 @@ export const branchFormSchema = z.object({
   description: z.string().optional().default(''),
   metadata: z
     .object({
-      lat: z.number().min(-90).max(90),
-      long: z.number().min(-180).max(180)
+      lat: z.coerce
+        .number()
+        .min(-90, 'Vĩ độ phải ≥ -90')
+        .max(90, 'Vĩ độ phải ≤ 90')
+        .optional(),
+      long: z.coerce
+        .number()
+        .min(-180, 'Kinh độ phải ≥ -180')
+        .max(180, 'Kinh độ phải ≤ 180')
+        .optional()
     })
-    .partial()
     .optional()
 });

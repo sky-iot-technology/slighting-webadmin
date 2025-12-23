@@ -1,13 +1,14 @@
 'use client';
 
 import { SelectedRegion } from '@/ui/components/tree-group';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { CalendarContent } from './calendar-content';
 import { CalendarSidebar } from './calendar-sidebar';
 import { cn } from '@/lib/utils';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
 
 export default function CalendarPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -17,6 +18,8 @@ export default function CalendarPage() {
   );
 
   const [searchTerm, setSearchTerm] = useState('');
+
+  const { treeData } = useRegionTreeStore();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -53,13 +56,8 @@ export default function CalendarPage() {
   const handleRegionChange = useCallback(
     (region: SelectedRegion) => {
       const newUrl = new URL(pathname, window.location.origin);
-      if (selectedRegion?.id === region?.id) {
-        setSelectedRegion(null);
-        newUrl.searchParams.delete('page');
-      } else {
-        setSelectedRegion(region);
-        newUrl.searchParams.set('page', '1');
-      }
+      setSelectedRegion(region);
+      newUrl.searchParams.set('page', '1');
       router.push(newUrl.toString());
     },
     [pathname, router, selectedRegion]
@@ -68,6 +66,15 @@ export default function CalendarPage() {
   const handleToggleSidebar = useCallback(() => {
     setTreeOpen((prev) => !prev);
   }, []);
+
+  useEffect(() => {
+    if (treeData?.length && !selectedRegion) {
+      setSelectedRegion({
+        id: treeData[0].id,
+        name: treeData[0].name
+      });
+    }
+  }, [treeData, selectedRegion]);
 
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>

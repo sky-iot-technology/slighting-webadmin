@@ -265,7 +265,7 @@ export const useQueryStatus = (
   const queryClient = useQueryClient();
   const attempt = useRef(0);
   const hasStopped = useRef(false);
-  const MAX_ATTEMPTS = 100; // Increased for longer polling
+  const MAX_ATTEMPTS = 10; // Increased for longer polling
   const pollIntervalRef = useRef(pollInterval || 3000);
   const onStoppedRef = useRef(onStopped);
 

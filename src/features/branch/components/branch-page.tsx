@@ -143,7 +143,7 @@ export default function BranchPage() {
                   <div className='flex items-center gap-2'>
                     <button
                       onClick={handleToggleSidebar}
-                      className='flex cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                      className='ml-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                     >
                       <Image
                         src={
@@ -203,7 +203,6 @@ export default function BranchPage() {
                                 </Button>
                               }
                               excel={true}
-                              onDeleteAll={() => console.log('2122121')}
                             />
 
                             <BranchAddDevice

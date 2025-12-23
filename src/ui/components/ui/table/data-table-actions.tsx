@@ -138,30 +138,34 @@ export function DataTableActionsPopover<TData>({
           className='hidden'
           onChange={handleImport}
         />
+        {onDeleteAll && (
+          <>
+            <Button
+              variant='ghost'
+              size='sm'
+              className='text-destructive hover:!text-destructive w-full justify-start text-xs'
+              onClick={() => {
+                setAlertOpen(true);
+              }}
+            >
+              <Trash2 className='mr-0.5 h-4 w-4' />
+              Xóa đã chọn
+              {table.getSelectedRowModel().rows.length > 0 && (
+                <span className='text-destructive'>
+                  ({table.getSelectedRowModel().rows.length})
+                </span>
+              )}
+            </Button>
 
-        <Button
-          variant='ghost'
-          size='sm'
-          className='text-destructive hover:!text-destructive w-full justify-start text-xs'
-          onClick={() => {
-            setAlertOpen(true);
-          }}
-        >
-          <Trash2 className='mr-0.5 h-4 w-4' />
-          Xóa đã chọn
-          {table.getSelectedRowModel().rows.length > 0 && (
-            <span className='text-destructive'>
-              ({table.getSelectedRowModel().rows.length})
-            </span>
-          )}
-        </Button>
+            <AlertModal
+              isOpen={alertOpen}
+              onClose={() => setAlertOpen(false)}
+              onConfirm={handleDelete}
+              loading={false}
+            />
+          </>
+        )}
 
-        <AlertModal
-          isOpen={alertOpen}
-          onClose={() => setAlertOpen(false)}
-          onConfirm={handleDelete}
-          loading={false}
-        />
         {excel && (
           <>
             <Button

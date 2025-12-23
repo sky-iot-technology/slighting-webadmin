@@ -281,17 +281,17 @@ export const columns: ColumnDef<Calendar>[] = [
     },
     enableColumnFilter: true
   },
-  {
-    id: 'group',
-    accessorKey: 'group',
-    header: 'Chi nhánh',
-    cell: () => {},
-    meta: {
-      label: 'Chi nhánh',
-      variant: 'regionTree'
-    },
-    enableColumnFilter: true
-  },
+  // {
+  //   id: 'group',
+  //   accessorKey: 'group',
+  //   header: 'Chi nhánh',
+  //   cell: () => {},
+  //   meta: {
+  //     label: 'Chi nhánh',
+  //     variant: 'regionTree'
+  //   },
+  //   enableColumnFilter: true
+  // },
   {
     id: 'device_sync',
     accessorKey: 'device_sync',

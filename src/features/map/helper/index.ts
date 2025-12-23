@@ -1,10 +1,4 @@
 import { Device } from '@/core/domains/devices';
-import {
-  GroupListResponseDto,
-  GroupNode,
-  RegionNode
-} from '@/core/domains/groups';
-
 export function getSensorAttributes(data: Device) {
   if (!data || !Array.isArray(data.devices)) {
     return null;

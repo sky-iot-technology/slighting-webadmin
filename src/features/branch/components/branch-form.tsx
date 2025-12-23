@@ -84,6 +84,8 @@ export default function BranchForm({
     defaultValues
   });
 
+  console.log(form.formState.errors);
+
   const createMutation = useCreateGroup({
     onSuccess: () => {
       if (onClose) onClose();

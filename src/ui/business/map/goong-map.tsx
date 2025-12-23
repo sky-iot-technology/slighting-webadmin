@@ -249,9 +249,7 @@ export default function GoongMap({
         {...mapControllerProps}
         {...viewport}
         interactiveLayerIds={
-          mapRef.current?.getMap().getLayer('devices-clusters')
-            ? ['devices-clusters', 'devices-unclustered']
-            : []
+          !isMapLoading ? ['devices-clusters', 'devices-unclustered'] : []
         }
         ref={mapRef}
         mapStyle={mapStyle}
@@ -264,7 +262,6 @@ export default function GoongMap({
         }}
         onLoad={(evt: any) => {
           const map = evt.target;
-          setIsMapLoading(true);
           map.on('idle', () => {
             setIsMapLoading(false);
           });

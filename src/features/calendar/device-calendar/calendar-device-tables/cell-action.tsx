@@ -48,14 +48,14 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
       />
 
       {/* ✏️ Edit */}
-      {openEdit && (
+      {/* {openEdit && (
         <CalendarDeviceDialog
           pageTitle='Chỉnh sửa lịch'
           open={openEdit}
           onOpenChange={setOpenEdit}
           calendarId={id}
         />
-      )}
+      )} */}
 
       {/* View */}
       {openView && (
@@ -96,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
             <span>Chi tiết</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
+          {/* <DropdownMenuItem
             onClick={() => setOpenEdit(true)}
             className='flex w-full items-center text-xs'
           >
@@ -109,7 +109,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
               />
             </div>
             <span>Sửa</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuItem
             variant='default'

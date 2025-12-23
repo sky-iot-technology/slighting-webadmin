@@ -37,12 +37,12 @@ import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { useEffect } from 'react';
 import { dayofweek } from '@/core/domains/calendars/constant';
-import { mapCalendarToFormData } from '../helper';
+import { findNodeName, mapCalendarToFormData } from '../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
-import { TreeMultiSelect } from './tree/calendar-multi-tree';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
 
 type CalendarFormProps = {
-  initialData: Partial<Calendar> | null;
+  initialData: Calendar;
   pageTitle: string;
   onNext: (data: any) => void;
   onClose?: () => void;
@@ -59,6 +59,7 @@ export default function CalendarForm({
   isEditMode
 }: CalendarFormProps) {
   const { catalogues } = useCatalogueStore();
+  const { treeData } = useRegionTreeStore();
 
   const defaultValues =
     formData ??
@@ -130,7 +131,7 @@ export default function CalendarForm({
         <CardContent className='px-0'>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-              {(!initialData?.group_ids?.length || isEditMode) && (
+              {/* {(!initialData?.group_ids?.length || isEditMode) && (
                 <FormField
                   control={form.control}
                   name='group_ids'
@@ -149,7 +150,27 @@ export default function CalendarForm({
                     </FormItem>
                   )}
                 />
-              )}
+              )} */}
+              <FormItem className='col-span-2'>
+                <FormLabel className='text-xs font-bold'>
+                  Chi nhánh cha
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                    disabled
+                    value={
+                      findNodeName(
+                        treeData,
+                        initialData?.group_ids?.length
+                          ? initialData?.group_ids?.[0]
+                          : ''
+                      ) ?? ''
+                    }
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
 
               <FormField
                 control={form.control}

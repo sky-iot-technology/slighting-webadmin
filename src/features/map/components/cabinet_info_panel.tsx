@@ -54,8 +54,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
               </div>
             </Avatar>
             <span
-              className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.warning && data.warning.trim() !== '' ? 'bg-map-control-button-danger' : data.device_info.online ? 'bg-map-control-button-success' : 'bg-map-control-button-destructive'} `}
-              // className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.device_info.online ? 'bg-map-control-button-success' : 'bg-foreground'}`}
+              className={`border-background absolute top-0 right-1 block h-3 w-3 rounded-full border-2 ${data.device_info.online ? 'bg-map-control-button-success' : 'bg-map-control-button-destructive'} `}
             />
           </div>
           <div className='mr-auto flex flex-col items-start'>
@@ -140,12 +139,36 @@ function CabinetInfoPanel(props: InfoModalProps) {
               <div className='text-foreground flex flex-col pr-[5px] pb-[4px] text-xs leading-[22px]'>
                 <div className='flex items-center justify-between'>
                   <span>Ngày kích hoạt:</span>
-                  <span className='font-medium'>01/09/2025</span>
+                  <span className='font-medium'>
+                    {(() => {
+                      const value = data.device_asset?.asset_attribute?.find(
+                        (item) => item.identify === 'installation_date'
+                      )?.content;
+
+                      if (!value) return '-';
+
+                      return new Date(Number(value) * 1000).toLocaleDateString(
+                        'vi-VN'
+                      );
+                    })()}
+                  </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span>Ngày hết hạn bảo hành:</span>
-                  <span className='font-medium'>01/09/2027</span>
+                  <span className='font-medium'>
+                    {(() => {
+                      const value = data.device_asset?.asset_attribute?.find(
+                        (item) => item.identify === 'expiration_date'
+                      )?.content;
+
+                      if (!value) return '-';
+
+                      return new Date(Number(value) * 1000).toLocaleDateString(
+                        'vi-VN'
+                      );
+                    })()}
+                  </span>
                 </div>
               </div>
             </CardContent>
@@ -270,7 +293,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                   <span>RSSI:</span>
                   <div className='flex items-center justify-center gap-1'>
                     <Image
-                      src={`/assets/icons/wifi-${data.device_info.optional.rssi}.svg`}
+                      src={`/assets/icons/wifi-${data.device_info.optional.rssi || 'unknown'}.svg`}
                       alt='wifiWeak'
                       width={13.13}
                       height={9.84}

@@ -61,7 +61,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           className='flex w-31.5 flex-col gap-2 p-2'
         >
           <DropdownMenuItem
-            onClick={() => setOpenView(true)}
+            onClick={() => router.push(`/dashboard/product/info/${id}`)}
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>
@@ -73,21 +73,6 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
               />
             </div>
             <span>Chi tiết</span>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem

@@ -103,13 +103,13 @@ export default function CalendarDialog({
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
       <DialogContent
-        className='flex max-h-[90vh] w-[417px] flex-col rounded-xl p-0'
+        className='flex max-h-[90vh] w-[417px] flex-col overflow-hidden rounded-xl p-0'
         hideCloseButton
       >
         <div className='flex min-h-0 flex-1 flex-col'>
           {step === 1 && (
             <CalendarForm
-              initialData={initialFormData as Partial<Calendar>}
+              initialData={initialFormData as Calendar}
               formData={formData}
               pageTitle={pageTitle}
               onNext={handleNext}

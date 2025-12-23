@@ -88,11 +88,6 @@ export function CalendarDeviceViewDialog({
 
         <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
           <div className='flex gap-2'>
-            <span className=''>Chi nhánh cha:</span>
-            <span className='text-right font-medium'>{displayText}</span>
-          </div>
-
-          <div className='flex gap-2'>
             <span className=''>Theo nhánh thiết bị:</span>
             <span className='text-right font-medium'>
               {nameLine.filter(Boolean).join(', ')}
@@ -167,26 +162,6 @@ export function CalendarDeviceViewDialog({
           <div className='flex flex-col gap-2.5'>
             <span className=''>Thời gian & Độ sáng:</span>
             <TimeBrightnessForm disabled schedules={data.schedules} />
-          </div>
-
-          <div className='flex flex-col gap-2 pt-1'>
-            <span className=''>
-              Thiết bị điều khiển ({allDeviceIds.length}){' '}
-            </span>
-            <div className='flex flex-col gap-1'>
-              {allDeviceIds.map((name, i) => (
-                <div
-                  key={i}
-                  className='grid h-6 w-full grid-cols-3 items-center rounded-[4px] border px-2 text-[10px] font-normal'
-                >
-                  <span className='truncate'>{name}</span>
-                  <span className='text-center text-green-600'>Online</span>
-                  <span className='cursor-pointer text-right text-blue-500 italic'>
-                    Xem chi tiết
-                  </span>
-                </div>
-              ))}
-            </div>
           </div>
 
           <div className='flex h-[30px] items-center justify-end gap-1'>
