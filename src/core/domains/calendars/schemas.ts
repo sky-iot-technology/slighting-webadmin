@@ -1,31 +1,48 @@
 import { z } from 'zod';
+export const TraitKeyEnum = z.enum([
+  'lms.devices.traits.OnOff',
+  'lms.devices.traits.Brightness'
+  //Volume, Mute, ColorSetting...
+]);
+
+export type TraitKey = z.infer<typeof TraitKeyEnum>;
+
+const scheduleActionSchema = z.object({
+  trait: TraitKeyEnum,
+  value: z.any()
+});
 
 export const subScheduleSchema = z
   .object({
     time: z.string().min(1, 'Thời gian không được để trống'),
-    actionType: z.enum(['brightness', 'onOff']).nullable().optional(),
-    brightness: z.number().min(0).max(100).optional(),
-    onOff: z.boolean().optional(),
-
-    enabled: z.boolean().default(true),
-    payload: z
-      .object({
-        command: z.string(),
-        params: z.record(z.any())
-      })
-      .default({ command: 'default-command', params: {} })
+    action: scheduleActionSchema.optional(),
+    enabled: z.boolean().default(true)
   })
-  .refine(
-    (data) =>
-      (data.actionType === 'brightness'
-        ? typeof data.brightness === 'number'
-        : true) &&
-      (data.actionType === 'onOff' ? typeof data.onOff === 'boolean' : true),
-    {
-      message: 'Thiếu giá trị cho hành động đã chọn',
-      path: ['actionType']
+  .superRefine((data, ctx) => {
+    if (!data.action) return;
+
+    const { trait, value } = data.action;
+
+    if (trait === 'lms.devices.traits.Brightness') {
+      if (typeof value !== 'number' || value < 0 || value > 100) {
+        ctx.addIssue({
+          path: ['action', 'value'],
+          message: 'Độ sáng phải từ 0–100',
+          code: z.ZodIssueCode.custom
+        });
+      }
     }
-  );
+
+    if (trait === 'lms.devices.traits.OnOff') {
+      if (typeof value !== 'boolean') {
+        ctx.addIssue({
+          path: ['action', 'value'],
+          message: 'Giá trị bật/tắt không hợp lệ',
+          code: z.ZodIssueCode.custom
+        });
+      }
+    }
+  });
 
 export const calendarFormSchema = z
   .object({

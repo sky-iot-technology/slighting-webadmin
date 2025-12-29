@@ -4,10 +4,15 @@ import { useEffect } from 'react';
 import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { authApi } from './api';
+import {
+  normalizeUIPermission,
+  rolesApi,
+  usePermissionStore
+} from '../permissions';
 
 export function useAuthInit() {
   const { setLoading, setUser, setTokens, setDomainId } = useAuthStore();
-
+  const setPermissions = usePermissionStore((s) => s.setPermissions);
   useEffect(() => {
     const initAuth = async () => {
       setLoading(true);
@@ -27,6 +32,13 @@ export function useAuthInit() {
             //Set DomainId for request
             const domainId = await authApi.getDomain();
             setDomainId(domainId);
+            //Set role for User
+            const roleId = user.metadata?.roleId;
+            if (roleId) {
+              const res = await rolesApi.getById(roleId);
+              const uiPermission = normalizeUIPermission(res.permission.ui);
+              setPermissions(uiPermission);
+            }
           } catch (error: any) {
             // If access token is expired, try to refresh
             if (error.status === 401 || error.status === 404) {
@@ -55,5 +67,5 @@ export function useAuthInit() {
     };
 
     initAuth();
-  }, [setLoading, setUser, setTokens]);
+  }, [setLoading, setUser, setTokens, setDomainId, setPermissions]);
 }

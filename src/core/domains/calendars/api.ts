@@ -96,7 +96,7 @@ export const calendarApi = {
     const limit = Math.max(1, Number(rawLimit) || 20);
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<CalendarListResponseDto>(
-      `/devices/${id}/schedules`,
+      `/devices/things/schedule/${id}`,
       {
         params: {
           offset,

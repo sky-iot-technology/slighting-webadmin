@@ -19,14 +19,20 @@ import {
 import { Button } from '@/ui/components/ui/button';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
-import { roleSchema } from '@/core/domains/role/schemas';
 import RolePermissionUI from '../role-permission-select';
 import {
   CreateRoleInput,
-  UIRoleResponse
+  UIRoleResponse,
+  UpdateRoleInput
 } from '@/core/domains/permissions/types';
-import { toBackendPayload, useCreateRole } from '@/core/domains/permissions';
+import {
+  roleSchema,
+  toBackendPayload,
+  useCreateRole,
+  useUpdateRole
+} from '@/core/domains/permissions';
 import { useMemo } from 'react';
+import { permissionArrayToMap } from '../../helper';
 
 type RoleFormProps = {
   pageTitle: string;
@@ -44,8 +50,8 @@ export default function RoleForm({
       initialData
         ? {
             name: initialData.name ?? '',
-            description: initialData.description ?? '',
-            permission: initialData.permission.ui
+            note: initialData.description ?? '',
+            permission: permissionArrayToMap(initialData.permission.ui)
           }
         : {
             name: '',
@@ -65,29 +71,46 @@ export default function RoleForm({
       if (onClose) onClose();
     }
   });
+  const updateRole = useUpdateRole({
+    onSuccess: () => {
+      if (onClose) onClose();
+    }
+  });
   const onSubmit = (values: z.infer<typeof roleSchema>) => {
     const backendPer = toBackendPayload(values.permission);
-    const payload: CreateRoleInput = {
+    let base = {
       name: values.name,
       label: values.name.toLowerCase().replace(/\s+/g, '-'),
       description: values.note ?? '',
-      status: 'enabled',
       permission: backendPer
     };
-    createRole.mutate(payload);
+    if (initialData) {
+      updateRole.mutate({
+        id: initialData.id,
+        data: base
+      });
+    } else {
+      createRole.mutate({
+        ...base,
+        status: 'enabled'
+      });
+    }
   };
 
   return (
     <CustomScrollbar className='max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'>
-      <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+      <Card className='bg-background mx-auto !h-full w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
             {pageTitle}
           </CardTitle>
         </CardHeader>
-        <CardContent className='px-0'>
+        <CardContent className='h-full px-0'>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className=''>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='flex !h-full flex-col'
+            >
               <FormField
                 control={form.control}
                 name='name'
@@ -130,7 +153,7 @@ export default function RoleForm({
                 control={form.control}
                 name='permission'
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className='h-full'>
                     <FormLabel className='text-xs font-bold'>
                       Phân quyền
                     </FormLabel>
@@ -145,7 +168,7 @@ export default function RoleForm({
                 )}
               />
 
-              <div className='flex h-[30px] items-center justify-end gap-4'>
+              <div className='mt-auto flex h-[30px] justify-end gap-4'>
                 <Button
                   onClick={onClose}
                   variant={'outline'}

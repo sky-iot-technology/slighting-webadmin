@@ -25,22 +25,21 @@ export default function RoleDialog({
   const { data, isLoading } = useGetRoleById(roleId ?? '', {
     enabled: !!roleId
   });
-
-  console.log(roleId);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
       <DialogContent
-        className='!w-[90vw] !max-w-[417px] rounded-xl p-0'
+        className='!h-[80vh] !w-[90vw] !max-w-[600px] overflow-hidden rounded-xl p-0'
         hideCloseButton
       >
-        <RoleForm
-          initialData={data}
-          pageTitle={pageTitle}
-          onClose={() => onOpenChange && onOpenChange(false)}
-        />
+        {!isLoading && (
+          <RoleForm
+            initialData={data}
+            pageTitle={pageTitle}
+            onClose={() => onOpenChange && onOpenChange(false)}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

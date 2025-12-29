@@ -1,4 +1,4 @@
-// src/core/permissions/ui-modules.ts
+import { PermissionFormMap, PermissionMap } from './store';
 
 export const uiModules = [
   { value: 'dashboard', label: 'Dashboard', actions: ['view'] },
@@ -8,36 +8,139 @@ export const uiModules = [
     actions: ['view', 'create', 'update', 'delete']
   },
   {
+    value: 'device',
+    label: 'Quản lý thiết bị',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'calendar',
+    label: 'Quản lý lịch',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
     value: 'maintenance',
-    label: 'Bảo trì',
+    label: 'Quản lý bảo trì',
+    actions: ['view']
+  },
+  {
+    value: 'maintenance.alarm',
+    label: 'Cảnh báo',
+    actions: ['view', 'update', 'delete']
+  },
+  {
+    value: 'maintenance.workorder',
+    label: 'Giao việc',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'department',
+    label: 'Quản lý tổ chức',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'ota',
+    label: 'Quản lý Firmware',
+    actions: ['view', 'create', 'update', 'sync', 'delete']
+  },
+  {
+    value: 'tag',
+    label: 'Quản lý nhóm yêu thích',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'branch',
+    label: 'Quản lý chi nhánh',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'role',
+    label: 'Quản lý vai trò',
+    actions: ['view', 'create', 'update', 'delete']
+  },
+  {
+    value: 'users',
+    label: 'Quản lý người dùng',
     actions: ['view', 'create', 'update', 'delete']
   }
-  // Thiết bị
-  //   { value: "device", label: "Quản lý thiết bị", actions: ["view", "create", "update", "delete"] },
-  //   { value: "control-cabinet", label: "Tủ điều khiển", actions: ["view", "create", "update", "delete"] },
-  //   { value: "sensor", label: "Cảm biến", actions: ["view", "create", "update", "delete"] },
-
-  //   // Người dùng
-  //   { value: "user", label: "Quản lý người dùng", actions: ["view", "create", "update", "delete"] },
-  //   { value: "role", label: "Quản lý vai trò", actions: ["view", "create", "update", "delete"] },
-  //   { value: "permission", label: "Phân quyền truy cập", actions: ["view", "update"] },
-
-  //   // Nhóm
-  //   { value: "branch", label: "Chi nhánh / Khu vực", actions: ["view", "create", "update", "delete"] },
-  //   { value: "group", label: "Nhóm thiết bị / Khu vực", actions: ["view", "create", "update", "delete"] },
-
-  //   // Bảo trì
-  //   { value: "maintenance", label: "Yêu cầu bảo trì", actions: ["view", "create", "update", "delete"] },
-  //   { value: "maintenance-process", label: "Quy trình bảo trì", actions: ["view", "create", "update", "delete"] },
-  //   { value: "plan", label: "Kế hoạch vận hành", actions: ["view", "create", "update", "delete"] },
-
-  //   // Lịch
-  //   { value: "calendar", label: "Lịch trình chiếu sáng", actions: ["view", "create", "update", "delete"] },
-  //   { value: "monitoring", label: "Giám sát hoạt động", actions: ["view"] },
-
-  //   // Hệ thống
-  //   { value: "audit-log", label: "Nhật ký hoạt động", actions: ["view"] },
-  //   { value: "settings", label: "Cấu hình hệ thống", actions: ["view", "update"] }
 ] as const;
 
 export type UIModuleValue = (typeof uiModules)[number]['value'];
+
+export const ROUTE_PERMISSION_MAP = [
+  {
+    path: '/dashboard/overview',
+    permission: { module: 'dashboard', action: 'view' }
+  },
+  {
+    path: '/dashboard/map',
+    permission: { module: 'map', action: 'view' }
+  },
+  {
+    path: '/dashboard/product',
+    permission: { module: 'device', action: 'view' }
+  },
+  {
+    path: '/dashboard/calendar',
+    permission: { module: 'calendar', action: 'view' }
+  },
+  {
+    path: '/dashboard/maintenance',
+    permission: { module: 'maintenance', action: 'view' }
+  },
+  {
+    path: '/dashboard/calendar',
+    permission: { module: 'calendar', action: 'view' }
+  },
+  {
+    path: '/dashboard/organization',
+    permission: { module: 'department', action: 'view' }
+  },
+  {
+    path: '/dashboard/ota',
+    permission: { module: 'ota', action: 'view' }
+  },
+  {
+    path: '/dashboard/tag',
+    permission: { module: 'tag', action: 'view' }
+  },
+  {
+    path: '/dashboard/branch',
+    permission: { module: 'branch', action: 'view' }
+  },
+  {
+    path: '/dashboard/role',
+    permission: { module: 'role', action: 'view' }
+  },
+  {
+    path: '/dashboard/user',
+    permission: { module: 'users', action: 'view' }
+  }
+];
+
+export const ACTION_DEPENDENCIES: Record<string, string[]> = {
+  update: ['view'],
+  delete: ['view'],
+  sync: ['view'],
+  create: ['view']
+};
+
+export function isActionDisabled(
+  module: string,
+  action: string,
+  value: PermissionFormMap
+) {
+  const deps = ACTION_DEPENDENCIES[action];
+  if (!deps) return false;
+
+  const actions = value[module];
+  if (!actions) return true;
+
+  return !deps.every((dep) => actions.includes(dep));
+}
+
+export function normalizeActions(module: string, actions: string[]): string[] {
+  if (!actions.includes('view')) {
+    return actions.filter((act) => !ACTION_DEPENDENCIES[act]);
+  }
+  return actions;
+}

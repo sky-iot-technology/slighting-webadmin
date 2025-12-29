@@ -33,10 +33,7 @@ export const branchColumns = (
     header: ({ table }) => (
       <div className='flex items-center justify-center'>
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
+          checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
         />

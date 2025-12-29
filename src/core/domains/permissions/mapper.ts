@@ -11,14 +11,3 @@ export const toBackendPayload = (
     }))
   };
 };
-
-export const toFrontendState = (list: UIRawPermission) => {
-  const selectedModules = list.ui.map((x) => x.id);
-  const permissions: Record<string, string[]> = {};
-
-  list.ui.forEach((p) => {
-    permissions[p.id] = p.actions;
-  });
-
-  return { selectedModules, permissions };
-};

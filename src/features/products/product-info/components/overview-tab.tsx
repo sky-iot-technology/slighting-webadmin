@@ -756,6 +756,23 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'flex-1',
                                 !isEditMode && 'disabled:opacity-90'
                               )}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^0-9.-]/g,
+                                  ''
+                                );
+                                field.onChange(value);
+                              }}
+                              onBlur={() => {
+                                const num = Number(field.value);
+                                if (!isNaN(num)) {
+                                  const limited = Math.max(
+                                    -180,
+                                    Math.min(180, num)
+                                  );
+                                  field.onChange(limited.toFixed(6));
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -777,6 +794,23 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'flex-1',
                                 !isEditMode && 'disabled:opacity-90'
                               )}
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^0-9.-]/g,
+                                  ''
+                                );
+                                field.onChange(value);
+                              }}
+                              onBlur={() => {
+                                const num = Number(field.value);
+                                if (!isNaN(num)) {
+                                  const limited = Math.max(
+                                    -180,
+                                    Math.min(180, num)
+                                  );
+                                  field.onChange(limited.toFixed(6));
+                                }
+                              }}
                             />
                           </FormControl>
                           <FormMessage />
@@ -801,8 +835,16 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         </SheetHeader>
                         <div className='relative h-full w-full overflow-hidden'>
                           <GoongMapMarker
-                            lat={Number(form.watch('lat'))}
-                            long={Number(form.watch('lon'))}
+                            lat={
+                              isValidLat(form.watch('lat') ?? '')
+                                ? Number(form.watch('lat'))
+                                : undefined
+                            }
+                            long={
+                              isValidLon(form.watch('lon') ?? '')
+                                ? Number(form.watch('lon'))
+                                : undefined
+                            }
                             onSelectLocation={({ lat, long }) => {
                               form.setValue(
                                 'lat',

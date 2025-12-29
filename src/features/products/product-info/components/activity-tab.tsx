@@ -56,6 +56,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
   const [pageSize] = useState(10);
   const [requests, setRequests] = useState<Record<string, string>>({});
   const [pending, setPending] = useState<Record<string, boolean>>({});
+  const [syncPending, setSyncPending] = useState(false);
   const [switchState, setSwitchState] = useState<Record<string, boolean>>({});
   const [brightnessMap, setBrightnessMap] = useState<Record<string, number>>(
     {}
@@ -104,22 +105,29 @@ export function ActivityTab({ device }: ActivityTabProps) {
   );
 
   // Initialize switch states from device data (for both SWITCH and LIGHT devices)
-  // useEffect(() => {
-  //   const devicesWithOnOff = [...switchDevices, ...lightDevices];
-  //   const newSwitchState = Object.fromEntries(
-  //     devicesWithOnOff.map((d) => [
-  //       d.device_id,
-  //       !!(d.last_state?.on as boolean | undefined)
-  //     ])
-  //   );
-  //   setSwitchState((prev) => {
-  //     if (JSON.stringify(prev) !== JSON.stringify(newSwitchState)) {
-  //       return newSwitchState;
-  //     }
-  //     return prev;
-  //   });
-  // }, [switchDevices, lightDevices]);
+  useEffect(() => {
+    const newSwitchState: Record<string, boolean> = {};
+    const newBrightnessMap: Record<string, number> = {};
 
+    [...switchDevices, ...lightDevices].forEach((device) => {
+      const id = device.device_id;
+
+      if (pending[id]) return;
+
+      newSwitchState[id] = !!device.last_state?.on;
+
+      if (device.type === 'lms.devices.types.LIGHT') {
+        const rawBrightness = device.last_state?.brightness;
+        newBrightnessMap[id] =
+          typeof rawBrightness === 'number'
+            ? rawBrightness
+            : Number(rawBrightness) || 0;
+      }
+    });
+
+    setSwitchState((prev) => ({ ...prev, ...newSwitchState }));
+    setBrightnessMap((prev) => ({ ...prev, ...newBrightnessMap }));
+  }, [lightDevices, switchDevices, pending]);
   // Initialize brightness map from device data
   useEffect(() => {
     const newBrightnessMap = Object.fromEntries(
@@ -385,6 +393,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
       {
         onSuccess: (data) => {
           // Store request_id and poll_interval to start polling
+          setSyncPending(true);
           setSyncRequestId(data.request_id);
           setSyncPollInterval(data.poll_interval * 1000); // Convert to milliseconds
         }
@@ -397,6 +406,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
       // Device state is already updated via useQueryStatus
       // The component will re-render automatically when device prop updates
     }
+    setSyncPending(false);
     setSyncRequestId(undefined);
     setSyncPollInterval(undefined);
   };
@@ -444,7 +454,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           <div className='bg-card rounded-tr-lg border-t'>
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className='bg-muted/50'>
                   <TableHead className='font-bold'>Thiết bị</TableHead>
                   <TableHead className='font-bold'>
                     Trạng thái thiết bị
@@ -472,7 +482,8 @@ export function ActivityTab({ device }: ActivityTabProps) {
                       subDevice.type === 'lms.devices.types.SENSOR';
                     const currentState =
                       switchState[subDevice.device_id] ?? false;
-                    const isPending = pending[subDevice.device_id] ?? false;
+                    const isPending =
+                      (pending[subDevice.device_id] || syncPending) ?? false;
                     const brightness =
                       brightnessMap[subDevice.device_id] ??
                       (subDevice.last_state?.brightness as
@@ -483,10 +494,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                     return (
                       <TableRow
                         key={subDevice.device_id}
-                        className={cn(
-                          'transition-colors',
-                          index === 0 && 'bg-muted/50'
-                        )}
+                        className={cn('transition-colors')}
                       >
                         <TableCell className='font-medium'>
                           {subDevice.name}

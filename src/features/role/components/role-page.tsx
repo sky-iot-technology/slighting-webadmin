@@ -4,9 +4,14 @@ import { RoleTable } from './role-tables';
 import { roleColumns } from './role-tables/columns';
 import { useMemo } from 'react';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
-import { useGetRoles } from '@/core/domains/permissions';
+import {
+  useCan,
+  useGetRoles,
+  usePermissionStore
+} from '@/core/domains/permissions';
 
 export default function RolePage() {
+  const canSync = useCan('device', 'sync');
   const { data, isLoading, error } = useGetRoles({
     status: 'enabled'
   });

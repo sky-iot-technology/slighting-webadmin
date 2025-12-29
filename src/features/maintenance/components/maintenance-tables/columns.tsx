@@ -24,10 +24,7 @@ export const maintenanceColumns = (
     header: ({ table }) => (
       <div className='flex items-center justify-center'>
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
+          checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
         />
@@ -47,15 +44,14 @@ export const maintenanceColumns = (
     maxSize: 50
   },
   {
-    id: 'client_id',
-    accessorKey: 'client_id',
+    id: 'metadata',
+    accessorKey: 'metadata',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
       <DataTableColumnHeader column={column} title='Mã thiết bị' />
     ),
     cell: ({ row }) => {
-      const clientId = row.getValue('client_id') as string;
-      const device = devices.find((d) => d.id === clientId);
-      return <div>{device?.device_info.imei}</div>;
+      const metadata = row.getValue('metadata') as Alarm['metadata'];
+      return <div>{metadata.imei ?? '-'}</div>;
     },
     enableSorting: false,
     enableHiding: false

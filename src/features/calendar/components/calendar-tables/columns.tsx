@@ -8,15 +8,28 @@ import { Calendar, SubSchedule } from '@/core/domains/calendars';
 import { PRIORITY_LABELS } from '@/core/domains/calendars/constant';
 import { formatDateString } from '../../helper';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
+import { cn } from '@/lib/utils';
 
 export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
+      const rows = table.getRowModel().rows;
+
+      const selectableRows = rows.filter((row) => !row.original.is_deleted);
+
+      const allSelected =
+        selectableRows.length > 0 &&
+        selectableRows.every((row) => row.getIsSelected());
+
       return (
         <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          checked={allSelected}
+          onCheckedChange={(value) => {
+            selectableRows.forEach((row) => {
+              row.toggleSelected(!!value);
+            });
+          }}
           aria-label='Select all'
         />
       );
@@ -25,18 +38,27 @@ export const columns: ColumnDef<Calendar>[] = [
     cell: ({ row }) => {
       const canExpand = row.getCanExpand();
       const isChild = row.depth > 0;
+      const isDeleted = row.original.is_deleted === true;
+
       return (
-        <div className='flex w-full items-center gap-2'>
+        <div
+          className={cn(
+            'flex w-full items-center gap-2 transition-opacity',
+            isDeleted && 'pointer-events-none opacity-50 select-none'
+          )}
+        >
           {!isChild && (
             <Checkbox
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label='Select row'
+              disabled={isDeleted}
             />
           )}
           {canExpand ? (
             <button
               onClick={row.getToggleExpandedHandler()}
+              disabled={isDeleted}
               className='flex h-4 w-4 items-center justify-center'
             >
               {row.getIsExpanded() ? (

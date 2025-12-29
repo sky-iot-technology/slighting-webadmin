@@ -27,6 +27,7 @@ import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { SettingModal } from '@/features/setting/modal/setting';
+import { useNavItems } from './useNavItemsBasePermission';
 
 // Reusable component for the active state SVG background
 export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
@@ -82,14 +83,27 @@ function NavIcon({
 // Component for sidebar logo
 function SidebarLogo({ isOpen }: { isOpen: boolean }) {
   return (
-    <div className='flex flex-row items-center justify-center'>
-      <Image
-        src='/assets/images/logo2.png'
-        alt='logo'
-        width={130}
-        height={130}
-      />
-    </div>
+    <>
+      {isOpen ? (
+        <div className='flex flex-row items-center justify-center'>
+          <Image
+            src='/assets/images/logo2.png'
+            alt='logo'
+            width={130}
+            height={130}
+          />
+        </div>
+      ) : (
+        <div className='flex flex-row items-center justify-center'>
+          <Image
+            src='/assets/images/logo-sidebar.png'
+            alt='logo'
+            width={20}
+            height={20}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
@@ -184,7 +198,7 @@ function MainMenuItem({
   pathname: string;
   open: boolean;
 }) {
-  const isActive = pathname === item.url;
+  const isActive = pathname === item.url || pathname.startsWith(item.url + '/');
 
   return (
     <SidebarMenuItem key={item.title}>
@@ -233,7 +247,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
   const { open } = useSidebar();
   const [openSettingModal, setOpenSettingModal] = React.useState(false);
-
+  const navItemsPermission = useNavItems();
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [open]);
@@ -247,7 +261,7 @@ export default function AppSidebar() {
         <SidebarContent className='overflow-x-hidden'>
           <SidebarGroup>
             <SidebarMenu>
-              {navItems.map((item) => {
+              {navItemsPermission.map((item) => {
                 const Icon = item.icon ? Icons[item.icon] : Icons.logo;
                 const isActive = pathname === item.url;
 

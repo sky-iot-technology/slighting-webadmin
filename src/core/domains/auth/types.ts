@@ -25,10 +25,20 @@ export interface User extends UserType {
   credentials: {
     username: string;
   };
+  metadata?: Metadata;
   email: string;
   created_at: string;
   updated_at: string;
   // updated_by: string;
+}
+
+export interface Metadata {
+  about?: string;
+  address?: string;
+  phone?: string;
+  unit?: string;
+  department?: string;
+  roleId?: string;
 }
 
 export interface ProfileUpdateData {

@@ -9,10 +9,10 @@ import {
   DropdownMenuTrigger
 } from '@/ui/components/ui/dropdown-menu';
 import { IconDotsVertical } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import RoleDialog from '../modal/role-dialog';
+import { useDeleteRole } from '@/core/domains/permissions';
 
 interface CellActionProps {
   id: string;
@@ -23,21 +23,21 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
-  const router = useRouter();
 
+  const deleteRole = useDeleteRole();
   const handleConfirmDelete = () => {
     if (!id) return;
-    // deleteCalendar.mutate(id);
+    deleteRole.mutate(id);
   };
 
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
-        loading={deleteCalendar.isPending}
-      /> */}
+        loading={deleteRole.isPending}
+      />
 
       {/* ✏️ Edit */}
       {openEdit && (

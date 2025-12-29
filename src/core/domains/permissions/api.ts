@@ -56,5 +56,17 @@ export const rolesApi = {
       console.error('❌ update role error:', message);
       throw new Error(message);
     }
+  },
+  async deleteRole(id: string): Promise<void> {
+    try {
+      await authenticatedApi.delete<void>(`/system/ui-roles/${id}`);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Không thể xóa vai trò. Vui lòng thử lại.';
+      console.error('❌ delete role error:', message);
+      throw new Error(message);
+    }
   }
 };

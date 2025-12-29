@@ -126,3 +126,31 @@ export const useUpdateRole = (
     }
   });
 };
+
+export const useDeleteRole = (
+  options?: UseMutationOptions<void, Error, string>
+) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    ...options,
+    mutationFn: (id) => rolesApi.deleteRole(id),
+    onSuccess: (data, deleteId, context) => {
+      queryClient.removeQueries({
+        queryKey: [ROLES_QUERY_KEY, deleteId]
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: [ROLES_QUERY_KEY]
+      });
+
+      toast.success('Role deleted successfully');
+      options?.onSuccess?.(data, deleteId, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to delete Role: ', error);
+      toast.error(error.message || 'Failed to delete Role');
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

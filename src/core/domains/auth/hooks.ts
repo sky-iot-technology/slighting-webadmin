@@ -12,6 +12,13 @@ import { useAuthStore } from './store';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { usersApi } from '../users';
 import { storageApi } from '../storage';
+import {
+  getFirstAccessibleRoute,
+  normalizeUIPermission,
+  PermissionMap,
+  rolesApi,
+  usePermissionStore
+} from '../permissions';
 
 // Query keys
 export const authKeys = {
@@ -25,6 +32,7 @@ export function useLogin() {
   const router = useRouter();
   const { setUser, setTokens, setLoading, setError, setDomainId } =
     useAuthStore();
+  const setPermissions = usePermissionStore((s) => s.setPermissions);
 
   return useMutation({
     mutationFn: authApi.login,
@@ -38,14 +46,24 @@ export function useLogin() {
         const user = await authApi.getCurrentUser(data.access_token);
         setUser(user);
         setTokens(data.access_token, data.refresh_token);
-
         //Set DomainId for request
         const domainId = await authApi.getDomain();
         setDomainId(domainId);
 
+        let uiPermission: PermissionMap = {};
+        //setPermission
+        const roleId = user.metadata?.roleId;
+        console.log(roleId);
+        if (roleId) {
+          const res = await rolesApi.getById(roleId);
+          uiPermission = normalizeUIPermission(res.permission.ui);
+          setPermissions(uiPermission);
+        }
+
         queryClient.setQueryData(authKeys.user(), user);
         toast.success('Đăng nhập thành công!');
-        router.push('/dashboard/overview');
+        const nextRoute = getFirstAccessibleRoute(uiPermission);
+        router.push(nextRoute ?? '/404');
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -92,6 +110,7 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { clearAuth, setLoading } = useAuthStore();
+  const { clearPermissions } = usePermissionStore();
 
   return useMutation({
     mutationFn: authApi.logout,
@@ -100,6 +119,7 @@ export function useLogout() {
     },
     onSuccess: () => {
       clearAuth();
+      clearPermissions();
       setLoading(false);
       queryClient.clear();
       toast.success('Đăng xuất thành công!');

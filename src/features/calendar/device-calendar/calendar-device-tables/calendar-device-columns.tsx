@@ -16,21 +16,23 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
-      const allNonDeletedRowsSelected = table
-        .getRowModel()
-        .rows.every((row) => row.original.is_deleted || row.getIsSelected());
+      const rows = table.getRowModel().rows;
+
+      const selectableRows = rows.filter((row) => !row.original.is_deleted);
+
+      const allSelected =
+        selectableRows.length > 0 &&
+        selectableRows.every((row) => row.getIsSelected());
+
       return (
         <Checkbox
-          checked={allNonDeletedRowsSelected}
+          checked={allSelected}
           onCheckedChange={(value) => {
-            table.getRowModel().rows.forEach((row) => {
-              if (!row.original.is_deleted) {
-                row.toggleSelected(!!value);
-              }
+            selectableRows.forEach((row) => {
+              row.toggleSelected(!!value);
             });
           }}
           aria-label='Select all'
-          className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
         />
       );
     },
@@ -53,7 +55,6 @@ export const columns: ColumnDef<Calendar>[] = [
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label='Select row'
               disabled={isDeleted}
-              className='data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground size-4 rounded-[2px] border-[1px] border-black'
             />
           )}
           {canExpand ? (

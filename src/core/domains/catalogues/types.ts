@@ -1,3 +1,25 @@
+//trait data for device catalogues
+export type TraitKey =
+  | 'lms.devices.traits.OnOff'
+  | 'lms.devices.traits.Brightness'
+  | 'lms.devices.traits.Volume'
+  | 'lms.devices.traits.Mute';
+// | "lms.devices.traits.Media"
+// | "lms.devices.traits.MediaActivityState"
+// | "lms.devices.traits.Schedule"
+// | 'lms.devices.traits.ColorSetting'
+
+export type ActionValue =
+  | { trait: 'lms.devices.traits.OnOff'; value: boolean }
+  | { trait: 'lms.devices.traits.Brightness'; value: number };
+
+export type ScheduleAction = ActionValue;
+
+export const TRAIT_LABELS: Record<string, string> = {
+  'lms.devices.traits.Brightness': 'Độ sáng',
+  'lms.devices.traits.OnOff': 'Bật/Tắt'
+};
+
 export type CatalogueDeviceType =
   | 'lms.devices.types.LIGHT'
   | 'lms.devices.types.SWITCH'
@@ -12,6 +34,11 @@ export type CatalogueDeviceType =
   | 'lms.devices.types.DIGITAL'
   | 'lms.devices.types.DIGITAL_SIGNATURE'
   | string;
+
+export const COMMAND_TO_TRAIT: Record<string, TraitKey> = {
+  'lms.devices.commands.OnOff': 'lms.devices.traits.OnOff',
+  'lms.devices.commands.Brightness': 'lms.devices.traits.Brightness'
+};
 
 export interface SubCatalogueDevice {
   device_id: string;

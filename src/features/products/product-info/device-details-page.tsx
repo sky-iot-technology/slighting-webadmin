@@ -86,7 +86,9 @@ export default function DeviceDetailsPage() {
           <Button
             variant='outline'
             className='mt-4'
-            onClick={() => router.push('/dashboard/product')}
+            onClick={() => {
+              router.back();
+            }}
           >
             <ArrowLeft className='mr-2 h-4 w-4' />
             Quay lại
@@ -108,7 +110,9 @@ export default function DeviceDetailsPage() {
               <Button
                 variant='ghost'
                 size='icon'
-                onClick={() => router.push('/dashboard/product')}
+                onClick={() => {
+                  router.back();
+                }}
               >
                 <ArrowLeft className='h-4 w-4' />
               </Button>

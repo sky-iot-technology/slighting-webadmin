@@ -1,3 +1,4 @@
+import { UIAction } from '@/core/domains/permissions';
 import { Icons } from '@/ui/components/icons';
 
 export interface NavItem {
@@ -12,6 +13,9 @@ export interface NavItem {
   isActive?: boolean;
   items?: NavItem[];
   modal?: boolean;
+
+  resourceId?: string;
+  requiredActions?: UIAction[];
 }
 
 export interface NavItemWithChildren extends NavItem {

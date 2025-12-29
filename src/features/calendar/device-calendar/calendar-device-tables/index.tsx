@@ -10,6 +10,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import { useDeleteMultiCalendars } from '@/core/domains/calendars';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
@@ -32,6 +33,14 @@ export function CalendarTable<TData, TValue>({
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
   const pageCount = Math.ceil(totalItems / pageSize);
+
+  const { mutate: deleteCalendars, isPending } = useDeleteMultiCalendars();
+
+  const handleDelete = async (selectedRows: any[]) => {
+    if (!selectedRows.length) return;
+    const ids = selectedRows.map((r) => r.id as string);
+    deleteCalendars(ids);
+  };
 
   const { table } = useDataTable({
     data,
@@ -80,6 +89,8 @@ export function CalendarTable<TData, TValue>({
             </Button>
           }
           filter={true}
+          excel={false}
+          onDeleteAll={handleDelete}
         />
         {/* <DataTableToolbar table={table} /> */}
       </div>

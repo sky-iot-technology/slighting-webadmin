@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ProductTable } from './product-tables';
 import { deviceColumns } from './product-tables/device-columns';
 import {
@@ -9,15 +9,16 @@ import {
   useGetDeviceCount
 } from '@/core/domains/devices';
 import { ColumnDef } from '@tanstack/react-table';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-// import { useRegionTreeStore } from '@/core/domains/tree/store';
+import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useGetGroups } from '@/core/domains/groups';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { Option } from '@/types/data-table';
 import { Button } from '@/ui/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import { findNodeById, findNodeId } from '@/features/calendar/helper';
 
 type ProductListingPage = {};
 
@@ -33,15 +34,19 @@ export default function ProductListingPage({}: ProductListingPage) {
   const serial_number = searchParams.get('serial_number') ?? undefined;
   const parent_group_id = searchParams.get('parent_group_id') ?? undefined;
 
+  const { treeData } = useRegionTreeStore();
+
   const currentPage = page ? parseInt(page.toString()) : 1;
   const limit = pageLimit ? parseInt(pageLimit.toString()) : 10;
   // Fetch device counts with filters (excluding pagination)
   const filtersExcludePagination = {
     ...(search && { name: search }),
-    ...(status && { status: status as any }),
+    ...(status && { metadata: status as any }),
     ...(type && { type }),
     ...(serial_number && { serial_number }),
-    ...(parent_group_id && { group: parent_group_id })
+    ...(parent_group_id && {
+      group: findNodeId(treeData, parent_group_id) as any
+    })
   };
   const filters = {
     dir: dir === 'asc' ? 'asc' : ('desc' as const),
@@ -63,11 +68,6 @@ export default function ProductListingPage({}: ProductListingPage) {
   );
 
   const { catalogues } = useCatalogueStore();
-  // const { treeData } = useRegionTreeStore();
-  // Fetch groups from API
-  const { data: groupsData } = useGetGroups({
-    status: 'enabled'
-  });
 
   // Memoize the breadcrumb content to prevent infinite re-renders
   const breadcrumbContent = useMemo(
@@ -89,35 +89,44 @@ export default function ProductListingPage({}: ProductListingPage) {
   }, [catalogues]);
 
   const columns = useMemo(() => {
-    const _columns = [...deviceColumns];
-    let typeColumn = _columns.find((x) => x.id === 'type');
-    if (typeColumn && typeColumn.meta) {
-      typeColumn.meta.options = typeOptions;
-      typeColumn.cell = ({ cell }) => {
-        const type = cell.getValue<Device['type']>();
-        const option = typeOptions.find((option) => option.value === type);
-        return <div>{option?.label}</div>;
-      };
-    }
-    let parentGroupColumn = _columns.find((x) => x.id === 'parent_group_id');
-    if (parentGroupColumn && parentGroupColumn.meta) {
-      parentGroupColumn.meta.options = groupsData?.groups.map(
-        (g) =>
-          ({
-            value: g.id,
-            label: g.name
-          }) as Option
-      );
-      parentGroupColumn.cell = ({ cell }) => {
-        const parent_group_id = cell.getValue<Device['parent_group_id']>();
-        const node = groupsData?.groups.find((node) => {
-          return node.id === parent_group_id;
-        });
-        return <div>{node?.name || ''}</div>;
-      };
-    }
-    return _columns;
-  }, [groupsData, typeOptions]);
+    return deviceColumns.map((col) => {
+      // TYPE FILTER
+      if (col.id === 'type') {
+        return {
+          ...col,
+          meta: {
+            ...col.meta,
+            options: typeOptions
+          },
+          cell: ({ cell }: any) => {
+            const type = cell.getValue() as Device['type'];
+            const option = typeOptions.find((o) => o.value === type);
+            return <div>{option?.label ?? ''}</div>;
+          }
+        };
+      }
+
+      // GROUP FILTER
+      if (col.id === 'parent_group_id') {
+        return {
+          ...col,
+          meta: {
+            ...col.meta,
+            variant: 'regionTree'
+          },
+          cell: ({ cell }: any) => {
+            const groupId = cell.getValue() as Device['parent_group_id'];
+            const groupNode = findNodeById(treeData, groupId) || null;
+            return <div>{groupNode?.name ?? '-'}</div>;
+          }
+        };
+      }
+
+      return col;
+    });
+  }, [typeOptions]);
+
+  const isFilterReady = typeOptions.length > 0;
 
   const actionBar = (
     <div className='ml-4 flex items-center gap-6 py-2'>
@@ -164,6 +173,7 @@ export default function ProductListingPage({}: ProductListingPage) {
         actionBar={actionBar}
         isLoading={isLoading}
         error={error}
+        isFilterReady={isFilterReady}
         action={
           <>
             <Button

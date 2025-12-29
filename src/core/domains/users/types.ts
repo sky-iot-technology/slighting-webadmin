@@ -21,6 +21,7 @@ export interface Metadata {
   phone?: string;
   unit?: string;
   department?: string;
+  roleId?: string;
 }
 
 export interface User {

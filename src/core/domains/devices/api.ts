@@ -46,6 +46,7 @@ export const devicesApi = {
 
   async getById(id: string | number): Promise<Device> {
     try {
+      console.log(id);
       return await authenticatedApi.get<Device>(`/devices/things/${id}`);
     } catch (error) {
       throw new Error(`Product with id ${id} not found`);

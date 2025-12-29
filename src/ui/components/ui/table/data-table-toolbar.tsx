@@ -117,7 +117,6 @@ export function DataTableCustomToolbar<TData>({
   }, [table]);
 
   const isFiltered = table.getState().columnFilters.length > 0;
-  console.log(rangePairs);
   return (
     <div
       role='toolbar'
@@ -167,7 +166,7 @@ export function DataTableCustomToolbar<TData>({
           ) : null
         )}
 
-        {isFiltered && (
+        {isFiltered && !filter && (
           <Button
             aria-label='Reset filters'
             variant='outline'

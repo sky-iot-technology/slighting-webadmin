@@ -37,6 +37,16 @@ const numberOrUndefined = (val: unknown) => {
   return isNaN(n) ? val : n;
 };
 
+const isValidLat = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -90 && n <= 90;
+};
+
+const isValidLon = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -180 && n <= 180;
+};
+
 // Main device form schema
 export const deviceFormSchema = z.object({
   // Image upload (optional)
@@ -95,22 +105,19 @@ export const deviceFormSchema = z.object({
   //     return val || 0;
   //   }),
 
-  lat: z.preprocess(
-    numberOrUndefined,
-    z
-      .number({ invalid_type_error: 'Vĩ độ phải là số' })
-      .min(-90, 'Vĩ độ phải ≥ -90')
-      .max(90, 'Vĩ độ phải ≤ 90')
-      .optional()
-  ),
-  lon: z.preprocess(
-    numberOrUndefined,
-    z
-      .number({ invalid_type_error: 'Kinh độ phải là số' })
-      .min(-180, 'Kinh độ phải ≥ -180')
-      .max(180, 'Kinh độ phải ≤ 180')
-      .optional()
-  ),
+  lat: z
+    .string()
+    .optional()
+    .refine((v) => v === undefined || v === '' || isValidLat(v), {
+      message: 'Vĩ độ phải là số trong khoảng -90 đến 90'
+    }),
+
+  lon: z
+    .string()
+    .optional()
+    .refine((v) => v === undefined || v === '' || isValidLon(v), {
+      message: 'Kinh độ phải là số trong khoảng -180 đến 180'
+    }),
 
   // Additional fields
   address: z.string().optional(),

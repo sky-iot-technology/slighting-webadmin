@@ -65,6 +65,16 @@ interface Device {
   };
 }
 
+const isValidLat = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -90 && n <= 90;
+};
+
+const isValidLon = (val: string) => {
+  const n = Number(val);
+  return !isNaN(n) && n >= -180 && n <= 180;
+};
+
 export default function ProductForm({
   initialData,
   pageTitle
@@ -117,8 +127,8 @@ export default function ProductForm({
     type: initialData?.type || '',
     parent_group_id: initialData?.parent_group_id || '',
     tags: initialData?.tags || [],
-    lat: initialData?.device_info?.lat || 0,
-    lon: initialData?.device_info?.lon || 0,
+    lat: initialData?.device_info?.lat?.toString() || '0',
+    lon: initialData?.device_info?.lon?.toString() || '0',
     address: '',
     note: '',
     serial: '',
@@ -287,13 +297,23 @@ export default function ProductForm({
                               placeholder='Vĩ độ'
                               {...field}
                               value={field.value || ''}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value
-                                    ? parseFloat(e.target.value)
-                                    : ''
-                                )
-                              }
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^0-9.-]/g,
+                                  ''
+                                );
+                                field.onChange(value);
+                              }}
+                              onBlur={() => {
+                                const num = Number(field.value);
+                                if (!isNaN(num)) {
+                                  const limited = Math.max(
+                                    -180,
+                                    Math.min(180, num)
+                                  );
+                                  field.onChange(limited.toFixed(6));
+                                }
+                              }}
                               className='h-9 rounded-sm'
                             />
                           </FormControl>
@@ -313,13 +333,23 @@ export default function ProductForm({
                               placeholder='Kinh độ'
                               {...field}
                               value={field.value || ''}
-                              onChange={(e) =>
-                                field.onChange(
-                                  e.target.value
-                                    ? parseFloat(e.target.value)
-                                    : ''
-                                )
-                              }
+                              onChange={(e) => {
+                                const value = e.target.value.replace(
+                                  /[^0-9.-]/g,
+                                  ''
+                                );
+                                field.onChange(value);
+                              }}
+                              onBlur={() => {
+                                const num = Number(field.value);
+                                if (!isNaN(num)) {
+                                  const limited = Math.max(
+                                    -180,
+                                    Math.min(180, num)
+                                  );
+                                  field.onChange(limited.toFixed(6));
+                                }
+                              }}
                               className='h-9 rounded-sm'
                             />
                           </FormControl>
@@ -349,11 +379,25 @@ export default function ProductForm({
                           </SheetHeader>
                           <div className='relative h-full w-full overflow-hidden'>
                             <GoongMapMarker
-                              lat={Number(form.watch('lat'))}
-                              long={Number(form.watch('lon'))}
+                              lat={
+                                isValidLat(form.watch('lat') ?? '')
+                                  ? Number(form.watch('lat'))
+                                  : undefined
+                              }
+                              long={
+                                isValidLon(form.watch('lon') ?? '')
+                                  ? Number(form.watch('lon'))
+                                  : undefined
+                              }
                               onSelectLocation={({ lat, long }) => {
-                                form.setValue('lat', Number(lat.toFixed(6)));
-                                form.setValue('lon', Number(long.toFixed(6)));
+                                form.setValue(
+                                  'lat',
+                                  String(Number(lat.toFixed(6)))
+                                );
+                                form.setValue(
+                                  'lon',
+                                  String(Number(long.toFixed(6)))
+                                );
                               }}
                             />
                           </div>

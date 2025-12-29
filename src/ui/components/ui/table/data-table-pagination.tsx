@@ -120,6 +120,7 @@ export function DataTablePagination<TData>({
         ) : (
           <>{table.getFilteredRowModel().rows.length} row(s) total.</>
         )} */}
+
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
           <>
             {table.getFilteredSelectedRowModel().rows.length} of{' '}
@@ -128,9 +129,12 @@ export function DataTablePagination<TData>({
         )}
       </div>
       <div className='flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
-        <div className='flex items-center justify-center text-sm font-medium'>
-          {start} - {end} trong {totalRows}
-        </div>
+        {totalRows > pageSize && (
+          <div className='flex items-center justify-center text-sm font-medium'>
+            {start} - {end} trong {totalRows}
+          </div>
+        )}
+
         <div className='flex items-center space-x-2'>
           <Button
             aria-label='Go to first page'

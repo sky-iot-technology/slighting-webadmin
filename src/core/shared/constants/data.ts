@@ -19,6 +19,8 @@ export const navItems: NavItem[] = [
     icon: 'dashboard',
     isActive: false,
     shortcut: ['d', 'd'],
+    resourceId: 'dashboard',
+    requiredActions: ['view'],
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
@@ -27,6 +29,8 @@ export const navItems: NavItem[] = [
     icon: 'map',
     shortcut: ['p', 'p'],
     isActive: false,
+    resourceId: 'map',
+    requiredActions: ['view'],
     items: [] // No child items
   },
   {
@@ -40,24 +44,32 @@ export const navItems: NavItem[] = [
         title: 'Nhóm yêu thích',
         url: '/dashboard/tag',
         icon: 'love',
+        resourceId: 'tag',
+        requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
       {
         title: 'Chi nhánh',
         url: '/dashboard/branch',
         icon: 'branch',
+        resourceId: 'branch',
+        requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
       {
         title: 'Vai trò',
         url: '/dashboard/role',
         icon: 'role',
+        resourceId: 'role',
+        requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
       {
         title: 'Người dùng',
         url: '/dashboard/user',
         icon: 'userAgent',
+        resourceId: 'users',
+        requiredActions: ['view'],
         shortcut: ['m', 'm']
       }
     ]
@@ -67,6 +79,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/product',
     icon: 'deviceMenu',
     shortcut: ['r', 'r'],
+    resourceId: 'device',
+    requiredActions: ['view'],
     isActive: false,
     items: [] // No child items
   },
@@ -75,6 +89,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/calendar',
     icon: 'calendar',
     shortcut: ['p', 'p'],
+    resourceId: 'calendar',
+    requiredActions: ['view'],
     isActive: false,
     items: []
   },
@@ -83,6 +99,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/maintenance',
     icon: 'maintenance',
     shortcut: ['m', 'm'],
+    resourceId: 'maintenance',
+    requiredActions: ['view'],
     isActive: false,
     items: []
   },
@@ -91,6 +109,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/organization',
     icon: 'organization',
     shortcut: ['m', 'm'],
+    resourceId: 'department',
+    requiredActions: ['view'],
     isActive: false,
     items: []
   },
@@ -99,6 +119,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/ota',
     icon: 'firmware',
     shortcut: ['m', 'm'],
+    resourceId: 'ota',
+    requiredActions: ['view'],
     isActive: false,
     items: []
   },

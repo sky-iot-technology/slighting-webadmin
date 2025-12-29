@@ -32,7 +32,7 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice } from '@/core/domains/catalogues';
+import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { useEffect } from 'react';
@@ -72,7 +72,12 @@ export default function CalendarForm({
           recurring: 'none',
           group_ids: [],
           date: { from: undefined, to: undefined },
-          schedules: [{ time: '', actionType: null }]
+          schedules: [
+            {
+              time: '',
+              action: undefined
+            }
+          ]
         }) as z.infer<typeof calendarFormSchema>);
 
   const form = useForm<z.infer<typeof calendarFormSchema>>({
@@ -451,7 +456,11 @@ export default function CalendarForm({
                       Thời gian & Hành động
                     </FormLabel>
                     <FormControl>
-                      <TimeBrightnessForm />
+                      <TimeBrightnessForm
+                        deviceTraits={
+                          (selectedDevice?.traits ?? []) as TraitKey[]
+                        }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

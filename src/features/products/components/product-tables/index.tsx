@@ -18,6 +18,7 @@ interface ProductTableParams<TData, TValue> {
   actionBar?: React.ReactNode;
   isLoading?: boolean;
   error?: Error | null;
+  isFilterReady?: boolean;
 }
 
 export function ProductTable<TData, TValue>({
@@ -27,7 +28,8 @@ export function ProductTable<TData, TValue>({
   action,
   actionBar,
   isLoading = false,
-  error = null
+  error = null,
+  isFilterReady
 }: ProductTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
   const router = useRouter();
@@ -43,43 +45,47 @@ export function ProductTable<TData, TValue>({
   });
 
   return (
-    <DataTable
-      table={table}
-      totalRows={totalItems}
-      // wrapperClassName='mx-1 mt-1 rounded-none'
-      tableContainerClassName='border-none rounded-none'
-      paginationClassName='py-3'
-      headerClassName='border-t-1 border-none shadow-none'
-      actionBar={actionBar}
-      isLoading={isLoading}
-      error={error}
-      loadingRowCount={pageSize}
-    >
-      {/* <DataTableToolbar table={table} /> */}
-      <div className='flex items-center gap-2 py-3'>
-        <DataTableCustomToolbar
+    <>
+      {isFilterReady && (
+        <DataTable
           table={table}
-          className='flex-1'
-          actions={
-            <>
-              {action}
-              <Button
-                variant='default'
-                size='sm'
-                className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
-                onClick={() => {
-                  router.push('/dashboard/product/new');
-                }}
-              >
-                <IconPlus className='h-3 w-3' />
-                Thêm
-              </Button>
-            </>
-          }
-          onDeleteAll={() => console.log('delete product')}
-          filter
-        />
-      </div>
-    </DataTable>
+          totalRows={totalItems}
+          // wrapperClassName='mx-1 mt-1 rounded-none'
+          tableContainerClassName='border-none rounded-none'
+          paginationClassName='py-3'
+          headerClassName='border-t-1 border-none shadow-none'
+          actionBar={actionBar}
+          isLoading={isLoading}
+          error={error}
+          loadingRowCount={pageSize}
+        >
+          {/* <DataTableToolbar table={table} /> */}
+          <div className='flex items-center gap-2 py-3'>
+            <DataTableCustomToolbar
+              table={table}
+              className='flex-1'
+              actions={
+                <>
+                  {action}
+                  <Button
+                    variant='default'
+                    size='sm'
+                    className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+                    onClick={() => {
+                      router.push('/dashboard/product/new');
+                    }}
+                  >
+                    <IconPlus className='h-3 w-3' />
+                    Thêm
+                  </Button>
+                </>
+              }
+              onDeleteAll={() => console.log('delete product')}
+              filter
+            />
+          </div>
+        </DataTable>
+      )}
+    </>
   );
 }

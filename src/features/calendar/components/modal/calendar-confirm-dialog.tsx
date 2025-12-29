@@ -10,6 +10,8 @@ import {
 import { DateRange } from 'react-day-picker';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { CalendarRangePicker } from '../calendar-range-picker';
+import { TRAIT_UI_MAP } from '@/ui/business/trait/trait';
+import { TRAIT_LABELS } from '@/core/domains/catalogues';
 
 type Props = {
   data: z.infer<typeof calendarFormSchema>;
@@ -111,14 +113,10 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
       <div className='flex flex-col gap-2'>
         <span className=''>Thời gian và hành động:</span>
         {data.schedules?.map((item, index) => (
-          <div key={index} className='test-sm flex gap-8 font-medium'>
+          <div key={index} className='flex gap-8 font-medium'>
             <span>{index + 1}</span>
             <span>{item.time}</span>
-            {item.brightness !== undefined ? (
-              <span>{item.brightness}%</span>
-            ) : (
-              <span>{item.onOff ? 'Bật' : 'Tắt'}</span>
-            )}
+            {renderAction(item)}
           </div>
         ))}
       </div>
@@ -132,5 +130,37 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
         </Button>
       </div>
     </div>
+  );
+}
+
+function renderAction(item: Props['data']['schedules'][number]) {
+  const action = item.action;
+  if (!action) return <span className='text-muted-foreground'>Chưa chọn</span>;
+
+  const { trait, value } = action;
+
+  if (trait === 'lms.devices.traits.Brightness') {
+    const v = typeof value === 'number' ? value : Number(value ?? 0);
+    return (
+      <span>
+        {TRAIT_LABELS[trait] ?? trait}: {v}%
+      </span>
+    );
+  }
+
+  if (trait === 'lms.devices.traits.OnOff') {
+    const v = Boolean(value);
+    return (
+      <span>
+        {TRAIT_LABELS[trait] ?? trait}: {v ? 'Bật' : 'Tắt'}
+      </span>
+    );
+  }
+
+  // fallback cho trait mới
+  return (
+    <span>
+      {TRAIT_LABELS[trait] ?? trait}: {String(value)}
+    </span>
   );
 }

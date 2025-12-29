@@ -129,15 +129,19 @@ export const useSetBrightnessLight = (
 };
 
 export const useCreateDevice = (
-  options?: UseMutationOptions<Device, Error, any>
+  options?: UseMutationOptions<void, Error, any>
 ) => {
   const queryClient = useQueryClient();
 
   const onSuccessCallback = options?.onSuccess;
   const onErrorCallback = options?.onError;
 
-  return useMutation<Device, Error, any>({
-    mutationFn: (deviceData) => devicesApi.createDevice(deviceData),
+  return useMutation<void, Error, any>({
+    mutationFn: async (deviceData) => {
+      console.log(deviceData);
+      // return devicesApi.createDevice(deviceData)
+      return;
+    },
     onSuccess: (data, variables, context) => {
       toast.success('Device created successfully!');
       queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] });

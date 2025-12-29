@@ -14,7 +14,7 @@ import {
 } from '@/core/domains/calendars/constant';
 import { useGetCalendarById } from '@/core/domains/calendars';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice } from '@/core/domains/catalogues';
+import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
 import { useMemo } from 'react';
 import { RegionNode } from '@/core/domains/groups';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
@@ -35,12 +35,11 @@ export function CalendarViewDialog({
 }: CalendarViewDialogProps) {
   const { treeData } = useRegionTreeStore();
   const { catalogues } = useCatalogueStore();
+
   const router = useRouter();
-  const { data, isLoading, error } = useGetCalendarById(id ?? '', {
+  const { data, isLoading } = useGetCalendarById(id ?? '', {
     enabled: !!id
   });
-
-  console.log(data);
 
   const displayText = useMemo(() => {
     const groupIds = data?.group_ids ?? [];
@@ -64,10 +63,7 @@ export function CalendarViewDialog({
     return names.length > 0 ? names.join(', ') : '—';
   }, [data?.group_ids, treeData]);
 
-  if (!id) return null;
-  if (isLoading) return <p>Loading...</p>;
-  if (error) return <p>Error...</p>;
-  if (!data) return null;
+  if (!id || !data) return null;
 
   const allDeviceIds = data.schedules[0].ids;
 
@@ -85,135 +81,147 @@ export function CalendarViewDialog({
   });
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className='w-[417px] rounded-xl p-5.5' hideCloseButton>
-        <DialogHeader>
-          <DialogTitle className='text-left text-[16px] font-bold'>
-            Chi tiết lịch:
-            <span className='text-primary ml-2 font-bold'>{data.name}</span>
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      {!isLoading && (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+          <DialogContent className='w-[417px] rounded-xl p-5.5' hideCloseButton>
+            <DialogHeader>
+              <DialogTitle className='text-left text-[16px] font-bold'>
+                Chi tiết lịch:
+                <span className='text-primary ml-2 font-bold'>{data.name}</span>
+              </DialogTitle>
+            </DialogHeader>
 
-        <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
-          <div className='flex gap-2'>
-            <span className=''>Chi nhánh cha:</span>
-            <span className='text-right font-medium'>{displayText}</span>
-          </div>
-
-          <div className='flex gap-2'>
-            <span className=''>Theo nhánh thiết bị:</span>
-            <span className='text-right font-medium'>
-              {nameLine.filter(Boolean).join(', ')}
-            </span>
-          </div>
-
-          <div className='flex gap-2'>
-            <span className=''>Lặp lại:</span>
-            <span className='text-right font-medium'>
-              {RECURRING_LABELS[data.schedules[0].recurring]}
-            </span>
-          </div>
-
-          <div className='flex gap-2'>
-            <span className=''>Loại lịch:</span>
-            <span className='text-right font-medium'>
-              {PRIORITY_LABELS[data.priority]}
-            </span>
-          </div>
-
-          <div className='flex items-center gap-2'>
-            <span className=''>Ngày áp dụng:</span>
-            <CalendarRangePicker
-              mode='range'
-              value={{
-                from: new Date(
-                  data.schedules[0].start_datetime.replace(/Z$/, '')
-                ),
-                to: new Date(data.schedules[0].end_datetime.replace(/Z$/, ''))
-              }}
-              disabled
-            />
-          </div>
-
-          {weekly && weekly.length > 0 && (
-            <div className=''>
-              <span>Ngày trong tuần:</span>
-              <div className='flex flex-wrap gap-1 pt-1'>
-                {weekly.map((value: any) => {
-                  const label = dayofweek[Number(value)];
-                  return (
-                    <span
-                      key={value}
-                      className='bg-muted rounded-[4px] px-2 py-1 text-xs'
-                    >
-                      {label}
-                    </span>
-                  );
-                })}
+            <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
+              <div className='flex gap-2'>
+                <span className=''>Chi nhánh cha:</span>
+                <span className='text-right font-medium'>{displayText}</span>
               </div>
-            </div>
-          )}
 
-          {monthly && monthly.length > 0 && (
-            <div className=''>
-              <span>Ngày trong tháng:</span>
-              <div className='flex flex-wrap gap-1 pt-1'>
-                {monthly.map((value: any) => {
-                  return (
-                    <span
-                      key={value}
-                      className='bg-muted rounded-[4px] px-2 py-1 text-xs'
-                    >
-                      {value}
-                    </span>
-                  );
-                })}
+              <div className='flex gap-2'>
+                <span className=''>Theo nhánh thiết bị:</span>
+                <span className='text-right font-medium'>
+                  {nameLine.filter(Boolean).join(', ')}
+                </span>
               </div>
-            </div>
-          )}
 
-          <div className='flex flex-col gap-2.5'>
-            <span className=''>Thời gian & Độ sáng:</span>
-            <TimeBrightnessForm disabled schedules={data.schedules} />
-          </div>
+              <div className='flex gap-2'>
+                <span className=''>Lặp lại:</span>
+                <span className='text-right font-medium'>
+                  {RECURRING_LABELS[data.schedules[0].recurring]}
+                </span>
+              </div>
 
-          <div className='flex flex-col gap-2 pt-1'>
-            <span className=''>
-              Thiết bị điều khiển ({allDeviceIds.length}){' '}
-            </span>
-            <div className='flex flex-col gap-1'>
-              {allDeviceIds.map((name, i) => (
-                <div
-                  key={i}
-                  className='grid h-6 w-full grid-cols-3 items-center rounded-[4px] border px-2 text-[10px] font-normal'
-                >
-                  <span className='truncate'>{name}</span>
-                  <span className='text-center text-green-600'>Online</span>
-                  <span
-                    className='cursor-pointer text-right text-blue-500 italic'
-                    onClick={() =>
-                      router.push(`/dashboard/product/info/${data.client_id}`)
-                    }
-                  >
-                    Xem chi tiết
-                  </span>
+              <div className='flex gap-2'>
+                <span className=''>Loại lịch:</span>
+                <span className='text-right font-medium'>
+                  {PRIORITY_LABELS[data.priority]}
+                </span>
+              </div>
+
+              <div className='flex items-center gap-2'>
+                <span className=''>Ngày áp dụng:</span>
+                <CalendarRangePicker
+                  mode='range'
+                  value={{
+                    from: new Date(
+                      data.schedules[0].start_datetime.replace(/Z$/, '')
+                    ),
+                    to: new Date(
+                      data.schedules[0].end_datetime.replace(/Z$/, '')
+                    )
+                  }}
+                  disabled
+                />
+              </div>
+
+              {weekly && weekly.length > 0 && (
+                <div className=''>
+                  <span>Ngày trong tuần:</span>
+                  <div className='flex flex-wrap gap-1 pt-1'>
+                    {weekly.map((value: any) => {
+                      const label = dayofweek[Number(value)];
+                      return (
+                        <span
+                          key={value}
+                          className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                        >
+                          {label}
+                        </span>
+                      );
+                    })}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              )}
 
-          <div className='flex h-[30px] items-center justify-end gap-1'>
-            <Button
-              onClick={() => onOpenChange && onOpenChange(false)}
-              variant={'outline'}
-              type='button'
-              className='h-full w-16 rounded-[4px] text-xs'
-            >
-              Đóng
-            </Button>
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+              {monthly && monthly.length > 0 && (
+                <div className=''>
+                  <span>Ngày trong tháng:</span>
+                  <div className='flex flex-wrap gap-1 pt-1'>
+                    {monthly.map((value: any) => {
+                      return (
+                        <span
+                          key={value}
+                          className='bg-muted rounded-[4px] px-2 py-1 text-xs'
+                        >
+                          {value}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className='flex flex-col gap-2.5'>
+                <span className=''>Thời gian & Độ sáng:</span>
+                <TimeBrightnessForm
+                  deviceTraits={(selectedDevice?.traits ?? []) as TraitKey[]}
+                  disabled
+                  schedules={data.schedules}
+                />
+              </div>
+
+              <div className='flex flex-col gap-2 pt-1'>
+                <span className=''>
+                  Thiết bị điều khiển ({allDeviceIds.length}){' '}
+                </span>
+                <div className='flex flex-col gap-1'>
+                  {allDeviceIds.map((name, i) => (
+                    <div
+                      key={i}
+                      className='grid h-6 w-full grid-cols-3 items-center rounded-[4px] border px-2 text-[10px] font-normal'
+                    >
+                      <span className='truncate'>{name}</span>
+                      <span className='text-center text-green-600'>Online</span>
+                      <span
+                        className='cursor-pointer text-right text-blue-500 italic'
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/product/info/${data.client_id}`
+                          )
+                        }
+                      >
+                        Xem chi tiết
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className='flex h-[30px] items-center justify-end gap-1'>
+                <Button
+                  onClick={() => onOpenChange && onOpenChange(false)}
+                  variant={'outline'}
+                  type='button'
+                  className='h-full w-16 rounded-[4px] text-xs'
+                >
+                  Đóng
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }

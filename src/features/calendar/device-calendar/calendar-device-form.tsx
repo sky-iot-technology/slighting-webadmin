@@ -31,6 +31,8 @@ import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { CalendarRangePicker } from '../components/calendar-range-picker';
 import { TimeBrightnessForm } from '../components/calendar-time-brightness';
 import { useGetDeviceById } from '@/core/domains/devices';
+import { useCatalogueStore } from '@/core/domains/catalogues/store';
+import { TraitKey } from '@/core/domains/catalogues';
 
 type CalendarFormProps = {
   initialData: Partial<Calendar> | null;
@@ -65,7 +67,7 @@ export default function CalendarDeviceForm({
     resolver: zodResolver(calendarFormSchema),
     defaultValues
   });
-
+  const { catalogues } = useCatalogueStore();
   const { watch, setValue } = form;
   const type = watch('priority');
   const repeat = watch('recurring');
@@ -106,6 +108,10 @@ export default function CalendarDeviceForm({
       setValue('device_type', data.type);
     }
   }, [data, setValue]);
+
+  const selectedDevice = catalogues.find(
+    (d) => d.type === form.watch('device_type')
+  );
 
   return (
     <div className='overflow-hidden rounded-[10px]'>
@@ -368,7 +374,11 @@ export default function CalendarDeviceForm({
                         Thời gian & Hành động
                       </FormLabel>
                       <FormControl>
-                        <TimeBrightnessForm />
+                        <TimeBrightnessForm
+                          deviceTraits={
+                            (selectedDevice?.traits ?? []) as TraitKey[]
+                          }
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

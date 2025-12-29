@@ -5,7 +5,8 @@ import {
   ScheduleAction,
   SchedulePriority,
   SubSchedule,
-  subScheduleSchema
+  subScheduleSchema,
+  TraitKey
 } from '@/core/domains/calendars';
 import {
   PRIORITY_LABELS_NUMS,
@@ -95,18 +96,27 @@ export function mapFormToCreateCalendarDto(
     schedules: formData.schedules.map((s) => {
       let payload: { command: string; params: Record<string, any> };
 
-      if (s.actionType === 'onOff') {
-        payload = {
-          command: 'lms.devices.commands.OnOff',
-          params: { on: s.onOff ?? false }
-        };
-      } else if (s.actionType === 'brightness') {
-        payload = {
-          command: 'lms.devices.commands.BrightnessAbsolute',
-          params: { brightness: s.brightness ?? 0 }
-        };
-      } else {
+      if (!s.action) {
         payload = { command: '', params: {} };
+      } else {
+        switch (s.action.trait) {
+          case 'lms.devices.traits.OnOff':
+            payload = {
+              command: 'lms.devices.commands.OnOff',
+              params: { on: Boolean(s.action.value) }
+            };
+            break;
+
+          case 'lms.devices.traits.Brightness':
+            payload = {
+              command: 'lms.devices.commands.BrightnessAbsolute',
+              params: { brightness: Number(s.action.value) }
+            };
+            break;
+
+          default:
+            payload = { command: '', params: {} };
+        }
       }
 
       let day = {};
@@ -136,38 +146,38 @@ export const mapSchedulesToForm = (
     return [
       {
         time: '',
-        actionType: undefined,
-        brightness: undefined,
-        onOff: undefined,
-        enabled: true,
-        payload: { command: 'default-command', params: {} }
+        action: undefined,
+        enabled: true
       }
     ];
   }
 
   return schedules.map((s) => {
-    const brightness =
-      s.payload?.params?.brightness !== undefined
-        ? Number(s.payload.params.brightness)
-        : undefined;
+    let action: { trait: TraitKey; value: unknown } | undefined;
 
-    const onOff =
-      s.payload?.params?.on !== undefined
-        ? Boolean(s.payload.params.on)
-        : undefined;
+    switch (s.payload?.command) {
+      case 'lms.devices.commands.OnOff':
+        action = {
+          trait: 'lms.devices.traits.OnOff',
+          value: Boolean(s.payload?.params?.on)
+        };
+        break;
 
-    const actionType = brightness !== undefined ? 'brightness' : 'onOff';
+      case 'lms.devices.commands.BrightnessAbsolute':
+        action = {
+          trait: 'lms.devices.traits.Brightness',
+          value: Number(s.payload?.params?.brightness)
+        };
+        break;
+
+      default:
+        action = undefined;
+    }
 
     return {
       time: s.time,
-      actionType,
-      brightness,
-      onOff,
-      enabled: s.enabled ?? true,
-      payload: {
-        command: s.payload?.command ?? 'default-command',
-        params: s.payload?.params ?? {}
-      }
+      action,
+      enabled: s.enabled ?? true
     };
   });
 };

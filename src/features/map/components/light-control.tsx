@@ -372,6 +372,7 @@ function LightControl(props: LightInfo) {
   );
   const [switchState, setSwitchState] = useState<Record<string, boolean>>({});
   const [pending, setPending] = useState<Record<string, boolean>>({});
+  const [onOffPending, setOnOffPending] = useState(false);
 
   const { mutate: toggleLight } = useTurnOnOffLight();
   const { mutate: setBrightness } = useSetBrightnessLight();
@@ -587,13 +588,14 @@ function LightControl(props: LightInfo) {
                         <Button
                           size='sm'
                           className='bg-map-control-button-success h-4 w-[58px] rounded-[4px] text-[9px]'
-                          onClick={() =>
+                          onClick={() => {
+                            setOnOffPending(true);
                             handleToggleLight(
                               controllableDevices.map((d) => d.device_id),
                               true
-                            )
-                          }
-                          disabled={!isOnline}
+                            );
+                          }}
+                          disabled={!isOnline || onOffPending}
                         >
                           Bật tất cả
                         </Button>
@@ -601,13 +603,14 @@ function LightControl(props: LightInfo) {
                         <Button
                           size='sm'
                           className='bg-map-control-button-destructive h-4 w-[58px] rounded-[4px] text-[9px]'
-                          onClick={() =>
+                          onClick={() => {
+                            setOnOffPending(true);
                             handleToggleLight(
                               controllableDevices.map((d) => d.device_id),
                               false
-                            )
-                          }
-                          disabled={!isOnline}
+                            );
+                          }}
+                          disabled={!isOnline || onOffPending}
                         >
                           Tắt tất cả
                         </Button>
@@ -639,6 +642,8 @@ function LightControl(props: LightInfo) {
               deviceIds.forEach((id) => (updated[id] = false));
               return updated;
             });
+
+            setOnOffPending(false);
           }}
         />
       ))}

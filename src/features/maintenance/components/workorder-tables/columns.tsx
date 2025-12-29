@@ -22,10 +22,7 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
     header: ({ table }) => (
       <div className='flex items-center justify-center'>
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
+          checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
         />
@@ -55,7 +52,7 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
     },
     meta: {
       label: 'work_order_name',
-      placeholder: 'Tìm tên lịch',
+      placeholder: 'Tìm tên công việc',
       variant: 'text'
     },
     enableColumnFilter: true,

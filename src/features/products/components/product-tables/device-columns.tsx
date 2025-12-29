@@ -14,10 +14,7 @@ export const deviceColumns: ColumnDef<Device>[] = [
     header: ({ table }) => (
       <div className='flex items-center justify-center'>
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && 'indeterminate')
-          }
+          checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
           aria-label='Select all'
         />
@@ -82,7 +79,8 @@ export const deviceColumns: ColumnDef<Device>[] = [
     enableHiding: false
   },
   {
-    id: 'online',
+    id: 'status',
+    accessorKey: 'status',
     header: ({ column }: { column: Column<Device, unknown> }) => (
       <DataTableColumnHeader column={column} title='Trạng thái' />
     ),
@@ -98,8 +96,8 @@ export const deviceColumns: ColumnDef<Device>[] = [
       label: 'Trạng thái',
       variant: 'select',
       options: [
-        { label: 'Online', value: 'true' },
-        { label: 'Offline', value: 'false' }
+        { label: 'Online', value: '{"device_info": {"online": true}}' },
+        { label: 'Offline', value: '{"device_info": {"online": false}}' }
       ]
     },
     enableColumnFilter: true,
@@ -167,7 +165,7 @@ export const deviceColumns: ColumnDef<Device>[] = [
     ),
     cell: ({ cell }) => {
       const region = cell.row.original.device_info?.region;
-      return <div>{region || '-'}</div>;
+      return <div className='max-w-[100px] truncate'>{region || '-'}</div>;
     },
     enableSorting: false,
     enableHiding: false

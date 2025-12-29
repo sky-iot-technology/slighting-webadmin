@@ -1,3 +1,4 @@
+'use client';
 import { Avatar } from '@/ui/components/ui/avatar';
 import { Button } from '@/ui/components/ui/button';
 import {
@@ -21,6 +22,7 @@ import { useGetDeviceById } from '@/core/domains/devices';
 import { diffTimeHMS, getSensorAttributes } from '../helper';
 import React from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
+import { useGetAlarms } from '@/core/domains/alarms';
 
 type InfoModalProps = {
   id: number | string;
@@ -29,14 +31,26 @@ type InfoModalProps = {
 
 function CabinetInfoPanel(props: InfoModalProps) {
   const { data, isLoading } = useGetDeviceById(props.id);
-  if (!data) return null;
-  console.log(data);
-  const sensorAttrs = getSensorAttributes(data);
-  const time = diffTimeHMS(data.updated_at);
+
+  const { data: totalAlarm } = useGetAlarms({
+    client_id: String(props.id)
+  });
+  const { data: doneAlarm } = useGetAlarms({
+    client_id: String(props.id),
+    status: 'resolved'
+  });
+  const { data: activeAlarm } = useGetAlarms({
+    client_id: String(props.id),
+    status: 'active'
+  });
 
   if (isLoading) {
     return <div className='rounded-lg bg-white p-4 shadow-lg'>Đang tải...</div>;
   }
+
+  if (!data) return null;
+  const sensorAttrs = getSensorAttributes(data);
+  const time = diffTimeHMS(data.updated_at);
 
   return (
     <CustomScrollbar className='bg-background flex max-h-[600px] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
@@ -221,17 +235,17 @@ function CabinetInfoPanel(props: InfoModalProps) {
               <div className='text-foregroun flex flex-col pr-[5px] pb-1 text-xs leading-[20px]'>
                 <div className='flex items-center justify-between'>
                   <span>Tổng cảnh báo:</span>
-                  <span className='font-medium'>2</span>
+                  <span className='font-medium'>{totalAlarm?.total ?? 0}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span>Đã xử lý:</span>
-                  <span className='font-medium'>1</span>
+                  <span className='font-medium'>{doneAlarm?.total ?? 0}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
                   <span>Đang xử lý:</span>
-                  <span className='font-medium'>1</span>
+                  <span className='font-medium'>{activeAlarm?.total ?? 0}</span>
                 </div>
               </div>
             </CardContent>

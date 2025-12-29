@@ -77,6 +77,7 @@ export interface ProductInfo {
   value: string;
   type: string;
   unit: string;
+  url: string;
 }
 
 export interface AssetAttribute {
