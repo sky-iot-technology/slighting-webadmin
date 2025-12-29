@@ -56,7 +56,7 @@ export const calendarApi = {
   async deleteCalendars(ids: (string | number)[]): Promise<void> {
     try {
       await authenticatedApi.delete<Calendar>(`/schedules`, {
-        data: { ids }
+        ids
       });
     } catch (error: any) {
       console.error('delete error:', error.message);
