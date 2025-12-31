@@ -12,17 +12,22 @@ import {
 } from '@/ui/components/ui/tabs';
 import { ArrowLeft } from 'lucide-react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { OverviewTab } from './components/overview-tab';
 import { ActivityTab } from './components/activity-tab';
 import { AnalysisTab } from './components/analysis-tab';
 import { CalendarContent } from '@/features/calendar/device-calendar/calendar-content';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
+import MaintenanceTab from './components/maintenance-tab';
 
 export default function DeviceDetailsPage() {
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
+
+  const tabFromUrl = searchParams.get('tab') ?? 'overview';
+  const [activeTab, setActiveTab] = useState(tabFromUrl);
+
   const deviceId = params?.id as string;
 
   const { data: device, isLoading, error } = useGetDeviceById(deviceId);
@@ -103,7 +108,11 @@ export default function DeviceDetailsPage() {
   return (
     <div className='bg-card p-4'>
       {/* Tabs */}
-      <Tabs defaultValue='overview' className='will-change-auto'>
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className='will-change-auto'
+      >
         <TabsList className='bg-card grid h-14 auto-cols-max grid-flow-col py-2 shadow-[0px_4px_4px_0px_rgba(0,71,117,0.4)] will-change-auto'>
           <div className='w-14'>
             <div className='flex items-center justify-center'>
@@ -158,12 +167,8 @@ export default function DeviceDetailsPage() {
         </TabsContent>
 
         {/* Maintenance Tab */}
-        <TabsContent value='maintenance' className='mt-6'>
-          <div className='rounded-lg border p-6'>
-            <p className='text-muted-foreground'>
-              Nội dung tab Vận hành và bảo trì sẽ được cập nhật sau
-            </p>
-          </div>
+        <TabsContent value='maintenance' className='mt-6 flex flex-col'>
+          <MaintenanceTab deviceId={deviceId} />
         </TabsContent>
       </Tabs>
     </div>

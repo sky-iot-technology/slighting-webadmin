@@ -16,7 +16,13 @@ import { formatDateTimeString } from '../../helper';
 import { User } from '@/core/domains/users';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
+export const workorderColumns = (
+  users: User[],
+  options?: {
+    onViewAction?: (id: string) => void;
+    onEditAction?: (id: string) => void;
+  }
+): ColumnDef<WorkOrder>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -216,7 +222,21 @@ export const workorderColumns = (users: User[]): ColumnDef<WorkOrder>[] => [
       const id = row.original.id;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction id={id} />}
+          {!isSubRow && (
+            <CellAction
+              id={id}
+              onViewAction={
+                options?.onViewAction
+                  ? () => options.onViewAction!(row.original.id)
+                  : undefined
+              }
+              onEditAction={
+                options?.onEditAction
+                  ? () => options.onEditAction!(row.original.id)
+                  : undefined
+              }
+            />
+          )}
         </div>
       );
     },

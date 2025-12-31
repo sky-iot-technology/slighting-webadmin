@@ -73,11 +73,10 @@ export interface AssetAttribute {
 }
 
 export interface ProductInfo {
-  name: string;
-  value: string;
+  name: string; //tên avatar
+  value: string; //url avatar
   type: string;
-  unit: string;
-  url: string;
+  unit: string; // không bỏ dữ liệu vào đây
 }
 
 export interface AssetAttribute {

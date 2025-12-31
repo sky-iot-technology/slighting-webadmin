@@ -18,9 +18,16 @@ import { useDeleteWorkOrder } from '@/core/domains/workorders';
 interface CellActionProps {
   id: string;
   disabled?: boolean;
+  onViewAction?: () => void;
+  onEditAction?: () => void;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+export const CellAction: React.FC<CellActionProps> = ({
+  id,
+  disabled,
+  onViewAction,
+  onEditAction
+}) => {
   const [open, setOpen] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
@@ -68,7 +75,11 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           className='flex w-30 flex-col gap-2 p-2'
         >
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/maintenance/${id}`)}
+            onClick={() =>
+              onViewAction
+                ? onViewAction()
+                : router.push(`/dashboard/maintenance/${id}`)
+            }
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>
@@ -83,7 +94,11 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/maintenance/${id}/edit`)}
+            onClick={() =>
+              onEditAction
+                ? onEditAction()
+                : router.push(`/dashboard/maintenance/${id}/edit`)
+            }
             className='flex w-full items-center text-xs'
           >
             <div className='mx-2 flex w-4 justify-center'>

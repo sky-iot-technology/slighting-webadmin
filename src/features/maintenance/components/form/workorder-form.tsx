@@ -54,12 +54,14 @@ type MaintenanceFormProps = {
   pageTitle: string;
   initialData: WorkOrder;
   isView?: boolean;
+  onBack?: () => void;
 };
 
 export default function WorkorderForm({
   pageTitle,
   initialData,
-  isView
+  isView,
+  onBack
 }: MaintenanceFormProps) {
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [existingFiles, setExistingFiles] = useState<Attachment[]>(
@@ -334,7 +336,9 @@ export default function WorkorderForm({
                         <Input
                           disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
+                          placeholder={
+                            permissions.assignedBy ? 'Nhập mô tả' : undefined
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -450,7 +454,9 @@ export default function WorkorderForm({
                             !permissions.assignee && !permissions.assignedBy
                           }
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
+                          placeholder={
+                            permissions.assignedBy ? 'Nhập ghi chú' : undefined
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -637,7 +643,9 @@ export default function WorkorderForm({
                         <Input
                           disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
+                          placeholder={
+                            permissions.assignedBy ? 'Nhập ghi chú' : undefined
+                          }
                           {...field}
                         />
                       </FormControl>
@@ -652,7 +660,9 @@ export default function WorkorderForm({
           <div className='mt-2 mr-2.5 mb-3.5 flex h-[30px] items-center justify-end gap-4'>
             {isView ? (
               <Button
-                onClick={() => router.push(`/dashboard/maintenance`)}
+                onClick={() =>
+                  onBack ? onBack() : router.push(`/dashboard/maintenance`)
+                }
                 variant={'outline'}
                 type='button'
                 className='h-full w-16 rounded-[4px] text-xs'
@@ -662,7 +672,9 @@ export default function WorkorderForm({
             ) : (
               <>
                 <Button
-                  onClick={() => router.push(`/dashboard/maintenance`)}
+                  onClick={() =>
+                    onBack ? onBack() : router.push(`/dashboard/maintenance`)
+                  }
                   variant={'outline'}
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'

@@ -1,6 +1,6 @@
 'use client';
 
-import { FileUploader } from '@/ui/components/file-uploader';
+import { AvatarUploader, FileUploader } from '@/ui/components/file-uploader';
 import { Button } from '@/ui/components/ui/button';
 import {
   Card,
@@ -38,7 +38,7 @@ import { useGetTags } from '@/core/domains/tags';
 import { useGetGroups } from '@/core/domains/groups';
 import { useRouter } from 'next/navigation';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import {
   Sheet,
@@ -48,6 +48,7 @@ import {
   SheetTrigger
 } from '@/ui/components/ui/sheet';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
+import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 
 interface Device {
   id?: string;
@@ -83,6 +84,13 @@ export default function ProductForm({
   pageTitle: string;
 }) {
   const router = useRouter();
+
+  const [selectedParent, setSelectedParent] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+
+  const [open, setOpen] = useState(false);
 
   // Fetch tags from API
   const { data: tagsData, isLoading: isLoadingTags } = useGetTags({
@@ -132,7 +140,8 @@ export default function ProductForm({
     address: '',
     note: '',
     serial: '',
-    manufacturer: ''
+    manufacturer: '',
+    image: undefined
   };
 
   const form = useForm<DeviceFormValues>({
@@ -143,7 +152,6 @@ export default function ProductForm({
   function onSubmit(values: DeviceFormValues) {
     // Convert form values to API payload format
     const apiPayload = convertFormToApiPayload(values);
-
     // Call API to create device
     createDeviceMutation.mutate(apiPayload);
   }
@@ -168,16 +176,20 @@ export default function ProductForm({
                       <div className='space-y-6'>
                         <FormItem className='w-full'>
                           <FormControl>
-                            <FileUploader
+                            {/* <FileUploader
                               value={field.value}
                               onValueChange={field.onChange}
-                              maxFiles={4}
-                              maxSize={4 * 1024 * 1024}
+                              maxFiles={1}
+                              maxSize={5 * 1024 * 1024}
                               // disabled={loading}
                               // progresses={progresses}
                               // pass the onUpload function here for direct upload
                               // onUpload={uploadFiles}
                               // disabled={isUploading}
+                            /> */}
+                            <AvatarUploader
+                              value={field.value}
+                              onValueChange={field.onChange}
                             />
                           </FormControl>
                           <FormMessage />
@@ -413,7 +425,7 @@ export default function ProductForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Chi nhánh</FormLabel>
-                          <Select
+                          {/* <Select
                             onValueChange={(value) => field.onChange(value)}
                             value={field.value}
                             disabled={isLoadingGroups}
@@ -432,16 +444,41 @@ export default function ProductForm({
                             <SelectContent>
                               {groupOptions.length > 0
                                 ? groupOptions.map((group) => (
-                                    <SelectItem
-                                      key={group.value}
-                                      value={group.value}
-                                    >
-                                      {group.label}
-                                    </SelectItem>
-                                  ))
+                                  <SelectItem
+                                    key={group.value}
+                                    value={group.value}
+                                  >
+                                    {group.label}
+                                  </SelectItem>
+                                ))
                                 : null}
                             </SelectContent>
-                          </Select>
+                          </Select> */}
+                          <TreeProvider
+                            onRegionChange={(region) => {
+                              field.onChange(region?.id ?? '');
+                              setSelectedParent(
+                                region
+                                  ? { id: region.id, name: region.name }
+                                  : null
+                              );
+                              setOpen(false);
+                            }}
+                            selectedRegion={
+                              selectedParent
+                                ? {
+                                    id: selectedParent.id,
+                                    name: selectedParent.name
+                                  }
+                                : undefined
+                            }
+                            open={open}
+                            onOpenChange={setOpen}
+                            className='!h-9 !w-full !text-sm'
+                            buttonClassName='!rounded-sm !bg-white'
+                            treeClassName='!w-full !rounded-sm '
+                            insideClassName='!text-sm'
+                          />
                           <FormMessage />
                         </FormItem>
                       )}

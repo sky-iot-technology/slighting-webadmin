@@ -39,6 +39,7 @@ interface CellActionProps {
   lat: number;
   lng: number;
   disabled?: boolean;
+  onViewAction?: (workOrderId: string) => void;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -46,7 +47,8 @@ export const CellAction: React.FC<CellActionProps> = ({
   id,
   lat,
   lng,
-  disabled
+  disabled,
+  onViewAction
 }) => {
   const [openMap, setOpenMap] = useState(false);
 
@@ -73,7 +75,9 @@ export const CellAction: React.FC<CellActionProps> = ({
       toast.error('Do not have any work order for this alarm');
       return;
     }
-    router.push(`/dashboard/maintenance/${workOrderId}`);
+    onViewAction
+      ? onViewAction(workOrderId)
+      : router.push(`/dashboard/maintenance/${workOrderId}`);
   };
 
   const deleteAlarm = useDeleteAlarm({

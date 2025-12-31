@@ -1,10 +1,11 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { cn } from '@/lib/utils';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { RegionTreeWrapper } from './RegionTreeWrapper';
+import { RegionNode } from '@/core/domains/groups';
 
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
@@ -12,9 +13,10 @@ type TreeProviderProps = {
   className?: string;
   buttonClassName?: string;
   treeClassName?: string;
+  insideClassName?: string;
   filter?: boolean;
   disabled?: boolean;
-
+  disabledClassName?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -25,11 +27,14 @@ export function TreeProvider({
   className,
   buttonClassName,
   treeClassName,
+  insideClassName,
   filter,
   disabled,
+  disabledClassName,
   open: openProp,
   onOpenChange
 }: TreeProviderProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
   const [internalOpen, setInternalOpen] = useState(false);
   const open = openProp ?? internalOpen;
 
@@ -41,8 +46,28 @@ export function TreeProvider({
   };
   const { treeData } = useRegionTreeStore();
 
+  useEffect(() => {
+    if (!open) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
   return (
     <div
+      ref={containerRef}
       className={cn(
         className,
         'relative h-[26px] w-[160px] rounded-md text-xs sm:h-[28px] sm:w-[180px] md:h-[30px] md:w-[217px]'
@@ -56,7 +81,7 @@ export function TreeProvider({
         className={cn(
           buttonClassName,
           'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
-          disabled && 'bg-muted opacity-60'
+          disabled ? (disabledClassName ?? 'bg-muted opacity-60') : undefined
         )}
       >
         <span
@@ -94,6 +119,7 @@ export function TreeProvider({
           }}
           selectedId={selectedRegion?.id}
           filter={filter}
+          classname={insideClassName}
         />
       </div>
     </div>

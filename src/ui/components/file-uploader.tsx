@@ -1,6 +1,6 @@
 'use client';
 
-import { IconX, IconUpload } from '@tabler/icons-react';
+import { IconX, IconUpload, IconUser } from '@tabler/icons-react';
 import Image from 'next/image';
 import * as React from 'react';
 import Dropzone, {
@@ -313,4 +313,140 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
 
 function isFileWithPreview(file: File): file is File & { preview: string } {
   return 'preview' in file && typeof file.preview === 'string';
+}
+
+interface AvatarUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  value?: File;
+  onValueChange?: (file: File | null) => void;
+  onUpload?: (file: File) => Promise<void>;
+  size?: number;
+  disabled?: boolean;
+}
+
+export function AvatarUploader(props: AvatarUploaderProps) {
+  const {
+    value: valueProp,
+    onValueChange,
+    onUpload,
+    disabled = false,
+    className,
+    ...dropzoneProps
+  } = props;
+
+  const [file, setFile] = useControllableState<File | null>({
+    prop: valueProp,
+    onChange: onValueChange
+  });
+
+  const onDrop = React.useCallback(
+    async (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
+      if (!acceptedFiles.length) return;
+
+      const selected = Object.assign(acceptedFiles[0], {
+        preview: URL.createObjectURL(acceptedFiles[0])
+      });
+
+      setFile(selected);
+
+      if (rejectedFiles.length) {
+        toast.error(`File ${rejectedFiles[0].file.name} was rejected`);
+      }
+
+      if (onUpload) {
+        toast.promise(onUpload(selected), {
+          loading: 'Uploading avatar...',
+          success: 'Avatar updated',
+          error: 'Failed to upload avatar'
+        });
+      }
+    },
+    [onUpload, setFile]
+  );
+
+  React.useEffect(() => {
+    return () => {
+      if (file && isFileWithPreview(file)) {
+        URL.revokeObjectURL(file.preview);
+      }
+    };
+  }, [file]);
+
+  return (
+    <Dropzone
+      accept={{ 'image/*': [] }}
+      maxFiles={1}
+      multiple={false}
+      disabled={disabled}
+      onDrop={onDrop}
+    >
+      {({ getRootProps, getInputProps, isDragActive }) => (
+        <div
+          {...getRootProps()}
+          {...dropzoneProps}
+          className={cn(
+            'group border-muted-foreground/25 hover:bg-muted/25 relative grid h-52 w-full cursor-pointer place-items-center overflow-hidden rounded-lg border-2 border-dashed px-5 py-2.5 text-center transition',
+            'ring-offset-background focus-visible:ring-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+            isDragActive && 'border-muted-foreground/50',
+            disabled && 'pointer-events-none opacity-60',
+            className
+          )}
+        >
+          <input {...getInputProps()} />
+
+          {file && isFileWithPreview(file) ? (
+            <>
+              <Image
+                src={file.preview}
+                width={180}
+                height={180}
+                alt='Avatar'
+                className='h-full w-full object-cover'
+              />
+
+              {/* ✅ Nút X xoá */}
+              <button
+                type='button'
+                className='bg-background/80 hover:bg-background absolute top-2 right-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full shadow-sm backdrop-blur'
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setFile(null);
+                  onValueChange?.(null);
+                }}
+                aria-label='Remove avatar'
+              >
+                <IconX className='text-muted-foreground h-4 w-4' />
+              </button>
+            </>
+          ) : isDragActive ? (
+            <div className='flex flex-col items-center justify-center gap-4 sm:px-5'>
+              <div className='rounded-full border border-dashed p-3'>
+                <IconUpload
+                  className='text-muted-foreground size-7'
+                  aria-hidden='true'
+                />
+              </div>
+              <p className='text-muted-foreground font-medium'>
+                Drop the files here
+              </p>
+            </div>
+          ) : (
+            <div className='flex flex-col items-center justify-center gap-4 sm:px-5'>
+              <div className='rounded-full border border-dashed p-3'>
+                <IconUpload
+                  className='text-muted-foreground size-7'
+                  aria-hidden='true'
+                />
+              </div>
+              <div className='space-y-px'>
+                <p className='text-muted-foreground font-medium'>
+                  Drag {`'n'`} drop avatar here, or click to select avatar
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </Dropzone>
+  );
 }

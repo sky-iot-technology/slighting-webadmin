@@ -8,6 +8,7 @@ import { Button } from '@/ui/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { useMemo } from 'react';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import WorkOrderView from './WorkOrderView';
 
 type WorkOrderViewPageProps = {
   pageTitle: string;
@@ -51,7 +52,7 @@ export default function WorkOrderViewPage({
     );
   }
 
-  if (error || !data) {
+  if (error) {
     return (
       <div className='flex h-64 items-center justify-center p-6'>
         <div className='text-center'>
@@ -75,14 +76,11 @@ export default function WorkOrderViewPage({
   }
 
   return (
-    <div className='h-full w-full p-3'>
-      <div className={`flex h-fit w-full flex-1 flex-col bg-white pt-1`}>
-        <WorkorderForm
-          pageTitle={pageTitle}
-          initialData={data}
-          isView={isView}
-        />
-      </div>
-    </div>
+    <WorkOrderView
+      data={data}
+      isLoading={isLoading}
+      isView={isView}
+      pageTitle={pageTitle}
+    />
   );
 }

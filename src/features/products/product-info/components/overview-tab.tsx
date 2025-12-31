@@ -35,7 +35,7 @@ import { useGetGroups } from '@/core/domains/groups';
 import { useGetTags } from '@/core/domains/tags';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { useUpdateDevice } from '@/core/domains/devices';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
@@ -51,6 +51,13 @@ import {
 } from '@/ui/components/ui/sheet';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
 import { RequestWatcher } from '@/features/map/components/RequestWatcher';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from '@/ui/components/ui/dialog';
+import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 
 interface OverviewTabProps {
   device: Device;
@@ -65,9 +72,25 @@ const isValidLon = (val: string) => {
   const n = Number(val);
   return !isNaN(n) && n >= -180 && n <= 180;
 };
+
+const MAX_FILE_SIZE = 5000000;
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp'
+];
 // Form schema for editable fields
 const overviewFormSchema = z.object({
   // Required fields (matching deviceFormSchema)
+  image: z
+    .instanceof(File)
+    .refine((file) => file.size <= MAX_FILE_SIZE, 'Max file size is 5MB')
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      'Invalid image type'
+    )
+    .optional(),
   name: z.string().min(2, { message: 'Tên thiết bị phải có ít nhất 2 ký tự' }),
   type: z.string().min(1, { message: 'Loại thiết bị không được bỏ trống' }),
   parent_group_id: z
@@ -101,7 +124,16 @@ const overviewFormSchema = z.object({
 type OverviewFormValues = z.infer<typeof overviewFormSchema>;
 
 export function OverviewTab({ device }: OverviewTabProps) {
+  const [avatarChanged, setAvatarChanged] = useState(false);
+  const [oldAvatarUrl, setOldAvatarUrl] = useState<string | null>(null);
+  const [selectedParent, setSelectedParent] = useState<{
+    id: string;
+    name: string;
+  } | null>(null);
+  const [open, setOpen] = useState(false);
+
   const [isEditMode, setIsEditMode] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [isReminderModalOpen, setIsReminderModalOpen] = useState(false);
   const [syncRequestId, setSyncRequestId] = useState<string | undefined>(
     undefined
@@ -242,6 +274,14 @@ export function OverviewTab({ device }: OverviewTabProps) {
     }
     return undefined;
   };
+
+  useEffect(() => {
+    const url = device.product_info?.find(
+      (a) => a.unit === 'avatar' || a.name === 'avatar'
+    )?.value;
+
+    setOldAvatarUrl(url ? String(url) : null);
+  }, [device.id]);
 
   // Initialize form with device data
   const form = useForm<OverviewFormValues>({
@@ -400,6 +440,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
   };
 
   const onSubmit = (values: OverviewFormValues) => {
+    const { image } = values;
     const asset_attribute = buildAssetAttributes(values);
 
     const latValue =
@@ -412,7 +453,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
         ? Number(values.lon)
         : (device.device_info?.lon ?? 0);
 
-    const updateData: Partial<Device> = {
+    const updateData: Partial<Device> & {
+      avatar?: File;
+      oldAvatarUrl?: string;
+    } = {
       name: values.name,
       type: values.type,
       parent_group_id: values.parent_group_id,
@@ -425,7 +469,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
         serial_number: values.serial || device.device_info?.serial_number || '',
         manufacturer:
           values.manufacturer || device.device_info?.manufacturer || ''
-      }
+      },
+      product_info: device.product_info
     };
 
     // Only include device_asset if we have asset_attribute
@@ -440,6 +485,11 @@ export function OverviewTab({ device }: OverviewTabProps) {
             name: device.name || '',
             asset_attribute
           };
+    }
+
+    if (avatarChanged && image) {
+      updateData.avatar = image;
+      updateData.oldAvatarUrl = oldAvatarUrl || undefined;
     }
 
     updateDeviceMutation.mutate({
@@ -496,7 +546,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
           currentValues.serial || device.device_info?.serial_number || '',
         manufacturer:
           currentValues.manufacturer || device.device_info?.manufacturer || ''
-      }
+      },
+      product_info: device.product_info
     };
 
     // Only include device_asset if we have asset_attribute
@@ -512,12 +563,21 @@ export function OverviewTab({ device }: OverviewTabProps) {
             asset_attribute
           };
     }
-
     updateDeviceMutation.mutate({
       deviceId: device.id,
       data: updateData
     });
   };
+
+  const avatarUrl = device.product_info?.find(
+    (a) => a.unit === 'avatar' || a.name === 'avatar'
+  )?.value;
+
+  const watchedImage = form.watch('image');
+
+  const previewAvatarUrl = watchedImage
+    ? URL.createObjectURL(watchedImage)
+    : avatarUrl;
 
   return (
     <FormSchemaProvider schema={overviewFormSchema}>
@@ -527,27 +587,58 @@ export function OverviewTab({ device }: OverviewTabProps) {
           <Card className='border-none py-1 shadow-none'>
             <div className='flex gap-6'>
               {/* Device Image Placeholder */}
-              <div className='bg-muted flex h-40 w-64 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg'>
-                {device.device_asset?.asset_attribute?.find(
-                  (a) =>
-                    a.identify === 'image' ||
-                    a.attr?.toLowerCase().includes('image')
-                )?.content ? (
+              <div className='group bg-muted relative flex h-40 w-64 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg'>
+                {previewAvatarUrl ? (
                   <Image
-                    src={String(
-                      device.device_asset.asset_attribute.find(
-                        (a) =>
-                          a.identify === 'image' ||
-                          a.attr?.toLowerCase().includes('image')
-                      )?.content
-                    )}
+                    src={String(previewAvatarUrl)}
                     alt={device.name || 'Device'}
                     width={128}
                     height={128}
-                    className='h-full w-full object-cover'
+                    className='h-full w-full cursor-pointer object-cover'
+                    onClick={() => setPreviewSrc(String(previewAvatarUrl))}
                   />
                 ) : (
                   <IconDeviceDesktop className='text-muted-foreground h-16 w-16' />
+                )}
+
+                {isEditMode && (
+                  <>
+                    <label
+                      htmlFor='device-avatar-upload'
+                      className={cn(
+                        'absolute top-2 right-2 flex h-8 w-24 cursor-pointer items-center justify-center gap-2 rounded-[20px] bg-white shadow transition hover:bg-gray-100',
+                        previewAvatarUrl
+                          ? 'opacity-0 group-hover:opacity-100'
+                          : 'opacity-100'
+                      )}
+                      title={previewAvatarUrl ? 'Đổi ảnh' : 'Thêm ảnh'}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <Image
+                        src='/assets/icons/edit.svg'
+                        alt='edit'
+                        width={12}
+                        height={12}
+                      />
+                      <span className='text-xs'>
+                        {previewAvatarUrl ? 'Đổi ảnh' : 'Thêm ảnh'}
+                      </span>
+                    </label>
+
+                    <input
+                      id='device-avatar-upload'
+                      type='file'
+                      accept='image/*'
+                      className='hidden'
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+
+                        form.setValue('image', file, { shouldDirty: true });
+                        setAvatarChanged(true);
+                      }}
+                    />
+                  </>
                 )}
               </div>
 
@@ -872,7 +963,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Chi nhánh</FormLabel>
-                        <Select
+                        {/* <Select
                           value={field.value}
                           onValueChange={field.onChange}
                           disabled={!isEditMode}
@@ -897,7 +988,34 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               </SelectItem>
                             ))}
                           </SelectContent>
-                        </Select>
+                        </Select> */}
+                        <TreeProvider
+                          onRegionChange={(region) => {
+                            field.onChange(region?.id ?? '');
+                            setSelectedParent(
+                              region
+                                ? { id: region.id, name: region.name }
+                                : null
+                            );
+                            setOpen(false);
+                          }}
+                          selectedRegion={
+                            selectedParent
+                              ? {
+                                  id: selectedParent.id,
+                                  name: selectedParent.name
+                                }
+                              : undefined
+                          }
+                          open={open}
+                          onOpenChange={setOpen}
+                          className='!h-9 !w-full !text-sm'
+                          buttonClassName={cn('!rounded-sm !bg-white')}
+                          disabledClassName='disabled:opacity-90 disabled:!bg-muted'
+                          treeClassName='!w-full !rounded-sm '
+                          insideClassName='!text-sm'
+                          disabled={!isEditMode}
+                        />
                         <FormMessage />
                       </FormItem>
                     )}
@@ -1158,6 +1276,22 @@ export function OverviewTab({ device }: OverviewTabProps) {
           onStopped={handleSyncStopped}
         />
       )}
+      <Dialog open={!!previewSrc} onOpenChange={() => setPreviewSrc(null)}>
+        <DialogTitle className='hidden'>Image</DialogTitle>
+        <DialogDescription className='hidden'>Image</DialogDescription>
+        <DialogContent className='max-h-[90vh] min-h-[300px] max-w-[90vw] min-w-[300px] p-0'>
+          {previewSrc && (
+            <div className='relative h-[80vh] w-full'>
+              <Image
+                src={previewSrc}
+                alt='preview'
+                fill
+                className='object-contain'
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </FormSchemaProvider>
   );
 }

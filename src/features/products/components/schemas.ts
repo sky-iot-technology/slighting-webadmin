@@ -51,22 +51,11 @@ const isValidLon = (val: string) => {
 export const deviceFormSchema = z.object({
   // Image upload (optional)
   image: z
-    .any()
+    .instanceof(File)
+    .refine((file) => file.size <= MAX_FILE_SIZE, 'Max file size is 5MB')
     .refine(
-      (files) => !files || files?.length === 0 || files?.length === 1,
-      'Image is optional.'
-    )
-    .refine(
-      (files) =>
-        !files || files?.length === 0 || files?.[0]?.size <= MAX_FILE_SIZE,
-      `Max file size is 5MB.`
-    )
-    .refine(
-      (files) =>
-        !files ||
-        files?.length === 0 ||
-        ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      '.jpg, .jpeg, .png and .webp files are accepted.'
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+      'Invalid image type'
     )
     .optional(),
 
@@ -244,14 +233,15 @@ export function convertFormToApiPayload(
   // Build API payload
   return {
     id: formValues.id,
+    avatar: formValues.image,
     type: formValues.type,
     // Ensure tags is always an array of strings
     tags: Array.isArray(formValues.tags) ? formValues.tags : [],
     parent_group_id: formValues.parent_group_id,
     name: formValues.name,
     device_info: {
-      lat: formValues.lat || 0,
-      lon: formValues.lon || 0,
+      lat: Number(formValues.lat) || 0,
+      lon: Number(formValues.lon) || 0,
       online: false,
       serial_number: formValues.serial,
       region: formValues.address,

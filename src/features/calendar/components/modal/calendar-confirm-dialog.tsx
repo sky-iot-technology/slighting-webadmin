@@ -5,13 +5,17 @@ import {
   dayofweek,
   PRIORITY_LABELS,
   PRIORITY_LABELS_NUMS,
+  PRIORITY_LABELS_NUMS_VIET,
   RECURRING_LABELS
 } from '@/core/domains/calendars/constant';
 import { DateRange } from 'react-day-picker';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { CalendarRangePicker } from '../calendar-range-picker';
 import { TRAIT_UI_MAP } from '@/ui/business/trait/trait';
-import { TRAIT_LABELS } from '@/core/domains/catalogues';
+import { SubCatalogueDevice, TRAIT_LABELS } from '@/core/domains/catalogues';
+import { Switch } from '@/ui/components/ui/switch';
+import { Slider } from '@/ui/components/ui/slider';
+import { useCatalogueStore } from '@/core/domains/catalogues/store';
 
 type Props = {
   data: z.infer<typeof calendarFormSchema>;
@@ -20,6 +24,18 @@ type Props = {
 };
 
 export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
+  const { catalogues } = useCatalogueStore();
+  const allDeviceIds = data.ids;
+
+  const selectedDevice = catalogues.find((d) => d.type === data.device_type);
+
+  const nameLine = allDeviceIds.map((id) => {
+    const attr = selectedDevice?.attributes[id];
+    if (typeof attr === 'object' && attr !== null && 'name' in attr) {
+      return (attr as SubCatalogueDevice).name;
+    }
+    return null;
+  });
   return (
     <div className='space-y-3.5 p-5.5 text-xs font-bold text-black'>
       <h3 className='text-primary text-left text-base font-bold'>
@@ -32,9 +48,16 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
       </div>
 
       <div className='flex gap-2'>
+        <span className=''>Nhánh thiết bị:</span>
+        <span className='text-right font-medium'>
+          {nameLine.filter(Boolean).join(', ')}
+        </span>
+      </div>
+
+      <div className='flex gap-2'>
         <span className=''>Loại lịch:</span>
         <span className='text-right font-medium'>
-          {PRIORITY_LABELS_NUMS[data.priority]}
+          {PRIORITY_LABELS_NUMS_VIET[data.priority]}
         </span>
       </div>
 
@@ -142,8 +165,12 @@ function renderAction(item: Props['data']['schedules'][number]) {
   if (trait === 'lms.devices.traits.Brightness') {
     const v = typeof value === 'number' ? value : Number(value ?? 0);
     return (
-      <span>
-        {TRAIT_LABELS[trait] ?? trait}: {v}%
+      <span className='flex gap-2'>
+        <Slider
+          value={[v]}
+          className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+        />
+        {v}%{/* {TRAIT_LABELS[trait] ?? trait}: {v}% */}
       </span>
     );
   }
@@ -152,7 +179,8 @@ function renderAction(item: Props['data']['schedules'][number]) {
     const v = Boolean(value);
     return (
       <span>
-        {TRAIT_LABELS[trait] ?? trait}: {v ? 'Bật' : 'Tắt'}
+        <Switch checked={v} className='data-[state=checked]:bg-green-500' />
+        {/* {TRAIT_LABELS[trait] ?? trait}: {v ? 'Bật' : 'Tắt'} */}
       </span>
     );
   }

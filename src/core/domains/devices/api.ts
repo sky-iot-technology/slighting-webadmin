@@ -46,7 +46,6 @@ export const devicesApi = {
 
   async getById(id: string | number): Promise<Device> {
     try {
-      console.log(id);
       return await authenticatedApi.get<Device>(`/devices/things/${id}`);
     } catch (error) {
       throw new Error(`Product with id ${id} not found`);
@@ -151,7 +150,7 @@ export const devicesApi = {
         deviceData
       );
     } catch (error) {
-      throw new Error('Failed to create device');
+      throw error;
     }
   },
 
@@ -176,7 +175,8 @@ export const devicesApi = {
         data
       );
     } catch (error) {
-      throw new Error('Failed to update device');
+      console.error('Failed to update device');
+      throw error;
     }
   },
 

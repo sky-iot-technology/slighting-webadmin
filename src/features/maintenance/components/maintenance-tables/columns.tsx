@@ -17,7 +17,8 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 
 export const maintenanceColumns = (
   users: User[],
-  devices: Device[]
+  devices: Device[],
+  options?: { onViewAction?: (id: string) => void }
 ): ColumnDef<Alarm>[] => [
   {
     id: 'select',
@@ -50,8 +51,10 @@ export const maintenanceColumns = (
       <DataTableColumnHeader column={column} title='Mã thiết bị' />
     ),
     cell: ({ row }) => {
-      const metadata = row.getValue('metadata') as Alarm['metadata'];
-      return <div>{metadata.imei ?? '-'}</div>;
+      const metadata = row.getValue('metadata') as
+        | Alarm['metadata']
+        | undefined;
+      return <div>{metadata?.imei || '-'}</div>;
     },
     enableSorting: false,
     enableHiding: false
@@ -229,6 +232,11 @@ export const maintenanceColumns = (
               id={String(row.original.id)}
               lat={device?.device_info.lat || 0}
               lng={device?.device_info.lon || 0}
+              onViewAction={
+                options?.onViewAction
+                  ? (workOrderId) => options.onViewAction!(workOrderId)
+                  : undefined
+              }
             />
           )}
         </div>

@@ -10,6 +10,12 @@ export const PRIORITY_LABELS_NUMS: Record<number, string> = {
   3: 'lower'
 };
 
+export const PRIORITY_LABELS_NUMS_VIET: Record<number, string> = {
+  1: 'Khẩn cấp',
+  2: 'Theo lịch',
+  3: 'Thấp'
+};
+
 export const PRIORITY_LABELS_STRINGS: Record<string, number> = {
   emergency: 1,
   normal: 2,

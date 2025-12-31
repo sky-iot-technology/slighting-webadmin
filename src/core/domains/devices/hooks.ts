@@ -21,6 +21,8 @@ import { devicesApi } from './api';
 import { toast } from 'sonner';
 import { useEffect, useRef } from 'react';
 import { JOURNALS_QUERY_KEY } from '../journals';
+import { useAuthStore } from '../auth';
+import { storageApi } from '../storage';
 
 //Query keys
 export const DEVICES_QUERY_KEY = 'devices';
@@ -129,18 +131,48 @@ export const useSetBrightnessLight = (
 };
 
 export const useCreateDevice = (
-  options?: UseMutationOptions<void, Error, any>
+  options?: UseMutationOptions<Device, Error, any>
 ) => {
   const queryClient = useQueryClient();
-
+  const { domainId } = useAuthStore();
   const onSuccessCallback = options?.onSuccess;
   const onErrorCallback = options?.onError;
 
-  return useMutation<void, Error, any>({
+  return useMutation<Device, Error, any>({
     mutationFn: async (deviceData) => {
-      console.log(deviceData);
-      // return devicesApi.createDevice(deviceData)
-      return;
+      if (!domainId) {
+        throw new Error('Not authenticated');
+      }
+      const { avatar, ...rest } = deviceData;
+      let product_info = Array.isArray(rest.product_info)
+        ? [...rest.product_info]
+        : [];
+
+      let uploadedFile: { name: string; url: string } | null = null;
+
+      try {
+        if (avatar) {
+          uploadedFile = await storageApi.uploadToDomain(domainId, avatar);
+
+          product_info.push({
+            name: 'avatar',
+            value: uploadedFile.url,
+            type: 'string',
+            unit: 'avatar'
+          });
+        }
+        const payload = {
+          ...rest,
+          product_info
+        };
+
+        return devicesApi.createDevice(payload);
+      } catch (error) {
+        if (uploadedFile) {
+          await storageApi.deletefile(uploadedFile.url);
+        }
+        throw error;
+      }
     },
     onSuccess: (data, variables, context) => {
       toast.success('Device created successfully!');
@@ -392,17 +424,72 @@ export const useUpdateDevice = (
   options?: UseMutationOptions<
     Device,
     Error,
-    { deviceId: string | number; data: Partial<Device> }
+    {
+      deviceId: string | number;
+      data: Partial<Device> & {
+        avatar?: File;
+        oldAvatarUrl?: string;
+      };
+    }
   >
 ) => {
   const queryClient = useQueryClient();
-
+  const { domainId } = useAuthStore();
   return useMutation<
     Device,
     Error,
-    { deviceId: string | number; data: Partial<Device> }
+    {
+      deviceId: string | number;
+      data: Partial<Device> & {
+        avatar?: File;
+        oldAvatarUrl?: string;
+      };
+    }
   >({
-    mutationFn: ({ deviceId, data }) => devicesApi.updateDevice(deviceId, data),
+    mutationFn: async ({ deviceId, data }) => {
+      if (!domainId) {
+        throw new Error('Invalid domainId');
+      }
+      const { avatar, oldAvatarUrl, product_info, ...rest } = data;
+
+      let uploadedFile: { url: string } | null = null;
+
+      try {
+        if (avatar) {
+          uploadedFile = await storageApi.uploadToDomain(domainId, avatar);
+        }
+        let nextProductInfo = Array.isArray(product_info)
+          ? [...product_info]
+          : [];
+        if (uploadedFile) {
+          nextProductInfo = nextProductInfo.filter(
+            (p) => p.unit !== 'avatar' && p.name !== 'avatar'
+          );
+          nextProductInfo.push({
+            name: 'avatar',
+            unit: 'avatar',
+            value: uploadedFile.url,
+            type: 'string'
+          });
+        }
+
+        const updatedDevice = await devicesApi.updateDevice(deviceId, {
+          ...rest,
+          product_info: nextProductInfo
+        });
+
+        if (uploadedFile && oldAvatarUrl) {
+          await storageApi.deletefile(oldAvatarUrl);
+        }
+
+        return updatedDevice;
+      } catch (error) {
+        if (uploadedFile) {
+          await storageApi.deletefile(uploadedFile.url);
+        }
+        throw error;
+      }
+    },
     onSuccess: (data, variables, context) => {
       toast.success('Cập nhật thiết bị thành công!');
       queryClient.invalidateQueries({

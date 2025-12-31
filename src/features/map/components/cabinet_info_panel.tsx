@@ -23,6 +23,7 @@ import { diffTimeHMS, getSensorAttributes } from '../helper';
 import React from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { useGetAlarms } from '@/core/domains/alarms';
+import { useRouter } from 'next/navigation';
 
 type InfoModalProps = {
   id: number | string;
@@ -30,6 +31,7 @@ type InfoModalProps = {
 };
 
 function CabinetInfoPanel(props: InfoModalProps) {
+  const router = useRouter();
   const { data, isLoading } = useGetDeviceById(props.id);
 
   const { data: totalAlarm } = useGetAlarms({
@@ -251,7 +253,13 @@ function CabinetInfoPanel(props: InfoModalProps) {
             </CardContent>
           </Card>
 
-          <Button variant='default' className='mx-auto my-6 mb-6 h-9 text-xs'>
+          <Button
+            variant='default'
+            className='mx-auto my-6 mb-6 h-9 text-xs'
+            onClick={() =>
+              router.push(`/dashboard/product/info/${props.id}?tab=maintenance`)
+            }
+          >
             Báo cáo sự cố
           </Button>
         </TabsContent>

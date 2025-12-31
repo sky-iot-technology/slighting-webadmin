@@ -6,19 +6,27 @@ import {
   CardHeader,
   CardTitle
 } from '@/ui/components/ui/card';
-import { LockKeyhole, LogOut, User, UserCog } from 'lucide-react';
+import { Camera, LockKeyhole, LogOut, User, UserCog } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import Profile from './profile-tab/profile';
 import PasswordForm from './form/password-form';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import { useAuthStore, useLogout, useUploadAvatar } from '@/core/domains/auth';
 import AccountForm from './form/account-form';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle
+} from '@/ui/components/ui/dialog';
+import Image from 'next/image';
 
 export default function ProfilePage() {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<'profile' | 'account' | 'password'>('profile');
   const logoutMutation = useLogout();
   const { user } = useAuthStore();
+  const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
   const handleLogout = () => {
     logoutMutation.mutate();
@@ -54,21 +62,25 @@ export default function ProfilePage() {
         <div className='w-full rounded-[4px] bg-white px-[22px] pt-[24px] md:h-[519px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
           <div className='mb-6 flex flex-col items-center gap-4 md:flex-row md:gap-8'>
             <div className='group relative cursor-pointer'>
-              <label htmlFor='avatar-upload' className='cursor-pointer'>
-                {user.profile_picture ? (
-                  <img
-                    src={user.profile_picture}
-                    alt='Avatar'
-                    className='h-[90px] w-[90px] rounded-full border object-cover shadow-sm'
-                  />
-                ) : (
-                  <div className='flex h-[90px] w-[90px] items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
-                    <User width={50} height={50} />
-                  </div>
-                )}
-                <div className='absolute inset-0 hidden items-center justify-center rounded-full bg-black/40 text-xs text-white group-hover:flex'>
-                  Đổi ảnh
+              {user.profile_picture ? (
+                <img
+                  src={user.profile_picture}
+                  onClick={() => setPreviewSrc(user.profile_picture ?? '')}
+                  alt='Avatar'
+                  className='h-[90px] w-[90px] rounded-full border object-cover shadow-sm'
+                />
+              ) : (
+                <div className='flex h-[90px] w-[90px] items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
+                  <User width={50} height={50} />
                 </div>
+              )}
+
+              <label
+                htmlFor='avatar-upload'
+                className='absolute -right-1 -bottom-1 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border bg-white text-gray-600 shadow hover:bg-gray-100'
+                title='Đổi ảnh'
+              >
+                <Camera className='h-4 w-4' />
               </label>
 
               <input
@@ -76,8 +88,7 @@ export default function ProfilePage() {
                 type='file'
                 accept='image/*'
                 className='hidden'
-                onChange={async (e) => {
-                  console.log('FIRE upload event');
+                onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
                   uploadAvatar.mutate(file);
@@ -144,6 +155,22 @@ export default function ProfilePage() {
         title='Bạn có chắc chắn đăng xuất không'
         description=''
       />
+      <Dialog open={!!previewSrc} onOpenChange={() => setPreviewSrc(null)}>
+        <DialogTitle className='hidden'>Image</DialogTitle>
+        <DialogDescription className='hidden'>Image</DialogDescription>
+        <DialogContent className='max-h-[90vh] min-h-[300px] max-w-[90vw] min-w-[300px] p-0'>
+          {previewSrc && (
+            <div className='relative h-[80vh] w-full'>
+              <Image
+                src={previewSrc}
+                alt='preview'
+                fill
+                className='object-contain'
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
