@@ -8,6 +8,7 @@ import { OtaColumns } from './ota-tables/columns';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { ColumnDef } from '@tanstack/react-table';
 import { useOtaFiltersFromParams } from '../hook/ota-filter';
+import { useCan } from '@/core/domains/permissions';
 
 export default function OtaPage() {
   const filter = useOtaFiltersFromParams();

@@ -12,6 +12,7 @@ import { TagContent } from './tag-content';
 import { Device, GetDevicesParamsDto } from '@/core/domains/devices';
 import { Table } from '@tanstack/react-table';
 import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import { useCan } from '@/core/domains/permissions';
 
 export default function TagPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -94,6 +95,7 @@ export default function TagPage() {
     );
   }, [filters, selectedTag, setDeviceTable]);
 
+  const canDelete = useCan('device', 'update');
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px] pb-3'>
       <div className='h-full w-full rounded-[4px]'>
@@ -124,7 +126,7 @@ export default function TagPage() {
                 <div className='flex items-center gap-2'>
                   <button
                     onClick={handleToggleSidebar}
-                    className='cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                    className='flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                   >
                     <Image
                       src={
@@ -133,8 +135,8 @@ export default function TagPage() {
                           : '/assets/icons/chevronRight.svg'
                       }
                       alt='toggle'
-                      width={5}
-                      height={9}
+                      width={8}
+                      height={8}
                     />
                   </button>
                   <span className='text-[20px] font-bold'>
@@ -153,7 +155,9 @@ export default function TagPage() {
                       table={deviceTable}
                       className='w-auto'
                       excel={false}
-                      onDeleteAll={() => console.log('2122121')}
+                      onDeleteAll={
+                        canDelete ? () => console.log('asdasd') : undefined
+                      }
                     />
                   </div>
                 )}

@@ -11,6 +11,7 @@ import { useState } from 'react';
 import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useDeleteMultiCalendars } from '@/core/domains/calendars';
+import { PermissionGuard, useCan } from '@/core/domains/permissions';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
@@ -28,6 +29,7 @@ export function CalendarTable<TData, TValue>({
   isLoading = false,
   error = null
 }: ProductTableParams<TData, TValue>) {
+  const canDelete = useCan('device', 'delete');
   const [open, setOpen] = useState(false);
 
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
@@ -78,19 +80,21 @@ export function CalendarTable<TData, TValue>({
           table={table}
           className='w-auto flex-1'
           actions={
-            <Button
-              variant='default'
-              size='sm'
-              className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[4px] text-white'
-              onClick={() => setOpen(true)}
-            >
-              <IconPlus className='h-3 w-3' />
-              Thêm
-            </Button>
+            <PermissionGuard module='device' action='update'>
+              <Button
+                variant='default'
+                size='sm'
+                className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[4px] text-white'
+                onClick={() => setOpen(true)}
+              >
+                <IconPlus className='h-3 w-3' />
+                Thêm
+              </Button>
+            </PermissionGuard>
           }
           filter={true}
           excel={false}
-          onDeleteAll={handleDelete}
+          onDeleteAll={canDelete ? handleDelete : undefined}
         />
         {/* <DataTableToolbar table={table} /> */}
       </div>

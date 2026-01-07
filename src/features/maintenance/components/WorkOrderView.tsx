@@ -1,13 +1,8 @@
 'use client';
 
-import { useGetWorkOrderById, WorkOrder } from '@/core/domains/workorders';
+import { WorkOrder } from '@/core/domains/workorders';
 import WorkorderForm from './form/workorder-form';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Skeleton } from '@/ui/components/ui/skeleton';
-import { Button } from '@/ui/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
-import { useMemo } from 'react';
-import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 type WorkOrderViewProps = {
   data?: WorkOrder;

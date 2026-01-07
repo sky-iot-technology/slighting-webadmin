@@ -5,7 +5,6 @@ import {
   GetUsersParamsDto,
   SearchUsersParamsDto,
   UpdateProfileDto,
-  UpdateRoleDto,
   UpdateUserDto,
   User,
   UserListResponseDto
@@ -72,33 +71,33 @@ export const usersApi = {
       throw new Error('Failed to update profile user');
     }
   },
-  async updateUserRole(id: string, data: UpdateRoleDto): Promise<User> {
-    try {
-      const response = await authenticatedApi.patch<User>(
-        `/users/${id}/role`,
-        data
-      );
-      return response;
-    } catch (error) {
-      throw new Error('Failed to update role user');
-    }
-  },
-  async updateUser(id: string, data: UpdateUserDto): Promise<User> {
-    try {
-      const { role, ...profileData } = data;
-      const requests: Promise<User>[] = [];
+  // async updateUserRole(id: string, data: UpdateRoleDto): Promise<User> {
+  //   try {
+  //     const response = await authenticatedApi.patch<User>(
+  //       `/users/${id}/role`,
+  //       data
+  //     );
+  //     return response;
+  //   } catch (error) {
+  //     throw new Error('Failed to update role user');
+  //   }
+  // },
+  // async updateUser(id: string, data: UpdateUserDto): Promise<User> {
+  //   try {
+  //     const { role, ...profileData } = data;
+  //     const requests: Promise<User>[] = [];
 
-      requests.push(this.updateUserProfile(id, profileData));
-      if (role) {
-        requests.push(this.updateUserRole(id, { role }));
-      }
+  //     requests.push(this.updateUserProfile(id, profileData));
+  //     if (role) {
+  //       requests.push(this.updateUserRole(id, { role }));
+  //     }
 
-      const results = await Promise.all(requests);
-      return results[results.length - 1];
-    } catch (error) {
-      throw new Error('Failed to update user');
-    }
-  },
+  //     const results = await Promise.all(requests);
+  //     return results[results.length - 1];
+  //   } catch (error) {
+  //     throw new Error('Failed to update user');
+  //   }
+  // },
   async enableUser(id: string): Promise<any> {
     try {
       return await authenticatedApi.post<any>(`/users/${id}/enable`);

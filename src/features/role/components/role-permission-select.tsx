@@ -12,11 +12,13 @@ import { useState } from 'react';
 type RolePermissionSectionProps = {
   value: PermissionFormMap;
   onChange: (val: PermissionFormMap) => void;
+  disabled?: boolean;
 };
 
 export default function RolePermissionSection({
   value,
-  onChange
+  onChange,
+  disabled
 }: RolePermissionSectionProps) {
   const selectedModules = Object.keys(value);
 
@@ -67,12 +69,13 @@ export default function RolePermissionSection({
   };
 
   return (
-    <div className='h-full w-full max-w-xl space-y-3 overflow-auto'>
-      <div className='bg-card rounded-[4px] border'>
-        <CustomScrollbar className='h-[18vw] min-h-[350px] space-y-4 overflow-y-auto p-2 md:min-h-[270px]'>
+    <div className='flex h-full w-full max-w-xl flex-col space-y-3 overflow-hidden'>
+      <div className='bg-card flex h-full flex-1 flex-col overflow-hidden rounded-[4px] border'>
+        <CustomScrollbar className='h-[18vw] min-h-[270px] space-y-4 overflow-y-auto p-2 md:min-h-[270px] lg:min-h-full'>
           {/* Chọn tất cả */}
           <div className='flex items-center gap-2 border-b pb-2'>
             <Checkbox
+              disabled={disabled}
               checked={isAllChecked}
               data-state={
                 isSomeChecked
@@ -100,6 +103,7 @@ export default function RolePermissionSection({
                 {/* Header Module */}
                 <div className='flex items-center gap-2'>
                   <Checkbox
+                    disabled={disabled}
                     checked={isSelected}
                     onCheckedChange={(checked) =>
                       toggleModule(ui.value, !!checked)
@@ -112,17 +116,16 @@ export default function RolePermissionSection({
                 {isSelected && (
                   <div className='mt-2 grid grid-cols-2 gap-2 pl-6 sm:grid-cols-4'>
                     {ui.actions.map((act) => {
-                      const disabled = isActionDisabled(ui.value, act, value);
+                      const additionalDisabled = isActionDisabled(
+                        ui.value,
+                        act,
+                        value
+                      );
+                      const isDisabled = disabled || additionalDisabled;
                       return (
-                        <label
-                          key={act}
-                          className={`flex items-center gap-2 ${
-                            disabled
-                              ? 'cursor-not-allowed opacity-50'
-                              : 'cursor-pointer'
-                          }`}
-                        >
+                        <label key={act} className={`flex items-center gap-2`}>
                           <Checkbox
+                            disabled={isDisabled}
                             checked={value[ui.value]?.includes(act)}
                             onCheckedChange={(checked) =>
                               toggleAction(ui.value, act, !!checked)
@@ -137,7 +140,9 @@ export default function RolePermissionSection({
                                   ? 'Sửa'
                                   : act === 'sync'
                                     ? 'Đồng bộ'
-                                    : 'Xóa'}
+                                    : act === 'control'
+                                      ? 'Điều khiển'
+                                      : 'Xóa'}
                           </span>
                         </label>
                       );

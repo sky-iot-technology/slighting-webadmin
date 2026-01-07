@@ -38,12 +38,14 @@ type RoleFormProps = {
   pageTitle: string;
   onClose?: () => void;
   initialData?: UIRoleResponse | null;
+  isViewOnly?: boolean;
 };
 
 export default function RoleForm({
   onClose,
   pageTitle,
-  initialData
+  initialData,
+  isViewOnly = false
 }: RoleFormProps) {
   const defaultValues = useMemo(() => {
     return (
@@ -98,7 +100,7 @@ export default function RoleForm({
   };
 
   return (
-    <CustomScrollbar className='max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'>
+    <CustomScrollbar className='!h-full max-h-[660px] overflow-y-auto px-5 pt-3 pb-5 lg:max-h-full'>
       <Card className='bg-background mx-auto !h-full w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
@@ -124,6 +126,7 @@ export default function RoleForm({
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                         placeholder='Nhập tên đơn vị'
                         {...field}
+                        disabled={isViewOnly}
                       />
                     </FormControl>
                     <FormMessage />
@@ -142,6 +145,7 @@ export default function RoleForm({
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                         placeholder='Nhập ghi chú'
                         {...field}
+                        disabled={isViewOnly}
                       />
                     </FormControl>
                     <FormMessage />
@@ -153,7 +157,7 @@ export default function RoleForm({
                 control={form.control}
                 name='permission'
                 render={({ field }) => (
-                  <FormItem className='h-full'>
+                  <FormItem className='flex h-full flex-1 flex-col'>
                     <FormLabel className='text-xs font-bold'>
                       Phân quyền
                     </FormLabel>
@@ -161,6 +165,7 @@ export default function RoleForm({
                     <RolePermissionUI
                       value={field.value}
                       onChange={field.onChange}
+                      disabled={isViewOnly}
                     />
                     {/* </FormControl> */}
                     <FormMessage />
@@ -177,12 +182,14 @@ export default function RoleForm({
                 >
                   Hủy
                 </Button>
-                <Button
-                  type='submit'
-                  className='h-full w-16 rounded-[4px] text-xs'
-                >
-                  Lưu
-                </Button>
+                {!isViewOnly && (
+                  <Button
+                    type='submit'
+                    className='h-full w-16 rounded-[4px] text-xs'
+                  >
+                    Lưu
+                  </Button>
+                )}
               </div>
             </form>
           </Form>

@@ -7,6 +7,7 @@ import { tagColumns } from './tag-tables/columns';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { SelectedTag } from './tag-sidebar';
+import { useCan } from '@/core/domains/permissions';
 
 interface TagContentProps {
   filters: GetDevicesParamsDto;
@@ -19,12 +20,14 @@ export const TagContent = memo(function TagContent({
   selectedTag,
   onTableReady
 }: TagContentProps) {
+  const canViewDevice = useCan('device', 'view');
+
   const { data, isLoading, error } = useGetDevices(
     {
       ...filters,
       tag: selectedTag?.alias
     },
-    { enabled: !!selectedTag }
+    { enabled: !!selectedTag && canViewDevice }
   );
 
   const { catalogues } = useCatalogueStore();
@@ -34,8 +37,8 @@ export const TagContent = memo(function TagContent({
     <>
       {selectedTag && data && (
         <TagTable
-          data={data?.devices}
-          totalItems={data?.total}
+          data={data?.devices ?? []}
+          totalItems={data?.total ?? 0}
           columns={tagColumns(catalogues, treeData, selectedTag)}
           onTableReady={onTableReady}
           isLoading={isLoading}

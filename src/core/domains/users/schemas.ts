@@ -82,13 +82,13 @@ export function convertUserFormToApiPayload(
   const basePayload = {
     first_name: formValues.firstName,
     last_name: formValues.lastName,
-    role: formValues.role as UserRole,
     tags: formValues.unit,
     metadata: {
       address: formValues.address,
       phone: formValues.phone,
       // unit: formValues.unit,
-      department: formValues.department
+      department: formValues.department,
+      roleId: formValues.role
     }
   };
 

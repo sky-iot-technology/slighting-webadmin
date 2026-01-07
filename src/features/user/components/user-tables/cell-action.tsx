@@ -14,6 +14,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import UserDialog from '../modal/user-dialog';
 import { useDeleteUser } from '@/core/domains/users';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 interface CellActionProps {
   id: string;
@@ -43,25 +44,21 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
       />
 
       {/* ✏️ Edit */}
-      {openEdit && (
-        <UserDialog
-          pageTitle='Chỉnh sửa người dùng'
-          open={openEdit}
-          onOpenChange={setOpenEdit}
-          userId={id}
-        />
-      )}
+      <UserDialog
+        pageTitle='Chỉnh sửa người dùng'
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+        userId={id}
+      />
 
       {/* View */}
-      {openView && (
-        <UserDialog
-          pageTitle='Thông tin người dùng'
-          open={openView}
-          onOpenChange={setOpenView}
-          userId={id}
-          isView={true}
-        />
-      )}
+      <UserDialog
+        pageTitle='Thông tin người dùng'
+        open={openView}
+        onOpenChange={setOpenView}
+        userId={id}
+        isView={true}
+      />
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -93,36 +90,40 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
             <span>Chi tiết</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='users' action='update' fallback={null}>
+            <DropdownMenuItem
+              onClick={() => setOpenEdit(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/edit.svg'}
+                  alt='edit'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Sửa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='users' action='delete' fallback={null}>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

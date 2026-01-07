@@ -7,6 +7,7 @@ import type { Column, ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 import { cn } from '@/lib/utils';
 import { formatDateString } from '@/lib/utils';
+import { diffTimeHMS } from '@/features/map/helper';
 
 export const deviceColumns: ColumnDef<Device>[] = [
   {
@@ -127,6 +128,19 @@ export const deviceColumns: ColumnDef<Device>[] = [
     cell: ({ cell }) => {
       const deviceAsset = cell.row.original.device_asset;
       return <div>{deviceAsset?.asset_status}</div>;
+    },
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
+    id: 'updated_at',
+    accessorKey: 'updated_at',
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader column={column} title='Thời gian online' />
+    ),
+    cell: ({ cell }) => {
+      const time = diffTimeHMS(cell.row.original.updated_at);
+      return <div>{time}</div>;
     },
     enableSorting: false,
     enableHiding: false

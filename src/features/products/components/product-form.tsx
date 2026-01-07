@@ -284,11 +284,11 @@ export default function ProductForm({
                               placeholder={'Chọn nhóm thiết bị'}
                               disabled={isLoadingTags}
                               resetOnDefaultValueChange={true}
-                              className='w-full text-base'
+                              className='!min-h-9 w-full rounded-sm text-sm'
                               popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
                               itemClassName='text-base'
-                              autoSize={false}
-                              singleLine={true}
+                              autoSize={true}
+                              // singleLine={false}
                             />
                           </FormControl>
                           <FormMessage />
@@ -299,14 +299,14 @@ export default function ProductForm({
                   <div className='grid w-full grid-cols-1 gap-3 md:col-span-2 md:col-start-2 md:grid-cols-3'>
                     <FormField
                       control={form.control}
-                      name='lat'
+                      name='lon'
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Kinh độ & Vĩ độ</FormLabel>
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Vĩ độ'
+                              placeholder='Kinh độ'
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => {
@@ -335,14 +335,14 @@ export default function ProductForm({
                     />
                     <FormField
                       control={form.control}
-                      name='lon'
+                      name='lat'
                       render={({ field }) => (
                         <FormItem>
                           <div className='md:h-3.5'></div>
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Kinh độ'
+                              placeholder='Vĩ độ'
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => {
@@ -356,8 +356,8 @@ export default function ProductForm({
                                 const num = Number(field.value);
                                 if (!isNaN(num)) {
                                   const limited = Math.max(
-                                    -180,
-                                    Math.min(180, num)
+                                    -90,
+                                    Math.min(90, num)
                                   );
                                   field.onChange(limited.toFixed(6));
                                 }

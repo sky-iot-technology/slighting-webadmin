@@ -14,6 +14,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import WorkorderHistory from '../modal/workorder-history-dialog';
 import { useDeleteWorkOrder } from '@/core/domains/workorders';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 interface CellActionProps {
   id: string;
@@ -93,24 +94,26 @@ export const CellAction: React.FC<CellActionProps> = ({
             <span>Chi tiết</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() =>
-              onEditAction
-                ? onEditAction()
-                : router.push(`/dashboard/maintenance/${id}/edit`)
-            }
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='maintenance.workorder' action='update'>
+            <DropdownMenuItem
+              onClick={() =>
+                onEditAction
+                  ? onEditAction()
+                  : router.push(`/dashboard/maintenance/edit/${id}`)
+              }
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/edit.svg'}
+                  alt='edit'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Sửa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
           <DropdownMenuItem
             onClick={() => setOpenHistory(true)}
@@ -126,22 +129,23 @@ export const CellAction: React.FC<CellActionProps> = ({
             </div>
             <span>Lịch sử</span>
           </DropdownMenuItem>
-
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='maintenance.workorder' action='delete'>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

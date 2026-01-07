@@ -298,7 +298,7 @@ export default function AppSidebar() {
                             <span className='group-data-[collapsible=icon]:hidden'>
                               {item.title}
                             </span>
-                            <IconChevronRight className='ml-auto transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90' />
+                            <IconChevronRight className='ml-auto !size-[18px] transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90' />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent>

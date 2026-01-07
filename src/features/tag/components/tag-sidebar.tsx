@@ -5,6 +5,7 @@ import BranchDialog from './modal/tag-dialog';
 import { IconPlus } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useGetTags, useUpdateTag } from '@/core/domains/tags';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 export type SelectedTag = {
   id: string;
@@ -57,17 +58,25 @@ export const TagSidebar = memo(function TagSidebar({
 
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
-      <div
-        className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
-      >
-        <Button
-          className='h-8 w-[110px] gap-1 text-xs'
-          onClick={() => setOpenNew(!openNew)}
+      <BranchDialog
+        pageTitle='Thêm nhóm yêu thích'
+        open={openNew}
+        onOpenChange={setOpenNew}
+        roleId={null}
+      />
+      <PermissionGuard module='tag' action='create' fallback={null}>
+        <div
+          className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
         >
-          <IconPlus className='h-3 w-3' />
-          Thêm nhóm
-        </Button>
-      </div>
+          <Button
+            className='h-8 w-[110px] gap-1 text-xs'
+            onClick={() => setOpenNew(!openNew)}
+          >
+            <IconPlus className='h-3 w-3' />
+            Thêm nhóm
+          </Button>
+        </div>
+      </PermissionGuard>
       <div className='bg-background mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
         <Image
           src={'/assets/icons/search.svg'}
@@ -151,21 +160,27 @@ export const TagSidebar = memo(function TagSidebar({
                     </>
                   ) : (
                     <>
-                      <span
-                        role='button'
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingTagId(String(tag.id));
-                          setEditValue(tag.name);
-                        }}
+                      <PermissionGuard
+                        module='tag'
+                        action='update'
+                        fallback={null}
                       >
-                        <Image
-                          src={'/assets/icons/edit.svg'}
-                          alt='edit'
-                          width={12}
-                          height={12}
-                        />
-                      </span>
+                        <span
+                          role='button'
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingTagId(String(tag.id));
+                            setEditValue(tag.name);
+                          }}
+                        >
+                          <Image
+                            src={'/assets/icons/edit.svg'}
+                            alt='edit'
+                            width={12}
+                            height={12}
+                          />
+                        </span>
+                      </PermissionGuard>
 
                       {/* <span
                         role="button"
@@ -189,13 +204,6 @@ export const TagSidebar = memo(function TagSidebar({
             );
           })}
       </div>
-
-      <BranchDialog
-        pageTitle='Thêm nhóm yêu thích'
-        open={openNew}
-        onOpenChange={setOpenNew}
-        roleId={null}
-      />
     </div>
   );
 });

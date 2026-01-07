@@ -5,6 +5,7 @@ import { DeviceColumns } from '../devices-table/columns';
 import { useClientDataTable } from '@/core/shared/hooks/test';
 import { useMemo, useState } from 'react';
 import { compareVersion } from '../../helper';
+import { useCan } from '@/core/domains/permissions';
 
 type DeviceTabProps = {
   id: string;
@@ -17,6 +18,8 @@ export default function DeviceTab({
   onSelectionChange,
   progressMap
 }: DeviceTabProps) {
+  const canViewDevice = useCan('device', 'view');
+
   const { data, isLoading } = useGetOta(id, {
     enabled: !!id
   });
@@ -31,7 +34,7 @@ export default function DeviceTab({
       type: data?.category_type
     },
     {
-      enabled: !!data?.category_type && !isLoading
+      enabled: !!data?.category_type && !isLoading && canViewDevice
     }
   );
 

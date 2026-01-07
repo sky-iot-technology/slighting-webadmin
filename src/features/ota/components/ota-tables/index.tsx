@@ -11,6 +11,7 @@ import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-tool
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import OtaDialog from '../modal/ota-dialog';
+import { PermissionGuard, useCan } from '@/core/domains/permissions';
 
 interface OtaTableParams<TData, TValue> {
   data: TData[];
@@ -42,6 +43,8 @@ export function OtaTable<TData, TValue>({
     }
   });
 
+  const canDelete = useCan('ota', 'delete');
+
   return (
     <DataTable
       table={table}
@@ -62,18 +65,22 @@ export function OtaTable<TData, TValue>({
           className='flex-1'
           actions={
             <>
-              <Button
-                variant='default'
-                size='sm'
-                className='bg-primary hover:bg-primary/90 flex items-center rounded-[4px] text-white'
-                onClick={() => setOpen(true)}
-              >
-                <IconPlus className='h-3 w-3' />
-                Thêm
-              </Button>
+              <PermissionGuard module='ota' action='create'>
+                <Button
+                  variant='default'
+                  size='sm'
+                  className='bg-primary hover:bg-primary/90 flex items-center rounded-[4px] text-white'
+                  onClick={() => setOpen(true)}
+                >
+                  <IconPlus className='h-3 w-3' />
+                  Thêm
+                </Button>
+              </PermissionGuard>
             </>
           }
-          onDeleteAll={() => console.log('delete product')}
+          onDeleteAll={
+            canDelete ? () => console.log('delete product') : undefined
+          }
           filter
         />
       </div>

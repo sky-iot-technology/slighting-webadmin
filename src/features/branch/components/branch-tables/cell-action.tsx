@@ -14,6 +14,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import {} from '@/core/domains/calendars';
 import { useDeleteDeviceParent } from '@/core/domains/devices';
+import { useCan } from '@/core/domains/permissions';
 
 interface CellActionProps {
   id: string;
@@ -22,8 +23,6 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [open, setOpen] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [openView, setOpenView] = useState(false);
   const router = useRouter();
 
   const deleteDeviceParent = useDeleteDeviceParent({
@@ -36,6 +35,11 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
     deleteDeviceParent.mutate(id);
   };
 
+  const canDelete = useCan('device', 'update');
+  const canView = useCan('device', 'view');
+
+  const hasActions = canView || canDelete;
+
   return (
     <>
       <AlertModal
@@ -45,7 +49,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
         loading={deleteDeviceParent.isPending}
       />
 
-      <DropdownMenu modal={false}>
+      <DropdownMenu modal={false} open={hasActions ? undefined : false}>
         <DropdownMenuTrigger asChild>
           <Button
             variant='ghost'
@@ -60,36 +64,44 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           align='end'
           className='flex w-31.5 flex-col gap-2 p-2'
         >
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/product/info/${id}`)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/view.svg'}
-                alt='view'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Chi tiết</span>
-          </DropdownMenuItem>
+          {canView && (
+            <>
+              <DropdownMenuItem
+                onClick={() => router.push(`/dashboard/product/info/${id}`)}
+                className='flex w-full items-center text-xs'
+              >
+                <div className='mx-2 flex w-4 justify-center'>
+                  <Image
+                    src={'/assets/icons/view.svg'}
+                    alt='view'
+                    width={12}
+                    height={12}
+                  />
+                </div>
+                <span>Chi tiết</span>
+              </DropdownMenuItem>
+            </>
+          )}
 
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          {canDelete && (
+            <>
+              <DropdownMenuItem
+                variant='default'
+                onClick={() => setOpen(true)}
+                className='flex w-full items-center text-xs'
+              >
+                <div className='mx-2 flex w-4 justify-center'>
+                  <Image
+                    src={'/assets/icons/trash.svg'}
+                    alt='trash'
+                    width={12}
+                    height={12}
+                  />
+                </div>
+                <span className='text-destructive'>Xóa</span>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

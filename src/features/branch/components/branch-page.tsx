@@ -23,6 +23,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { cn } from '@/lib/utils';
+import { PermissionGuard, useCan } from '@/core/domains/permissions';
 
 export default function BranchPage() {
   const [treeOpen, setTreeOpen] = useState(true);
@@ -70,9 +71,11 @@ export default function BranchPage() {
     ts: number;
   }>({ device: null, ts: 0 });
 
+  const viewDevice = useCan('device', 'view');
+
   const { data, isLoading, isFetching, error } = useGetDevices(
     { group: selectedRegion?.id, ...filters },
-    { enabled: !!selectedRegion }
+    { enabled: !!selectedRegion && !!viewDevice }
   );
 
   const { data: group, isFetching: groupFetching } = useGetGroup(
@@ -143,7 +146,7 @@ export default function BranchPage() {
                   <div className='flex items-center gap-2'>
                     <button
                       onClick={handleToggleSidebar}
-                      className='ml-2 flex h-6 w-6 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                      className='ml-2 flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                     >
                       <Image
                         src={
@@ -152,8 +155,8 @@ export default function BranchPage() {
                             : '/assets/icons/chevronRight.svg'
                         }
                         alt='toggle'
-                        width={5}
-                        height={9}
+                        width={8}
+                        height={8}
                       />
                     </button>
                     <Tabs
@@ -193,14 +196,20 @@ export default function BranchPage() {
                               table={deviceTable}
                               className='w-auto'
                               actions={
-                                <Button
-                                  variant='default'
-                                  size='sm'
-                                  className='bg-primary hover:bg-primary/90 flex h-7.5 w-7.5 items-center rounded-[4px] !px-3 text-white'
-                                  onClick={() => setOpen(true)}
+                                <PermissionGuard
+                                  module='device'
+                                  action='update'
+                                  fallback={null}
                                 >
-                                  <IconPlus className='h-4 w-4' />
-                                </Button>
+                                  <Button
+                                    variant='default'
+                                    size='sm'
+                                    className='bg-primary hover:bg-primary/90 flex h-7.5 w-7.5 items-center rounded-[4px] !px-3 text-white'
+                                    onClick={() => setOpen(true)}
+                                  >
+                                    <IconPlus className='h-4 w-4' />
+                                  </Button>
+                                </PermissionGuard>
                               }
                               excel={true}
                             />
@@ -229,7 +238,7 @@ export default function BranchPage() {
                   selectedRegionId={selectedRegion?.id}
                   treeData={treeData}
                   group={group}
-                  devices={devices}
+                  devices={devices ?? []}
                   isLoading={isLoading}
                   isFetching={isFetching}
                   selectedDevice={selectedDevice}

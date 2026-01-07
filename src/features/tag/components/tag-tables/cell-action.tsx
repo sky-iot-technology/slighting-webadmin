@@ -14,6 +14,7 @@ import { useCallback, useState } from 'react';
 import Image from 'next/image';
 import { Device, useUpdateTagDevice } from '@/core/domains/devices';
 import { SelectedTag } from '../tag-sidebar';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 interface CellActionProps {
   data: Device;
@@ -86,22 +87,23 @@ export const CellAction: React.FC<CellActionProps> = ({
             </div>
             <span>Chi tiết</span>
           </DropdownMenuItem>
-
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='device' action='update' fallback={null}>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

@@ -12,6 +12,7 @@ import { useGetOverView } from '@/core/domains/overview/hooks';
 import { useRouter } from 'next/navigation';
 import { useCan } from '@/core/domains/permissions';
 import { useEffect } from 'react';
+import NotFound from '@/app/not-found';
 
 const stats = [
   {
@@ -60,21 +61,11 @@ export default function Overview2({
   alert_stats: React.ReactNode;
   circle_stats: React.ReactNode;
 }) {
-  const router = useRouter();
-
   const canViewDashboard = useCan('dashboard', 'view');
 
   const { data, isLoading } = useGetOverView({
     enabled: canViewDashboard
   });
-
-  useEffect(() => {
-    if (!canViewDashboard) {
-      router.replace('/404');
-    }
-  }, [canViewDashboard, router]);
-
-  if (!canViewDashboard) return null;
 
   if (isLoading) return <div>Đang tải dữ liệu...</div>;
   const mappedStats = data

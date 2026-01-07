@@ -11,7 +11,7 @@ import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { Alarm, useGetAlarms } from '@/core/domains/alarms';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
-import { useGetUsers } from '@/core/domains/users';
+import { useGetUsers, useSearchUsers } from '@/core/domains/users';
 import { useGetDevices } from '@/core/domains/devices';
 import {
   useGetWorkOrderById,
@@ -28,15 +28,23 @@ import { WorkorderTable } from '@/features/maintenance/components/workorder-tabl
 import { workorderColumns } from '@/features/maintenance/components/workorder-tables/columns';
 import MaintenanceDialog from '@/features/maintenance/components/modal/maintenance-dialog';
 import WorkOrderView from '@/features/maintenance/components/WorkOrderView';
+import { PermissionGuard, useCan } from '@/core/domains/permissions';
 
 type MaintenanceTabProps = {
   deviceId: string;
 };
 
 export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
+  const canViewAlarms = useCan('maintenance.alarm', 'view');
+  const canViewWorkOrders = useCan('maintenance.workorder', 'view');
+  const canDeleteAlarms = useCan('maintenance.alarm', 'delete');
+  const canDeleteWorkOrders = useCan('maintenance.workorder', 'delete');
+
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const [activeTab, setActiveTab] = useState<string>('alert');
+  const [activeTab, setActiveTab] = useState<string>(
+    canViewAlarms ? 'alert' : 'workorder'
+  );
   const [open, setOpen] = useState(false);
   const [maintenanceTable, setMaintenanceTable] = useState<Table<Alarm> | null>(
     null
@@ -58,16 +66,23 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
       client_id: deviceId
     },
     {
-      enabled: !!deviceId
+      enabled: !!deviceId && canViewAlarms
     }
   );
 
-  const { data: users, isLoading: usersLoad, error: usersErr } = useGetUsers();
+  const {
+    data: users,
+    isLoading: usersLoad,
+    error: usersErr
+  } = useSearchUsers(
+    { tag: 'team:' },
+    { enabled: canViewAlarms || canViewWorkOrders }
+  );
   const {
     data: devices,
     isLoading: devicesLoad,
     error: devicesErr
-  } = useGetDevices();
+  } = useGetDevices({}, { enabled: useCan('device', 'view') && canViewAlarms });
 
   const loadingAll = isLoading || usersLoad || devicesLoad;
   const errorAll = error || usersErr || devicesErr;
@@ -83,7 +98,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
       client_id: deviceId
     },
     {
-      enabled: !!deviceId
+      enabled: !!deviceId && canViewWorkOrders
     }
   );
 
@@ -91,24 +106,26 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
     const alarms = data?.alarms ?? [];
     const totalItems = data?.total ?? 0;
     return (
-      <MaintenanceTable
-        data={alarms}
-        totalItems={totalItems}
-        columns={maintenanceColumns(
-          users?.users || [],
-          devices?.devices || [],
-          {
-            onViewAction: (workOrderId: string) => {
-              setEdit(false);
-              setSelectedWorkOrderId(workOrderId);
+      <PermissionGuard module='maintenance.alarm' action='view'>
+        <MaintenanceTable
+          data={alarms}
+          totalItems={totalItems}
+          columns={maintenanceColumns(
+            users?.users || [],
+            devices?.devices || [],
+            {
+              onViewAction: (workOrderId: string) => {
+                setEdit(false);
+                setSelectedWorkOrderId(workOrderId);
+              }
             }
-          }
-        )}
-        onTableReady={setMaintenanceTable}
-        onSelectionChange={(data) => setSelectedIds(data)}
-        isLoading={loadingAll}
-        error={errorAll}
-      />
+          )}
+          onTableReady={setMaintenanceTable}
+          onSelectionChange={(data) => setSelectedIds(data)}
+          isLoading={loadingAll}
+          error={errorAll}
+        />
+      </PermissionGuard>
     );
   }, [data, loadingAll, error]);
 
@@ -124,17 +141,19 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
       setSelectedWorkOrderId(id);
     };
     return (
-      <WorkorderTable
-        data={workorders}
-        totalItems={totalItems}
-        columns={workorderColumns(users?.users || [], {
-          onViewAction: handleViewWorkOrder,
-          onEditAction: handleEditWorkOrder
-        })}
-        onTableReady={setWorkoderTable}
-        isLoading={workorderLoading}
-        error={workorderError}
-      />
+      <PermissionGuard module='maintenance.workorder' action='view'>
+        <WorkorderTable
+          data={workorders}
+          totalItems={totalItems}
+          columns={workorderColumns(users?.users || [], {
+            onViewAction: handleViewWorkOrder,
+            onEditAction: handleEditWorkOrder
+          })}
+          onTableReady={setWorkoderTable}
+          isLoading={workorderLoading}
+          error={workorderError}
+        />
+      </PermissionGuard>
     );
   }, [workorderData, workorderLoading, workorderError]);
 
@@ -213,48 +232,71 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
               >
                 <TabsList className='flex !bg-transparent text-[12px]'>
-                  <TabsTrigger
-                    value='alert'
-                    className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                  >
-                    Cảnh báo
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value='workorder'
-                    className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
-                  >
-                    Giao việc
-                  </TabsTrigger>
+                  <PermissionGuard module='maintenance.alarm' action='view'>
+                    <TabsTrigger
+                      value='alert'
+                      className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                    >
+                      Cảnh báo
+                    </TabsTrigger>
+                  </PermissionGuard>
+
+                  <PermissionGuard module='maintenance.workorder' action='view'>
+                    <TabsTrigger
+                      value='workorder'
+                      className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                    >
+                      Giao việc
+                    </TabsTrigger>
+                  </PermissionGuard>
                 </TabsList>
               </Tabs>
-              {activeTab === 'alert' && maintenanceTable && (
-                <DataTableCustomToolbar
-                  table={maintenanceTable}
-                  className='w-auto flex-1 py-3'
-                  actions={
-                    <Button
-                      variant='default'
-                      size='sm'
-                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center !rounded-[4px] !px-2 text-white'
-                      disabled={!canCreateWorkOrder}
-                      onClick={() => setOpen(true)}
-                    >
-                      <IconPlus className='h-4 w-4' />
-                      <span className='text-xs'>Tạo công việc</span>
-                    </Button>
-                  }
-                  excel={false}
-                  onDeleteAll={() => alert('Fake delete triggered')}
-                />
-              )}
-              {activeTab === 'workorder' && workoderTable && (
-                <DataTableCustomToolbar
-                  table={workoderTable}
-                  className='w-auto flex-1 py-3'
-                  excel={false}
-                  onDeleteAll={() => alert('Fake delete triggered')}
-                />
-              )}
+              <PermissionGuard module='maintenance.alarm' action='view'>
+                {activeTab === 'alert' && maintenanceTable && (
+                  <DataTableCustomToolbar
+                    table={maintenanceTable}
+                    className='w-auto flex-1 py-3'
+                    actions={
+                      <PermissionGuard
+                        module='maintenance.workorder'
+                        action='create'
+                      >
+                        <Button
+                          variant='default'
+                          size='sm'
+                          className='bg-primary hover:bg-primary/90 flex h-7.5 items-center !rounded-[4px] !px-2 text-white'
+                          disabled={!canCreateWorkOrder}
+                          onClick={() => setOpen(true)}
+                        >
+                          <IconPlus className='h-4 w-4' />
+                          <span className='text-xs'>Tạo công việc</span>
+                        </Button>
+                      </PermissionGuard>
+                    }
+                    excel={false}
+                    onDeleteAll={
+                      canDeleteAlarms
+                        ? () => alert('Fake delete triggered')
+                        : undefined
+                    }
+                  />
+                )}
+              </PermissionGuard>
+
+              <PermissionGuard module='maintenance.workorder' action='view'>
+                {activeTab === 'workorder' && workoderTable && (
+                  <DataTableCustomToolbar
+                    table={workoderTable}
+                    className='w-auto flex-1 py-3'
+                    excel={false}
+                    onDeleteAll={
+                      canDeleteWorkOrders
+                        ? () => alert('Fake delete triggered')
+                        : undefined
+                    }
+                  />
+                )}
+              </PermissionGuard>
             </div>
 
             <div className='flex min-h-[500px] w-full flex-col'>

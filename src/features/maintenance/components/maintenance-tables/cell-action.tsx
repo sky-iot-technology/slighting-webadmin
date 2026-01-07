@@ -32,6 +32,7 @@ import {
 } from '@/core/domains/alarms';
 import { useGetWorkOrders } from '@/core/domains/workorders';
 import { toast } from 'sonner';
+import { PermissionGuard } from '@/core/domains/permissions/components/permission-guard';
 
 interface CellActionProps {
   active: boolean;
@@ -121,22 +122,24 @@ export const CellAction: React.FC<CellActionProps> = ({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align='end' className='flex flex-col gap-2 p-2'>
-          {active && (
-            <DropdownMenuItem
-              onClick={handleView}
-              className='flex w-full items-center text-xs'
-            >
-              <div className='flex w-4 justify-center'>
-                <Image
-                  src={'/assets/icons/view2.svg'}
-                  alt='view2'
-                  width={12}
-                  height={12}
-                />
-              </div>
-              <span>Xem giao việc</span>
-            </DropdownMenuItem>
-          )}
+          <PermissionGuard module='maintenance.workorder' action='view'>
+            {active && (
+              <DropdownMenuItem
+                onClick={handleView}
+                className='flex w-full items-center text-xs'
+              >
+                <div className='flex w-4 justify-center'>
+                  <Image
+                    src={'/assets/icons/view2.svg'}
+                    alt='view2'
+                    width={12}
+                    height={12}
+                  />
+                </div>
+                <span>Xem giao việc</span>
+              </DropdownMenuItem>
+            )}
+          </PermissionGuard>
 
           <DropdownMenuItem
             className='flex w-full items-center text-xs'
@@ -153,64 +156,72 @@ export const CellAction: React.FC<CellActionProps> = ({
             <span>Xem vị trí xử lý</span>
           </DropdownMenuItem>
 
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className='flex w-full items-center gap-2 text-xs'>
+          <PermissionGuard module='maintenance.alarm' action='update'>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className='flex w-full items-center gap-2 text-xs'>
+                <div className='flex w-4 justify-center'>
+                  <Image
+                    src='/assets/icons/notePen.svg'
+                    alt='notePen'
+                    width={12}
+                    height={12}
+                  />
+                </div>
+                <span>Xử lý</span>
+              </DropdownMenuSubTrigger>
+
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent className='min-w-[140px] space-y-1.5 p-2'>
+                  <DropdownMenuItem
+                    onClick={handleAcknowledge}
+                    className='flex cursor-pointer gap-2 text-xs'
+                  >
+                    <div className='flex w-4 justify-center'>
+                      <Image
+                        src='/assets/icons/userGear.svg'
+                        alt='userGear'
+                        width={12}
+                        height={12}
+                      />
+                    </div>
+                    <span>Đang xử lý</span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
+                    onClick={handleCompleted}
+                    className='flex cursor-pointer gap-2 text-xs'
+                  >
+                    <div className='flex w-4 justify-center'>
+                      <Check
+                        width={12}
+                        height={12}
+                        className='text-green-600'
+                      />
+                    </div>
+                    <span>Hoàn thành</span>
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          </PermissionGuard>
+
+          <PermissionGuard module='maintenance.alarm' action='delete'>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
               <div className='flex w-4 justify-center'>
                 <Image
-                  src='/assets/icons/notePen.svg'
-                  alt='notePen'
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
                   width={12}
                   height={12}
                 />
               </div>
-              <span>Xử lý</span>
-            </DropdownMenuSubTrigger>
-
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent className='min-w-[140px] space-y-1.5 p-2'>
-                <DropdownMenuItem
-                  onClick={handleAcknowledge}
-                  className='flex cursor-pointer gap-2 text-xs'
-                >
-                  <div className='flex w-4 justify-center'>
-                    <Image
-                      src='/assets/icons/userGear.svg'
-                      alt='userGear'
-                      width={12}
-                      height={12}
-                    />
-                  </div>
-                  <span>Đang xử lý</span>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem
-                  onClick={handleCompleted}
-                  className='flex cursor-pointer gap-2 text-xs'
-                >
-                  <div className='flex w-4 justify-center'>
-                    <Check width={12} height={12} className='text-green-600' />
-                  </div>
-                  <span>Hoàn thành</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
 

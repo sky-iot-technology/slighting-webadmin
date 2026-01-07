@@ -16,6 +16,7 @@ import { useState } from 'react';
 import CalendarDialog from '../modal/calendar-dialog';
 import { Badge } from '@/ui/components/ui/badge';
 import { useDeleteMultiCalendars } from '@/core/domains/calendars';
+import { PermissionGuard, useCan } from '@/core/domains/permissions';
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -66,6 +67,8 @@ export function CalendarTable<TData, TValue>({
     deleteCalendars(ids);
   };
 
+  const canDelete = useCan('calendar', 'delete');
+
   return (
     <DataTable
       table={table}
@@ -86,22 +89,22 @@ export function CalendarTable<TData, TValue>({
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className='min-h-[12px] min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
+              className='min-h-[12px] w-5 min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
             >
               {isSidebarOpen ? (
                 <Image
                   src='/assets/icons/chevronLeft.svg'
                   alt='chevronLeft'
-                  width={4.5}
-                  height={8.25}
+                  width={8}
+                  height={8}
                   className='shrink-0'
                 />
               ) : (
                 <Image
                   src='/assets/icons/chevronRight.svg'
                   alt='chevronRight'
-                  width={4.5}
-                  height={8.25}
+                  width={8}
+                  height={8}
                   className='shrink-0'
                 />
               )}
@@ -126,19 +129,21 @@ export function CalendarTable<TData, TValue>({
           table={table}
           className='w-auto flex-1'
           actions={
-            <Button
-              variant='default'
-              size='sm'
-              className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
-              onClick={() => setOpen(true)}
-            >
-              <IconPlus className='h-3 w-3' />
-              Thêm
-            </Button>
+            <PermissionGuard module='calendar' action='create' fallback={null}>
+              <Button
+                variant='default'
+                size='sm'
+                className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
+                onClick={() => setOpen(true)}
+              >
+                <IconPlus className='h-3 w-3' />
+                Thêm
+              </Button>
+            </PermissionGuard>
           }
           filter={false}
           excel={false}
-          onDeleteAll={handleDelete}
+          onDeleteAll={canDelete ? handleDelete : undefined}
         />
       </div>
       <CalendarDialog

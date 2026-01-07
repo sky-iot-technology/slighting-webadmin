@@ -334,12 +334,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { RequestWatcher } from './RequestWatcher';
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { useCan } from '@/core/domains/permissions';
 
 type LightInfo = {
   device: Device;
 };
 
 function LightControl(props: LightInfo) {
+  const canControl = useCan('device', 'control');
   const lightDevices = useMemo(
     () =>
       (props.device.devices ?? []).filter(
@@ -483,7 +485,7 @@ function LightControl(props: LightInfo) {
                     <Switch
                       className='data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-6'
                       checked={isOn}
-                      disabled={!isOnline || pending[id]}
+                      disabled={!canControl || !isOnline || pending[id]}
                       onCheckedChange={(val) => handleToggleLight([id], val)}
                     />
 
@@ -522,7 +524,9 @@ function LightControl(props: LightInfo) {
                               max={100}
                               step={1}
                               value={[brightness]}
-                              disabled={!isOnline || !isOn || isPending}
+                              disabled={
+                                !canControl || !isOnline || !isOn || isPending
+                              }
                               className={`[&_[data-slot=slider-thumb]]:border-primary ml-2 w-[75px] self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-2 [&_[data-slot=slider-thumb]]:!w-2 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px] ${
                                 device.last_state?.on
                                   ? `[&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active`
@@ -595,7 +599,7 @@ function LightControl(props: LightInfo) {
                               true
                             );
                           }}
-                          disabled={!isOnline || onOffPending}
+                          disabled={!canControl || !isOnline || onOffPending}
                         >
                           Bật tất cả
                         </Button>
@@ -610,7 +614,7 @@ function LightControl(props: LightInfo) {
                               false
                             );
                           }}
-                          disabled={!isOnline || onOffPending}
+                          disabled={!canControl || !isOnline || onOffPending}
                         >
                           Tắt tất cả
                         </Button>

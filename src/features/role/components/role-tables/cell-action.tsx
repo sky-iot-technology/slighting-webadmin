@@ -12,7 +12,7 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useState } from 'react';
 import Image from 'next/image';
 import RoleDialog from '../modal/role-dialog';
-import { useDeleteRole } from '@/core/domains/permissions';
+import { PermissionGuard, useDeleteRole } from '@/core/domains/permissions';
 
 interface CellActionProps {
   id: string;
@@ -32,6 +32,15 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
 
   return (
     <>
+      {/* View */}
+      <RoleDialog
+        pageTitle='Chi tiết vai trò'
+        open={openView}
+        onOpenChange={setOpenView}
+        isViewOnly={true}
+        roleId={id}
+      />
+
       <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
@@ -40,23 +49,12 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
       />
 
       {/* ✏️ Edit */}
-      {openEdit && (
-        <RoleDialog
-          pageTitle='Chỉnh sửa vai trò'
-          open={openEdit}
-          onOpenChange={setOpenEdit}
-          roleId={id}
-        />
-      )}
-
-      {/* View */}
-      {/* {openView && (
-        <CalendarViewDialog
-          open={openView}
-          onOpenChange={setOpenView}
-          id={id}
-        />
-      )} */}
+      <RoleDialog
+        pageTitle='Chỉnh sửa vai trò'
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+        roleId={id}
+      />
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -88,36 +86,40 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
             <span>Chi tiết</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='role' action='update' fallback={null}>
+            <DropdownMenuItem
+              onClick={() => setOpenEdit(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/edit.svg'}
+                  alt='edit'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Sửa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='role' action='delete' fallback={null}>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

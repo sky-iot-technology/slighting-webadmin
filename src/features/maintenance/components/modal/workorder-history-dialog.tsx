@@ -15,7 +15,8 @@ import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useMemo } from 'react';
 import { formatDateTimeString } from '../../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
-import { useGetUsers } from '@/core/domains/users';
+import { useGetUsers, useSearchUsers } from '@/core/domains/users';
+import { useCan } from '@/core/domains/permissions';
 
 type WorkorderHistoryProps = {
   id: string;
@@ -28,6 +29,7 @@ export default function WorkorderHistory({
   open,
   onOpenChange
 }: WorkorderHistoryProps) {
+  const canViewAlarm = useCan('maintenance.alarm', 'view');
   const { treeData } = useRegionTreeStore();
 
   const { data: historyData, isLoading: historyLoading } = useGetHistoryById(
@@ -44,10 +46,13 @@ export default function WorkorderHistory({
 
   const { data: alarmData, isLoading: alarmLoading } = useGetAlarmById(
     alarmId ?? '',
-    { enabled: !!alarmId }
+    { enabled: !!alarmId && canViewAlarm }
   );
 
-  const { data: usersData, isLoading: usersLoading } = useGetUsers();
+  const { data: usersData, isLoading: usersLoading } = useSearchUsers(
+    { tag: 'team:' },
+    { enabled: !!alarmId && canViewAlarm }
+  );
 
   const deviceBranchName = useMemo(() => {
     const parentGroupId = alarmData?.metadata?.parent_group_id;

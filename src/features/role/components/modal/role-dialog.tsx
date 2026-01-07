@@ -14,13 +14,15 @@ type RoleDialogProps = {
   open: boolean;
   onOpenChange?: (open: boolean) => void;
   roleId?: string;
+  isViewOnly?: boolean;
 };
 
 export default function RoleDialog({
   pageTitle,
   open,
   onOpenChange,
-  roleId
+  roleId,
+  isViewOnly
 }: RoleDialogProps) {
   const { data, isLoading } = useGetRoleById(roleId ?? '', {
     enabled: !!roleId
@@ -38,6 +40,7 @@ export default function RoleDialog({
             initialData={data}
             pageTitle={pageTitle}
             onClose={() => onOpenChange && onOpenChange(false)}
+            isViewOnly={isViewOnly}
           />
         )}
       </DialogContent>

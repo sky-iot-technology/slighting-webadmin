@@ -8,6 +8,7 @@ import { useClientDataTable } from '@/core/shared/hooks/test';
 import { DeviceColumns } from '../devices-table/columns';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { compareVersion } from '../../helper';
+import { useCan } from '@/core/domains/permissions';
 
 type DeviceTabProps = {
   id: string;
@@ -20,6 +21,8 @@ export default function DeviceRegionTab({
   onSelectionChange,
   progressMap
 }: DeviceTabProps) {
+  const canViewDevice = useCan('device', 'view');
+
   const [treeOpen, setTreeOpen] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion | null>(
     null
@@ -49,7 +52,7 @@ export default function DeviceRegionTab({
       type: data?.category_type,
       group: selectedRegion?.id
     },
-    { enabled: canFetchDevices }
+    { enabled: canFetchDevices && canViewDevice }
   );
 
   const devices = useMemo(

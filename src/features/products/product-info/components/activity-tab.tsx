@@ -46,12 +46,14 @@ import {
 } from '@/ui/components/ui/select';
 import { format } from 'date-fns';
 import { Skeleton } from '@/ui/components/ui/skeleton';
+import { useCan } from '@/core/domains/permissions';
 
 interface ActivityTabProps {
   device: Device;
 }
 
 export function ActivityTab({ device }: ActivityTabProps) {
+  const canControl = useCan('device', 'control');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
   const [requests, setRequests] = useState<Record<string, string>>({});
@@ -533,7 +535,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                             {isSwitch ? (
                               <Switch
                                 checked={currentState}
-                                disabled={!isOnline || isPending}
+                                disabled={!canControl || !isOnline || isPending}
                                 onCheckedChange={(checked) =>
                                   handleToggleDevice(
                                     subDevice.device_id,
@@ -546,7 +548,9 @@ export function ActivityTab({ device }: ActivityTabProps) {
                               <div className='flex max-w-xs flex-1 items-center gap-3'>
                                 <Switch
                                   checked={currentState}
-                                  disabled={!isOnline || isPending}
+                                  disabled={
+                                    !canControl || !isOnline || isPending
+                                  }
                                   onCheckedChange={(checked) =>
                                     handleToggleDevice(
                                       subDevice.device_id,
@@ -572,7 +576,9 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                   min={0}
                                   max={100}
                                   step={1}
-                                  disabled={!isOnline || isPending}
+                                  disabled={
+                                    !canControl || !isOnline || isPending
+                                  }
                                   className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
                                 />
                                 <span className='min-w-[3rem] text-right text-sm font-medium'>

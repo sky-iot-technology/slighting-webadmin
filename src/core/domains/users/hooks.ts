@@ -170,7 +170,7 @@ export const useUpdateUser = (
 
   return useMutation<User, Error, { id: string; data: UpdateUserDto }>({
     ...options,
-    mutationFn: ({ id, data }) => usersApi.updateUser(id, data),
+    mutationFn: ({ id, data }) => usersApi.updateUserProfile(id, data),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
       // queryClient.setQueryData({

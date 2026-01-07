@@ -58,6 +58,8 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import { TreeProvider } from '@/ui/business/tree/TreeProvider';
+import { MultiSelect } from '@/ui/components/ui/multi-select';
+import { useCan } from '@/core/domains/permissions';
 
 interface OverviewTabProps {
   device: Device;
@@ -97,6 +99,7 @@ const overviewFormSchema = z.object({
     .string()
     .min(1, { message: 'Chi nhánh không được bỏ trống' }),
   serial: z.string().min(1, { message: 'Serial không được bỏ trống' }),
+  tags: z.array(z.string()).optional(),
 
   // Optional fields
   imei: z.string().optional(),
@@ -124,6 +127,7 @@ const overviewFormSchema = z.object({
 type OverviewFormValues = z.infer<typeof overviewFormSchema>;
 
 export function OverviewTab({ device }: OverviewTabProps) {
+  const canUpdate = useCan('device', 'update');
   const [avatarChanged, setAvatarChanged] = useState(false);
   const [oldAvatarUrl, setOldAvatarUrl] = useState<string | null>(null);
   const [selectedParent, setSelectedParent] = useState<{
@@ -164,6 +168,14 @@ export function OverviewTab({ device }: OverviewTabProps) {
       label: group.name
     }));
   }, [groupsData]);
+
+  const tagOptions = useMemo(() => {
+    if (!tagsData?.tag) return [];
+    return tagsData.tag.map((tag) => ({
+      value: tag.alias || String(tag.id),
+      label: tag.name || tag.alias || String(tag.id)
+    }));
+  }, [tagsData]);
 
   const sensorInfo = useMemo(() => {
     const sensors = device.devices?.filter(
@@ -283,6 +295,17 @@ export function OverviewTab({ device }: OverviewTabProps) {
     setOldAvatarUrl(url ? String(url) : null);
   }, [device.id]);
 
+  useEffect(() => {
+    if (device.parent_group_id && groupsData?.groups) {
+      const parent = groupsData.groups.find(
+        (g) => g.id === device.parent_group_id
+      );
+      if (parent) {
+        setSelectedParent({ id: String(parent.id), name: parent.name });
+      }
+    }
+  }, [device.parent_group_id, groupsData]);
+
   // Initialize form with device data
   const form = useForm<OverviewFormValues>({
     resolver: zodResolver(overviewFormSchema),
@@ -303,7 +326,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
       purchase_date: purchaseDate ? parseDateValue(purchaseDate) : undefined,
       expiration_date: expirationDate
         ? parseDateValue(expirationDate)
-        : undefined
+        : undefined,
+      tags: device.tags || []
     }
   });
 
@@ -470,7 +494,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
         manufacturer:
           values.manufacturer || device.device_info?.manufacturer || ''
       },
-      product_info: device.product_info
+      product_info: device.product_info,
+      tags: values.tags
     };
 
     // Only include device_asset if we have asset_attribute
@@ -516,7 +541,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
       purchase_date: purchaseDate ? parseDateValue(purchaseDate) : undefined,
       expiration_date: expirationDate
         ? parseDateValue(expirationDate)
-        : undefined
+        : undefined,
+      tags: device.tags || []
     });
     setIsEditMode(false);
   };
@@ -547,7 +573,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
         manufacturer:
           currentValues.manufacturer || device.device_info?.manufacturer || ''
       },
-      product_info: device.product_info
+      product_info: device.product_info,
+      tags: currentValues.tags
     };
 
     // Only include device_asset if we have asset_attribute
@@ -821,12 +848,30 @@ export function OverviewTab({ device }: OverviewTabProps) {
               {/* Row 1 */}
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <div className='w-full space-y-2'>
-                  <Label>Nhóm yêu thích</Label>
-                  <Input
-                    value={tagNames.join(', ') || 'N/A'}
-                    disabled
-                    placeholder='Nhóm yêu thích'
-                    className='disabled:opacity-90'
+                  <FormField
+                    control={form.control}
+                    name='tags'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nhóm yêu thích</FormLabel>
+                        <FormControl>
+                          <MultiSelect
+                            options={tagOptions}
+                            defaultValue={field.value ?? []}
+                            onValueChange={(val) => field.onChange(val)}
+                            placeholder={'Chọn nhóm thiết bị'}
+                            disabled={!isEditMode}
+                            resetOnDefaultValueChange={true}
+                            className='disabled:bg-muted !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
+                            popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
+                            itemClassName='text-sm'
+                            autoSize={true}
+                            // singleLine={true}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
                   />
                 </div>
                 <div className='space-y-2 md:col-span-2'>
@@ -896,8 +941,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 const num = Number(field.value);
                                 if (!isNaN(num)) {
                                   const limited = Math.max(
-                                    -180,
-                                    Math.min(180, num)
+                                    -90,
+                                    Math.min(90, num)
                                   );
                                   field.onChange(limited.toFixed(6));
                                 }
@@ -913,7 +958,6 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         <Button
                           type='button'
                           className='bg-blue-2 rounded-sm hover:!bg-cyan-600 hover:!brightness-95'
-                          disabled={!isEditMode}
                         >
                           Vị trí bản đồ
                         </Button>
@@ -926,6 +970,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         </SheetHeader>
                         <div className='relative h-full w-full overflow-hidden'>
                           <GoongMapMarker
+                            disabled={!isEditMode}
                             lat={
                               isValidLat(form.watch('lat') ?? '')
                                 ? Number(form.watch('lat'))
@@ -1149,7 +1194,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               type='button'
                               variant='link'
                               className='text-green-600 hover:text-green-700'
-                              onClick={() => setIsReminderModalOpen(true)}
+                              onClick={() => {
+                                if (!canUpdate) {
+                                  return;
+                                }
+                                setIsReminderModalOpen(true);
+                              }}
                             >
                               Xem lời nhắc
                             </Button>
@@ -1169,7 +1219,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
               <Button
                 type='button'
                 variant='default'
-                onClick={() => setIsEditMode(true)}
+                onClick={() => {
+                  if (!canUpdate) {
+                    return;
+                  }
+                  setIsEditMode(true);
+                }}
                 className='bg-primary hover:bg-primary/90'
               >
                 <Edit2 className='mr-2 h-4 w-4' />

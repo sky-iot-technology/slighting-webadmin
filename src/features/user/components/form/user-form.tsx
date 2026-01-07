@@ -41,7 +41,7 @@ import {
 import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 import Image from 'next/image';
 import ChangepassDialog from './changepass-form';
-import { useGetRoles } from '@/core/domains/permissions';
+import { useCan, useGetRoles } from '@/core/domains/permissions';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 
 type RoleFormProps = {
@@ -65,10 +65,17 @@ export default function UserForm({
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [open, setOpen] = useState(false);
 
+  //checkrole
+  const canViewRole = useCan('role', 'view');
   //fetch roles from api
-  const { data: rolesData, isLoading } = useGetRoles({
-    status: 'enabled'
-  });
+  const { data: rolesData, isLoading } = useGetRoles(
+    {
+      status: 'enabled'
+    },
+    {
+      enabled: canViewRole
+    }
+  );
 
   // Transform roles data into Select options format
   const roleOptions = useMemo(() => {
@@ -85,7 +92,7 @@ export default function UserForm({
       firstName: initialData?.first_name || '',
       lastName: initialData?.last_name || '',
       email: initialData?.email || '',
-      role: initialData?.role || '',
+      role: initialData?.metadata?.roleId || '',
       group: '',
 
       username: initialData?.credentials.username || '',
@@ -115,7 +122,6 @@ export default function UserForm({
   });
 
   const onSubmit = (values: UserFormValues) => {
-    if (initialData?.role === values.role) values.role = '';
     const apiPayload = convertUserFormToApiPayload(values, !!initialData);
     if (initialData) {
       updateUser.mutate({ id: String(initialData.id), data: apiPayload });
@@ -254,22 +260,22 @@ export default function UserForm({
                                 />
                               </SelectTrigger>
                               <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                                {/* {roleOptions.length > 0
+                                {roleOptions.length > 0
                                   ? roleOptions.map((role) => (
-                                    <SelectItem
-                                      key={role.value}
-                                      value={role.value}
-                                    >
-                                      {role.label}
-                                    </SelectItem>
-                                  ))
-                                  : null} */}
-                                <SelectItem key={'user'} value={'user'}>
+                                      <SelectItem
+                                        key={role.value}
+                                        value={role.value}
+                                      >
+                                        {role.label}
+                                      </SelectItem>
+                                    ))
+                                  : null}
+                                {/* <SelectItem key={'user'} value={'user'}>
                                   User
                                 </SelectItem>
                                 <SelectItem key={'admin'} value={'admin'}>
                                   Admin
-                                </SelectItem>
+                                </SelectItem> */}
                               </SelectContent>
                             </Select>
                           </FormControl>

@@ -15,18 +15,24 @@ function filterNavItems(
 ): NavItem[] {
   return items
     .map((item) => {
+      const hasChildren = Array.isArray(item.items) && item.items.length > 0;
+
       const filteredChildren = item.items
         ? filterNavItems(item.items, can)
         : [];
 
-      const allowed = hasPermission(item, can) || filteredChildren.length > 0;
+      if (hasChildren) {
+        if (filteredChildren.length === 0) return null;
 
-      if (!allowed) return null;
+        return {
+          ...item,
+          items: filteredChildren
+        };
+      }
 
-      return {
-        ...item,
-        items: filteredChildren
-      };
+      if (!hasPermission(item, can)) return null;
+
+      return item;
     })
     .filter(Boolean) as NavItem[];
 }

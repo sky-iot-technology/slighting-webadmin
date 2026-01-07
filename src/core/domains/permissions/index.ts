@@ -6,3 +6,5 @@ export * from './mapper';
 export * from './ui-modules';
 export * from './store';
 export * from './schemas';
+export * from './components/permission-guard';
+export * from './hocs/with-permission';

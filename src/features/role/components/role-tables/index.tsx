@@ -13,6 +13,7 @@ import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import RoleDialog from '../modal/role-dialog';
+import { PermissionGuard } from '@/core/domains/permissions';
 interface RoleTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -68,25 +69,27 @@ export function RoleTable<TData, TValue>({
         table={table}
         className='w-auto py-3'
         actions={
-          <Button
-            variant='default'
-            size='sm'
-            className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
-            onClick={() => setOpen(true)}
-          >
-            <IconPlus className='h-3 w-3' />
-            Thêm
-          </Button>
+          <PermissionGuard module='role' action='create' fallback={null}>
+            <Button
+              variant='default'
+              size='sm'
+              className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
+              onClick={() => setOpen(true)}
+            >
+              <IconPlus className='h-3 w-3' />
+              Thêm
+            </Button>
+            <RoleDialog
+              pageTitle='Thêm vai trò'
+              open={open}
+              onOpenChange={setOpen}
+              // initialData={{ group_ids: region?.id ? [region.id] : [] }}
+            />
+          </PermissionGuard>
         }
-        filter={true}
+        filter={false}
         excel={false}
         // onDeleteAll={handleDelete}
-      />
-      <RoleDialog
-        pageTitle='Thêm vai trò'
-        open={open}
-        onOpenChange={setOpen}
-        // initialData={{ group_ids: region?.id ? [region.id] : [] }}
       />
     </DataTable>
   );

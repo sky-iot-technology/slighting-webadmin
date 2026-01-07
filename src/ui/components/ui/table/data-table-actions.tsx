@@ -27,6 +27,8 @@ export function DataTableActionsPopover<TData>({
   onImportExcel,
   onDeleteAll
 }: DataTableActionsPopoverProps<TData>) {
+  const hasActions = Boolean(onDeleteAll || excel);
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [open, setOpen] = useState(false);
   const [alertOpen, setAlertOpen] = useState(false);
@@ -108,6 +110,10 @@ export function DataTableActionsPopover<TData>({
     setAlertOpen(false);
     setOpen(false);
   };
+
+  if (!hasActions) {
+    return null;
+  }
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

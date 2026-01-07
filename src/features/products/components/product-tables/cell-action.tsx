@@ -1,5 +1,6 @@
 'use client';
 import { Device, useDeleteDevice } from '@/core/domains/devices';
+import { PermissionGuard } from '@/core/domains/permissions';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import { Button } from '@/ui/components/ui/button';
 import {
@@ -67,21 +68,23 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             </div>
             <span>Chi tiết</span>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-1 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='device' action='delete'>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-1 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

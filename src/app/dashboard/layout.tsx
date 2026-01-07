@@ -6,6 +6,7 @@ import type { Metadata } from 'next';
 import { cookies } from 'next/headers';
 import { BootstrapProviders } from './bootstrap/bootstrap-providers';
 import { BreadcrumbsProvider } from '@/core/shared/context/breadcrumbs-context';
+import { RBACGuard } from '@/core/shared/components/rbac-guard';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard',
@@ -24,16 +25,18 @@ export default async function DashboardLayout({
   return (
     <ProtectedRoute>
       <BreadcrumbsProvider>
-        <SidebarProvider defaultOpen={defaultOpen}>
-          <BootstrapProviders />
-          <AppSidebar />
-          <SidebarInset>
-            <Header />
-            {/* page main content */}
-            {children}
-            {/* page main content ends */}
-          </SidebarInset>
-        </SidebarProvider>
+        <RBACGuard>
+          <SidebarProvider defaultOpen={defaultOpen}>
+            <BootstrapProviders />
+            <AppSidebar />
+            <SidebarInset>
+              <Header />
+              {/* page main content */}
+              {children}
+              {/* page main content ends */}
+            </SidebarInset>
+          </SidebarProvider>
+        </RBACGuard>
       </BreadcrumbsProvider>
     </ProtectedRoute>
   );

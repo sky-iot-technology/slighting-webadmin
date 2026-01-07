@@ -14,6 +14,7 @@ import Image from 'next/image';
 import { OtaData, useDeleteOta } from '@/core/domains/ota';
 import SyncDeviceDialog from '../modal/sync-dialog';
 import OtaDialog from '../modal/ota-dialog';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 interface CellActionProps {
   data: OtaData;
@@ -45,22 +46,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
         loading={isPending}
       />
 
-      {openSync && (
-        <SyncDeviceDialog
-          data={data}
-          open={openSync}
-          onOpenChange={setOpenSync}
-        />
-      )}
+      <SyncDeviceDialog
+        data={data}
+        open={openSync}
+        onOpenChange={setOpenSync}
+      />
 
-      {openEdit && (
-        <OtaDialog
-          pageTitle='Chỉnh sửa Ota'
-          open={openEdit}
-          onOpenChange={setOpenEdit}
-          id={data.id}
-        />
-      )}
+      <OtaDialog
+        pageTitle='Chỉnh sửa Ota'
+        open={openEdit}
+        onOpenChange={setOpenEdit}
+        id={data.id}
+      />
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -77,51 +74,57 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
           align='end'
           className='flex w-30 flex-col gap-2 p-2'
         >
-          <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/edit.svg'}
-                alt='edit'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Sửa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='ota' action='update'>
+            <DropdownMenuItem
+              onClick={() => setOpenEdit(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/edit.svg'}
+                  alt='edit'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Sửa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
-          <DropdownMenuItem
-            variant='default'
-            onClick={() => setOpen(true)}
-            className='flex w-full items-center text-xs'
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/trash.svg'}
-                alt='trash'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span className='text-destructive'>Xóa</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='ota' action='delete'>
+            <DropdownMenuItem
+              variant='default'
+              onClick={() => setOpen(true)}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/trash.svg'}
+                  alt='trash'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span className='text-destructive'>Xóa</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
-          <DropdownMenuItem
-            className='flex w-full items-center text-xs'
-            onClick={() => setOpenSync(true)}
-          >
-            <div className='mx-2 flex w-4 justify-center'>
-              <Image
-                src={'/assets/icons/move.svg'}
-                alt='sync'
-                width={12}
-                height={12}
-              />
-            </div>
-            <span>Đồng bộ</span>
-          </DropdownMenuItem>
+          <PermissionGuard module='ota' action='sync'>
+            <DropdownMenuItem
+              className='flex w-full items-center text-xs'
+              onClick={() => setOpenSync(true)}
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <Image
+                  src={'/assets/icons/move.svg'}
+                  alt='sync'
+                  width={12}
+                  height={12}
+                />
+              </div>
+              <span>Đồng bộ</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>
     </>

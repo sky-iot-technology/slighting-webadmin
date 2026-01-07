@@ -13,6 +13,7 @@ import Image from 'next/image';
 import { useDeleteGroup } from '@/core/domains/groups';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import BranchDialog from './branch-dialog';
+import { useCan } from '@/core/domains/permissions';
 
 interface BranchActionMenuProps {
   id: string;
@@ -40,6 +41,13 @@ export function BranchActionMenu({
     if (!id) return;
     deleteGroup.mutate(id);
   };
+
+  const canUpdate = useCan('branch', 'update');
+  const canDelete = useCan('branch', 'delete');
+
+  const hasActions = canUpdate || canDelete;
+
+  if (!hasActions) return null;
 
   return (
     <>
@@ -89,47 +97,55 @@ export function BranchActionMenu({
           align='end'
           className='flex w-34 flex-col gap-2 p-2'
         >
-          <DropdownMenuItem
-            onClick={() => setOpenEdit(true)}
-            className='flex items-center text-xs'
-          >
-            <Image
-              src='/assets/icons/edit.svg'
-              alt='edit'
-              width={12}
-              height={12}
-              className='mx-2'
-            />
-            <span>Chỉnh sửa</span>
-          </DropdownMenuItem>
+          {canUpdate && (
+            <>
+              <DropdownMenuItem
+                onClick={() => setOpenEdit(true)}
+                className='flex items-center text-xs'
+              >
+                <Image
+                  src='/assets/icons/edit.svg'
+                  alt='edit'
+                  width={12}
+                  height={12}
+                  className='mx-2'
+                />
+                <span>Chỉnh sửa</span>
+              </DropdownMenuItem>
 
-          <DropdownMenuItem
-            onClick={() => setOpenConfirm(true)}
-            className='text-destructive hover:!text-destructive flex items-center text-xs'
-          >
-            <Image
-              src='/assets/icons/trash.svg'
-              alt='trash'
-              width={12}
-              height={12}
-              className='mx-2'
-            />
-            <span>Xóa nhánh</span>
-          </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setOpenMove(true)}
+                className='flex items-center text-xs'
+              >
+                <Image
+                  src='/assets/icons/move.svg'
+                  alt='view'
+                  width={12}
+                  height={12}
+                  className='mx-2'
+                />
+                <span>Di chuyển</span>
+              </DropdownMenuItem>
+            </>
+          )}
 
-          <DropdownMenuItem
-            onClick={() => setOpenMove(true)}
-            className='flex items-center text-xs'
-          >
-            <Image
-              src='/assets/icons/move.svg'
-              alt='view'
-              width={12}
-              height={12}
-              className='mx-2'
-            />
-            <span>Di chuyển</span>
-          </DropdownMenuItem>
+          {canDelete && (
+            <>
+              <DropdownMenuItem
+                onClick={() => setOpenConfirm(true)}
+                className='text-destructive hover:!text-destructive flex items-center text-xs'
+              >
+                <Image
+                  src='/assets/icons/trash.svg'
+                  alt='trash'
+                  width={12}
+                  height={12}
+                  className='mx-2'
+                />
+                <span>Xóa nhánh</span>
+              </DropdownMenuItem>
+            </>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

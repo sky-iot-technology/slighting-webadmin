@@ -59,14 +59,14 @@ export function StatCard({
           </div>
         </div>
       </CardHeader>
-      <CardFooter className='mt-auto flex-col items-end pr-2.5 text-[10px] font-medium'>
+      {/* <CardFooter className='mt-auto flex-col items-end pr-2.5 text-[10px] font-medium'>
         <div className='line-clamp-1 flex gap-0.5'>
           <span className={`flex items-center gap-0.5 ${trendColor}`}>
             <TrendIcon className='size-3' /> {trend}%
           </span>
           <span className='text-muted-foreground'>so với hôm qua</span>
         </div>
-      </CardFooter>
+      </CardFooter> */}
     </Card>
   );
 }

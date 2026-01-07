@@ -3,16 +3,25 @@
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import MapFilter from './map-filter';
-import { Device, useGetDevices } from '@/core/domains/devices';
+import {
+  Device,
+  DeviceStatusFilter,
+  GetDevicesParamsDto,
+  useGetDeviceCount,
+  useGetDevices
+} from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import GoongMap from '@/ui/business/map/goong-map';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { deviceDataLayer } from '../layer/device-data-layer';
+import { useCan } from '@/core/domains/permissions';
+import { group } from 'console';
 
 export default function MapContainer() {
   // const [devices, setDevices] = useState<Device[]>([]);
 
+  const canViewDevices = useCan('device', 'view');
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
@@ -24,6 +33,8 @@ export default function MapContainer() {
 
   useCustomBreadcrumbContent(breadcrumbContent);
 
+  const [statusFilter, setStatusFilter] = useState<DeviceStatusFilter>('all');
+
   const [selectedDevice, setSelectedDevice] = useState<{
     device: Device | null;
     ts: number;
@@ -31,11 +42,41 @@ export default function MapContainer() {
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion>(null);
   const { treeData, isLoading: isRegionsLoading } = useRegionTreeStore();
 
+  const deviceQueryParams = useMemo(() => {
+    const baseParams: GetDevicesParamsDto = {
+      group: selectedRegion?.id,
+      limit: 100
+    };
+
+    if (statusFilter === 'online') {
+      baseParams.metadata = JSON.stringify({
+        device_info: { online: true }
+      });
+    }
+
+    if (statusFilter === 'offline') {
+      baseParams.metadata = JSON.stringify({
+        device_info: { online: false }
+      });
+    }
+
+    return baseParams;
+  }, [selectedRegion?.id, statusFilter]);
+
   const { data, isLoading, isFetching, error } = useGetDevices(
-    { group: selectedRegion?.id, limit: 100 },
-    { enabled: !!selectedRegion }
+    deviceQueryParams,
+    { enabled: !!selectedRegion && canViewDevices }
   );
   const devices = data?.devices ?? [];
+
+  const { data: onlineData, refetch: refetchOnline } = useGetDeviceCount(true, {
+    group: selectedRegion?.id
+  });
+  const { data: offlineData, refetch: refetchOffline } = useGetDeviceCount(
+    false,
+    { group: selectedRegion?.id }
+  );
+
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {
       setSelectedRegion({
@@ -48,6 +89,12 @@ export default function MapContainer() {
   const handleRegionChange = useCallback((region: SelectedRegion) => {
     setSelectedRegion(region);
   }, []);
+
+  useEffect(() => {
+    if (!selectedRegion) return;
+
+    setStatusFilter('all');
+  }, [selectedRegion?.id]);
 
   // useEffect(() => {
   //   if (!selectedRegion) return;
@@ -98,11 +145,15 @@ export default function MapContainer() {
         ) : (
           <MapFilter
             devices={devices}
+            online={onlineData?.total || 0}
+            offline={offlineData?.total || 0}
             selectedRegion={selectedRegion}
             onRegionChange={handleRegionChange}
             onSelectDevice={(d) =>
               setSelectedDevice({ device: d, ts: Date.now() })
             }
+            statusFilter={statusFilter}
+            onStatusChange={(status) => setStatusFilter(status)}
           />
         )}
       </div>

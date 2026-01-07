@@ -224,3 +224,5 @@ export interface DeviceQueryResponse {
   request_id: string;
   poll_interval: number;
 }
+
+export type DeviceStatusFilter = 'all' | 'online' | 'offline';

@@ -66,7 +66,6 @@ export interface CreateUserDto {
   first_name: string;
   last_name: string;
   status: UserStatus;
-  role: UserRole;
   credentials: CreateUserCredentialsDto;
   email: string;
   metadata?: Metadata;
@@ -77,12 +76,10 @@ export interface CreateUserDto {
 export interface UpdateUserDto {
   first_name?: string;
   last_name?: string;
-  role?: UserRole;
   metadata?: Metadata;
 }
 
 export interface UpdateProfileDto extends Omit<UpdateUserDto, 'role'> {}
-export interface UpdateRoleDto extends Pick<UpdateUserDto, 'role'> {}
 
 export interface ChangePassDto {
   old_secret: string;

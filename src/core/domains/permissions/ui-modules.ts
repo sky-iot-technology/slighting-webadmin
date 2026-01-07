@@ -5,12 +5,12 @@ export const uiModules = [
   {
     value: 'map',
     label: 'Bản đồ',
-    actions: ['view', 'create', 'update', 'delete']
+    actions: ['view']
   },
   {
     value: 'device',
     label: 'Quản lý thiết bị',
-    actions: ['view', 'create', 'update', 'delete']
+    actions: ['view', 'create', 'update', 'delete', 'control']
   },
   {
     value: 'calendar',
@@ -80,12 +80,20 @@ export const ROUTE_PERMISSION_MAP = [
     permission: { module: 'device', action: 'view' }
   },
   {
+    path: '/dashboard/product/new',
+    permission: { module: 'device', action: 'create' }
+  },
+  {
     path: '/dashboard/calendar',
     permission: { module: 'calendar', action: 'view' }
   },
   {
     path: '/dashboard/maintenance',
     permission: { module: 'maintenance', action: 'view' }
+  },
+  {
+    path: '/dashboard/maintenance/edit',
+    permission: { module: 'maintenance.workorder', action: 'update' }
   },
   {
     path: '/dashboard/calendar',
@@ -121,7 +129,8 @@ export const ACTION_DEPENDENCIES: Record<string, string[]> = {
   update: ['view'],
   delete: ['view'],
   sync: ['view'],
-  create: ['view']
+  create: ['view'],
+  control: ['view']
 };
 
 export function isActionDisabled(

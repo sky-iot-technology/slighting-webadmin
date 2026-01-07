@@ -9,6 +9,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { parseAsInteger, useQueryState } from 'nuqs';
+import { PermissionGuard } from '@/core/domains/permissions';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
@@ -67,17 +68,19 @@ export function ProductTable<TData, TValue>({
               actions={
                 <>
                   {action}
-                  <Button
-                    variant='default'
-                    size='sm'
-                    className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
-                    onClick={() => {
-                      router.push('/dashboard/product/new');
-                    }}
-                  >
-                    <IconPlus className='h-3 w-3' />
-                    Thêm
-                  </Button>
+                  <PermissionGuard module='device' action='create'>
+                    <Button
+                      variant='default'
+                      size='sm'
+                      className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+                      onClick={() => {
+                        router.push('/dashboard/product/new');
+                      }}
+                    >
+                      <IconPlus className='h-3 w-3' />
+                      Thêm
+                    </Button>
+                  </PermissionGuard>
                 </>
               }
               onDeleteAll={() => console.log('delete product')}

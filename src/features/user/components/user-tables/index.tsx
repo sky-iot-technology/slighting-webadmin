@@ -13,6 +13,7 @@ import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import UserDialog from '../modal/user-dialog';
+import { PermissionGuard } from '@/core/domains/permissions';
 interface UserTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -66,15 +67,17 @@ export function UserTable<TData, TValue>({
         table={table}
         className='w-auto py-3'
         actions={
-          <Button
-            variant='default'
-            size='sm'
-            className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
-            onClick={() => setOpen(true)}
-          >
-            <IconPlus className='h-3 w-3' />
-            Thêm
-          </Button>
+          <PermissionGuard module='users' action='create' fallback={null}>
+            <Button
+              variant='default'
+              size='sm'
+              className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
+              onClick={() => setOpen(true)}
+            >
+              <IconPlus className='h-3 w-3' />
+              Thêm
+            </Button>
+          </PermissionGuard>
         }
         filter={true}
         excel={false}
