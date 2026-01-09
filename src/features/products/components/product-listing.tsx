@@ -19,10 +19,13 @@ import { Button } from '@/ui/components/ui/button';
 import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { findNodeById, findNodeId } from '@/features/calendar/helper';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type ProductListingPage = {};
 
 export default function ProductListingPage({}: ProductListingPage) {
+  const { t } = useTranslation();
+
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
   const search = searchParams.get('name');
@@ -73,10 +76,10 @@ export default function ProductListingPage({}: ProductListingPage) {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Thiết bị</span>
+        <span className='text-lg font-bold'>{t('navbar.device')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

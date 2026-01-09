@@ -9,18 +9,23 @@ import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { ColumnDef } from '@tanstack/react-table';
 import { useOtaFiltersFromParams } from '../hook/ota-filter';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function OtaPage() {
+  const { t } = useTranslation();
+
   const filter = useOtaFiltersFromParams();
   const { data, isLoading, error } = useGetListOta({ ...filter });
 
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Quản lý OTA</span>
+        <span className='text-lg font-bold'>
+          {t('navbar.firmware_management')}
+        </span>
       </div>
     ),
-    []
+    [t]
   );
   useCustomBreadcrumbContent(breadcrumbContent);
 

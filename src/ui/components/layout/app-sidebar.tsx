@@ -23,39 +23,47 @@ import {
 import { IconChevronRight } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { LanguageToggle } from '@/ui/components/layout/LanguageToggle/language-toggle';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import * as React from 'react';
 import { Icons } from '../icons';
 import { SettingModal } from '@/features/setting/modal/setting';
 import { useNavItems } from './useNavItemsBasePermission';
+import {
+  getFirstAccessibleRoute,
+  usePermissionStore
+} from '@/core/domains/permissions';
+import router from 'next/router';
 
 // Reusable component for the active state SVG background
 export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
   return (
-    <svg
-      width='34'
-      height='36'
-      viewBox='0 0 34 36'
-      fill='none'
-      xmlns='http://www.w3.org/2000/svg'
-    >
-      <path
-        d='M15 36C9.78439 28.7027 -1.28398e-06 29.3741 -7.97296e-07 18.24C-3.1061e-07 7.10594 8.79889 5.83784 15 -8.30516e-07C26.7638 -3.16304e-07 34 7.10594 34 18.24C34 29.3741 26.7638 36 15 36Z'
-        fill='#072645'
-      />
-      <rect
-        x='29'
-        y='6'
-        width='24'
-        height='24'
-        rx='12'
-        transform='rotate(90 29 6)'
-        fill='white'
-      />
-      <foreignObject x='9' y='9' width='24' height='24'>
-        {children}
-      </foreignObject>
-    </svg>
+    <>{children}</>
+    // <svg
+    //   width='34'
+    //   height='36'
+    //   viewBox='0 0 34 36'
+    //   fill='none'
+    //   xmlns='http://www.w3.org/2000/svg'
+    // >
+    //   <path
+    //     d='M15 36C9.78439 28.7027 -1.28398e-06 29.3741 -7.97296e-07 18.24C-3.1061e-07 7.10594 8.79889 5.83784 15 -8.30516e-07C26.7638 -3.16304e-07 34 7.10594 34 18.24C34 29.3741 26.7638 36 15 36Z'
+    //     fill='#072645'
+    //   />
+    //   <rect
+    //     x='29'
+    //     y='6'
+    //     width='24'
+    //     height='24'
+    //     rx='12'
+    //     transform='rotate(90 29 6)'
+    //     fill='white'
+    //   />
+    //   <foreignObject x='9' y='9' width='24' height='24'>
+    //     {children}
+    //   </foreignObject>
+    // </svg>
   );
 }
 
@@ -75,17 +83,38 @@ function NavIcon({
   size?: number;
 }) {
   if (isActive) {
-    return <Icon color='#072645' width={size} height={size} />;
+    return (
+      <Icon
+        color='white'
+        className='brightness-0 invert'
+        width={size}
+        height={size}
+      />
+    );
   }
   return <Icon className='text-muted-foreground' width={size} height={size} />;
 }
 
 // Component for sidebar logo
 function SidebarLogo({ isOpen }: { isOpen: boolean }) {
+  const router = useRouter();
+  const { ui } = usePermissionStore();
+  const onClickLogo = () => {
+    const nextRoute = getFirstAccessibleRoute(ui);
+
+    if (nextRoute) {
+      router.replace(nextRoute);
+    } else {
+      router.replace('/auth/sign-in');
+    }
+  };
   return (
     <>
       {isOpen ? (
-        <div className='flex flex-row items-center justify-center'>
+        <div
+          className='flex cursor-pointer flex-row items-center justify-center'
+          onClick={onClickLogo}
+        >
           <Image
             src='/assets/images/logo2.png'
             alt='logo'
@@ -94,7 +123,10 @@ function SidebarLogo({ isOpen }: { isOpen: boolean }) {
           />
         </div>
       ) : (
-        <div className='flex flex-row items-center justify-center'>
+        <div
+          className='flex cursor-pointer flex-row items-center justify-center'
+          onClick={onClickLogo}
+        >
           <Image
             src='/assets/images/logo-sidebar.png'
             alt='logo'
@@ -145,6 +177,7 @@ function SubMenuItem({
   subItem: { title: string; url: string; icon?: string };
   isActive: boolean;
 }) {
+  const { t } = useTranslation();
   const SubIcon =
     subItem.icon && subItem.icon in Icons
       ? Icons[subItem.icon as keyof typeof Icons]
@@ -159,7 +192,7 @@ function SubMenuItem({
             prefetch={true}
             className='flex items-center gap-2'
           >
-            <span>{subItem.title}</span>
+            <span>{t(subItem.title as any)}</span>
           </Link>
         </SidebarMenuSubButton>
       </SidebarMenuSubItem>
@@ -179,7 +212,7 @@ function SubMenuItem({
             isActive={isActive}
             showActiveState={isActive}
           />
-          <span>{subItem.title}</span>
+          <span>{t(subItem.title as any)}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuSubItem>
@@ -198,11 +231,16 @@ function MainMenuItem({
   pathname: string;
   open: boolean;
 }) {
+  const { t } = useTranslation();
   const isActive = pathname === item.url || pathname.startsWith(item.url + '/');
 
   return (
     <SidebarMenuItem key={item.title}>
-      <SidebarMenuButton asChild tooltip={item.title} isActive={isActive}>
+      <SidebarMenuButton
+        asChild
+        tooltip={t(item.title as any)}
+        isActive={isActive}
+      >
         <Link href={item.url} prefetch={true}>
           <MenuItemIcon
             icon={Icon}
@@ -210,7 +248,7 @@ function MainMenuItem({
             showActiveState={isActive && open}
             size={20}
           />
-          <span>{item.title}</span>
+          <span>{t(item.title as any)}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -228,16 +266,17 @@ function MainMenuItemModal({
   isActive: boolean;
   onClick: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        tooltip={item.title}
+        tooltip={t(item.title as any)}
         isActive={isActive}
         onClick={onClick}
         asChild={false}
       >
         <MenuItemIcon icon={Icon} isActive={isActive} showActiveState={false} />
-        <span>{item.title}</span>
+        <span>{t(item.title as any)}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -248,6 +287,7 @@ export default function AppSidebar() {
   const { open } = useSidebar();
   const [openSettingModal, setOpenSettingModal] = React.useState(false);
   const navItemsPermission = useNavItems();
+  const { t } = useTranslation();
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [open]);
@@ -263,7 +303,11 @@ export default function AppSidebar() {
             <SidebarMenu>
               {navItemsPermission.map((item) => {
                 const Icon = item.icon ? Icons[item.icon] : Icons.logo;
-                const isActive = pathname === item.url;
+                // const isActive = pathname === item.url;
+
+                const isActive =
+                  pathname === item.url ||
+                  item.items?.some((sub) => pathname === sub.url);
 
                 if (item.modal) {
                   return (
@@ -271,7 +315,7 @@ export default function AppSidebar() {
                       key={item.title}
                       item={item}
                       Icon={Icon}
-                      isActive={isActive}
+                      isActive={isActive ?? false}
                       onClick={() => {
                         setOpenSettingModal(true);
                         console.log('open');
@@ -284,19 +328,19 @@ export default function AppSidebar() {
                   return (
                     <Collapsible
                       key={item.title}
-                      defaultOpen={item.isActive}
+                      defaultOpen={!!item.isActive}
                       className='group/collapsible'
                     >
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuButton isActive={isActive}>
+                          <SidebarMenuButton isActive={!!isActive && !open}>
                             <MenuItemIcon
                               icon={Icon}
-                              isActive={isActive}
+                              isActive={!!isActive}
                               showActiveState={false}
                             />
                             <span className='group-data-[collapsible=icon]:hidden'>
-                              {item.title}
+                              {t(item.title as any)}
                             </span>
                             <IconChevronRight className='ml-auto !size-[18px] transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90' />
                           </SidebarMenuButton>
@@ -330,8 +374,12 @@ export default function AppSidebar() {
             </SidebarMenu>
           </SidebarGroup>
         </SidebarContent>
+
         <SidebarFooter>
-          <span className='text-center text-sm text-gray-500'>v1.0.0</span>
+          <div className='flex items-center justify-center gap-2'>
+            <LanguageToggle />
+            <span className='text-center text-sm text-gray-500'>v1.0.0</span>
+          </div>
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>

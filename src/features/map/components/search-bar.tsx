@@ -1,4 +1,6 @@
 import { Device } from '@/core/domains/devices';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { LanguageKey } from '@/core/i18n/locales';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -6,8 +8,8 @@ import { useEffect, useRef, useState } from 'react';
 type SearchType = 'deviceName' | 'macAddress';
 
 const typeLabels: Record<SearchType, string> = {
-  deviceName: 'Tên thiết bị',
-  macAddress: 'MAC address'
+  deviceName: 'map.deviceName',
+  macAddress: 'map.macAddress'
 };
 
 type DropdownMode = 'none' | 'type' | 'results';
@@ -18,6 +20,8 @@ type SearchBarProps = {
 };
 
 export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
+  const { t } = useTranslation();
+
   const [dropdownMode, setDropdownMode] = useState<DropdownMode>('none');
   const [searchType, setSearchType] = useState<SearchType>('deviceName');
   const [query, setQuery] = useState('');
@@ -88,7 +92,7 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
             setDropdownMode(dropdownMode === 'type' ? 'none' : 'type')
           }
         >
-          <span>{typeLabels[searchType]}:</span>
+          <span>{t(`${typeLabels[searchType]}` as LanguageKey)}:</span>
         </button>
 
         <input
@@ -99,7 +103,7 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
             setDropdownMode('results');
           }}
           className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent focus:outline-none'
-          placeholder='Nhập từ khóa...'
+          placeholder={t('map.inputHolder')}
         />
       </div>
 
@@ -111,13 +115,13 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
               className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'deviceName' ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
               onClick={() => handleTypeChange('deviceName')}
             >
-              Tên thiết bị
+              {t('map.deviceName')}
             </li>
             <li
               className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'macAddress' ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
               onClick={() => handleTypeChange('macAddress')}
             >
-              MAC address
+              {t('map.macAddress')}
             </li>
           </ul>
         </div>

@@ -14,7 +14,7 @@ export type Product = {
 //Info: The following data is used for the sidebar navigation and Cmd K bar.
 export const navItems: NavItem[] = [
   {
-    title: 'Dashboard',
+    title: 'navbar.dashboard',
     url: '/dashboard/overview',
     icon: 'dashboard',
     isActive: false,
@@ -24,7 +24,7 @@ export const navItems: NavItem[] = [
     items: [] // Empty array as there are no child items for Dashboard
   },
   {
-    title: 'Bản đồ',
+    title: 'navbar.map',
     url: '/dashboard/map',
     icon: 'map',
     shortcut: ['p', 'p'],
@@ -34,14 +34,14 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Quản lý',
+    title: 'navbar.management',
     url: '/dashboard/management',
     icon: 'management',
     shortcut: ['p', 'p'],
     isActive: false,
     items: [
       {
-        title: 'Nhóm yêu thích',
+        title: 'navbar.favorite_groups',
         url: '/dashboard/tag',
         icon: 'love',
         resourceId: 'tag',
@@ -49,7 +49,7 @@ export const navItems: NavItem[] = [
         shortcut: ['m', 'm']
       },
       {
-        title: 'Chi nhánh',
+        title: 'navbar.branches',
         url: '/dashboard/branch',
         icon: 'branch',
         resourceId: 'branch',
@@ -57,7 +57,7 @@ export const navItems: NavItem[] = [
         shortcut: ['m', 'm']
       },
       {
-        title: 'Vai trò',
+        title: 'navbar.roles',
         url: '/dashboard/role',
         icon: 'role',
         resourceId: 'role',
@@ -65,7 +65,7 @@ export const navItems: NavItem[] = [
         shortcut: ['m', 'm']
       },
       {
-        title: 'Người dùng',
+        title: 'navbar.users',
         url: '/dashboard/user',
         icon: 'userAgent',
         resourceId: 'users',
@@ -75,7 +75,7 @@ export const navItems: NavItem[] = [
     ]
   },
   {
-    title: 'Quản lý thiết bị',
+    title: 'navbar.device_management',
     url: '/dashboard/product',
     icon: 'deviceMenu',
     shortcut: ['r', 'r'],
@@ -85,7 +85,7 @@ export const navItems: NavItem[] = [
     items: [] // No child items
   },
   {
-    title: 'Quản lý lịch',
+    title: 'navbar.calendar_management',
     url: '/dashboard/calendar',
     icon: 'calendar',
     shortcut: ['p', 'p'],
@@ -95,7 +95,7 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Quản lý bảo trì',
+    title: 'navbar.maintenance_management',
     url: '/dashboard/maintenance',
     icon: 'maintenance',
     shortcut: ['m', 'm'],
@@ -105,7 +105,7 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Quản lý tổ chức',
+    title: 'navbar.organization_management',
     url: '/dashboard/organization',
     icon: 'organization',
     shortcut: ['m', 'm'],
@@ -115,7 +115,7 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Quản lý Firmware',
+    title: 'navbar.firmware_management',
     url: '/dashboard/ota',
     icon: 'firmware',
     shortcut: ['m', 'm'],
@@ -125,7 +125,7 @@ export const navItems: NavItem[] = [
     items: []
   },
   {
-    title: 'Cài đặt',
+    title: 'navbar.settings',
     url: '/dashboard/setting',
     icon: 'setting',
     shortcut: ['m', 'm'],

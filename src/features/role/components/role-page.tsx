@@ -9,8 +9,11 @@ import {
   useGetRoles,
   usePermissionStore
 } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function RolePage() {
+  const { t } = useTranslation();
+
   const canSync = useCan('device', 'sync');
   const { data, isLoading, error } = useGetRoles({
     status: 'enabled'
@@ -19,10 +22,10 @@ export default function RolePage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Vai trò</span>
+        <span className='text-lg font-bold'>{t('navbar.roles')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

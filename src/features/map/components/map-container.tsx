@@ -16,19 +16,19 @@ import GoongMap from '@/ui/business/map/goong-map';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { deviceDataLayer } from '../layer/device-data-layer';
 import { useCan } from '@/core/domains/permissions';
-import { group } from 'console';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function MapContainer() {
-  // const [devices, setDevices] = useState<Device[]>([]);
+  const { t } = useTranslation();
 
   const canViewDevices = useCan('device', 'view');
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Bản đồ</span>
+        <span className='text-lg font-bold'>{t('navbar.map')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

@@ -24,8 +24,10 @@ import {
   changenewpassFormSchema,
   useChangePassword
 } from '@/core/domains/users';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function PasswordForm() {
+  const { t } = useTranslation();
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -54,7 +56,7 @@ export default function PasswordForm() {
     <Card className='mx-auto h-full w-full gap-1.5 border-0 bg-white px-5 py-0 pt-3 pb-5 shadow-none'>
       <CardHeader className='px-0'>
         <CardTitle className='text-primary text-left text-[20px] font-bold'>
-          Đổi mật khẩu
+          {t('profile.changePass')}
         </CardTitle>
       </CardHeader>
       <CardContent className='flex h-full justify-center px-0'>
@@ -69,14 +71,14 @@ export default function PasswordForm() {
               render={({ field }) => (
                 <FormItem className=''>
                   <FormLabel className='text-[16px] font-bold'>
-                    Mật khẩu cũ
+                    {t('profile.oldPassword')}
                   </FormLabel>
                   <FormControl>
                     <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showOldPassword ? 'text' : 'password'}
-                        placeholder='Nhập mật khẩu mới'
+                        placeholder={t('profile.oldPassword_placeholder')}
                         className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='newpassword'
                       />
@@ -104,14 +106,14 @@ export default function PasswordForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className='text-[16px] font-bold'>
-                    Mật khẩu mới
+                    {t('profile.newPassword')}
                   </FormLabel>
                   <FormControl>
                     <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showNewPassword ? 'text' : 'password'}
-                        placeholder='Nhập mật khẩu mới'
+                        placeholder={t('profile.newPassword_placeholder')}
                         className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='newpassword'
                       />
@@ -139,14 +141,16 @@ export default function PasswordForm() {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className='text-[16px] font-bold'>
-                    Xác nhận mật khẩu mới
+                    {t('profile.confirmNewPassword')}
                   </FormLabel>
                   <FormControl>
                     <div className='relative w-full md:max-w-[392px]'>
                       <Input
                         {...field}
                         type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder='Xác nhận mật khẩu mới'
+                        placeholder={t(
+                          'profile.confirmNewPassword_placeholder'
+                        )}
                         className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
                         autoComplete='confirmPassword'
                       />
@@ -175,7 +179,7 @@ export default function PasswordForm() {
                 type='submit'
                 className='h-[40px] w-[130px] rounded-[8px] text-lg'
               >
-                Cập nhật
+                {t('general.edit')}
               </Button>
             </div>
           </form>

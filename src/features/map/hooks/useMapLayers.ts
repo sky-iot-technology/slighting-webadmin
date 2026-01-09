@@ -24,7 +24,8 @@ const loadIcons = (map: any) => {
 
   load('cabinet-online', '/assets/images/cabinet-online.png');
   load('cabinet-offline', '/assets/images/cabinet-offline.png');
-  // load('cabinet-warning', '/assets/images/cabinet-warning.png');
+  load('light-online', '/assets/images/light-online.png');
+  load('light-offline', '/assets/images/light-offline.png');
 };
 
 export const useMapLayers = (

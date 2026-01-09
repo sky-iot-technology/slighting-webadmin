@@ -18,8 +18,11 @@ import { departmentColumns } from './department-tables/columns';
 import UnitDialog from './modal/unit-dialog';
 import DepartmentDialog from './modal/department-dialog';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function OrganizationPage() {
+  const { t } = useTranslation();
+
   const [activeTab, setActiveTab] = useState<string>('unit');
   const [open, setOpen] = useState(false);
   const [openDepartment, setOpenDepartment] = useState(false);
@@ -30,10 +33,12 @@ export default function OrganizationPage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Quản lý tổ chức</span>
+        <span className='text-lg font-bold'>
+          {t('navbar.maintenance_management')}
+        </span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

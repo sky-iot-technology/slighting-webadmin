@@ -3,7 +3,6 @@ import { SearchBar } from './search-bar';
 import { Device, DeviceStatusFilter } from '@/core/domains/devices';
 import { Button } from '@/ui/components/ui/button';
 import { Separator } from '@/ui/components/ui/separator';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 type SelectedRegion = { id: string; name: string } | null;
@@ -40,37 +39,51 @@ export default function MapFilter({
 
           <SearchBar devices={devices} onSelectDevice={onSelectDevice} />
         </div>
-        <div className='flex items-center gap-0.5 rounded-lg border border-gray-200 bg-white p-0.5'>
-          <Button
-            variant={'outline'}
-            className={cn(
-              'hover:text-success cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-green-50 sm:h-[28px] md:h-[30px]',
-              statusFilter === 'online' &&
-                'text-success border-green-200 bg-green-50'
+      </div>
+      <div className='fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-white p-1'>
+        <Button
+          variant={'outline'}
+          className={cn(
+            'hover:text-success cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-green-50 sm:h-[28px] md:h-[30px]',
+            statusFilter === 'online' &&
+              'text-success border-green-200 bg-green-50'
+          )}
+          onClick={() =>
+            onStatusChange?.(statusFilter === 'online' ? 'all' : 'online')
+          }
+        >
+          <span className='relative flex h-2 w-2'>
+            {statusFilter === 'online' && (
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75`}
+              ></span>
             )}
-            onClick={() =>
-              onStatusChange?.(statusFilter === 'online' ? 'all' : 'online')
-            }
-          >
             <span className='h-2 w-2 rounded-full bg-green-500'></span>
-            online ({online})
-          </Button>
-          <Separator orientation='vertical' className='!h-5' />
-          <Button
-            variant={'outline'}
-            className={cn(
-              'hover:text-destructive cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-red-50 sm:h-[28px] md:h-[30px]',
-              statusFilter === 'offline' &&
-                'text-destructive border-red-200 bg-red-50'
+          </span>
+          online ({online})
+        </Button>
+        <Separator orientation='vertical' className='!h-5' />
+        <Button
+          variant={'outline'}
+          className={cn(
+            'hover:text-destructive cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-red-50 sm:h-[28px] md:h-[30px]',
+            statusFilter === 'offline' &&
+              'text-destructive border-red-200 bg-red-50'
+          )}
+          onClick={() =>
+            onStatusChange?.(statusFilter === 'offline' ? 'all' : 'offline')
+          }
+        >
+          <span className='relative flex h-2 w-2'>
+            {statusFilter === 'offline' && (
+              <span
+                className={`absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75`}
+              ></span>
             )}
-            onClick={() =>
-              onStatusChange?.(statusFilter === 'offline' ? 'all' : 'offline')
-            }
-          >
             <span className='h-2 w-2 rounded-full bg-red-500'></span>
-            offline ({offline})
-          </Button>
-        </div>
+          </span>
+          offline ({offline})
+        </Button>
       </div>
     </>
   );

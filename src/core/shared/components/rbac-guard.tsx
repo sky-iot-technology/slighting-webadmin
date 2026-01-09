@@ -43,7 +43,7 @@ export function RBACGuard({ children }: RBACGuardProps) {
       if (nextRoute && nextRoute !== pathname) {
         router.replace(nextRoute);
       } else {
-        router.replace('/auth/sign-in');
+        router.replace('/not-found');
       }
     }
   }, [isAllowed, router, ui, pathname]);

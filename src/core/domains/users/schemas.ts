@@ -34,22 +34,22 @@ export const userFormSchema = z
 
 export const changenewpassFormSchema = z
   .object({
-    oldpassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
-    newpassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
-    confirmPassword: z.string().trim().min(6, 'Mật khẩu tối thiểu 6 ký tự')
+    oldpassword: z.string().trim().min(6, 'validation.password_min'),
+    newpassword: z.string().trim().min(6, 'validation.password_min'),
+    confirmPassword: z.string().trim().min(6, 'validation.password_min')
   })
   .refine((data) => data.newpassword === data.confirmPassword, {
-    message: 'Mật khẩu không khớp',
+    message: 'validation.password_not_match',
     path: ['confirmPassword']
   });
 
 export const changepassFormSchema = z
   .object({
-    newpassword: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
-    confirmPassword: z.string().min(6, 'Xác nhận mật khẩu không đúng')
+    newpassword: z.string().min(6, 'validation.password_min'),
+    confirmPassword: z.string().min(6, 'validation.password_min')
   })
   .refine((data) => data.newpassword === data.confirmPassword, {
-    message: 'Mật khẩu không khớp',
+    message: 'validation.password_not_match',
     path: ['confirmPassword']
   });
 

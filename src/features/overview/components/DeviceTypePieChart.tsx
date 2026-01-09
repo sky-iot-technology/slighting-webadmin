@@ -20,6 +20,7 @@ import {
 } from '@/ui/components/ui/chart';
 import Image from 'next/image';
 import { useGetOverView } from '@/core/domains/overview/hooks';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 const colors = [
   '#93c5fd',
@@ -32,9 +33,10 @@ const colors = [
 ];
 
 export function DeviceTypePieChart() {
+  const { t } = useTranslation();
   const { data, isLoading } = useGetOverView();
   if (!data || !data.device_distribution_by_type) {
-    return <div>Đang tải dữ liệu...</div>;
+    return <div>{t('general.loading')}</div>;
   }
 
   const chartData = data.device_distribution_by_type.map((item, index) => ({
@@ -57,7 +59,7 @@ export function DeviceTypePieChart() {
             className='size-6'
           />
           <CardTitle className='text-sm font-bold'>
-            Phân bố thiết bị theo loại
+            {t('dashboard.piechart')}
           </CardTitle>
         </div>
       </CardHeader>
@@ -123,7 +125,7 @@ export function DeviceTypePieChart() {
                           y={(viewBox.cy || 0) + 24}
                           className='fill-muted-foreground text-sm'
                         >
-                          Tổng thiết bị
+                          {t('dashboard.allDevice')}
                         </tspan>
                       </text>
                     );

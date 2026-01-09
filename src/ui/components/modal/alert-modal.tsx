@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/ui/components/ui/button';
 import { Modal } from '@/ui/components/ui/modal';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface AlertModalProps {
   isOpen: boolean;
@@ -20,6 +21,7 @@ export const AlertModal: React.FC<AlertModalProps> = ({
   title,
   description
 }) => {
+  const { t } = useTranslation();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -39,10 +41,10 @@ export const AlertModal: React.FC<AlertModalProps> = ({
     >
       <div className='flex w-full items-center justify-end space-x-2 pt-6'>
         <Button disabled={loading} variant='outline' onClick={onClose}>
-          Huỷ
+          {t('general.cancel')}
         </Button>
         <Button disabled={loading} variant='destructive' onClick={onConfirm}>
-          Đồng ý
+          {t('general.accept')}
         </Button>
       </div>
     </Modal>

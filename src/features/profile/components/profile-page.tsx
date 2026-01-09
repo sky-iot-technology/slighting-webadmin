@@ -20,8 +20,10 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import Image from 'next/image';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState<'profile' | 'account' | 'password'>('profile');
   const logoutMutation = useLogout();
@@ -35,10 +37,10 @@ export default function ProfilePage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Hồ sơ</span>
+        <span className='text-lg font-bold'>{t('navbar.profile')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);
@@ -48,7 +50,7 @@ export default function ProfilePage() {
   if (!user) {
     return (
       <Card className='bg-background mx-auto w-full border-0 py-0 shadow-none'>
-        <div className='p-6'>Đang tải...</div>
+        <div className='p-6'>{t('general.loading')}</div>
       </Card>
     );
   }
@@ -110,7 +112,7 @@ export default function ProfilePage() {
               className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'profile' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
             >
               <User width={20} height={20} />
-              Hồ sơ cá nhân
+              {t('profile.profile')}
             </button>
 
             <button
@@ -119,7 +121,7 @@ export default function ProfilePage() {
               className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'account' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
             >
               <UserCog width={20} height={20} />
-              Tài khoản
+              {t('profile.account')}
             </button>
 
             <button
@@ -128,16 +130,16 @@ export default function ProfilePage() {
               className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'password' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
             >
               <LockKeyhole width={20} height={20} />
-              Đổi mật khẩu
+              {t('profile.changePass')}
             </button>
 
             <button
               type='button'
               onClick={() => setOpen(!open)}
-              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold`}
+              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold text-black`}
             >
               <LogOut width={20} height={20} />
-              Đăng xuất
+              {t('profile.singout')}
             </button>
           </div>
         </div>
@@ -152,7 +154,7 @@ export default function ProfilePage() {
         onClose={() => setOpen(false)}
         onConfirm={handleLogout}
         loading={logoutMutation.isPending}
-        title='Bạn có chắc chắn đăng xuất không'
+        title={t('profile.message_logout')}
         description=''
       />
       <Dialog open={!!previewSrc} onOpenChange={() => setPreviewSrc(null)}>

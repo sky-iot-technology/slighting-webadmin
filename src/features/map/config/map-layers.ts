@@ -16,6 +16,8 @@ export const createDeivcesGeoJSON = (
         },
         properties: {
           id: device.id,
+          type: device.type,
+          name: device.name,
           lon: device.device_info.lon,
           lat: device.device_info.lat,
           online: device.device_info.online ? 'online' : 'offline'
@@ -70,10 +72,31 @@ export const unclusteredPointLayer: LayerProps = {
   // }
   layout: {
     'icon-image': [
+      // 'case',
+      // ['==', ['get', 'online'], 'online'],
+      // 'cabinet-online',
+      // 'cabinet-offline'
       'case',
-      // ['==', ['get', 'online'], 'warning'],
-      // 'cabinet-warning',
-      ['==', ['get', 'online'], 'online'],
+      //light online
+      [
+        'all',
+        ['==', ['get', 'type'], 'lms.devices.types.STL_SMART'],
+        ['==', ['get', 'online'], 'online']
+      ],
+      'light-online',
+      //light offline
+      [
+        'all',
+        ['==', ['get', 'type'], 'lms.devices.types.STL_SMART'],
+        ['==', ['get', 'online'], 'offline']
+      ],
+      'light-offline',
+      //cabinet online
+      [
+        'all',
+        ['==', ['get', 'type'], 'lms.devices.types.STL_CABINET'],
+        ['==', ['get', 'online'], 'online']
+      ],
       'cabinet-online',
       'cabinet-offline'
     ],

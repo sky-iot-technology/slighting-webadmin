@@ -3,6 +3,10 @@ import FormCardSkeleton from '@/ui/components/form-card-skeleton';
 import PageContainer from '@/ui/components/layout/page-container';
 import { Suspense } from 'react';
 
+export const metadata = {
+  title: 'Dashboard : Work Order View'
+};
+
 type PageProps = { params: Promise<{ id: string }> };
 export default async function Page(props: PageProps) {
   return (

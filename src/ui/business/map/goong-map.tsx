@@ -23,6 +23,7 @@ import Cabinet_info_panel from '@/features/map/components/cabinet_info_panel';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { Button } from '@/ui/components/ui/button';
 import { DeviceHoverCard } from '@/features/map/components/device-hover-card';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_web.json';
 type SelectedRegion = { id: string; name: string } | null;
@@ -51,6 +52,8 @@ export default function GoongMap({
   selectedDevice = null,
   renderPopup
 }: GoongMapProps) {
+  const { t } = useTranslation();
+
   const [isMapLoading, setIsMapLoading] = useState(true);
   const [mapStyle, setMapStyle] = useState(mapStyleDefault);
   const [transitionDuration, setTransitionDuration] = useState(1000);
@@ -288,7 +291,7 @@ export default function GoongMap({
             }
             hoverTimeoutRef.current = setTimeout(() => {
               setHoverInfo(null);
-            }, 100);
+            }, 50);
           }
         }}
         onLoad={(evt: any) => {
@@ -305,23 +308,20 @@ export default function GoongMap({
               : 'grab';
         }}
       >
-        <ScaleControl {...scaleControlProps} />
+        {/* <ScaleControl {...scaleControlProps} /> */}
         {hoverInfo && (
           <Popup
             tipSize={5}
-            anchor='bottom-left'
+            anchor='bottom'
             longitude={hoverInfo.feature.properties.lon}
             latitude={hoverInfo.feature.properties.lat}
             closeButton={false}
-            className='z-50 [&_.mapboxgl-popup-content]:!bg-transparent [&_.mapboxgl-popup-content]:!p-0 [&_.mapboxgl-popup-content]:!shadow-none'
+            className='z-50 [&_.mapboxgl-popup-content]:!bg-transparent [&_.mapboxgl-popup-content]:!p-0 [&_.mapboxgl-popup-content]:!shadow-none [&_.mapboxgl-popup-tip]:!hidden'
             offsetLeft={0}
             offsetTop={0}
             dynamicPosition={true}
           >
             <DeviceHoverCard
-              device={devices.find(
-                (d) => d.id === hoverInfo.feature.properties.id
-              )}
               featureProperties={hoverInfo.feature.properties}
               onMouseEnter={() => {
                 if (hoverTimeoutRef.current) {
@@ -331,7 +331,7 @@ export default function GoongMap({
               onMouseLeave={() => {
                 hoverTimeoutRef.current = setTimeout(() => {
                   setHoverInfo(null);
-                }, 100);
+                }, 50);
               }}
               onMouseMove={() => {
                 if (hoverTimeoutRef.current) {
@@ -347,7 +347,7 @@ export default function GoongMap({
         <div className='animate-fade-in absolute top-4 right-4 z-10'>
           <div className='flex items-center gap-2 rounded-md bg-white p-2 shadow-md'>
             <Loader2 className='text-primary h-6 w-6 animate-spin' />
-            <span className='text-primary text-sm'>Đang tải thiết bị...</span>
+            <span className='text-primary text-sm'>{t('general.loading')}</span>
           </div>
         </div>
       )}
@@ -365,7 +365,7 @@ export default function GoongMap({
         <div className='animate-fade-in absolute top-4 right-4 z-10'>
           <div className='rounded-md bg-white p-2 shadow-md'>
             <span className='text-sm text-gray-700'>
-              Không có thiết bị trong khu vực này
+              {t('map.device_alert')}
             </span>
           </div>
         </div>

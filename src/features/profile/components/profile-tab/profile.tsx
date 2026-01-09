@@ -10,6 +10,7 @@ import { UserColumns } from '../profile-tables/columns';
 import { WorkTable } from '../work-tables';
 import { WorkColumns } from '../work-tables/columns';
 import { User } from '@/core/domains/auth/types';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const fakeData = [
   {
@@ -94,6 +95,7 @@ type ProfileProps = {
 };
 
 export default function Profile({ user }: ProfileProps) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<'user' | 'work'>('user');
 
   const userTableMemo = useMemo(() => {
@@ -121,35 +123,35 @@ export default function Profile({ user }: ProfileProps) {
       {/* Left panel - User info */}
       <div className='w-full px-4 py-2.5 md:w-[282px] md:py-2.5 md:pr-2.5 md:pl-6'>
         <span className='text-primary text-[20px] font-bold'>
-          Hồ sơ cá nhân
+          {t('profile.profile')}
         </span>
         <div className='mt-6 flex flex-col gap-3.5 md:mt-8'>
-          <span className='text-[16px] font-bold'>Thông tin</span>
+          <span className='text-[16px] font-bold'>{t('profile.info')}</span>
           <div className='flex flex-col gap-4 pl-1 text-[14px] md:gap-5'>
             <p className='break-words'>
-              <span className='font-bold'>Họ tên: </span>
+              <span className='font-bold'>{t('profile.name')} </span>
               {user?.first_name} {user?.last_name}
             </p>
             <p>
-              <span className='font-bold'>Vai trò: </span>
+              <span className='font-bold'>{t('profile.role')}: </span>
               {user?.role}
             </p>
             <p>
-              <span className='font-bold'>Đơn vị: </span> ...
+              <span className='font-bold'>{t('profile.unit')}: </span> ...
             </p>
             <p>
-              <span className='font-bold'>Bộ phận: </span> ...
+              <span className='font-bold'>{t('profile.department')}: </span> ...
             </p>
             <p>
-              <span className='font-bold'>Điện thoại: </span>
+              <span className='font-bold'>{t('profile.phone')}: </span>
               {'Nguyễn Văn An'}
             </p>
             <p className='break-all'>
-              <span className='font-bold'>Email: </span>
+              <span className='font-bold'>{t('profile.email')}: </span>
               {user?.email}
             </p>
             <p className='break-words'>
-              <span className='font-bold'>Địa chỉ: </span>
+              <span className='font-bold'>{t('profile.address')}: </span>
               {'Nguyễn Văn An'}
             </p>
           </div>
@@ -158,7 +160,9 @@ export default function Profile({ user }: ProfileProps) {
 
       {/* Right panel - Activity history */}
       <div className='flex flex-col px-4 pt-2.5 md:min-h-0 md:flex-1 md:px-0'>
-        <span className='text-[20px] font-bold'>Lịch sử hoạt động</span>
+        <span className='text-[20px] font-bold'>
+          {t('profile.work_history')}
+        </span>
 
         <div className='mt-5 flex w-full flex-col gap-3.5 md:h-full md:border-l-2 md:pl-2'>
           {/* Tabs - Responsive */}
@@ -172,13 +176,13 @@ export default function Profile({ user }: ProfileProps) {
                 value='user'
                 className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
               >
-                Người dùng
+                {t('profile.user')}
               </TabsTrigger>
               <TabsTrigger
                 value='work'
                 className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
               >
-                Công việc
+                {t('profile.work')}
               </TabsTrigger>
             </TabsList>
           </Tabs>

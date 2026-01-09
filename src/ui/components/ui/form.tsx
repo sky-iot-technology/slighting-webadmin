@@ -16,6 +16,8 @@ import { z } from 'zod';
 
 import { cn } from '@/lib/utils';
 import { Label } from '@/ui/components/ui/label';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { LanguageKey } from '@/core/i18n/locales';
 
 const Form = FormProvider;
 
@@ -172,9 +174,9 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
 }
 
 function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
+  const { t } = useTranslation();
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message ?? '') : props.children;
-
+  const body = error ? (t(error.message as LanguageKey) ?? '') : props.children;
   if (!body) {
     return <div className='h-4'></div>;
   }

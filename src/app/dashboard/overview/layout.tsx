@@ -11,8 +11,9 @@ import { StatCard } from '../../../features/overview/components/stat-card';
 import { useGetOverView } from '@/core/domains/overview/hooks';
 import { useRouter } from 'next/navigation';
 import { useCan } from '@/core/domains/permissions';
-import { useEffect } from 'react';
-import NotFound from '@/app/not-found';
+import { useEffect, useMemo } from 'react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 
 const stats = [
   {
@@ -61,18 +62,30 @@ export default function Overview2({
   alert_stats: React.ReactNode;
   circle_stats: React.ReactNode;
 }) {
+  const { t } = useTranslation();
   const canViewDashboard = useCan('dashboard', 'view');
+
+  const breadcrumbContent = useMemo(
+    () => (
+      <div className='flex items-center'>
+        <span className='text-lg font-bold'>{t('navbar.dashboard')}</span>
+      </div>
+    ),
+    [t]
+  );
+
+  useCustomBreadcrumbContent(breadcrumbContent);
 
   const { data, isLoading } = useGetOverView({
     enabled: canViewDashboard
   });
 
-  if (isLoading) return <div>Đang tải dữ liệu...</div>;
+  if (isLoading) return <div>{t('general.loading')}</div>;
   const mappedStats = data
     ? [
         {
           icon: '/assets/icons/total-device.svg',
-          label: 'Tổng thiết bị',
+          label: t('dashboard.allDevice'),
           value: data.device_summary.total_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'up' as const,
@@ -81,7 +94,7 @@ export default function Overview2({
         },
         {
           icon: '/assets/icons/online.svg',
-          label: 'Thiết bị Online',
+          label: t('dashboard.onlineDevice'),
           value: data.device_summary.online_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'up' as const,
@@ -90,7 +103,7 @@ export default function Overview2({
         },
         {
           icon: '/assets/icons/offline.svg',
-          label: 'Thiết bị Offline',
+          label: t('dashboard.offlineDevice'),
           value: data.device_summary.offline_devices.toLocaleString(),
           trend: 1.8,
           trendType: 'down' as const,
@@ -98,7 +111,7 @@ export default function Overview2({
         },
         {
           icon: '/assets/icons/alert.svg',
-          label: 'Thiết bị lỗi',
+          label: t('dashboard.failedDevice'),
           value: data.device_summary.error_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'down' as const,

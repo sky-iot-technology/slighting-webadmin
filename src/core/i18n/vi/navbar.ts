@@ -1,0 +1,19 @@
+export const navbar = {
+  dashboard: 'Trang chủ',
+  map: 'Bản đồ',
+  management: 'Quản lý',
+  favorite_groups: 'Nhóm yêu thích',
+  branches: 'Chi nhánh',
+  roles: 'Vai trò',
+  users: 'Người dùng',
+  device_management: 'Quản lý thiết bị',
+  calendar_management: 'Quản lý lịch',
+  maintenance_management: 'Quản lý bảo trì',
+  organization_management: 'Quản lý tổ chức',
+  firmware_management: 'Quản lý Firmware',
+  settings: 'Cài đặt',
+  sign_out: 'Đăng xuất',
+  profile: 'Hồ sơ',
+  device: 'Thiết bị',
+  deviceInfo: 'Chi tiết thiết bị'
+} as const;

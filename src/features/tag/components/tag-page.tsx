@@ -13,8 +13,11 @@ import { Device, GetDevicesParamsDto } from '@/core/domains/devices';
 import { Table } from '@tanstack/react-table';
 import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function TagPage() {
+  const { t } = useTranslation();
+
   const [treeOpen, setTreeOpen] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedTag, setSelectedTag] = useState<SelectedTag>(null);
@@ -53,10 +56,10 @@ export default function TagPage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Nhóm yêu thích</span>
+        <span className='text-lg font-bold'>{t('navbar.favorite_groups')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

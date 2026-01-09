@@ -27,12 +27,15 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { updateProfileSchema, useUpdateProfile } from '@/core/domains/auth';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type RoleFormProps = {
   initialData: User;
 };
 
 export default function AccountForm({ initialData }: RoleFormProps) {
+  const { t } = useTranslation();
+
   const form = useForm<z.infer<typeof updateProfileSchema>>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
@@ -43,7 +46,8 @@ export default function AccountForm({ initialData }: RoleFormProps) {
         address: initialData?.metadata?.address ?? '',
         phone: initialData?.metadata?.phone ?? '',
         unit: initialData?.metadata?.unit ?? '',
-        department: initialData?.metadata?.department ?? ''
+        department: initialData?.metadata?.department ?? '',
+        roleId: initialData.metadata?.roleId
       }
     }
   });
@@ -58,7 +62,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
     <Card className='mx-auto h-full w-full gap-1.5 border-0 bg-white px-5 py-0 pt-3 pb-4 shadow-none'>
       <CardHeader className='px-0'>
         <CardTitle className='text-primary text-left text-[20px] font-bold'>
-          Tài khoản
+          {t('profile.account')}
         </CardTitle>
       </CardHeader>
       <CardContent className='flex h-full justify-center px-0'>
@@ -75,12 +79,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='!gap-0.5 text-xs font-bold'>
-                        Họ
+                        {t('profile.first_name')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='h-[35px] w-full rounded-[4px] text-xs placeholder:text-xs'
-                          placeholder='Nhập họ'
+                          placeholder={t('profile.first_name_placeholder')}
                           {...field}
                         />
                       </FormControl>
@@ -94,12 +98,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='!gap-0.5 text-xs font-bold'>
-                        Tên
+                        {t('profile.last_name')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='h-[35px] w-full rounded-[4px] text-xs placeholder:text-xs'
-                          placeholder='Nhập tên'
+                          placeholder={t('profile.last_name_placeholder')}
                           {...field}
                         />
                       </FormControl>
@@ -111,11 +115,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   name='email'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-xs font-bold'>Email</FormLabel>
+                      <FormLabel className='text-xs font-bold'>
+                        {t('profile.email')}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập email'
                           {...field}
                           value={initialData.email}
                           disabled
@@ -130,7 +135,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='!gap-0.5 text-xs font-bold'>
-                        Chi nhánh
+                        {t('profile.branch')}
                       </FormLabel>
                       <FormControl>
                         {/* <TreeMultiSelect
@@ -147,7 +152,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='!gap-0.5 text-xs font-bold'>
-                        Vai trò
+                        {t('profile.role')}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -168,12 +173,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Số điện thoại
+                        {t('profile.phone')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập số điện thoại'
+                          placeholder={t('profile.phone_placeholder')}
                           {...field}
                         />
                       </FormControl>
@@ -188,7 +193,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Đơn vị
+                        {t('profile.unit')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -213,7 +218,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Bộ phận
+                        {t('profile.department')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -238,12 +243,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Địa chỉ
+                        {t('profile.address')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập địa chỉ'
+                          placeholder={t('profile.address_placeholder')}
                           {...field}
                         />
                       </FormControl>
@@ -258,12 +263,12 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Ghi chú
+                        {t('profile.note')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập ghi chú'
+                          placeholder={t('profile.note_placeholder')}
                           {...field}
                         />
                       </FormControl>
@@ -278,7 +283,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                   type='submit'
                   className='h-[40px] w-[130px] rounded-[8px] text-lg'
                 >
-                  Cập nhật
+                  {t('general.edit')}
                 </Button>
               </div>
             </form>

@@ -39,13 +39,13 @@ import Image from 'next/image';
 export type Icon = React.ComponentType<IconProps>;
 
 export const Icons = {
-  dashboard: () => (
+  dashboard: (props: any) => (
     <Image
       src={'/assets/icons/dashboard.svg'}
       alt='dashboard'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
   logo: IconCommand,
@@ -79,148 +79,148 @@ export const Icons = {
   twitter: IconBrandTwitter,
   check: IconCheck,
   palette: IconPalette,
-  maintenance: () => (
+  maintenance: (props: any) => (
     <Image
       src={'/assets/icons/maintenance.svg'}
       alt='maintenance'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  map: () => (
+  map: (props: any) => (
     <Image
       src={'/assets/icons/map.svg'}
       alt='map'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  calendar: () => (
+  calendar: (props: any) => (
     <Image
       src={'/assets/icons/calendar.svg'}
       alt='calendar'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  management: () => (
+  management: (props: any) => (
     <Image
       src={'/assets/icons/management.svg'}
       alt='management'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  branch: () => (
+  branch: (props: any) => (
     <Image
       src={'/assets/icons/branch.svg'}
       alt='branch'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  organization: () => (
+  organization: (props: any) => (
     <Image
       src={'/assets/icons/organization.svg'}
       alt='organization'
       width={20}
       height={20}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  role: () => (
+  role: (props: any) => (
     <Image
       src={'/assets/icons/role.svg'}
       alt='role'
       width={14}
       height={14}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  userAgent: () => (
+  userAgent: (props: any) => (
     <Image
       src={'/assets/icons/user.svg'}
       alt='user'
       width={17}
       height={24}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  deviceMenu: () => (
+  deviceMenu: (props: any) => (
     <Image
       src={'/assets/icons/device-menu.svg'}
       alt='device-menu'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  love: () => (
+  love: (props: any) => (
     <Image
       src={'/assets/icons/love.svg'}
       alt='love'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  firmware: () => (
+  firmware: (props: any) => (
     <Image
       src={'/assets/icons/firmware.svg'}
       alt='firmware'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  setting: () => (
+  setting: (props: any) => (
     <Image
       src={'/assets/icons/setting.svg'}
       alt='setting'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  display: () => (
+  display: (props: any) => (
     <Image
       src={'/assets/icons/display.svg'}
       alt='display'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  alertSetting: () => (
+  alertSetting: (props: any) => (
     <Image
       src={'/assets/icons/alert-setting.svg'}
       alt='alertSetting'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  shield: () => (
+  shield: (props: any) => (
     <Image
       src={'/assets/icons/shield.svg'}
       alt='shield'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   ),
-  system: () => (
+  system: (props: any) => (
     <Image
       src={'/assets/icons/system.svg'}
       alt='system'
       width={17}
       height={17}
-      className='dark:invert'
+      className={`dark:invert ${props.className || ''}`}
     />
   )
 };

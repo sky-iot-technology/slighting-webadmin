@@ -4,14 +4,9 @@ import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
+  DialogTitle
 } from '@/ui/components/ui/dialog';
-import { Button } from '@/ui/components/ui/button';
-import { Switch } from '@/ui/components/ui/switch';
 import { useState } from 'react';
-import { Tabs, TabsList } from '@/ui/components/ui/tabs';
 import { Icons } from '@/ui/components/icons';
 import {
   SidebarMenu,
@@ -23,6 +18,7 @@ import { DisplaySetting } from '../tab/display';
 import { AlertSetting } from '../tab/alert';
 import { SecureSetting } from '../tab/secure';
 import { SystemSetting } from '../tab/system';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export function SettingModal({
   open,
@@ -32,7 +28,7 @@ export function SettingModal({
   onOpenChange: (v: boolean) => void;
 }) {
   const [activeTab, setActiveTab] = useState('display');
-
+  const { t } = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -46,7 +42,7 @@ export function SettingModal({
         <div className='flex max-h-[75vh] flex-col overflow-y-auto md:h-[435px] md:flex-row'>
           <div className='w-full p-3 md:w-[216px]'>
             <div>
-              <h2 className='mb-3 text-sm font-bold'>Cài đặt</h2>
+              <h2 className='mb-3 text-sm font-bold'>{t('navbar.settings')}</h2>
             </div>
             <SidebarMenu>
               <SidebarMenuItem>
@@ -57,7 +53,7 @@ export function SettingModal({
                   <ActiveStateIcon>
                     <Icons.display />
                   </ActiveStateIcon>
-                  <span>Giao diện</span>
+                  <span>{t('setting.appearance')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -69,7 +65,7 @@ export function SettingModal({
                   <ActiveStateIcon>
                     <Icons.alertSetting />
                   </ActiveStateIcon>
-                  <span>Thông báo</span>
+                  <span>{t('setting.notification')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -81,7 +77,7 @@ export function SettingModal({
                   <ActiveStateIcon>
                     <Icons.shield />
                   </ActiveStateIcon>
-                  <span>Bảo mật</span>
+                  <span>{t('setting.security')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
 
@@ -93,7 +89,7 @@ export function SettingModal({
                   <ActiveStateIcon>
                     <Icons.system />
                   </ActiveStateIcon>
-                  <span>Hệ thống</span>
+                  <span>{t('setting.system')}</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

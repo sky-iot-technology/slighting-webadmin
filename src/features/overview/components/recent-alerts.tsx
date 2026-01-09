@@ -1,3 +1,6 @@
+'use client';
+
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/ui/components/ui/avatar';
 import { Badge } from '@/ui/components/ui/badge';
 import {
@@ -68,6 +71,7 @@ const data = [
 ];
 
 export function RecentAlerts() {
+  const { t } = useTranslation();
   return (
     <Card className='!shadow-default h-full gap-1.5 border-none py-3'>
       <CardHeader className='flex items-center gap-3.5 py-2'>
@@ -78,7 +82,7 @@ export function RecentAlerts() {
           height={24}
           className='size-6'
         />
-        <CardTitle>Cảnh báo gần đây</CardTitle>
+        <CardTitle>{t('dashboard.alert')}</CardTitle>
       </CardHeader>
       <div className='max-h-80 space-y-8 overflow-y-auto pr-2'>
         <CardContent className='px-3.5'>

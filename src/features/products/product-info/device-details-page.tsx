@@ -19,8 +19,10 @@ import { AnalysisTab } from './components/analysis-tab';
 import { CalendarContent } from '@/features/calendar/device-calendar/calendar-content';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import MaintenanceTab from './components/maintenance-tab';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function DeviceDetailsPage() {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -58,13 +60,13 @@ export default function DeviceDetailsPage() {
     () => (
       <div className='flex items-center'>
         <span className='text-lg font-bold'>
-          Chi tiết thiết bị:{' '}
+          {t('navbar.deviceInfo')}:{' '}
           <span className='text-primary'>{device?.name || 'Loading...'}</span>
         </span>
       </div>
     ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [device?.name]
+    [device?.name, t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

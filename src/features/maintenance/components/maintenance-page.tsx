@@ -28,8 +28,11 @@ import { useRouter } from 'next/navigation';
 import { useWorkOrderFiltersFromParams } from '../hook/work-filter';
 import { PermissionGuard } from '@/core/domains/permissions/components/permission-guard';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function MaintenancePage() {
+  const { t } = useTranslation();
+
   const canViewAlarms = useCan('maintenance.alarm', 'view');
   const canViewWorkOrders = useCan('maintenance.workorder', 'view');
   const canDeleteAlarms = useCan('maintenance.alarm', 'delete');
@@ -52,10 +55,12 @@ export default function MaintenancePage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Quản lý bảo trì</span>
+        <span className='text-lg font-bold'>
+          {t('navbar.maintenance_management')}
+        </span>
       </div>
     ),
-    []
+    [t]
   );
   useCustomBreadcrumbContent(breadcrumbContent);
 

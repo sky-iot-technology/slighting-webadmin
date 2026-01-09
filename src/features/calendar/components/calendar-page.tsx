@@ -9,8 +9,11 @@ import { CalendarSidebar } from './calendar-sidebar';
 import { cn } from '@/lib/utils';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function CalendarPage() {
+  const { t } = useTranslation();
+
   const [treeOpen, setTreeOpen] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<SelectedRegion | null>(
@@ -34,10 +37,12 @@ export default function CalendarPage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Quản lý lịch</span>
+        <span className='text-lg font-bold'>
+          {t('navbar.calendar_management')}
+        </span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

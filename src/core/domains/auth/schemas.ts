@@ -48,12 +48,13 @@ const metadataSchema = z.object({
   address: z.string().optional(),
   phone: z.string().optional(),
   unit: z.string().optional(),
-  department: z.string().optional()
+  department: z.string().optional(),
+  roleId: z.string()
 });
 
 export const updateProfileSchema = z.object({
-  first_name: z.string().min(1, 'First name is required'),
-  last_name: z.string().min(1, 'Last name is required'),
+  first_name: z.string().min(1, 'validation.firstname_required'),
+  last_name: z.string().min(1, 'validation.lastname_required'),
   metadata: metadataSchema.optional()
 });
 

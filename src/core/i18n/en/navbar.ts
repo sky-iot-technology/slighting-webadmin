@@ -1,0 +1,19 @@
+export const navbar = {
+  dashboard: 'Dashboard',
+  map: 'Map',
+  management: 'Management',
+  favorite_groups: 'Favorite Groups',
+  branches: 'Branches',
+  roles: 'Roles',
+  users: 'Users',
+  device_management: 'Device Management',
+  calendar_management: 'Calendar Management',
+  maintenance_management: 'Maintenance Management',
+  organization_management: 'Organization Management',
+  firmware_management: 'Firmware Management',
+  settings: 'Settings',
+  sign_out: 'Sign Out',
+  profile: 'Profile',
+  device: 'Device',
+  deviceInfo: 'Device detail'
+} as const;

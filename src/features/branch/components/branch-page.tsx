@@ -24,8 +24,11 @@ import Image from 'next/image';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { cn } from '@/lib/utils';
 import { PermissionGuard, useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function BranchPage() {
+  const { t } = useTranslation();
+
   const [treeOpen, setTreeOpen] = useState(true);
   const { treeData } = useRegionTreeStore();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -44,10 +47,10 @@ export default function BranchPage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Chi nhánh</span>
+        <span className='text-lg font-bold'>{t('navbar.branches')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

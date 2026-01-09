@@ -1,8 +1,9 @@
 import { UIAction } from '@/core/domains/permissions';
+import { LanguageKey } from '@/core/i18n/locales';
 import { Icons } from '@/ui/components/icons';
 
 export interface NavItem {
-  title: string;
+  title: Extract<LanguageKey, `navbar.${string}`>;
   url: string;
   disabled?: boolean;
   external?: boolean;

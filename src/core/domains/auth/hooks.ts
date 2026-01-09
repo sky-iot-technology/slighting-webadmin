@@ -5,7 +5,6 @@ import {
   useQueryClient
 } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
 import { authApi } from './api';
 import { type User } from './types';
 import { useAuthStore } from './store';
@@ -19,6 +18,7 @@ import {
   rolesApi,
   usePermissionStore
 } from '../permissions';
+import { toast } from 'sonner';
 
 // Query keys
 export const authKeys = {
@@ -137,40 +137,6 @@ export function useLogout() {
     }
   });
 }
-
-// export function useUpdateProfile() {
-//   const queryClient = useQueryClient();
-//   const { updateUser, setLoading, setError, accessToken } = useAuthStore();
-
-//   return useMutation({
-//     mutationFn: ({
-//       userId,
-//       updates
-//     }: {
-//       userId: string;
-//       updates: Partial<User>;
-//     }) => authApi.updateProfile(accessToken || '', userId, updates),
-//     onMutate: () => {
-//       setLoading(true);
-//       setError(null);
-//     },
-//     onSuccess: (updatedUser) => {
-//       updateUser(updatedUser);
-//       setLoading(false);
-//       queryClient.setQueryData(authKeys.user(), updatedUser);
-//       toast.success('Cập nhật thông tin thành công!');
-//     },
-//     onError: (error: Error) => {
-//       setLoading(false);
-//       setError(
-//         error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
-//       );
-//       toast.error(
-//         error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
-//       );
-//     }
-//   });
-// }
 
 export const useUpdateProfile = (
   options?: UseMutationOptions<User, Error, Partial<User>>

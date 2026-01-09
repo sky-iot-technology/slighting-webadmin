@@ -10,7 +10,6 @@ import {
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { Alarm, useGetAlarms } from '@/core/domains/alarms';
-import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { useGetUsers, useSearchUsers } from '@/core/domains/users';
 import { useGetDevices } from '@/core/domains/devices';
 import {

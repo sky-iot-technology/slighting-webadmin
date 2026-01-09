@@ -335,12 +335,15 @@ import { RequestWatcher } from './RequestWatcher';
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type LightInfo = {
   device: Device;
 };
 
 function LightControl(props: LightInfo) {
+  const { t } = useTranslation();
+
   const canControl = useCan('device', 'control');
   const lightDevices = useMemo(
     () =>
@@ -458,8 +461,8 @@ function LightControl(props: LightInfo) {
       <Table className='hover:!bg-transparent'>
         <TableHeader className='[&_*]:text-background bg-map-lightControl-header [&_*]:text-xs [&_*]:leading-5 [&_*]:font-semibold [&_th]:h-5'>
           <TableRow className='hover:!bg-map-lightControl-header h-5'>
-            <TableHead className='pl-3'>Điều khiển line</TableHead>
-            <TableHead className='pr-3 text-end'>Thao tác</TableHead>
+            <TableHead className='pl-3'>{t('map.line_control')}</TableHead>
+            <TableHead className='pr-3 text-end'>{t('map.action')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className='[&>*]:border-0'>
@@ -601,7 +604,7 @@ function LightControl(props: LightInfo) {
                           }}
                           disabled={!canControl || !isOnline || onOffPending}
                         >
-                          Bật tất cả
+                          {t('map.turn_on_all')}
                         </Button>
 
                         <Button
@@ -616,7 +619,7 @@ function LightControl(props: LightInfo) {
                           }}
                           disabled={!canControl || !isOnline || onOffPending}
                         >
-                          Tắt tất cả
+                          {t('map.turn_off_all')}
                         </Button>
                       </div>
                     </TableCell>
@@ -627,7 +630,7 @@ function LightControl(props: LightInfo) {
         </TableBody>
       </Table>
       <p className='mb-2 ml-2 text-[10px]'>
-        {activeLights} / {controllableDevices.length} line đang bật
+        {activeLights} / {controllableDevices.length} {t('map.line_status')}
       </p>
 
       {Object.entries(requests).map(([requestId, deviceIds]) => (

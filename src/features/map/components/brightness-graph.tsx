@@ -21,6 +21,7 @@ import {
   CardTitle
 } from '@/ui/components/ui/card';
 import { Button } from '@/ui/components/ui/button';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const description = 'An interactive bar chart';
 
@@ -56,19 +57,20 @@ const chartData = [
 ];
 
 export function BrightnessGraph() {
+  const { t } = useTranslation();
   const CustomLegend = () => (
     <div className='mt-1 flex items-center justify-center gap-7 text-[10px] leading-5'>
       <div className='flex items-center gap-2'>
         <span className='bg-map-control-button-success inline-block h-2.5 w-2.5 rounded-[50%]' />
-        <span>Bật</span>
+        <span>{t('map.chart_onl')}</span>
       </div>
       <div className='flex items-center gap-2'>
         <span className='bg-map-control-button-destructive inline-block h-2.5 w-2.5 rounded-[50%]' />
-        <span>Tắt</span>
+        <span>{t('map.chart_off')}</span>
       </div>
       <div className='flex items-center gap-2'>
         <span className='bg-primary inline-block h-2.5 w-2.5 rounded-[50%]' />
-        <span>Độ sáng</span>
+        <span>{t('map.chart_brightness')}</span>
       </div>
     </div>
   );
@@ -88,13 +90,15 @@ export function BrightnessGraph() {
 
         {typeof brightness === 'number' && (
           <div className='mb-1'>
-            Độ sáng: <span className='text-blue-600'>{brightness}%</span>
+            {t('map.chart_brightness')}:{' '}
+            <span className='text-blue-600'>{brightness}%</span>
           </div>
         )}
 
         {statusText && (
           <div>
-            Trạng thái: <span className={`${statusColor}`}>{statusText}</span>
+            {t('map.chart_status')}:{' '}
+            <span className={`${statusColor}`}>{statusText}</span>
           </div>
         )}
       </div>
@@ -108,7 +112,7 @@ export function BrightnessGraph() {
       <CardHeader className='flex flex-col items-stretch space-y-0 border-0 !p-0 sm:flex-row'>
         <div className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
           <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-            Biểu đồ hoạt động đèn
+            {t('map.chart_title')}
           </CardTitle>
         </div>
       </CardHeader>
@@ -118,7 +122,7 @@ export function BrightnessGraph() {
             size={'sm'}
             className='h-3.5 w-12 rounded-[4px] !bg-[linear-gradient(180deg,var(--map-button-today-start)_0%,var(--map-button-today-end)_100%)] text-[10px]'
           >
-            Hôm nay
+            {t('map.chart_day')}
           </Button>
         </div>
       </CardHeader>

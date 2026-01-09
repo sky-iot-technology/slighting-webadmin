@@ -475,7 +475,7 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 // const activeBackgroudStyle =
 //   ' data-[active=true]:bg-linear-to-r data-[active=true]:from-white data-[active=true]:from-1% data-[active=true]:to-sidebar-accent data-[active=true]:to-65% data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:h-11 data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#072645]';
 const activeBackgroudStyle =
-  ' data-[active=true]:bg-primary data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#ffffff]';
+  ' data-[active=true]:bg-primary data-[active=true]:shadow-xl data-[active=true]:rounded-md data-[active=true]:font-bold data-[active=true]:[&>svg]:fill-[#ffffff] data-[active=true]:[&_img]:brightness-0 data-[active=true]:[&_img]:invert';
 
 const hoverBackgroudStyle =
   ' hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground';

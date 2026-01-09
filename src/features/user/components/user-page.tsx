@@ -6,8 +6,11 @@ import { userColumns } from './user-tables/columns';
 import { UserTable } from './user-tables';
 import { GetUsersParamsDto, useGetUsers } from '@/core/domains/users';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function UserPage() {
+  const { t } = useTranslation();
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -34,10 +37,10 @@ export default function UserPage() {
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
-        <span className='text-lg font-bold'>Người dùng</span>
+        <span className='text-lg font-bold'>{t('navbar.users')}</span>
       </div>
     ),
-    []
+    [t]
   );
 
   useCustomBreadcrumbContent(breadcrumbContent);

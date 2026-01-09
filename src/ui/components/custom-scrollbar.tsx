@@ -5,10 +5,11 @@ type CustomScrollbarProps = {
   children: ReactNode;
   className?: string;
   style?: React.CSSProperties;
+  onWheelCapture?: (e: React.WheelEvent<HTMLDivElement>) => void;
 };
 
 const CustomScrollbar = React.forwardRef<HTMLDivElement, CustomScrollbarProps>(
-  ({ children, className = '', style }, ref) => {
+  ({ children, className = '', style, onWheelCapture }, ref) => {
     const handleMouseEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
         e.currentTarget.style.setProperty('--scrollbar-thumb-color', '#9ca3af');
@@ -32,6 +33,7 @@ const CustomScrollbar = React.forwardRef<HTMLDivElement, CustomScrollbarProps>(
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onMouseDown={(e) => e.stopPropagation()}
+        onWheelCapture={onWheelCapture}
         data-scrollable='true'
         className={`[&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent ${className} `}
       >

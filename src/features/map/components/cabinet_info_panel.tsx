@@ -20,10 +20,12 @@ import { BrightnessGraph } from './brightness-graph';
 import LightControl from './light-control';
 import { useGetDeviceById } from '@/core/domains/devices';
 import { diffTimeHMS, getSensorAttributes } from '../helper';
-import React from 'react';
+import React, { useState } from 'react';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { useGetAlarms } from '@/core/domains/alarms';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { Skeleton } from '@/ui/components/ui/skeleton';
 
 type InfoModalProps = {
   id: number | string;
@@ -31,6 +33,8 @@ type InfoModalProps = {
 };
 
 function CabinetInfoPanel(props: InfoModalProps) {
+  const { t, tTime } = useTranslation();
+
   const router = useRouter();
   const { data, isLoading } = useGetDeviceById(props.id);
 
@@ -47,12 +51,12 @@ function CabinetInfoPanel(props: InfoModalProps) {
   });
 
   if (isLoading) {
-    return <div className='rounded-lg bg-white p-4 shadow-lg'>Đang tải...</div>;
+    return <CabinetInfoPanelSkeleton />;
   }
 
   if (!data) return null;
   const sensorAttrs = getSensorAttributes(data);
-  const time = diffTimeHMS(data.updated_at);
+  const time = diffTimeHMS(data.updated_at, tTime);
 
   return (
     <CustomScrollbar className='bg-background flex max-h-[600px] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
@@ -62,7 +66,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             <Avatar className='h-[50px] w-[50px]'>
               <div className='bg-muted flex h-full w-full items-center justify-center rounded-full'>
                 <Image
-                  src={'/assets/icons/device.svg'}
+                  src={`${data.type === 'lms.devices.types.STL_SMART' ? '/assets/icons/device-light.svg' : '/assets/icons/device.svg'}`}
                   alt='search'
                   width={27.6}
                   height={27.6}
@@ -112,7 +116,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 height={13}
                 className='hidden group-data-[state=active]:block'
               />
-              <p>Thông tin</p>
+              <p>{t('map.info')}</p>
             </div>
           </TabsTrigger>
           <TabsTrigger
@@ -134,7 +138,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 height={13.5}
                 className='hidden group-data-[state=active]:block'
               />
-              <p>Bảo trì & Vận hành</p>
+              <p>{t('map.maintenance')}</p>
             </div>
           </TabsTrigger>
         </TabsList>
@@ -148,13 +152,13 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='@container/card gap-0 rounded-lg border-none p-0 px-[15px]'>
             <CardHeader className='gap-0 p-0 pr-[5px] pb-[4px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Thông Tin Vận Hành
+                {t('map.operation_info')}
               </CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
               <div className='text-foreground flex flex-col pr-[5px] pb-[4px] text-xs leading-[22px]'>
                 <div className='flex items-center justify-between'>
-                  <span>Ngày kích hoạt:</span>
+                  <span>{t('map.active_date')}:</span>
                   <span className='font-medium'>
                     {(() => {
                       const value = data.device_asset?.asset_attribute?.find(
@@ -171,7 +175,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Ngày hết hạn bảo hành:</span>
+                  <span>{t('map.last_warranty_date')}:</span>
                   <span className='font-medium'>
                     {(() => {
                       const value = data.device_asset?.asset_attribute?.find(
@@ -193,34 +197,34 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='@container/card gap-0 rounded-lg p-0 px-[15px]'>
             <CardHeader className='gap-0 p-0 pb-0.5'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Thông Tin Bảo trì
+                {t('map.maintenance_info')}
               </CardTitle>
             </CardHeader>
             <CardContent className='text-foreground p-0 text-xs leading-[22px] [&_span]:py-1'>
               <div className='mb-0.5 flex flex-col pr-[5px]'>
                 <div className='flex items-center justify-between'>
-                  <span>Bảo trì lần cuối:</span>
+                  <span>{t('map.last_maintenance')}:</span>
                   <span className='font-medium'>06/07/2025</span>
                 </div>
               </div>
 
               <div className='flex flex-col pr-[5px] pb-[4px]'>
                 <div className='mb-0.5 flex items-center font-bold'>
-                  <span>Bảo trì định kỳ tiếp theo</span>
+                  <span>{t('map.next_maintenance')}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Ngày:</span>
+                  <span>{t('map.maintenance_date')}:</span>
                   <span className='font-medium'>01/09/2025</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Loại:</span>
+                  <span>{t('map.maintenance_type')}:</span>
                   <span className='font-medium'>Bảo trì định kỳ 6 tháng </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Nội dung:</span>
+                  <span>{t('map.maintenance_content')}:</span>
                   <span className='font-medium'>Kiểm tra kết nối</span>
                 </div>
               </div>
@@ -230,23 +234,23 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='@container/card gap-0 rounded-lg p-0 px-[15px] [&_span]:py-1'>
             <CardHeader className='gap-0 p-0 pb-[4px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Thống kê cảnh báo
+                {t('map.statistic_alert')}
               </CardTitle>
             </CardHeader>
             <CardContent className='p-0'>
               <div className='text-foregroun flex flex-col pr-[5px] pb-1 text-xs leading-[20px]'>
                 <div className='flex items-center justify-between'>
-                  <span>Tổng cảnh báo:</span>
+                  <span>{t('map.all_alert')}:</span>
                   <span className='font-medium'>{totalAlarm?.total ?? 0}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Đã xử lý:</span>
+                  <span>{t('map.alert_doned')}:</span>
                   <span className='font-medium'>{doneAlarm?.total ?? 0}</span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Đang xử lý:</span>
+                  <span>{t('map.alert_doing')}:</span>
                   <span className='font-medium'>{activeAlarm?.total ?? 0}</span>
                 </div>
               </div>
@@ -260,7 +264,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
               router.push(`/dashboard/product/info/${props.id}?tab=maintenance`)
             }
           >
-            Báo cáo sự cố
+            {t('map.alert_button')}
           </Button>
         </TabsContent>
 
@@ -271,20 +275,20 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='bg-map-background @container/card gap-0 rounded-lg p-0'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Thông tin thiết bị
+                {t('map.device_info')}
               </CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col p-0 px-[15px] pb-[4px]'>
               <div className='pr-[5px] [&_span]:py-1'>
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
-                  <span className='text-foreground'>Vĩ độ:</span>
+                  <span className='text-foreground'>{t('map.latitude')}:</span>
                   <span className='text-foreground font-medium'>
                     {data.device_info.lat}
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
-                  <span className='text-foreground'>Kinh độ:</span>
+                  <span className='text-foreground'>{t('map.longitude')}:</span>
                   <span className='text-foreground font-medium'>
                     {data.device_info.lon}
                   </span>
@@ -299,20 +303,20 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='bg-map-background @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
             <CardHeader className='gap-0 pr-[5px] pb-0.5 pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Kết nối
+                {t('map.connect')}
               </CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col p-0 px-[15px] pb-[4px] text-xs leading-[22px]'>
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
-                  <span>Loại kết nối:</span>
+                  <span>{t('map.connect_type')}:</span>
                   <span className='font-medium'>
                     {data.device_info.optional.net_mode}
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>RSSI:</span>
+                  <span>{t('map.RSSI')}:</span>
                   <div className='flex items-center justify-center gap-1'>
                     <Image
                       src={`/assets/icons/wifi-${data.device_info.optional.rssi || 'unknown'}.svg`}
@@ -325,7 +329,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Lần cuối online:</span>
+                  <span>{t('map.online_time')}:</span>
                   <span className='font-medium'>{time}</span>
                 </div>
               </div>
@@ -335,20 +339,20 @@ function CabinetInfoPanel(props: InfoModalProps) {
           <Card className='bg-map-background @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
-                Thông số hiện tại
+                {t('map.parameter')}
               </CardTitle>
             </CardHeader>
             <CardContent className='flex flex-col p-0 px-[15px] pb-[4px] text-xs leading-[22px]'>
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
-                  <span>Điện áp tiêu thụ (kWh):</span>
+                  <span>{t('map.voltage')} (kWh):</span>
                   <span className='font-medium'>
                     {Number(sensorAttrs?.electric).toFixed(2)}
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>Nhiệt độ (°C):</span>
+                  <span>{t('map.temperature')} (°C):</span>
                   <span className='font-medium'>
                     {sensorAttrs?.temperature}
                   </span>
@@ -370,3 +374,55 @@ export default React.memo(CabinetInfoPanel, (prevProps, nextProps) => {
     prevProps.onOpenChange === nextProps.onOpenChange
   );
 });
+
+function CabinetInfoPanelSkeleton() {
+  return (
+    <div className='bg-background flex max-h-[600px] flex-col rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
+      {/* Header */}
+      <div className='sticky top-0 z-10'>
+        <div className='my-2 ml-[20px] flex h-[67px] items-center gap-2.5'>
+          <Skeleton className='h-[50px] w-[50px] rounded-full' />
+
+          <div className='flex flex-col gap-1'>
+            <Skeleton className='h-4 w-32' />
+            <Skeleton className='h-3 w-24' />
+          </div>
+
+          <Skeleton className='mr-[16px] ml-auto h-8 w-8 rounded-md' />
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Tabs */}
+      <div className='flex h-[50px]'>
+        <div className='flex flex-1 items-center justify-center'>
+          <Skeleton className='h-4 w-20' />
+        </div>
+        <div className='flex flex-1 items-center justify-center'>
+          <Skeleton className='h-4 w-32' />
+        </div>
+      </div>
+
+      <Separator />
+
+      {/* Content */}
+      <div className='flex flex-col gap-3 p-3'>
+        {/* Card skeleton */}
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className='bg-muted rounded-lg p-3'>
+            <Skeleton className='mb-2 h-4 w-32' />
+            <div className='space-y-2'>
+              <Skeleton className='h-3 w-full' />
+              <Skeleton className='h-3 w-[80%]' />
+              <Skeleton className='h-3 w-[60%]' />
+            </div>
+          </div>
+        ))}
+
+        {/* Button */}
+        <Skeleton className='mx-auto mt-4 h-9 w-32 rounded-md' />
+      </div>
+    </div>
+  );
+}

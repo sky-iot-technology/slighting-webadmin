@@ -152,6 +152,8 @@ export interface DeviceListResponseDto {
 
 export interface DeviceFeatureProps {
   id: string | number;
+  type: string;
+  name: string | number;
   lon: number;
   lat: number;
   online: string;

@@ -20,8 +20,10 @@ import { ErrorStatusPieChart } from './ErrorStatusPieChart';
 import React from 'react';
 import { ErrorStatusAreaChart } from './ErrorStatusAreaChart';
 import Image from 'next/image';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export function SimpleLineChart() {
+  const { t } = useTranslation();
   const [chartType, setChartType] = React.useState('area');
   return (
     <Card className='!shadow-simple pb- @container/card my-4 mr-[22px] ml-[28px] gap-0.5 border-none px-0 py-0'>
@@ -35,7 +37,7 @@ export function SimpleLineChart() {
             className='size-6'
           />
           <CardTitle className='text-sm leading-5 font-bold'>
-            Tình trạng xử lý lỗi trong tuần
+            {t('dashboard.status')}
           </CardTitle>
         </div>
         <div className='flex items-center space-x-[3px] text-sm leading-[15px]'>
