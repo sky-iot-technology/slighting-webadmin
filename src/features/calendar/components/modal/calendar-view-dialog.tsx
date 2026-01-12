@@ -7,11 +7,7 @@ import {
   DialogTitle
 } from '@/ui/components/ui/dialog';
 import { Button } from '@/ui/components/ui/button';
-import {
-  dayofweek,
-  PRIORITY_LABELS,
-  RECURRING_LABELS
-} from '@/core/domains/calendars/constant';
+import { dayofweek } from '@/core/domains/calendars/constant';
 import { useGetCalendarById } from '@/core/domains/calendars';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
@@ -21,6 +17,7 @@ import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { CalendarRangePicker } from '../calendar-range-picker';
 import { TimeBrightnessForm } from '../calendar-time-brightness';
 import { useRouter } from 'next/navigation';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarViewDialogProps = {
   open: boolean;
@@ -35,6 +32,7 @@ export function CalendarViewDialog({
 }: CalendarViewDialogProps) {
   const { treeData } = useRegionTreeStore();
   const { catalogues } = useCatalogueStore();
+  const { t } = useTranslation();
 
   const router = useRouter();
   const { data, isLoading } = useGetCalendarById(id ?? '', {
@@ -87,40 +85,44 @@ export function CalendarViewDialog({
           <DialogContent className='w-[417px] rounded-xl p-5.5' hideCloseButton>
             <DialogHeader>
               <DialogTitle className='text-left text-[16px] font-bold'>
-                Chi tiết lịch:
+                {t('calendar.calendar_detail')}:
                 <span className='text-primary ml-2 font-bold'>{data.name}</span>
               </DialogTitle>
             </DialogHeader>
 
             <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
               <div className='flex gap-2'>
-                <span className=''>Chi nhánh cha:</span>
+                <span className=''>{t('calendar.parent_branch')}:</span>
                 <span className='text-right font-medium'>{displayText}</span>
               </div>
 
               <div className='flex gap-2'>
-                <span className=''>Theo nhánh thiết bị:</span>
+                <span className=''>{t('calendar.by_device_branch')}:</span>
                 <span className='text-right font-medium'>
                   {nameLine.filter(Boolean).join(', ')}
                 </span>
               </div>
 
               <div className='flex gap-2'>
-                <span className=''>Lặp lại:</span>
+                <span className=''>{t('calendar.repeat')}:</span>
                 <span className='text-right font-medium'>
-                  {RECURRING_LABELS[data.schedules[0].recurring]}
+                  {t(
+                    `calendar.repeat_options.${data.schedules[0].recurring}` as any
+                  )}
                 </span>
               </div>
 
               <div className='flex gap-2'>
-                <span className=''>Loại lịch:</span>
+                <span className=''>{t('calendar.calendar_type')}:</span>
                 <span className='text-right font-medium'>
-                  {PRIORITY_LABELS[data.priority]}
+                  {Number(data.priority) === 1
+                    ? t('calendar.priority.emergency' as any)
+                    : t('calendar.priority.normal' as any)}
                 </span>
               </div>
 
               <div className='flex items-center gap-2'>
-                <span className=''>Ngày áp dụng:</span>
+                <span className=''>{t('calendar.apply_date')}:</span>
                 <CalendarRangePicker
                   mode='range'
                   value={{
@@ -137,7 +139,7 @@ export function CalendarViewDialog({
 
               {weekly && weekly.length > 0 && (
                 <div className=''>
-                  <span>Ngày trong tuần:</span>
+                  <span>{t('calendar.day_of_week')}:</span>
                   <div className='flex flex-wrap gap-1 pt-1'>
                     {weekly.map((value: any) => {
                       const label = dayofweek[Number(value)];
@@ -156,7 +158,7 @@ export function CalendarViewDialog({
 
               {monthly && monthly.length > 0 && (
                 <div className=''>
-                  <span>Ngày trong tháng:</span>
+                  <span>{t('calendar.day_of_month')}:</span>
                   <div className='flex flex-wrap gap-1 pt-1'>
                     {monthly.map((value: any) => {
                       return (
@@ -173,7 +175,7 @@ export function CalendarViewDialog({
               )}
 
               <div className='flex flex-col gap-2.5'>
-                <span className=''>Thời gian & Độ sáng:</span>
+                <span className=''>{t('calendar.time_and_brightness')}:</span>
                 <TimeBrightnessForm
                   deviceTraits={(selectedDevice?.traits ?? []) as TraitKey[]}
                   disabled
@@ -183,7 +185,7 @@ export function CalendarViewDialog({
 
               <div className='flex flex-col gap-2 pt-1'>
                 <span className=''>
-                  Thiết bị điều khiển ({allDeviceIds.length}){' '}
+                  {t('calendar.control_device')} ({allDeviceIds.length}){' '}
                 </span>
                 <div className='flex flex-col gap-1'>
                   {allDeviceIds.map((name, i) => (
@@ -201,7 +203,7 @@ export function CalendarViewDialog({
                           )
                         }
                       >
-                        Xem chi tiết
+                        {t('calendar.view_detail')}
                       </span>
                     </div>
                   ))}
@@ -215,7 +217,7 @@ export function CalendarViewDialog({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Đóng
+                  {t('calendar.close')}
                 </Button>
               </div>
             </div>

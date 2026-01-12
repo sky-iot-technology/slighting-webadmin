@@ -17,6 +17,7 @@ import { formatDateTimeString } from '../../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { useGetUsers, useSearchUsers } from '@/core/domains/users';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type WorkorderHistoryProps = {
   id: string;
@@ -31,6 +32,7 @@ export default function WorkorderHistory({
 }: WorkorderHistoryProps) {
   const canViewAlarm = useCan('maintenance.alarm', 'view');
   const { treeData } = useRegionTreeStore();
+  const { t } = useTranslation();
 
   const { data: historyData, isLoading: historyLoading } = useGetHistoryById(
     id,
@@ -110,9 +112,11 @@ export default function WorkorderHistory({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTitle className='hidden'>Lịch sử giao việc</DialogTitle>
+      <DialogTitle className='hidden'>
+        {t('maintenance.work_order_history')}
+      </DialogTitle>
       <DialogDescription className='hidden'>
-        Lịch sử giao việc
+        {t('maintenance.work_order_history')}
       </DialogDescription>
       <DialogContent
         className='!w-[90vw] !max-w-[472px] gap-0 !border-none !bg-transparent p-0'
@@ -140,12 +144,15 @@ export default function WorkorderHistory({
             <div className='bg-primary rounded-t-[8px] px-5 py-3 text-white'>
               <h2 className='pb-3 text-[18px] font-bold'>Đèn không sáng</h2>
               <p className='text-sm'>
-                Mã thiết bị: {alarmData?.metadata?.imei ?? '----'}
+                {t('maintenance.device_code')}:{' '}
+                {alarmData?.metadata?.imei ?? '----'}
               </p>
-              <p className='mb-3 text-sm'>Chi nhánh: {deviceBranchName}</p>
+              <p className='mb-3 text-sm'>
+                {t('maintenance.branch')}: {deviceBranchName}
+              </p>
 
               <div className='flex justify-between text-sm'>
-                <span>Tiến độ hoàn thành</span>
+                <span>{t('maintenance.completion_progress')}</span>
                 <span>50%</span>
               </div>
 
@@ -191,11 +198,11 @@ export default function WorkorderHistory({
                             {data.note}
                           </p>
                           <p className='text-muted-foreground text-sm'>
-                            Phụ trách:{' '}
+                            {t('maintenance.in_charge')}:{' '}
                             <span className='text-black'>
                               {user
                                 ? `${user.last_name} ${user.first_name}`
-                                : `Hệ thống`}
+                                : t('maintenance.system')}
                             </span>
                           </p>
                         </div>
@@ -211,7 +218,7 @@ export default function WorkorderHistory({
                   className='h-[29px] w-[68px] rounded-[4px]'
                   onClick={() => onOpenChange(!open)}
                 >
-                  Đóng
+                  {t('maintenance.close')}
                 </Button>
               </div>
             </div>

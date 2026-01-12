@@ -9,6 +9,7 @@ import 'react-day-picker/style.css';
 import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import CustomScrollbar from '../custom-scrollbar';
 import { Popover, PopoverContent, PopoverTrigger } from './popover';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarProps = ComponentProps<typeof DayPicker> & {
   disablePastDate?: boolean;
@@ -21,6 +22,7 @@ function Calendar({
   disablePastDate = false,
   ...props
 }: CalendarProps) {
+  const { t } = useTranslation();
   const [month, setMonth] = React.useState(new Date());
 
   const [internalSelected, setInternalSelected] = React.useState<
@@ -64,7 +66,7 @@ function Calendar({
     <div className={cn('p-4 text-xs leading-[22px]', className)}>
       <div className='mb-3 flex items-center justify-between pl-3'>
         <div className='flex items-center text-[14px] font-bold'>
-          <span className='leading-none'>Năm</span>
+          <span className='leading-none'>{t('general.year')}</span>
           <YearSelect
             value={month.getFullYear()}
             onChange={(year) => {
@@ -117,7 +119,7 @@ function Calendar({
               onClick={() => onSelect(undefined)}
               className='text-muted-foreground hover:text-foreground cursor-pointer text-xs'
             >
-              Xóa
+              {t('general.delete')}
             </button>
             <button
               onClick={() => {
@@ -127,7 +129,7 @@ function Calendar({
               }}
               className='text-primary cursor-pointer text-xs font-medium'
             >
-              Hôm nay
+              {t('general.today')}
             </button>
           </div>
         }

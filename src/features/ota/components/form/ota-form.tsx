@@ -38,6 +38,7 @@ import {
   otaUpdateSchema
 } from '@/core/domains/ota/schemas';
 import { FileUpload } from '@/ui/components/input-file';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type OtaFormProps = {
   initialData: Partial<OtaItem> | null;
@@ -50,6 +51,7 @@ export default function OtaForm({
   pageTitle,
   onClose
 }: OtaFormProps) {
+  const { t } = useTranslation();
   const { catalogues } = useCatalogueStore();
 
   const schema = initialData ? otaUpdateSchema : otaFormSchema;
@@ -118,12 +120,12 @@ export default function OtaForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên Firmware
+                      {t('ota.label.name' as any)}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên Firmware'
+                        placeholder={t('ota.placeholder.name' as any)}
                         {...field}
                       />
                     </FormControl>
@@ -138,7 +140,7 @@ export default function OtaForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Loại thiết bị
+                      {t('ota.label.category' as any)}
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -146,7 +148,9 @@ export default function OtaForm({
                         value={field.value}
                       >
                         <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                          <SelectValue placeholder='Chọn loại thiết bị' />
+                          <SelectValue
+                            placeholder={t('ota.placeholder.category' as any)}
+                          />
                         </SelectTrigger>
                         <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                           {typeOptions.map((c, index) => (
@@ -168,12 +172,12 @@ export default function OtaForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
-                      Phiên bản
+                      {t('ota.label.version' as any)}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập phiên bản'
+                        placeholder={t('ota.placeholder.version' as any)}
                         {...field}
                       />
                     </FormControl>
@@ -187,11 +191,13 @@ export default function OtaForm({
                 name='description'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('ota.label.description' as any)}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập mô tả'
+                        placeholder={t('ota.placeholder.description' as any)}
                         {...field}
                       />
                     </FormControl>
@@ -206,7 +212,7 @@ export default function OtaForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
-                      Tải tệp đính kèm
+                      {t('ota.label.file' as any)}
                     </FormLabel>
                     <FormControl>
                       <FileUpload
@@ -239,7 +245,7 @@ export default function OtaForm({
                             rel='noopener noreferrer'
                             className='text-primary hover:underline'
                           >
-                            Tải xuống
+                            {t('ota.button.download' as any)}
                           </a>
                         </div>
                       </div>
@@ -256,14 +262,16 @@ export default function OtaForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('ota.button.cancel' as any)}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-[70px] rounded-[4px] text-xs'
                   disabled={isPending || isUpdatePending}
                 >
-                  {isPending || isUpdatePending ? 'Đang lưu' : 'Lưu'}
+                  {isPending || isUpdatePending
+                    ? t('ota.button.saving' as any)
+                    : t('ota.button.save' as any)}
                 </Button>
               </div>
             </form>

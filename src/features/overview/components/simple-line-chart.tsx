@@ -43,24 +43,40 @@ export function SimpleLineChart() {
         <div className='flex items-center space-x-[3px] text-sm leading-[15px]'>
           <Select defaultValue='All'>
             <SelectTrigger className='h-[30px] w-[96px] rounded-sm px-2 shadow-none'>
-              <SelectValue placeholder='Select Device' />
+              <SelectValue placeholder={t('dashboard.select_period' as any)} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='Today'>Today</SelectItem>
-              <SelectItem value='This Week'>This Week</SelectItem>
-              <SelectItem value='This Month'>This Month</SelectItem>
-              <SelectItem value='This Year'>This Year</SelectItem>
-              <SelectItem value='All'>All</SelectItem>
+              <SelectItem value='Today'>
+                {t('dashboard.today' as any)}
+              </SelectItem>
+              <SelectItem value='This Week'>
+                {t('dashboard.this_week' as any)}
+              </SelectItem>
+              <SelectItem value='This Month'>
+                {t('dashboard.this_month' as any)}
+              </SelectItem>
+              <SelectItem value='This Year'>
+                {t('dashboard.this_year' as any)}
+              </SelectItem>
+              <SelectItem value='All'>{t('dashboard.all' as any)}</SelectItem>
             </SelectContent>
           </Select>
           <Select value={chartType} onValueChange={setChartType}>
             <SelectTrigger className='h-[30px] w-[111px] rounded-sm px-2 shadow-none'>
-              <SelectValue placeholder='Select Device' />
+              <SelectValue
+                placeholder={t('dashboard.select_chart_type' as any)}
+              />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='area'>Area Chart</SelectItem>
-              <SelectItem value='barline'>Bar-Line Chart</SelectItem>
-              <SelectItem value='pie'>Pie Chart</SelectItem>
+              <SelectItem value='area'>
+                {t('dashboard.area_chart' as any)}
+              </SelectItem>
+              <SelectItem value='barline'>
+                {t('dashboard.bar_line_chart' as any)}
+              </SelectItem>
+              <SelectItem value='pie'>
+                {t('dashboard.pie_chart_option' as any)}
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>

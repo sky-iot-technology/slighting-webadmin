@@ -17,6 +17,7 @@ import {
 } from './types';
 import { groupsApi } from './api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useRegionTreeStore } from '../tree/store';
 
 //Query keys
@@ -101,6 +102,7 @@ export const useCreateGroup = (
   options?: UseMutationOptions<Group, Error, CreateGroupDTO>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<Group, Error, CreateGroupDTO>({
     ...options,
@@ -113,12 +115,12 @@ export const useCreateGroup = (
 
       useRegionTreeStore.getState().fetchTree();
 
-      toast.success('Group created successfully!');
+      toast.success(t('toast.create_group_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to create group:', error);
-      toast.error(error.message || 'Failed to create group');
+      toast.error(error.message || t('toast.create_group_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -128,6 +130,7 @@ export const useDeleteGroup = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -144,12 +147,12 @@ export const useDeleteGroup = (
 
       useRegionTreeStore.getState().fetchTree();
 
-      toast.success('Group deleted successfully');
+      toast.success(t('toast.delete_group_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete Group: ', error);
-      toast.error(error.message || 'Failed to delete Group');
+      toast.error(error.message || t('toast.delete_group_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -163,6 +166,7 @@ export const useUpdateGroup = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<Group, Error, { id: string; data: UpdateGroupDto }>({
     ...options,
@@ -174,12 +178,12 @@ export const useUpdateGroup = (
 
       useRegionTreeStore.getState().fetchTree();
 
-      toast.success('Group update successfully!');
+      toast.success(t('toast.update_group_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update Group:', error);
-      toast.error(error.message || 'Failed to update Group');
+      toast.error(error.message || t('toast.update_group_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -189,6 +193,7 @@ export const useSetChildrenGroup = (
   options?: UseMutationOptions<void, Error, SetChildrenGroupDto>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, SetChildrenGroupDto>({
     ...options,
@@ -205,12 +210,12 @@ export const useSetChildrenGroup = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [GROUPS_QUERY_KEY] });
       useRegionTreeStore.getState().fetchTree();
-      toast.success('Update device parent successfully!');
+      toast.success(t('toast.update_device_parent_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update device parent:', error);
-      toast.error(error.message || 'Failed to update device parent');
+      toast.error(error.message || t('toast.update_device_parent_failed'));
       options?.onError?.(error, variables, context);
     }
   });

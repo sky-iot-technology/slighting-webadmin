@@ -16,12 +16,15 @@ import SyncDeviceDialog from '../modal/sync-dialog';
 import OtaDialog from '../modal/ota-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 interface CellActionProps {
   data: OtaData;
   disabled?: boolean;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openSync, setOpenSync] = useState(false);
@@ -53,7 +56,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
       />
 
       <OtaDialog
-        pageTitle='Chỉnh sửa Ota'
+        pageTitle={t('ota.title.edit' as any)}
         open={openEdit}
         onOpenChange={setOpenEdit}
         id={data.id}
@@ -87,7 +90,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
                   height={12}
                 />
               </div>
-              <span>Sửa</span>
+              <span>{t('ota.action.edit' as any)}</span>
             </DropdownMenuItem>
           </PermissionGuard>
 
@@ -105,7 +108,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('ota.action.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
 
@@ -122,7 +127,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
                   height={12}
                 />
               </div>
-              <span>Đồng bộ</span>
+              <span>{t('ota.action.sync' as any)}</span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

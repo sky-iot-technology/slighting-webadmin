@@ -43,6 +43,7 @@ import Image from 'next/image';
 import ChangepassDialog from './changepass-form';
 import { useCan, useGetRoles } from '@/core/domains/permissions';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type RoleFormProps = {
   pageTitle: string;
@@ -57,6 +58,7 @@ export default function UserForm({
   initialData,
   isView
 }: RoleFormProps) {
+  const { t } = useTranslation();
   const [selectedParent, setSelectedParent] = useState<{
     id: string;
     name: string;
@@ -158,7 +160,7 @@ export default function UserForm({
 
                 <div className='flex-1'>
                   <h3 className='pb-2 text-[16px] font-bold'>
-                    Thông tin cá nhân
+                    {t('user.personal_info' as any)}
                   </h3>
                   <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
                     <FormField
@@ -167,12 +169,13 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Họ <span className='text-red-500'>*</span>
+                            {t('user.first_name' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập họ'
+                              placeholder={t('user.enter_first_name' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -186,12 +189,13 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Tên <span className='text-red-500'>*</span>
+                            {t('user.last_name' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập tên'
+                              placeholder={t('user.enter_last_name' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -205,12 +209,12 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='text-xs font-bold'>
-                            Số điện thoại
+                            {t('user.phone' as any)}
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập số điện thoại'
+                              placeholder={t('user.enter_phone' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -225,12 +229,13 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Email <span className='text-red-500'>*</span>
+                            {t('user.email' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập email'
+                              placeholder={t('user.enter_email' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -244,7 +249,8 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Vai trò <span className='text-red-500'>*</span>
+                            {t('user.role_label' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Select
@@ -255,7 +261,9 @@ export default function UserForm({
                               <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                                 <SelectValue
                                   placeholder={
-                                    isLoading ? 'Đang tải...' : 'Chọn vai trò'
+                                    isLoading
+                                      ? t('user.loading' as any)
+                                      : t('user.select_role' as any)
                                   }
                                 />
                               </SelectTrigger>
@@ -289,7 +297,8 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Chi nhánh <span className='text-red-500'>*</span>
+                            {t('user.branch_label' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <TreeProvider
@@ -325,7 +334,7 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='text-xs font-bold'>
-                            Đơn vị
+                            {t('user.unit_label' as any)}
                           </FormLabel>
                           <FormControl>
                             {/* <MultiSelect
@@ -358,7 +367,7 @@ export default function UserForm({
                               ]}
                               defaultValue={field.value ?? []}
                               onValueChange={field.onChange}
-                              placeholder='Chọn đơn vị xử lý'
+                              placeholder={t('user.select_unit' as any)}
                               resetOnDefaultValueChange
                               className='flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 flex-wrap gap-1 !rounded-[4px]'
                               popoverClassName='
@@ -382,7 +391,7 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='text-xs font-bold'>
-                            Bộ phận
+                            {t('user.department_label' as any)}
                           </FormLabel>
                           <FormControl>
                             <Select
@@ -391,7 +400,11 @@ export default function UserForm({
                               disabled={isView}
                             >
                               <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                                <SelectValue placeholder='Chọn bộ phận' />
+                                <SelectValue
+                                  placeholder={t(
+                                    'user.select_department' as any
+                                  )}
+                                />
                               </SelectTrigger>
                               <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                                 <SelectItem value='test'>test</SelectItem>
@@ -408,12 +421,12 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='text-xs font-bold'>
-                            Địa chỉ
+                            {t('user.address' as any)}
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập địa chỉ'
+                              placeholder={t('user.enter_address' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -428,12 +441,12 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='text-xs font-bold'>
-                            Ghi chú
+                            {t('user.note' as any)}
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập ghi chú'
+                              placeholder={t('user.enter_note' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -444,7 +457,7 @@ export default function UserForm({
                   </div>
 
                   <h3 className='pb-2 text-[16px] font-bold'>
-                    Thông tin tài khoản
+                    {t('user.account_info' as any)}
                   </h3>
                   <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
                     <FormField
@@ -454,12 +467,13 @@ export default function UserForm({
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            Tài khoản <span className='text-red-500'>*</span>
+                            {t('user.username' as any)}{' '}
+                            <span className='text-red-500'>*</span>
                           </FormLabel>
                           <FormControl>
                             <Input
                               className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder='Nhập tài khoản'
+                              placeholder={t('user.enter_username' as any)}
                               {...field}
                             />
                           </FormControl>
@@ -477,7 +491,7 @@ export default function UserForm({
                             <FormItem>
                               <FormLabel className='justify-between text-xs font-bold'>
                                 <span>
-                                  Mật khẩu
+                                  {t('user.password' as any)}
                                   <span className='ml-0.5 text-red-500'>*</span>
                                 </span>
                                 {initialData && (
@@ -498,7 +512,9 @@ export default function UserForm({
                                   <Input
                                     {...field}
                                     type={showPassword ? 'text' : 'password'}
-                                    placeholder='Nhập mật khẩu'
+                                    placeholder={t(
+                                      'user.enter_password' as any
+                                    )}
                                     className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                                   />
                                   <button
@@ -526,7 +542,7 @@ export default function UserForm({
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel className='!gap-0.5 text-xs font-bold'>
-                                Nhập lại mật khẩu{' '}
+                                {t('user.confirm_password' as any)}{' '}
                                 <span className='text-red-500'>*</span>
                               </FormLabel>
                               <FormControl>
@@ -536,7 +552,9 @@ export default function UserForm({
                                     type={
                                       showConfirmPassword ? 'text' : 'password'
                                     }
-                                    placeholder='Nhập lại mật khẩu'
+                                    placeholder={t(
+                                      'user.re_enter_password' as any
+                                    )}
                                     className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                                   />
                                   <button
@@ -569,7 +587,7 @@ export default function UserForm({
                           variant={'ghost'}
                           onClick={() => setOpen(!open)}
                         >
-                          Reset mật khẩu
+                          {t('user.reset_password' as any)}
                         </Button>
                       </div>
                     ) : (
@@ -586,14 +604,14 @@ export default function UserForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  {isView ? 'Đóng' : 'Hủy'}
+                  {isView ? t('user.close' as any) : t('user.cancel' as any)}
                 </Button>
                 {!isView && (
                   <Button
                     type='submit'
                     className='h-full w-[91px] rounded-[4px] text-xs'
                   >
-                    Lưu
+                    {t('user.save' as any)}
                   </Button>
                 )}
               </div>

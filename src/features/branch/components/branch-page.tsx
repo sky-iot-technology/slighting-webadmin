@@ -95,7 +95,7 @@ export default function BranchPage() {
         data={devices}
         totalItems={Number(data?.total ?? 0)}
         columns={
-          branchColumns(catalogues, treeData) as ColumnDef<Device, any>[]
+          branchColumns(catalogues, treeData, t) as ColumnDef<Device, any>[]
         }
         onTableReady={setDeviceTable}
         isLoading={isLoading}
@@ -172,19 +172,19 @@ export default function BranchPage() {
                           value='detail'
                           className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
                         >
-                          Chi tiết
+                          {t('branch.detail')}
                         </TabsTrigger>
                         <TabsTrigger
                           value='devices'
                           className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
                         >
-                          Thiết bị
+                          {t('branch.devices')}
                         </TabsTrigger>
                         <TabsTrigger
                           value='config'
                           className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
                         >
-                          Cấu hình
+                          {t('branch.config')}
                         </TabsTrigger>
                       </TabsList>
                     </Tabs>

@@ -33,6 +33,7 @@ import { TimeBrightnessForm } from '../components/calendar-time-brightness';
 import { useGetDeviceById } from '@/core/domains/devices';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { TraitKey } from '@/core/domains/catalogues';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarFormProps = {
   initialData: Partial<Calendar> | null;
@@ -49,6 +50,7 @@ export default function CalendarDeviceForm({
   onNext,
   onClose
 }: CalendarFormProps) {
+  const { t } = useTranslation();
   const defaultValues =
     formData ??
     ((initialData
@@ -131,7 +133,7 @@ export default function CalendarDeviceForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Chọn nhánh thiết bị
+                        {t('calendar.select_device_branch' as any)}
                       </FormLabel>
                       <FormControl>
                         <MultiSelect
@@ -143,7 +145,7 @@ export default function CalendarDeviceForm({
                           }
                           defaultValue={field.value ?? []}
                           onValueChange={(val) => field.onChange(val)}
-                          placeholder='Chọn thiết bị'
+                          placeholder={t('calendar.select_device' as any)}
                           resetOnDefaultValueChange={true}
                           className='!min-h-[31px] w-full !rounded-[4px] px-2'
                           popoverClassName='w-[var(--radix-popover-trigger-width)]'
@@ -163,12 +165,12 @@ export default function CalendarDeviceForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Tên lịch
+                        {t('calendar.calendar_name' as any)}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên lịch'
+                          placeholder={t('calendar.enter_calendar_name' as any)}
                           {...field}
                         />
                       </FormControl>
@@ -181,11 +183,13 @@ export default function CalendarDeviceForm({
                   name='description'
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                      <FormLabel className='text-xs font-bold'>
+                        {t('calendar.description' as any)}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập mô tả'
+                          placeholder={t('calendar.enter_description' as any)}
                           {...field}
                         />
                       </FormControl>
@@ -200,7 +204,7 @@ export default function CalendarDeviceForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='mb-1 text-xs font-bold'>
-                        Loại lịch
+                        {t('calendar.calendar_type' as any)}
                       </FormLabel>
                       <FormControl>
                         <RadioGroup
@@ -213,11 +217,15 @@ export default function CalendarDeviceForm({
                         >
                           <div className='flex items-center space-x-2'>
                             <RadioGroupItem value='2' id='2' />
-                            <Label htmlFor='Theo lịch'>Theo lịch</Label>
+                            <Label htmlFor='Theo lịch'>
+                              {t('calendar.priority.normal' as any)}
+                            </Label>
                           </div>
                           <div className='flex items-center space-x-2'>
                             <RadioGroupItem value='1' id='1' />
-                            <Label htmlFor='Khẩn cấp'>Khẩn cấp</Label>
+                            <Label htmlFor='Khẩn cấp'>
+                              {t('calendar.priority.emergency' as any)}
+                            </Label>
                           </div>
                         </RadioGroup>
                       </FormControl>
@@ -232,7 +240,7 @@ export default function CalendarDeviceForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className='mb-1 text-xs font-bold'>
-                          Lặp lại
+                          {t('calendar.repeat' as any)}
                         </FormLabel>
                         <FormControl>
                           <RadioGroup
@@ -245,19 +253,27 @@ export default function CalendarDeviceForm({
                           >
                             <div className='flex items-center space-x-2'>
                               <RadioGroupItem value='none' id='none' />
-                              <Label htmlFor='Không'>Không</Label>
+                              <Label htmlFor='Không'>
+                                {t('calendar.repeat_options.none' as any)}
+                              </Label>
                             </div>
                             <div className='flex items-center space-x-2'>
                               <RadioGroupItem value='daily' id='daily' />
-                              <Label htmlFor='Hàng ngày'>Hàng ngày</Label>
+                              <Label htmlFor='Hàng ngày'>
+                                {t('calendar.repeat_options.daily' as any)}
+                              </Label>
                             </div>
                             <div className='flex items-center space-x-2'>
                               <RadioGroupItem value='weekly' id='weekly' />
-                              <Label htmlFor='Hàng tuần'>Hàng tuần</Label>
+                              <Label htmlFor='Hàng tuần'>
+                                {t('calendar.repeat_options.weekly' as any)}
+                              </Label>
                             </div>
                             <div className='flex items-center space-x-2'>
                               <RadioGroupItem value='monthly' id='monthly' />
-                              <Label htmlFor='Hàng tháng'>Hàng tháng</Label>
+                              <Label htmlFor='Hàng tháng'>
+                                {t('calendar.repeat_options.monthly' as any)}
+                              </Label>
                             </div>
                           </RadioGroup>
                         </FormControl>
@@ -276,7 +292,7 @@ export default function CalendarDeviceForm({
                         <FormItem className='flex flex-col'>
                           <div className='flex justify-between'>
                             <FormLabel className='text-xs font-bold'>
-                              Ngày áp dụng:
+                              {t('calendar.apply_date' as any)}:
                             </FormLabel>
                             <FormControl>
                               <CalendarRangePicker
@@ -308,7 +324,7 @@ export default function CalendarDeviceForm({
                     render={({ field }) => (
                       <FormItem className='col-span-2'>
                         <FormLabel className='text-xs font-bold'>
-                          Chọn ngày trong tuần
+                          {t('calendar.select_day_of_week' as any)}
                         </FormLabel>
                         <FormControl>
                           <MultiSelect
@@ -341,7 +357,7 @@ export default function CalendarDeviceForm({
                     render={({ field }) => (
                       <FormItem className='col-span-2'>
                         <FormLabel className='text-xs font-bold'>
-                          Chọn ngày trong tháng
+                          {t('calendar.select_day_of_month' as any)}
                         </FormLabel>
                         <FormControl>
                           <MultiSelect
@@ -371,7 +387,7 @@ export default function CalendarDeviceForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Thời gian & Hành động
+                        {t('calendar.time_and_action' as any)}
                       </FormLabel>
                       <FormControl>
                         <TimeBrightnessForm
@@ -392,13 +408,13 @@ export default function CalendarDeviceForm({
                     type='button'
                     className='h-full w-16 rounded-[4px] text-xs'
                   >
-                    Hủy
+                    {t('calendar.cancel' as any)}
                   </Button>
                   <Button
                     type='submit'
                     className='h-full w-[70px] rounded-[4px] text-xs'
                   >
-                    Tiếp theo
+                    {t('calendar.next' as any)}
                   </Button>
                 </div>
               </form>

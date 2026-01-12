@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { memo } from 'react';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import TreeSidebar from '@/ui/business/tree/TreeSidebar';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CalendarSidebarProps {
   searchTerm: string;
@@ -17,6 +18,7 @@ export const CalendarSidebar = memo(function CalendarSidebar({
   selectedRegion,
   onRegionChange
 }: CalendarSidebarProps) {
+  const { t } = useTranslation();
   return (
     <div className='flex h-full flex-col pt-1.5 pr-[9px] pl-2'>
       <div className='bg-background mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
@@ -29,7 +31,7 @@ export const CalendarSidebar = memo(function CalendarSidebar({
         />
         <input
           className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'
-          placeholder='Tìm kiếm chi nhánh...'
+          placeholder={t('calendar.search_branch')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

@@ -8,7 +8,8 @@ import { Skeleton } from '@/ui/components/ui/skeleton';
 import { ColumnDef } from '@tanstack/react-table';
 import { CalendarTable } from './calendar-tables';
 import { memo } from 'react';
-import { columns } from './calendar-tables/columns';
+import { calendarColumns } from './calendar-tables/columns';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CalendarContentProps {
   filters: GetCalendarsParamsDto;
@@ -23,6 +24,7 @@ export const CalendarContent = memo(function CalendarContent({
   isSidebarOpen,
   onToggleSidebar
 }: CalendarContentProps) {
+  const { t } = useTranslation();
   const { data, isLoading, error } = useGetCalendars({
     ...filters,
     groups: selectedRegion?.id
@@ -35,7 +37,7 @@ export const CalendarContent = memo(function CalendarContent({
     <CalendarTable
       data={calendars}
       totalItems={totalItems}
-      columns={columns as ColumnDef<Calendar, any>[]}
+      columns={calendarColumns(t) as ColumnDef<Calendar, any>[]}
       isSidebarOpen={isSidebarOpen}
       onToggleSidebar={onToggleSidebar}
       region={selectedRegion ?? null}

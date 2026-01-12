@@ -33,6 +33,7 @@ import {
 import { useGetWorkOrders } from '@/core/domains/workorders';
 import { toast } from 'sonner';
 import { PermissionGuard } from '@/core/domains/permissions/components/permission-guard';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   active: boolean;
@@ -51,6 +52,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   disabled,
   onViewAction
 }) => {
+  const { t } = useTranslation();
   const [openMap, setOpenMap] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -136,7 +138,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                     height={12}
                   />
                 </div>
-                <span>Xem giao việc</span>
+                <span>{t('maintenance.actions.view_work_order' as any)}</span>
               </DropdownMenuItem>
             )}
           </PermissionGuard>
@@ -153,7 +155,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                 height={12}
               />
             </div>
-            <span>Xem vị trí xử lý</span>
+            <span>{t('maintenance.actions.view_location' as any)}</span>
           </DropdownMenuItem>
 
           <PermissionGuard module='maintenance.alarm' action='update'>
@@ -167,7 +169,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                     height={12}
                   />
                 </div>
-                <span>Xử lý</span>
+                <span>{t('maintenance.actions.process' as any)}</span>
               </DropdownMenuSubTrigger>
 
               <DropdownMenuPortal>
@@ -184,7 +186,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                         height={12}
                       />
                     </div>
-                    <span>Đang xử lý</span>
+                    <span>{t('maintenance.actions.processing' as any)}</span>
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
@@ -198,7 +200,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                         className='text-green-600'
                       />
                     </div>
-                    <span>Hoàn thành</span>
+                    <span>{t('maintenance.actions.completed' as any)}</span>
                   </DropdownMenuItem>
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
@@ -219,7 +221,9 @@ export const CellAction: React.FC<CellActionProps> = ({
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('maintenance.actions.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>
@@ -228,7 +232,9 @@ export const CellAction: React.FC<CellActionProps> = ({
       <Sheet open={openMap} onOpenChange={setOpenMap}>
         <SheetContent side='right' className='gap-0'>
           <SheetHeader>
-            <SheetTitle className='mx-auto'>Xem vị trí xử lý</SheetTitle>
+            <SheetTitle className='mx-auto'>
+              {t('maintenance.actions.view_location' as any)}
+            </SheetTitle>
           </SheetHeader>
           <div className='relative h-full w-full overflow-hidden'>
             <GoongMapMarker lat={lat} long={lng} disabled={true} />

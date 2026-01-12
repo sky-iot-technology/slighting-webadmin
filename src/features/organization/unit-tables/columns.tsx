@@ -6,7 +6,7 @@ import { CellAction } from './cell-action';
 import { Unit } from '@/core/domains/organizations/type';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const unitColumns = (): ColumnDef<Unit>[] => [
+export const unitColumns = (t: any): ColumnDef<Unit>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -35,14 +35,17 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Unit, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên đơn vị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.unit.table.name')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm kiếm',
+      placeholder: t('organization.unit.placeholder.search'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -53,7 +56,10 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
     id: 'address',
     accessorKey: 'address',
     header: ({ column }: { column: Column<Unit, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Địa chỉ' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.unit.table.address')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('address')}</div>;
@@ -65,7 +71,10 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
     id: 'note',
     accessorKey: 'note',
     header: ({ column }: { column: Column<Unit, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ghi chú' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.unit.table.note')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('note')}</div>;
@@ -76,7 +85,10 @@ export const unitColumns = (): ColumnDef<Unit>[] => [
   {
     id: 'actions',
     header: ({ column }: { column: Column<Unit, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.unit.table.action')}
+      />
     ),
     size: 57,
     cell: ({ row }) => {

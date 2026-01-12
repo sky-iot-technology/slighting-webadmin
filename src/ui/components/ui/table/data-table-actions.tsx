@@ -13,6 +13,7 @@ import type { Table } from '@tanstack/react-table';
 import Image from 'next/image';
 import { AlertModal } from '../../modal/alert-modal';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface DataTableActionsPopoverProps<TData> {
   table: Table<TData>;
@@ -27,6 +28,8 @@ export function DataTableActionsPopover<TData>({
   onImportExcel,
   onDeleteAll
 }: DataTableActionsPopoverProps<TData>) {
+  const { t } = useTranslation();
+
   const hasActions = Boolean(onDeleteAll || excel);
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -103,7 +106,7 @@ export function DataTableActionsPopover<TData>({
   const handleDelete = async () => {
     if (!onDeleteAll) return;
     if (selectedRows.length === 0) {
-      toast.warning('Vui lòng chọn ít nhất một hàng để xóa.');
+      toast.warning(t('general.delete_warning'));
       return;
     }
     await onDeleteAll(selectedRows);
@@ -155,7 +158,7 @@ export function DataTableActionsPopover<TData>({
               }}
             >
               <Trash2 className='mr-0.5 h-4 w-4' />
-              Xóa đã chọn
+              {t('general.delete_selected')}
               {table.getSelectedRowModel().rows.length > 0 && (
                 <span className='text-destructive'>
                   ({table.getSelectedRowModel().rows.length})
@@ -187,7 +190,7 @@ export function DataTableActionsPopover<TData>({
                 height={16}
                 className='pb-1'
               />
-              Nhập Excel
+              {t('general.import_excel')}
             </Button>
             <Button
               variant='ghost'
@@ -202,7 +205,7 @@ export function DataTableActionsPopover<TData>({
                 height={16}
                 className='pb-1'
               />
-              Xuất Excel
+              {t('general.export_excel')}
             </Button>
           </>
         )}

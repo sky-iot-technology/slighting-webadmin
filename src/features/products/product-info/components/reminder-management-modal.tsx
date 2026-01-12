@@ -21,6 +21,7 @@ import {
   useDeleteReminder
 } from '@/core/domains/reminders';
 import { Device } from '@/core/domains/devices';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface ReminderManagementModalProps {
   isOpen: boolean;
@@ -41,6 +42,7 @@ export function ReminderManagementModal({
   device,
   onSave
 }: ReminderManagementModalProps) {
+  const { t } = useTranslation();
   const { data: remindersData, isLoading: isLoadingReminders } =
     useGetReminders();
   const createReminderMutation = useCreateReminder();
@@ -75,9 +77,9 @@ export function ReminderManagementModal({
     const fields: DateField[] = [];
 
     const fieldMap: Record<string, string> = {
-      installation_date: 'Ngày lắp đặt',
-      purchase_date: 'Ngày áp dụng bảo hành',
-      expiration_date: 'Ngày hết hạn bảo hành'
+      installation_date: t('products.form.label.installation_date' as any),
+      purchase_date: t('products.form.label.warranty_date' as any),
+      expiration_date: t('products.form.label.warranty_expiration' as any)
     };
 
     ['installation_date', 'purchase_date', 'expiration_date'].forEach(
@@ -158,7 +160,7 @@ export function ReminderManagementModal({
   };
 
   const handleDeleteReminder = (id: string) => {
-    if (confirm('Bạn có chắc chắn muốn xóa lời nhắc này?')) {
+    if (confirm(t('products.detail.reminders.confirm_delete' as any))) {
       deleteReminderMutation.mutate(id);
     }
   };
@@ -172,7 +174,9 @@ export function ReminderManagementModal({
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className='max-h-[90vh] w-[80vw] !max-w-full overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle>Quản lý lời nhắc</DialogTitle>
+          <DialogTitle>
+            {t('products.detail.reminders.title' as any)}
+          </DialogTitle>
         </DialogHeader>
 
         <div className='mt-4 grid grid-cols-2 gap-4 space-y-6'>
@@ -193,7 +197,7 @@ export function ReminderManagementModal({
                     )}
                     {!field.value && (
                       <div className='text-muted-foreground text-sm'>
-                        Chưa có ngày
+                        {t('products.detail.reminders.no_date' as any)}
                       </div>
                     )}
                   </div>
@@ -207,7 +211,9 @@ export function ReminderManagementModal({
                       onValueChange={(values) =>
                         handleReminderChange(field.identify, values)
                       }
-                      placeholder='Chọn lời nhắc...'
+                      placeholder={t(
+                        'products.detail.reminders.select_reminder' as any
+                      )}
                       className='w-full'
                       maxCount={3}
                       searchable={true}
@@ -231,12 +237,12 @@ export function ReminderManagementModal({
                                 </span>
                                 {' - '}
                                 {reminder.before > 0 &&
-                                  `${reminder.before} ngày trước`}
+                                  `${reminder.before} ${t('products.detail.reminders.days_before' as any)}`}
                                 {reminder.before > 0 &&
                                   reminder.after > 0 &&
                                   ' • '}
                                 {reminder.after > 0 &&
-                                  `${reminder.after} ngày sau`}
+                                  `${reminder.after} ${t('products.detail.reminders.days_after' as any)}`}
                               </div>
                             );
                           })}
@@ -245,7 +251,7 @@ export function ReminderManagementModal({
                   </div>
                 ) : (
                   <div className='text-muted-foreground text-sm'>
-                    Chưa có lời nhắc nào. Vui lòng tạo lời nhắc trước.
+                    {t('products.detail.reminders.no_reminders_hint' as any)}
                   </div>
                 )}
               </div>
@@ -255,7 +261,9 @@ export function ReminderManagementModal({
           {/* Reminders Management Section */}
           <div className='space-y-4 rounded-lg border p-4'>
             <div className='flex items-center justify-between'>
-              <h3 className='text-lg font-semibold'>Danh sách lời nhắc</h3>
+              <h3 className='text-lg font-semibold'>
+                {t('products.detail.reminders.list_title' as any)}
+              </h3>
               <Button
                 type='button'
                 size='sm'
@@ -269,7 +277,7 @@ export function ReminderManagementModal({
                 }
               >
                 <Plus className='mr-2 h-4 w-4' />
-                Thêm lời nhắc
+                {t('products.detail.reminders.add_button' as any)}
               </Button>
             </div>
 
@@ -277,7 +285,9 @@ export function ReminderManagementModal({
               <div className='bg-muted/50 space-y-3 rounded-lg border p-4'>
                 <div className='flex items-center justify-between'>
                   <h4 className='font-medium'>
-                    {editingReminder.id ? 'Chỉnh sửa' : 'Thêm mới'} lời nhắc
+                    {editingReminder.id
+                      ? t('products.detail.reminders.edit_title' as any)
+                      : t('products.detail.reminders.create_title' as any)}
                   </h4>
                   <Button
                     type='button'
@@ -290,7 +300,9 @@ export function ReminderManagementModal({
                 </div>
                 <div className='grid grid-cols-3 gap-3'>
                   <div className='space-y-2'>
-                    <Label>Tên lời nhắc</Label>
+                    <Label>
+                      {t('products.detail.reminders.form.name' as any)}
+                    </Label>
                     <Input
                       value={editingReminder.name}
                       onChange={(e) =>
@@ -299,11 +311,17 @@ export function ReminderManagementModal({
                           name: e.target.value
                         })
                       }
-                      placeholder='Nhập tên lời nhắc'
+                      placeholder={t(
+                        'products.detail.reminders.form.name_placeholder' as any
+                      )}
                     />
                   </div>
                   <div className='space-y-2'>
-                    <Label>Số ngày trước</Label>
+                    <Label>
+                      {t(
+                        'products.detail.reminders.form.days_before_label' as any
+                      )}
+                    </Label>
                     <Input
                       type='number'
                       value={editingReminder.before}
@@ -313,11 +331,17 @@ export function ReminderManagementModal({
                           before: parseInt(e.target.value) || 0
                         })
                       }
-                      placeholder='Số ngày trước khi nhắc'
+                      placeholder={t(
+                        'products.detail.reminders.form.days_before_placeholder' as any
+                      )}
                     />
                   </div>
                   <div className='space-y-2'>
-                    <Label>Số ngày sau</Label>
+                    <Label>
+                      {t(
+                        'products.detail.reminders.form.days_after_label' as any
+                      )}
+                    </Label>
                     <Input
                       type='number'
                       value={editingReminder.after}
@@ -327,12 +351,16 @@ export function ReminderManagementModal({
                           after: parseInt(e.target.value) || 0
                         })
                       }
-                      placeholder='Số ngày sau khi nhắc'
+                      placeholder={t(
+                        'products.detail.reminders.form.days_after_placeholder' as any
+                      )}
                     />
                   </div>
                 </div>
                 <div className='space-y-2'>
-                  <Label>Mô tả</Label>
+                  <Label>
+                    {t('products.detail.reminders.form.description' as any)}
+                  </Label>
                   <Input
                     value={editingReminder.description}
                     onChange={(e) =>
@@ -341,7 +369,9 @@ export function ReminderManagementModal({
                         description: e.target.value
                       })
                     }
-                    placeholder='Nhập mô tả'
+                    placeholder={t(
+                      'products.detail.reminders.form.description_placeholder' as any
+                    )}
                   />
                 </div>
                 <div className='flex justify-end gap-2'>
@@ -350,7 +380,7 @@ export function ReminderManagementModal({
                     variant='outline'
                     onClick={() => setEditingReminder(null)}
                   >
-                    Hủy
+                    {t('products.detail.overview.button.cancel' as any)}
                   </Button>
                   <Button
                     type='button'
@@ -362,7 +392,7 @@ export function ReminderManagementModal({
                     }
                   >
                     <Save className='mr-2 h-4 w-4' />
-                    Lưu
+                    {t('products.detail.overview.button.save' as any)}
                   </Button>
                 </div>
               </div>
@@ -370,11 +400,11 @@ export function ReminderManagementModal({
 
             {isLoadingReminders ? (
               <div className='text-muted-foreground py-4 text-center'>
-                Đang tải...
+                {t('products.detail.reminders.status.loading' as any)}
               </div>
             ) : reminders.length === 0 ? (
               <div className='text-muted-foreground py-4 text-center'>
-                Chưa có lời nhắc nào
+                {t('products.detail.reminders.status.empty' as any)}
               </div>
             ) : (
               <div className='space-y-2'>
@@ -391,9 +421,11 @@ export function ReminderManagementModal({
                         </div>
                       )}
                       <div className='text-muted-foreground text-xs'>
-                        {reminder.before > 0 && `${reminder.before} ngày trước`}
+                        {reminder.before > 0 &&
+                          `${reminder.before} ${t('products.detail.reminders.days_before' as any)}`}
                         {reminder.before > 0 && reminder.after > 0 && ' • '}
-                        {reminder.after > 0 && `${reminder.after} ngày sau`}
+                        {reminder.after > 0 &&
+                          `${reminder.after} ${t('products.detail.reminders.days_after' as any)}`}
                       </div>
                     </div>
                     <div className='flex items-center gap-2'>
@@ -434,10 +466,10 @@ export function ReminderManagementModal({
 
         <div className='mt-6 flex justify-end gap-2 border-t pt-4'>
           <Button type='button' variant='outline' onClick={onClose}>
-            Hủy
+            {t('products.detail.overview.button.cancel' as any)}
           </Button>
           <Button type='button' onClick={handleSave}>
-            Lưu
+            {t('products.detail.overview.button.save' as any)}
           </Button>
         </div>
       </DialogContent>

@@ -14,6 +14,7 @@ import { useDeleteGroup } from '@/core/domains/groups';
 import { AlertModal } from '@/ui/components/modal/alert-modal';
 import BranchDialog from './branch-dialog';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface BranchActionMenuProps {
   id: string;
@@ -26,6 +27,8 @@ export function BranchActionMenu({
   disabled,
   onDeleted
 }: BranchActionMenuProps) {
+  const { t } = useTranslation();
+
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openMove, setOpenMove] = useState(false);
@@ -62,7 +65,7 @@ export function BranchActionMenu({
       {/* Edit Modal */}
       {openEdit && (
         <BranchDialog
-          pageTitle='Chỉnh sửa nhánh'
+          pageTitle={t('branch.table.action.title')}
           open={openEdit}
           onOpenChange={setOpenEdit}
           groupId={id}
@@ -72,7 +75,7 @@ export function BranchActionMenu({
       {/* Move Modal */}
       {openMove && (
         <BranchDialog
-          pageTitle='Di chuyển nhánh'
+          pageTitle={t('branch.table.action.moveTitle')}
           open={openMove}
           onOpenChange={setOpenMove}
           groupId={id}
@@ -110,7 +113,7 @@ export function BranchActionMenu({
                   height={12}
                   className='mx-2'
                 />
-                <span>Chỉnh sửa</span>
+                <span>{t('branch.table.action.edit')}</span>
               </DropdownMenuItem>
 
               <DropdownMenuItem
@@ -124,7 +127,7 @@ export function BranchActionMenu({
                   height={12}
                   className='mx-2'
                 />
-                <span>Di chuyển</span>
+                <span>{t('branch.table.action.move')}</span>
               </DropdownMenuItem>
             </>
           )}
@@ -142,7 +145,7 @@ export function BranchActionMenu({
                   height={12}
                   className='mx-2'
                 />
-                <span>Xóa nhánh</span>
+                <span>{t('branch.table.action.delete')}</span>
               </DropdownMenuItem>
             </>
           )}

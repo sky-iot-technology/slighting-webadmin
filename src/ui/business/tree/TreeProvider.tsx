@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { RegionTreeWrapper } from './RegionTreeWrapper';
 import { RegionNode } from '@/core/domains/groups';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
@@ -34,6 +35,8 @@ export function TreeProvider({
   open: openProp,
   onOpenChange
 }: TreeProviderProps) {
+  const { t } = useTranslation();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [internalOpen, setInternalOpen] = useState(false);
   const open = openProp ?? internalOpen;
@@ -89,7 +92,7 @@ export function TreeProvider({
             selectedRegion?.name ? 'text-foreground' : 'text-muted-foreground'
           }
         >
-          {selectedRegion?.name || 'Tất cả'}
+          {selectedRegion?.name || t('branch.all')}
         </span>
 
         <Image

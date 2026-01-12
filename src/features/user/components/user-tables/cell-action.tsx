@@ -15,6 +15,7 @@ import Image from 'next/image';
 import UserDialog from '../modal/user-dialog';
 import { useDeleteUser } from '@/core/domains/users';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
@@ -26,6 +27,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
   const router = useRouter();
+  const { t } = useTranslation();
 
   const deleteUser = useDeleteUser();
 
@@ -45,7 +47,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
 
       {/* ✏️ Edit */}
       <UserDialog
-        pageTitle='Chỉnh sửa người dùng'
+        pageTitle={t('user.edit_title' as any)}
         open={openEdit}
         onOpenChange={setOpenEdit}
         userId={id}
@@ -53,7 +55,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
 
       {/* View */}
       <UserDialog
-        pageTitle='Thông tin người dùng'
+        pageTitle={t('user.view_title' as any)}
         open={openView}
         onOpenChange={setOpenView}
         userId={id}
@@ -87,7 +89,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('user.view' as any)}</span>
           </DropdownMenuItem>
 
           <PermissionGuard module='users' action='update' fallback={null}>
@@ -103,7 +105,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                   height={12}
                 />
               </div>
-              <span>Sửa</span>
+              <span>{t('user.edit' as any)}</span>
             </DropdownMenuItem>
           </PermissionGuard>
 
@@ -121,7 +123,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('user.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

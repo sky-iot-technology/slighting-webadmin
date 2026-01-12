@@ -29,6 +29,8 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 type DepartmentFormProps = {
   pageTitle: string;
   onClose?: () => void;
@@ -38,6 +40,7 @@ export default function DepartmentForm({
   onClose,
   pageTitle
 }: DepartmentFormProps) {
+  const { t } = useTranslation();
   //   const defaultValues = useMemo(() => {
   //     return (
   //       formData ??
@@ -91,12 +94,14 @@ export default function DepartmentForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên đơn vị
+                      {t('organization.department.label.name')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên đơn vị'
+                        placeholder={t(
+                          'organization.department.placeholder.name'
+                        )}
                         {...field}
                       />
                     </FormControl>
@@ -111,7 +116,7 @@ export default function DepartmentForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
-                      Thuộc đơn vị
+                      {t('organization.department.label.unit')}
                     </FormLabel>
                     <FormControl>
                       <Select
@@ -119,7 +124,11 @@ export default function DepartmentForm({
                         value={field.value}
                       >
                         <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                          <SelectValue placeholder='Chọn đơn vị' />
+                          <SelectValue
+                            placeholder={t(
+                              'organization.department.placeholder.unit'
+                            )}
+                          />
                         </SelectTrigger>
                         <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                           <SelectItem key={'test'} value={'test'}>
@@ -144,11 +153,15 @@ export default function DepartmentForm({
                 name='note'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Ghi chú</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('organization.department.label.note')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập ghi chú'
+                        placeholder={t(
+                          'organization.department.placeholder.note'
+                        )}
                         {...field}
                       />
                     </FormControl>
@@ -164,13 +177,13 @@ export default function DepartmentForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('organization.button.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Lưu
+                  {t('organization.button.save')}
                 </Button>
               </div>
             </form>

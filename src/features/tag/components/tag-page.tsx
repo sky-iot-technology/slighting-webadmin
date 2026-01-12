@@ -143,7 +143,7 @@ export default function TagPage() {
                     />
                   </button>
                   <span className='text-[20px] font-bold'>
-                    Danh sách nhóm:
+                    {t('tag.group_list')}:
                     {selectedTag && (
                       <span className='text-primary ml-1'>
                         {selectedTag.name}

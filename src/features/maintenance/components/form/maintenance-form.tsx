@@ -38,6 +38,7 @@ import {
   WorkOrderStatus
 } from '@/core/domains/workorders';
 import { normalizeStartEndDate } from '../../helper';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type MaintenanceFormProps = {
   alarmId: string;
@@ -66,6 +67,8 @@ export default function MaintenanceForm({
     resolver: zodResolver(workOrderFormSchema),
     defaultValues
   });
+
+  const { t } = useTranslation();
 
   const { watch, setValue } = form;
   const unit = watch('department');
@@ -119,12 +122,12 @@ export default function MaintenanceForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên công việc
+                      {t('maintenance.work_order_name')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên công việc'
+                        placeholder={t('maintenance.enter_work_order_name')}
                         {...field}
                       />
                     </FormControl>
@@ -138,11 +141,13 @@ export default function MaintenanceForm({
                 name='remarks'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('maintenance.description')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập mô tả'
+                        placeholder={t('maintenance.enter_description')}
                         {...field}
                       />
                     </FormControl>
@@ -158,7 +163,7 @@ export default function MaintenanceForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Đơn vị xử lý
+                        {t('maintenance.unit_handling')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -166,14 +171,18 @@ export default function MaintenanceForm({
                           value={field.value}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn đơn vị xử lý' />
+                            <SelectValue
+                              placeholder={t(
+                                'maintenance.select_unit_handling'
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             <SelectItem value='team:support'>
-                              Team Support
+                              {t('maintenance.team_support')}
                             </SelectItem>
                             <SelectItem value='team:technical'>
-                              Team Technical
+                              {t('maintenance.team_technical')}
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -189,7 +198,7 @@ export default function MaintenanceForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Người giám sát
+                        {t('maintenance.supervisor')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -197,7 +206,9 @@ export default function MaintenanceForm({
                           value={field.value}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn người giám sát' />
+                            <SelectValue
+                              placeholder={t('maintenance.select_supervisor')}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             {usersOptions.length > 0
@@ -224,7 +235,7 @@ export default function MaintenanceForm({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Người thực hiện
+                        {t('maintenance.executor')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -232,7 +243,9 @@ export default function MaintenanceForm({
                           value={field.value}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn người thực hiện' />
+                            <SelectValue
+                              placeholder={t('maintenance.select_executor')}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             {usersOptions.length > 0
@@ -259,7 +272,7 @@ export default function MaintenanceForm({
                   render={({ field }) => (
                     <FormItem className='order-4 md:order-none'>
                       <FormLabel className='text-xs font-bold'>
-                        Ngày bắt đầu dự kiến
+                        {t('maintenance.expected_start_date')}
                       </FormLabel>
                       <FormControl>
                         <CalendarRangePicker
@@ -283,7 +296,7 @@ export default function MaintenanceForm({
                   render={({ field }) => (
                     <FormItem className='order-5 md:order-none'>
                       <FormLabel className='text-xs font-bold'>
-                        Ngày hoàn thành dự kiến
+                        {t('maintenance.expected_end_date')}
                       </FormLabel>
                       <FormControl>
                         <CalendarRangePicker
@@ -314,7 +327,7 @@ export default function MaintenanceForm({
                             width={20}
                             height={20}
                           />
-                          Tập tin đính kèm
+                          {t('maintenance.attachments')}
                         </FormLabel>
                         <FormControl>
                           <FileUpload
@@ -345,13 +358,13 @@ export default function MaintenanceForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('maintenance.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-[136px] rounded-[4px] text-xs'
                 >
-                  Xác nhận
+                  {t('maintenance.confirm')}
                 </Button>
               </div>
             </form>

@@ -92,7 +92,7 @@ export default function ProductListingPage({}: ProductListingPage) {
   }, [catalogues]);
 
   const columns = useMemo(() => {
-    return deviceColumns.map((col) => {
+    return deviceColumns(t).map((col) => {
       // TYPE FILTER
       if (col.id === 'type') {
         return {
@@ -127,7 +127,7 @@ export default function ProductListingPage({}: ProductListingPage) {
 
       return col;
     });
-  }, [typeOptions]);
+  }, [typeOptions, t]);
 
   const isFilterReady = typeOptions.length > 0;
 
@@ -137,7 +137,7 @@ export default function ProductListingPage({}: ProductListingPage) {
       <div className='flex items-center gap-2'>
         <div className='h-3 w-3 rounded-full bg-green-500' />
         <span className='text-sm font-medium'>
-          Online: {onlineData?.total ?? 0}
+          {t('products.status.online' as any)}: {onlineData?.total ?? 0}
         </span>
       </div>
 
@@ -145,7 +145,7 @@ export default function ProductListingPage({}: ProductListingPage) {
       <div className='flex items-center gap-2'>
         <div className='h-3 w-3 rounded-full bg-red-500' />
         <span className='text-sm font-medium'>
-          Offline: {offlineData?.total ?? 0}
+          {t('products.status.offline' as any)}: {offlineData?.total ?? 0}
         </span>
       </div>
 
@@ -156,14 +156,15 @@ export default function ProductListingPage({}: ProductListingPage) {
           <div className='absolute top-1/2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500' />
         </div>
         <span className='text-sm font-medium'>
-          Tổng: {(onlineData?.total ?? 0) + (offlineData?.total ?? 0)}
+          {t('products.status.total' as any)}:{' '}
+          {(onlineData?.total ?? 0) + (offlineData?.total ?? 0)}
         </span>
       </div>
     </div>
   );
 
   const handleRefetch = async () => {
-    toast.success('Đồng bộ thiết bị đã được khởi tạo');
+    toast.success(t('products.message.sync_initiated' as any));
     await Promise.all([refetch(), refetchOnline(), refetchOffline()]);
   };
 

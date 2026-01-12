@@ -3,6 +3,7 @@ import { translations, LanguageKey } from '../../i18n/locales';
 import { useCallback } from 'react';
 
 function getTranslationValue(obj: any, path: string): string | undefined {
+  if (!path || typeof path !== 'string') return undefined;
   return path.split('.').reduce((acc, key) => acc?.[key], obj);
 }
 
@@ -11,7 +12,7 @@ export function useTranslation() {
 
   const t = useCallback(
     (key: LanguageKey): string =>
-      getTranslationValue(translations[language], key) ?? key,
+      getTranslationValue(translations[language], key) ?? key ?? '',
     [language]
   );
 

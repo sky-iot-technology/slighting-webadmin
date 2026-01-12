@@ -1,9 +1,10 @@
 import type {
   UseMutationOptions,
-  UseQueryOptions,
+  UseQueryOptions
 } from '@tanstack/react-query';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 import { productsApi } from './api';
 import type {
@@ -12,7 +13,7 @@ import type {
   ProductDetail,
   ProductListResponseDto,
   UpdateProductDto,
-  CreateProductDto,
+  CreateProductDto
 } from './types';
 // Using local PRODUCTS_QUERY_KEY instead of imported queryKeys
 
@@ -41,7 +42,7 @@ export const useGetProducts = (
     queryFn: () => productsApi.getAll(params),
     gcTime: 30 * 60 * 1000, // Keep unused data for 30 minutes
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    ...options,
+    ...options
   });
 };
 
@@ -70,7 +71,7 @@ export const useGetProductsByCategory = (
     enabled: !!categoryId, // Only run query if categoryId is available
     gcTime: 30 * 60 * 1000, // Keep unused data for 30 minutes
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
-    ...options,
+    ...options
   });
 };
 
@@ -98,7 +99,7 @@ export const useGetProductById = (
     enabled: !!id,
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
-    ...options,
+    ...options
   });
 };
 
@@ -107,28 +108,26 @@ export const useCreateProduct = (
   options?: UseMutationOptions<Product, Error, CreateProductDto>
 ) => {
   const queryClient = useQueryClient();
-  
+  const { t } = useTranslation();
+
   return useMutation<Product, Error, CreateProductDto>({
     mutationFn: (data) => productsApi.create(data),
     onSuccess: (data, variables, context) => {
       // Invalidate all product queries
       queryClient.invalidateQueries({ queryKey: [PRODUCTS_QUERY_KEY] });
-      
+
       // Add the new product to the cache
-      queryClient.setQueryData(
-        [PRODUCTS_QUERY_KEY, 'detail', data.id],
-        data
-      );
-      
-      toast.success('Product created successfully!');
+      queryClient.setQueryData([PRODUCTS_QUERY_KEY, 'detail', data.id], data);
+
+      toast.success(t('toast.create_product_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to create product:', error);
-      toast.error(error.message || 'Failed to create product');
+      toast.error(error.message || t('toast.create_product_failed'));
       options?.onError?.(error, variables, context);
     },
-    ...options,
+    ...options
   });
 };
 
@@ -141,7 +140,8 @@ export const useUpdateProduct = (
   >
 ) => {
   const queryClient = useQueryClient();
-  
+  const { t } = useTranslation();
+
   return useMutation<
     Product,
     Error,
@@ -151,19 +151,22 @@ export const useUpdateProduct = (
     onSuccess: (data, variables, context) => {
       // Invalidate all product queries and category queries that might contain this product
       queryClient.invalidateQueries({ queryKey: [PRODUCTS_QUERY_KEY] });
-      
+
       // Update the specific product in cache
-      queryClient.setQueryData([PRODUCTS_QUERY_KEY, 'detail', variables.id], data);
-      
-      toast.success('Product updated successfully!');
+      queryClient.setQueryData(
+        [PRODUCTS_QUERY_KEY, 'detail', variables.id],
+        data
+      );
+
+      toast.success(t('toast.update_product_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update product:', error);
-      toast.error(error.message || 'Failed to update product');
+      toast.error(error.message || t('toast.update_product_failed'));
       options?.onError?.(error, variables, context);
     },
-    ...options,
+    ...options
   });
 };
 
@@ -172,29 +175,30 @@ export const useDeleteProduct = (
   options?: UseMutationOptions<void, Error, string | number>
 ) => {
   const queryClient = useQueryClient();
-  
+  const { t } = useTranslation();
+
   return useMutation<void, Error, string | number>({
     mutationFn: (id) => productsApi.delete(id),
     onSuccess: (data, deletedId, context) => {
       // Remove the product from the cache
       queryClient.removeQueries({
-        queryKey: [PRODUCTS_QUERY_KEY, 'detail', deletedId],
+        queryKey: [PRODUCTS_QUERY_KEY, 'detail', deletedId]
       });
-      
+
       // Invalidate products list to reflect changes
       queryClient.invalidateQueries({
-        queryKey: [PRODUCTS_QUERY_KEY],
+        queryKey: [PRODUCTS_QUERY_KEY]
       });
-      
-      toast.success('Product deleted successfully!');
+
+      toast.success(t('toast.delete_product_success'));
       options?.onSuccess?.(data, deletedId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete product:', error);
-      toast.error(error.message || 'Failed to delete product');
+      toast.error(error.message || t('toast.delete_product_failed'));
       options?.onError?.(error, variables, context);
     },
-    ...options,
+    ...options
   });
 };
 
@@ -206,7 +210,7 @@ export const usePrefetchProducts = (params?: GetProductsParamsDto) => {
     queryClient.prefetchQuery({
       queryKey: [PRODUCTS_QUERY_KEY, params],
       queryFn: () => productsApi.getAll(params),
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000 // 5 minutes
     });
   };
 };

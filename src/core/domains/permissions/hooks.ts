@@ -14,6 +14,7 @@ import {
 } from './types';
 import { rolesApi } from './api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const ROLES_QUERY_KEY = 'ui-roles';
 
@@ -73,6 +74,7 @@ export const useCreateRole = (
   options?: UseMutationOptions<UIRoleResponse, Error, CreateRoleInput>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<UIRoleResponse, Error, CreateRoleInput>({
     ...options,
@@ -82,13 +84,13 @@ export const useCreateRole = (
 
       queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
 
-      toast.success('Tạo vai trò thành công!');
+      toast.success(t('toast.create_role_success'));
       options?.onSuccess?.(data, variables, context);
     },
 
     onError: (error, variables, context) => {
       console.error('Failed to create role:', error);
-      toast.error(error.message || 'Tạo vai trò thất bại');
+      toast.error(error.message || t('toast.create_role_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -102,6 +104,7 @@ export const useUpdateRole = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<
     UIRoleResponse,
@@ -115,13 +118,13 @@ export const useUpdateRole = (
 
       queryClient.setQueryData([ROLES_QUERY_KEY, data.id], data);
 
-      toast.success('Cập nhật vai trò thành công!');
+      toast.success(t('toast.update_role_success'));
       options?.onSuccess?.(data, variables, context);
     },
 
     onError: (error, variables, context) => {
-      console.error('Failed to create role:', error);
-      toast.error(error.message || 'Cập nhật vai trò thất bại');
+      console.error('Failed to update role:', error);
+      toast.error(error.message || t('toast.update_role_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -131,6 +134,7 @@ export const useDeleteRole = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -144,12 +148,12 @@ export const useDeleteRole = (
         queryKey: [ROLES_QUERY_KEY]
       });
 
-      toast.success('Role deleted successfully');
+      toast.success(t('toast.delete_role_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete Role: ', error);
-      toast.error(error.message || 'Failed to delete Role');
+      toast.error(error.message || t('toast.delete_role_failed'));
       options?.onError?.(error, variables, context);
     }
   });

@@ -11,19 +11,20 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 
 export const branchColumns = (
   catalogues: Catalogue[],
-  trees: RegionNode[]
+  trees: RegionNode[],
+  t: (key: any) => string
 ): ColumnDef<Device>[] => [
   {
     id: 'dir',
     accessorKey: 'dir',
-    header: 'Sắp xếp',
+    header: t('branch.sort'),
     cell: () => {},
     meta: {
-      label: 'Sắp xếp',
+      label: t('branch.sort'),
       variant: 'select',
       options: [
-        { label: 'Mới nhất', value: 'asc' },
-        { label: 'Cũ nhất', value: 'desc' }
+        { label: t('branch.newest'), value: 'asc' },
+        { label: t('branch.oldest'), value: 'desc' }
       ]
     },
     enableColumnFilter: true
@@ -56,7 +57,7 @@ export const branchColumns = (
     id: 'serial_number',
     accessorKey: 'device_info',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Mã thiết bị' />
+      <DataTableColumnHeader column={column} title={t('branch.device_code')} />
     ),
     cell: ({ row }) => {
       const id = row.original.id;
@@ -71,7 +72,7 @@ export const branchColumns = (
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên thiết bị' />
+      <DataTableColumnHeader column={column} title={t('branch.device_name')} />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
@@ -83,7 +84,7 @@ export const branchColumns = (
     id: 'type',
     accessorKey: 'type',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Loại thiết bị' />
+      <DataTableColumnHeader column={column} title={t('branch.device_type')} />
     ),
     cell: ({ row }) => {
       const type = row.getValue('type');
@@ -91,7 +92,7 @@ export const branchColumns = (
       return <div>{name}</div>;
     },
     meta: {
-      label: 'Loại thiết bị',
+      label: t('branch.device_type'),
       variant: 'select',
       options: catalogues.map((c) => ({
         label: c.name,
@@ -106,22 +107,28 @@ export const branchColumns = (
     id: 'metadata',
     accessorKey: 'device_info',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái' />
+      <DataTableColumnHeader column={column} title={t('branch.status')} />
     ),
     cell: ({ row }) => {
       const info = row.original.device_info as DeviceInfo;
-      const label = info.online ? 'Online' : 'Offline';
+      const label = info.online ? t('branch.online') : t('branch.offline');
       const color = info.online
         ? 'text-map-control-button-success'
         : 'text-map-control-button-destructive';
       return <div className={color}>{label}</div>;
     },
     meta: {
-      label: 'Trạng thái',
+      label: t('branch.status'),
       variant: 'select',
       options: [
-        { label: 'Online', value: '{"device_info": {"online": true}}' },
-        { label: 'Offline', value: '{"device_info": {"online": false}}' }
+        {
+          label: t('branch.online'),
+          value: '{"device_info": {"online": true}}'
+        },
+        {
+          label: t('branch.offline'),
+          value: '{"device_info": {"online": false}}'
+        }
       ]
     },
     enableColumnFilter: true,
@@ -132,7 +139,10 @@ export const branchColumns = (
     id: 'status',
     accessorKey: 'status',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái thiết bị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('branch.device_status')}
+      />
     ),
     cell: ({ row }) => {
       const info = row.getValue('status') as string;
@@ -141,15 +151,15 @@ export const branchColumns = (
           ? 'text-calendar-blue'
           : 'text-map-control-button-destructive';
       const formatted =
-        info.charAt(0).toUpperCase() + info.slice(1).toLowerCase();
+        info === 'enabled' ? t('branch.enabled') : t('branch.disabled');
       return <div className={color}>{formatted}</div>;
     },
     meta: {
-      label: 'Trạng thái thiết bị',
+      label: t('branch.device_status'),
       variant: 'select',
       options: [
-        { label: 'Kích hoạt', value: 'enabled' },
-        { label: 'Chưa kích hoạt', value: 'disabled' }
+        { label: t('branch.enable'), value: 'enabled' },
+        { label: t('branch.disable'), value: 'disabled' }
       ]
     },
     enableColumnFilter: true,
@@ -160,7 +170,7 @@ export const branchColumns = (
     id: 'parent_group_id',
     accessorKey: 'parent_group_id',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Nhóm chi nhánh' />
+      <DataTableColumnHeader column={column} title={t('branch.branch_group')} />
     ),
     cell: ({ row }) => {
       const id = row.getValue('parent_group_id');
@@ -173,7 +183,10 @@ export const branchColumns = (
   {
     id: 'expiration_date',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Hết bảo hành' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('branch.warranty_expired')}
+      />
     ),
     cell: ({ row }) => {
       const attributes = row.original.device_asset?.asset_attribute;
@@ -197,7 +210,7 @@ export const branchColumns = (
   {
     id: 'actions',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader column={column} title={t('branch.action')} />
     ),
     size: 57,
     cell: ({ row }) => {

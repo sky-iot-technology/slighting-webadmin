@@ -37,6 +37,7 @@ type GoongMapProps = {
 
   /** ✅ optional render for popup */
   renderPopup?: (id: string | number, onClose: () => void) => React.ReactNode;
+  hover?: boolean;
 };
 
 type FitBoundsOptions = {
@@ -50,7 +51,8 @@ export default function GoongMap({
   isLoading = false,
   isFetching = false,
   selectedDevice = null,
-  renderPopup
+  renderPopup,
+  hover = false
 }: GoongMapProps) {
   const { t } = useTranslation();
 
@@ -309,7 +311,7 @@ export default function GoongMap({
         }}
       >
         {/* <ScaleControl {...scaleControlProps} /> */}
-        {hoverInfo && (
+        {hoverInfo && hover && (
           <Popup
             tipSize={5}
             anchor='bottom'

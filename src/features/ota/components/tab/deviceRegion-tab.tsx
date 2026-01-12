@@ -16,11 +16,14 @@ type DeviceTabProps = {
   progressMap?: Record<string, number>;
 };
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 export default function DeviceRegionTab({
   id,
   onSelectionChange,
   progressMap
 }: DeviceTabProps) {
+  const { t } = useTranslation();
   const canViewDevice = useCan('device', 'view');
 
   const [treeOpen, setTreeOpen] = useState(false);
@@ -83,7 +86,7 @@ export default function DeviceRegionTab({
 
   const { table } = useClientDataTable({
     data: tableData,
-    columns: DeviceColumns(),
+    columns: DeviceColumns(t),
     initialPageSize: 10,
     enableRowSelection: (row) => {
       if (row.original.isProgress) return false;

@@ -5,6 +5,7 @@ import { findParentNode } from '@/features/calendar/helper';
 import { parseIsoDate } from '../../helper';
 import GoongMap from '@/ui/business/map/goong-map';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type BranchDetailTabProps = {
   selectedRegionId?: string;
@@ -28,6 +29,7 @@ export function BranchDetailTab({
   isFetching,
   selectedDevice
 }: BranchDetailTabProps) {
+  const { t, tTime } = useTranslation();
   const hasRegion = !!selectedRegionId;
 
   return (
@@ -44,41 +46,45 @@ export function BranchDetailTab({
       >
         <div className='flex flex-col gap-5 text-xs'>
           <div className='flex items-center justify-between'>
-            <span className='text-[16px] font-bold'>Thông tin chi nhánh</span>
+            <span className='text-[16px] font-bold'>
+              {t('branch.branch_info' as any)}
+            </span>
             <BranchActionMenu id={selectedRegionId ?? ''} />
           </div>
 
           <div className='flex gap-2'>
-            <span>Chi nhánh:</span>
+            <span>{t('branch.branch_label' as any)}:</span>
             <span className='font-bold'>
               {findParentNode(treeData, selectedRegionId ?? '')?.name ?? '—'}
             </span>
           </div>
 
           <div className='flex gap-2'>
-            <span>Khu vực:</span>
+            <span>{t('branch.region' as any)}:</span>
             <span className='font-bold'>{group?.name ?? '—'}</span>
           </div>
 
           <div className='flex gap-2'>
-            <span>Ghi chú:</span>
+            <span>{t('branch.note' as any)}:</span>
             <span className='font-bold'>{group?.description ?? '—'}</span>
           </div>
 
           <div className='flex gap-2'>
-            <span>Thiết bị:</span>
-            <span className='font-bold'>{devices.length} thiết bị</span>
+            <span>{t('branch.devices' as any)}:</span>
+            <span className='font-bold'>
+              {tTime('branch.device_count' as any, { count: devices.length })}
+            </span>
           </div>
 
           <div className='flex gap-2'>
-            <span>Ngày tạo:</span>
+            <span>{t('branch.created_at' as any)}:</span>
             <span className='font-bold'>
               {parseIsoDate(group?.created_at ?? '')}
             </span>
           </div>
 
           <div className='flex gap-2'>
-            <span>Cập nhật cuối:</span>
+            <span>{t('branch.updated_at' as any)}:</span>
             <span className='font-bold'>
               {parseIsoDate(group?.updated_at ?? '')}
             </span>

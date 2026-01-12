@@ -13,12 +13,14 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   data: Device;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const deleteDevice = useDeleteDevice({
@@ -38,8 +40,8 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onClose={() => setOpen(false)}
         onConfirm={onConfirm}
         loading={deleteDevice.isPending}
-        title='Xoá thiết bị'
-        description='Bạn có chắc chắn muốn xoá thiết bị này?'
+        title={t('products.modal.delete.title' as any)}
+        description={t('products.modal.delete.description' as any)}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
@@ -66,7 +68,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('products.action.view' as any)}</span>
           </DropdownMenuItem>
           <PermissionGuard module='device' action='delete'>
             <DropdownMenuItem
@@ -82,7 +84,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('products.action.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

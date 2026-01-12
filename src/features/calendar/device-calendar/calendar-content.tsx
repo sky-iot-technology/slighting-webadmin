@@ -7,6 +7,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { memo } from 'react';
 import { CalendarTable } from './calendar-device-tables';
 import { columns } from './calendar-device-tables/calendar-device-columns';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CalendarContentProps {
   deviceId: string;
@@ -17,6 +18,7 @@ export const CalendarContent = memo(function CalendarContent({
   filters,
   deviceId
 }: CalendarContentProps) {
+  const { t } = useTranslation();
   const { data, isLoading, error } = useGetCalendarsByDevice(deviceId, {
     ...filters
   });
@@ -28,7 +30,7 @@ export const CalendarContent = memo(function CalendarContent({
     <CalendarTable
       data={calendars}
       totalItems={totalItems}
-      columns={columns as ColumnDef<Calendar, any>[]}
+      columns={columns(t) as ColumnDef<Calendar, any>[]}
       clientId={deviceId}
       isLoading={isLoading}
       error={error}

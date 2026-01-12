@@ -9,28 +9,27 @@ import { ArrowLeft } from 'lucide-react';
 import { useMemo } from 'react';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import WorkOrderView from './WorkOrderView';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type WorkOrderViewPageProps = {
-  pageTitle: string;
   isView?: boolean;
 };
 
 export default function WorkOrderViewPage({
-  pageTitle,
   isView = true
 }: WorkOrderViewPageProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const params = useParams();
   const searchParams = useSearchParams();
   const id = params?.maintenanceId as string;
-
   const { data, isLoading, error } = useGetWorkOrderById(id);
 
   const breadcrumbContent = useMemo(
     () => (
       <div className='flex items-center'>
         <span className='text-lg font-bold'>
-          {pageTitle}:{' '}
+          {t('products.detail.maintenance.title.detail')}:{' '}
           <span className='text-primary'>
             {data?.work_order_name || 'Loading...'}
           </span>
@@ -80,7 +79,7 @@ export default function WorkOrderViewPage({
       data={data}
       isLoading={isLoading}
       isView={isView}
-      pageTitle={pageTitle}
+      pageTitle={t('products.detail.maintenance.title.detail')}
     />
   );
 }

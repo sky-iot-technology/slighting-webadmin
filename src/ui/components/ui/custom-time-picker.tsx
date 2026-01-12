@@ -9,6 +9,7 @@ import React, {
 import TimePicker from 'react-time-picker';
 import { motion, AnimatePresence } from 'motion/react';
 import CustomScrollbar from '../custom-scrollbar';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CustomTimePickerProps {
   value?: string;
@@ -21,6 +22,7 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
   onChange,
   disabled
 }: CustomTimePickerProps) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [hour, setHour] = useState('00');
   const [minute, setMinute] = useState('00');
@@ -162,7 +164,7 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
         className={`border-input flex w-full items-center justify-between rounded-[4px] border px-1 py-1 ${!disabled ? 'cursor-pointer' : ''}`}
         onClick={() => setOpen((o) => !o)}
       >
-        {value || `Chọn thời gian`}
+        {value || t('calendar.time_select')}
         <Image
           src={'/assets/icons/time.svg'}
           alt='time'

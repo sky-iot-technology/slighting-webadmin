@@ -13,11 +13,14 @@ type DeviceTabProps = {
   progressMap?: Record<string, number>;
 };
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 export default function DeviceTab({
   id,
   onSelectionChange,
   progressMap
 }: DeviceTabProps) {
+  const { t } = useTranslation();
   const canViewDevice = useCan('device', 'view');
 
   const { data, isLoading } = useGetOta(id, {
@@ -66,7 +69,7 @@ export default function DeviceTab({
 
   const { table } = useClientDataTable({
     data: tableData,
-    columns: DeviceColumns(),
+    columns: DeviceColumns(t),
     initialPageSize: 10,
     enableRowSelection: (row) => {
       if (row.original.isProgress) return false;

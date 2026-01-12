@@ -23,6 +23,7 @@ import { WorkOrderFormSchema } from '@/core/domains/workorders';
 import { useAuthStore } from '../auth';
 import { ALARMS_QUERY_KEY } from '../alarms/hooks';
 import { storageApi } from '../storage';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const WORKORDER_QUERY_KEY = 'workorders';
 
@@ -61,6 +62,7 @@ export const useCreateWorkOrder = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId, user } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<
     void,
     Error,
@@ -96,12 +98,12 @@ export const useCreateWorkOrder = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [WORKORDER_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [ALARMS_QUERY_KEY] });
-      toast.success('Create WorkOrder successfully!');
+      toast.success(t('toast.create_work_order_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to create WorkOrder:', error);
-      toast.error(error.message || 'Failed to create WorkOrder');
+      toast.error(error.message || t('toast.create_work_order_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -148,6 +150,7 @@ export const useUpdateWorkOrder = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId, user } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<
     WorkOrder,
     Error,
@@ -179,12 +182,12 @@ export const useUpdateWorkOrder = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [WORKORDER_QUERY_KEY] });
 
-      toast.success('Update WorkOrder successfully!');
+      toast.success(t('toast.update_work_order_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      console.error('Failed to create WorkOrder:', error);
-      toast.error(error.message || 'Failed to create WorkOrder');
+      console.error('Failed to update WorkOrder:', error);
+      toast.error(error.message || t('toast.update_work_order_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -259,6 +262,7 @@ export const useDeleteWorkOrder = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<void, Error, string>({
     ...options,
     mutationFn: (id) => {
@@ -281,12 +285,12 @@ export const useDeleteWorkOrder = (
         queryKey: [WORKORDER_QUERY_KEY]
       });
 
-      toast.success('Work Order deleted successfully');
+      toast.success(t('toast.delete_work_order_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete work order: ', error);
-      toast.error(error.message || 'Failed to delete work order');
+      toast.error(error.message || t('toast.delete_work_order_failed'));
       options?.onError?.(error, variables, context);
     }
   });

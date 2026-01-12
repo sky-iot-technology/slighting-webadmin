@@ -36,7 +36,7 @@ export default function RolePage() {
         <RoleTable
           data={data?.['ui-roles'] ?? []}
           totalItems={data?.total ?? 0}
-          columns={roleColumns()}
+          columns={roleColumns(t)}
           isLoading={isLoading}
           error={error}
         />

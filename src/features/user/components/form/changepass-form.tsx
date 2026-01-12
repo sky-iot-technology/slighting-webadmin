@@ -32,6 +32,7 @@ import { Button } from '@/ui/components/ui/button';
 import { Input } from '@/ui/components/ui/input';
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type ChangepasssDialogProps = {
   open: boolean;
@@ -44,6 +45,7 @@ export default function ChangepassDialog({
   onOpenChange,
   userId
 }: ChangepasssDialogProps) {
+  const { t } = useTranslation();
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -70,14 +72,18 @@ export default function ChangepassDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTitle className='hidden'>Đổi mật khẩu</DialogTitle>
-      <DialogDescription className='hidden'>Đổi mật khẩu</DialogDescription>
+      <DialogTitle className='hidden'>
+        {t('user.change_password_title' as any)}
+      </DialogTitle>
+      <DialogDescription className='hidden'>
+        {t('user.change_password_title' as any)}
+      </DialogDescription>
       <DialogContent className='!w-[90vw] !max-w-[417px] rounded-xl p-0'>
         {/* <CustomScrollbar className='max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'> */}
         <Card className='bg-background mx-auto w-full gap-1.5 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
           <CardHeader className='px-0'>
             <CardTitle className='text-primary text-left text-[20px] font-bold'>
-              Đổi mật khẩu
+              {t('user.change_password_title' as any)}
             </CardTitle>
           </CardHeader>
           <CardContent className='px-0'>
@@ -89,14 +95,15 @@ export default function ChangepassDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Mật khẩu mới<span className='text-red-500'>*</span>
+                        {t('user.new_password' as any)}
+                        <span className='text-red-500'>*</span>
                       </FormLabel>
                       <FormControl>
                         <div className='relative'>
                           <Input
                             {...field}
                             type={showNewPassword ? 'text' : 'password'}
-                            placeholder='Nhập mật khẩu mới'
+                            placeholder={t('user.enter_new_password' as any)}
                             className='!h-[31px] !text-xs'
                             autoComplete='newpassword'
                           />
@@ -124,7 +131,7 @@ export default function ChangepassDialog({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className='text-xs font-bold'>
-                        Xác nhận mật khẩu mới{' '}
+                        {t('user.confirm_new_password' as any)}{' '}
                         <span className='text-red-500'>*</span>
                       </FormLabel>
                       <FormControl>
@@ -132,7 +139,7 @@ export default function ChangepassDialog({
                           <Input
                             {...field}
                             type={showConfirmPassword ? 'text' : 'password'}
-                            placeholder='Xác nhận mật khẩu mới'
+                            placeholder={t('user.re_enter_new_password' as any)}
                             className='!h-[31px] !text-xs'
                             autoComplete='confirmPassword'
                           />
@@ -163,13 +170,13 @@ export default function ChangepassDialog({
                     type='button'
                     className='h-full w-16 rounded-[4px] text-xs'
                   >
-                    Hủy
+                    {t('user.cancel' as any)}
                   </Button>
                   <Button
                     type='submit'
                     className='h-full w-[105px] rounded-[4px] text-xs'
                   >
-                    Cập nhật
+                    {t('user.update' as any)}
                   </Button>
                 </div>
               </form>

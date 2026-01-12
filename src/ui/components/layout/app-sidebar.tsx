@@ -24,7 +24,6 @@ import { IconChevronRight } from '@tabler/icons-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LanguageToggle } from '@/ui/components/layout/LanguageToggle/language-toggle';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import * as React from 'react';
 import { Icons } from '../icons';
@@ -34,7 +33,6 @@ import {
   getFirstAccessibleRoute,
   usePermissionStore
 } from '@/core/domains/permissions';
-import router from 'next/router';
 
 // Reusable component for the active state SVG background
 export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
@@ -377,7 +375,6 @@ export default function AppSidebar() {
 
         <SidebarFooter>
           <div className='flex items-center justify-center gap-2'>
-            <LanguageToggle />
             <span className='text-center text-sm text-gray-500'>v1.0.0</span>
           </div>
         </SidebarFooter>

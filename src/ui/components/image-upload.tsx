@@ -5,6 +5,7 @@ import CustomScrollbar from './custom-scrollbar';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogContent, DialogDescription } from './ui/dialog';
 import { DialogTitle } from '@radix-ui/react-dialog';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type ExistingFile = {
   file_name: string;
@@ -37,6 +38,7 @@ export function ImageUpload({
   existingImages = [],
   onRemoveExisting
 }: ImageUploadProps) {
+  const { t } = useTranslation();
   const [images, setImages] = useState<File[]>([]);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
 
@@ -82,7 +84,7 @@ export function ImageUpload({
             className='hover:bg-accent flex w-fit cursor-pointer items-center rounded-[4px] border px-3 py-1.5 text-xs transition-colors'
           >
             <Upload className='mr-2 h-3 w-3' />
-            Chọn ảnh
+            {t('general.choose_picture')}
           </label>
         )}
 

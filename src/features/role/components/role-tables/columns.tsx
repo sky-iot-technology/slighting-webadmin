@@ -7,7 +7,7 @@ import { UIRoleResponse } from '@/core/domains/permissions';
 import { formatDateString } from '@/features/calendar/helper';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
+export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -36,14 +36,17 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên vai trò' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('role.table.name' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm kiếm vai trò',
+      placeholder: t('role.placeholder.search_role' as any),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -54,7 +57,10 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
     id: 'created_at',
     accessorKey: 'created_at',
     header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ngày tạo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('role.table.created_at' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{formatDateString(row.getValue('created_at'))}</div>;
@@ -66,7 +72,10 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
     id: 'description',
     accessorKey: 'description',
     header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ghi chú' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('role.table.description' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('description')}</div>;
@@ -80,7 +89,7 @@ export const roleColumns = (): ColumnDef<UIRoleResponse>[] => [
       <DataTableColumnHeader
         className='flex w-full items-center justify-center'
         column={column}
-        title='Ghi chú'
+        title={t('role.table.action' as any)}
       />
     ),
     size: 57,

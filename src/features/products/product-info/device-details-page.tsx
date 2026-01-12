@@ -130,19 +130,19 @@ export default function DeviceDetailsPage() {
             </div>
           </div>
           <TabsTrigger value='overview' className={tabClassName}>
-            Tổng quan
+            {t('products.detail.tabs.overview' as any)}
           </TabsTrigger>
           <TabsTrigger value='activity' className={tabClassName}>
-            Hoạt động
+            {t('products.detail.tabs.activity' as any)}
           </TabsTrigger>
           <TabsTrigger value='analytics' className={tabClassName}>
-            Phân tích
+            {t('products.detail.tabs.analytics' as any)}
           </TabsTrigger>
           <TabsTrigger value='schedule' className={tabClassName}>
-            Quản lý lịch
+            {t('products.detail.tabs.schedule' as any)}
           </TabsTrigger>
           <TabsTrigger value='maintenance' className={tabClassName}>
-            Vận hành và bảo trì
+            {t('products.detail.tabs.maintenance' as any)}
           </TabsTrigger>
         </TabsList>
 

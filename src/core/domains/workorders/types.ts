@@ -63,9 +63,9 @@ export enum WorkOrderSeverity {
 }
 
 export const WorkOderSeverityLabel: Record<WorkOrderSeverity, string> = {
-  [WorkOrderSeverity.High]: 'Cao',
-  [WorkOrderSeverity.Medium]: 'Trung bình',
-  [WorkOrderSeverity.Low]: 'Thấp'
+  [WorkOrderSeverity.High]: 'maintenance.severity.high',
+  [WorkOrderSeverity.Medium]: 'maintenance.severity.medium',
+  [WorkOrderSeverity.Low]: 'maintenance.severity.low'
 };
 
 export enum WorkOrderStatus {
@@ -76,10 +76,10 @@ export enum WorkOrderStatus {
 }
 
 export const WorkOrderStatusLabel: Record<WorkOrderStatus, string> = {
-  [WorkOrderStatus.OPEN]: 'Chưa xử lý',
-  [WorkOrderStatus.PROCESS]: 'Đang xử lý',
-  [WorkOrderStatus.COMPLETED]: 'Đã xử lý',
-  [WorkOrderStatus.CLOSED]: 'Đã đóng'
+  [WorkOrderStatus.OPEN]: 'maintenance.work_order_status.open',
+  [WorkOrderStatus.PROCESS]: 'maintenance.work_order_status.process',
+  [WorkOrderStatus.COMPLETED]: 'maintenance.work_order_status.completed',
+  [WorkOrderStatus.CLOSED]: 'maintenance.work_order_status.closed'
 };
 
 export enum WorkOrderAction {
@@ -90,10 +90,10 @@ export enum WorkOrderAction {
 }
 
 export const WorkOrderActionLabel: Record<WorkOrderAction, string> = {
-  [WorkOrderAction.OPEN]: 'Chưa xử lý',
-  [WorkOrderAction.FORWARD]: 'Chuyển giao',
-  [WorkOrderAction.CONFIRMED]: 'Xác nhận hoàn thành',
-  [WorkOrderAction.CANCEL]: 'Đã hủy'
+  [WorkOrderAction.OPEN]: 'maintenance.work_order_action.open',
+  [WorkOrderAction.FORWARD]: 'maintenance.work_order_action.forward',
+  [WorkOrderAction.CONFIRMED]: 'maintenance.work_order_action.comfirmed',
+  [WorkOrderAction.CANCEL]: 'maintenance.work_order_action.cancel'
 };
 
 export interface createWorkOrderDTO {

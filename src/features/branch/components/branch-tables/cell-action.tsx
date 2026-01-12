@@ -15,6 +15,7 @@ import Image from 'next/image';
 import {} from '@/core/domains/calendars';
 import { useDeleteDeviceParent } from '@/core/domains/devices';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
@@ -22,6 +23,8 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+  const { t } = useTranslation();
+
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
@@ -78,7 +81,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                     height={12}
                   />
                 </div>
-                <span>Chi tiết</span>
+                <span>{t('branch.table.action.view')}</span>
               </DropdownMenuItem>
             </>
           )}
@@ -98,7 +101,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                     height={12}
                   />
                 </div>
-                <span className='text-destructive'>Xóa</span>
+                <span className='text-destructive'>
+                  {t('branch.table.action.delete')}
+                </span>
               </DropdownMenuItem>
             </>
           )}

@@ -10,8 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger
 } from '@/ui/components/ui/popover';
-import { CaretSortIcon } from '@radix-ui/react-icons';
-import { ListFilter } from 'lucide-react';
 import { Input } from '@/ui/components/ui/input';
 import {
   Select,
@@ -23,13 +21,10 @@ import {
 } from '@/ui/components/ui/select';
 import { Label } from '@/ui/components/ui/label';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
-import {
-  findNodeName,
-  findNodeSlug,
-  flattenTree
-} from '@/features/calendar/helper';
+import { findNodeSlug, flattenTree } from '@/features/calendar/helper';
 import Image from 'next/image';
 import { TreeProvider } from '@/ui/business/tree/TreeProvider';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface DataTableFilterOptionsProps<TData> {
   table: Table<TData>;
@@ -44,6 +39,8 @@ export function DataTableFilterOptions<TData>({
   onApply,
   onCancel
 }: DataTableFilterOptionsProps<TData>) {
+  const { t } = useTranslation();
+
   const [open, setOpen] = React.useState(false);
   const { treeData } = useRegionTreeStore();
 
@@ -161,7 +158,7 @@ export function DataTableFilterOptions<TData>({
                   <Label className='text-xs'>{opt.label}</Label>
                   {opt.variant === 'text' && (
                     <Input
-                      placeholder='Tất cả'
+                      placeholder={t('general.all')}
                       value={value}
                       onChange={(e) =>
                         setFilterValues((prev) => ({
@@ -186,10 +183,10 @@ export function DataTableFilterOptions<TData>({
                       }}
                     >
                       <SelectTrigger className='w-full text-xs'>
-                        <SelectValue placeholder='Tất cả' />
+                        <SelectValue placeholder={t('general.all')} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectClear>Tất cả</SelectClear>
+                        <SelectClear>{t('general.all')}</SelectClear>
                         {(opt.options ?? []).map((o) => (
                           <SelectItem
                             key={o.value}
@@ -261,10 +258,10 @@ export function DataTableFilterOptions<TData>({
                 handleCancel();
               }}
             >
-              Đặt lại
+              {t('general.reset')}
             </Button>
             <Button className='text-xs' size='sm' onClick={handleApply}>
-              Áp dụng
+              {t('general.apply')}
             </Button>
           </div>
         </div>

@@ -48,18 +48,18 @@ export default function OrganizationPage() {
       <UnitTable
         data={units}
         totalItems={units.length}
-        columns={unitColumns()}
+        columns={unitColumns(t)}
         onTableReady={setUnitTable}
       />
     );
-  }, []);
+  }, [t]);
 
   const departmentTableMemo = useMemo(() => {
     return (
       <DepartmentTable
         data={departments}
         totalItems={departments.length}
-        columns={departmentColumns(units)}
+        columns={departmentColumns(t, units)}
         onTableReady={setDepartmentTable}
       />
     );
@@ -79,13 +79,13 @@ export default function OrganizationPage() {
                 value='unit'
                 className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
               >
-                Đơn vị
+                {t('organization.tab.unit')}
               </TabsTrigger>
               <TabsTrigger
                 value='department'
                 className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
               >
-                Bộ phận
+                {t('organization.tab.department')}
               </TabsTrigger>
             </TabsList>
           </Tabs>
@@ -102,7 +102,9 @@ export default function OrganizationPage() {
                   onClick={() => setOpen(true)}
                 >
                   <IconPlus className='h-4 w-4' />
-                  <span className='text-xs'>Thêm</span>
+                  <span className='text-xs'>
+                    {t('organization.button.add')}
+                  </span>
                 </Button>
               }
               excel={false}
@@ -121,7 +123,9 @@ export default function OrganizationPage() {
                   onClick={() => setOpenDepartment(true)}
                 >
                   <IconPlus className='h-4 w-4' />
-                  <span className='text-xs'>Thêm</span>
+                  <span className='text-xs'>
+                    {t('organization.button.add')}
+                  </span>
                 </Button>
               }
               excel={false}
@@ -132,12 +136,12 @@ export default function OrganizationPage() {
 
         {activeTab === 'unit' ? unitTableMemo : departmentTableMemo}
         <UnitDialog
-          pageTitle='Thêm đơn vị'
+          pageTitle={t('organization.unit.title.add')}
           open={open}
           onOpenChange={setOpen}
         />
         <DepartmentDialog
-          pageTitle='Thêm bộ phận'
+          pageTitle={t('organization.department.title.add')}
           open={openDepartment}
           onOpenChange={setOpenDepartment}
         />

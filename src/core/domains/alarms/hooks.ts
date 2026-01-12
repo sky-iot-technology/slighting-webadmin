@@ -15,6 +15,7 @@ import {
 import { alarmApi } from './api';
 import { toast } from 'sonner';
 import { useAuthStore } from '../auth';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const ALARMS_QUERY_KEY = 'alarms';
 
@@ -48,6 +49,7 @@ export const useAcknowledgedAlarm = (
   options?: UseMutationOptions<Alarm, Error, { id: string }>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { user } = useAuthStore();
 
@@ -74,12 +76,12 @@ export const useAcknowledgedAlarm = (
       //   [ALARMS_QUERY_KEY, 'detail', variables.id], data
       // );
 
-      toast.success('Acknowleged alarm successfully!');
+      toast.success(t('toast.acknowledge_alarm_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to acknowleged alarm:', error);
-      toast.error(error.message || 'Failed to acknowleged alarm');
+      toast.error(error.message || t('toast.acknowledge_alarm_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -89,6 +91,7 @@ export const useCompletedAlarm = (
   options?: UseMutationOptions<Alarm, Error, { id: string }>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const { user } = useAuthStore();
 
@@ -114,12 +117,12 @@ export const useCompletedAlarm = (
       //   [ALARMS_QUERY_KEY, 'detail', variables.id], data
       // );
 
-      toast.success('Completed alarm successfully!');
+      toast.success(t('toast.complete_alarm_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to completed alarm:', error);
-      toast.error(error.message || 'Failed to completed alarm');
+      toast.error(error.message || t('toast.complete_alarm_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -154,6 +157,7 @@ export const useDeleteAlarm = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -168,12 +172,12 @@ export const useDeleteAlarm = (
         queryKey: [ALARMS_QUERY_KEY]
       });
 
-      toast.success('Alarm deleted successfully');
+      toast.success(t('toast.delete_alarm_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete alarm: ', error);
-      toast.error(error.message || 'Failed to delete alarm');
+      toast.error(error.message || t('toast.delete_alarm_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -183,6 +187,7 @@ export const useDeleteAlarms = (
   options?: UseMutationOptions<void, Error, string[]>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string[]>({
     ...options,
@@ -199,12 +204,12 @@ export const useDeleteAlarms = (
         queryKey: [ALARMS_QUERY_KEY]
       });
 
-      toast.success('Alarms deleted successfully');
+      toast.success(t('toast.delete_alarms_success'));
       options?.onSuccess?.(data, ids, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete alarms: ', error);
-      toast.error(error.message || 'Failed to delete alarms');
+      toast.error(error.message || t('toast.delete_alarms_failed'));
       options?.onError?.(error, variables, context);
     }
   });

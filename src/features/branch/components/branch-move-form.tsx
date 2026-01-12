@@ -29,6 +29,7 @@ import { findNodeById } from '@/features/calendar/helper';
 import { Input } from '@/ui/components/ui/input';
 import { toast } from 'sonner';
 import { RegionTreeWrapper } from '@/ui/business/tree/RegionTreeWrapper';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type BranchMoveFormProps = {
   initialData: Partial<Group>;
@@ -47,6 +48,7 @@ export default function BranchMoveForm({
   onClose,
   pageTitle
 }: BranchMoveFormProps) {
+  const { t } = useTranslation();
   const { treeData } = useRegionTreeStore();
   const [selectedParent, setSelectedParent] = useState<{
     id: string;
@@ -105,7 +107,7 @@ export default function BranchMoveForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Chi nhánh hiện tại
+                        {t('branch.current_branch')}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -126,7 +128,7 @@ export default function BranchMoveForm({
                     render={({ field }) => (
                       <FormItem className='col-span-2'>
                         <FormLabel className='text-xs font-bold'>
-                          Đã chọn
+                          {t('branch.selected')}
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -149,7 +151,7 @@ export default function BranchMoveForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Chi nhánh cha
+                      {t('branch.parent_branch')}
                     </FormLabel>
                     <FormControl>
                       <div className='rounded-[4px] border-1'>
@@ -184,13 +186,13 @@ export default function BranchMoveForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('branch.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-[70px] rounded-[4px] text-xs'
                 >
-                  Lưu
+                  {t('branch.save')}
                 </Button>
               </div>
             </form>

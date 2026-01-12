@@ -10,6 +10,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
@@ -33,6 +34,7 @@ export function ProductTable<TData, TValue>({
   isFilterReady
 }: ProductTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
+  const { t } = useTranslation();
   const router = useRouter();
   const pageCount = Math.ceil(totalItems / pageSize);
 
@@ -78,7 +80,7 @@ export function ProductTable<TData, TValue>({
                       }}
                     >
                       <IconPlus className='h-3 w-3' />
-                      Thêm
+                      {t('products.button.add' as any)}
                     </Button>
                   </PermissionGuard>
                 </>

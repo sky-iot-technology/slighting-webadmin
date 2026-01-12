@@ -22,6 +22,7 @@ import { useAuthStore } from '../auth';
 import { storageApi } from '../storage';
 import { useEffect, useRef } from 'react';
 import { DEVICES_QUERY_KEY, devicesApi } from '../devices';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 //Query keys
 export const OTAS_QUERY_KEY = 'otas';
@@ -84,6 +85,7 @@ export const useCreateOta = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<OtaItem, Error, OtaFormSchema>({
     ...options,
     mutationFn: async (data) => {
@@ -112,12 +114,12 @@ export const useCreateOta = (
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [OTAS_QUERY_KEY] });
 
-      toast.success('Ota created successfully!');
+      toast.success(t('toast.create_ota_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to create ota:', error);
-      toast.error(error.message || 'Failed to create ota');
+      toast.error(error.message || t('toast.create_ota_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -127,6 +129,7 @@ export const useDeleteOta = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -150,12 +153,12 @@ export const useDeleteOta = (
         queryKey: [OTAS_QUERY_KEY]
       });
 
-      toast.success('Ota deleted successfully');
+      toast.success(t('toast.delete_ota_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete Ota: ', error);
-      toast.error(error.message || 'Failed to delete Ota');
+      toast.error(error.message || t('toast.delete_ota_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -170,6 +173,7 @@ export const useUpdateOta = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<OtaItem, Error, { id: string; data: OtaUpdateFormSchema }>(
     {
       ...options,
@@ -214,12 +218,12 @@ export const useUpdateOta = (
       onSuccess: (data, variables, context) => {
         queryClient.invalidateQueries({ queryKey: [OTAS_QUERY_KEY] });
 
-        toast.success('Ota update successfully!');
+        toast.success(t('toast.update_ota_success'));
         options?.onSuccess?.(data, variables, context);
       },
       onError: (error, variables, context) => {
         console.error('Failed to update Ota:', error);
-        toast.error(error.message || 'Failed to update Ota');
+        toast.error(error.message || t('toast.update_ota_failed'));
         options?.onError?.(error, variables, context);
       }
     }
@@ -231,18 +235,19 @@ export const useExcuteOta = (
   options?: UseMutationOptions<ExecuteOtaResponse, Error, ExecuteOtaRequest>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<ExecuteOtaResponse, Error, ExecuteOtaRequest>({
     ...options,
     mutationFn: async (data) => await otaApi.executesManyOta(data),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [OTAS_QUERY_KEY] });
-      toast.success('Send ota request successfully!');
+      toast.success(t('toast.send_ota_request_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to send OTA request:', error);
-      toast.error(error.message || 'Failed to send OTA request');
+      toast.error(error.message || t('toast.send_ota_request_failed'));
       options?.onError?.(error, variables, context);
     }
   });

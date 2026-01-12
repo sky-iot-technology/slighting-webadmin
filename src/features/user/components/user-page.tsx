@@ -51,7 +51,7 @@ export default function UserPage() {
         <UserTable
           data={data?.users ?? []}
           totalItems={data?.total ?? 0}
-          columns={userColumns()}
+          columns={userColumns(t)}
           isLoading={isLoading}
           error={error}
         />

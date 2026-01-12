@@ -7,7 +7,7 @@ import { User } from '@/core/domains/users/types';
 import StatusCell from './statusCell';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const userColumns = (): ColumnDef<User>[] => [
+export const userColumns = (t: any): ColumnDef<User>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -36,7 +36,7 @@ export const userColumns = (): ColumnDef<User>[] => [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên' />
+      <DataTableColumnHeader column={column} title={t('user.name')} />
     ),
     cell: ({ row }) => {
       const user = row.original as User;
@@ -44,7 +44,7 @@ export const userColumns = (): ColumnDef<User>[] => [
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm kiếm',
+      placeholder: t('user.search_placeholder'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -54,7 +54,7 @@ export const userColumns = (): ColumnDef<User>[] => [
   {
     id: 'unit',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Đơn vị' />
+      <DataTableColumnHeader column={column} title={t('user.unit')} />
     ),
     cell: ({ row }) => {
       return <div>-</div>;
@@ -66,7 +66,7 @@ export const userColumns = (): ColumnDef<User>[] => [
     id: 'department',
     accessorKey: 'department',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Bộ phận' />
+      <DataTableColumnHeader column={column} title={t('user.department')} />
     ),
     cell: ({ row }) => {
       return <div>-</div>;
@@ -78,7 +78,7 @@ export const userColumns = (): ColumnDef<User>[] => [
     id: 'role',
     accessorKey: 'role',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Vai trò' />
+      <DataTableColumnHeader column={column} title={t('user.role')} />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('role')}</div>;
@@ -90,7 +90,7 @@ export const userColumns = (): ColumnDef<User>[] => [
     id: 'group',
     accessorKey: 'group',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Chi nhánh' />
+      <DataTableColumnHeader column={column} title={t('user.branch')} />
     ),
     cell: ({ row }) => {
       return <div>-</div>;
@@ -98,31 +98,11 @@ export const userColumns = (): ColumnDef<User>[] => [
     enableSorting: false,
     enableHiding: false
   },
-  // {
-  //   id: 'status',
-  //   accessorKey: 'status',
-  //   header: 'Trạng thái',
-  //   cell: ({ row }) => {
-  //     const user = row.original;
-  //     const isEnabled = user.status === 'enabled';
-  //     const useUpdateStatus = useUpdateUserStatus();
-  //     return (
-  //       <Switch
-  //         className={`data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-3`}
-  //         checked={isEnabled}
-  //         disabled={useUpdateStatus.isPending}
-  //         onCheckedChange={(val) =>
-  //           useUpdateStatus.mutate({ id: user.id, enabled: val })
-  //         }
-  //       />
-  //     );
-  //   }
-  // },
   {
     id: 'status',
     accessorKey: 'status',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái' />
+      <DataTableColumnHeader column={column} title={t('user.status')} />
     ),
     cell: ({ row }) => <StatusCell user={row.original} />,
     enableSorting: false,
@@ -131,7 +111,7 @@ export const userColumns = (): ColumnDef<User>[] => [
   {
     id: 'actions',
     header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader column={column} title={t('user.actions')} />
     ),
     size: 57,
     cell: ({ row }) => {

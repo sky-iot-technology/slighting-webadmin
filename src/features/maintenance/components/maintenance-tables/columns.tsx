@@ -18,6 +18,7 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 export const maintenanceColumns = (
   users: User[],
   devices: Device[],
+  t: (key: string) => string,
   options?: { onViewAction?: (id: string) => void }
 ): ColumnDef<Alarm>[] => [
   {
@@ -48,7 +49,10 @@ export const maintenanceColumns = (
     id: 'metadata',
     accessorKey: 'metadata',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Mã thiết bị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.device_id')}
+      />
     ),
     cell: ({ row }) => {
       const metadata = row.getValue('metadata') as
@@ -63,7 +67,10 @@ export const maintenanceColumns = (
     id: 'measurement',
     accessorKey: 'measurement',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên cảnh báo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.warning_name')}
+      />
     ),
     cell: ({ row }) => {
       const measurement = row.getValue('measurement') as string;
@@ -76,7 +83,7 @@ export const maintenanceColumns = (
     },
     meta: {
       label: 'measurement',
-      placeholder: 'Tìm tên cảnh báo',
+      placeholder: t('maintenance.placeholder_warning_name'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -87,7 +94,10 @@ export const maintenanceColumns = (
     id: 'severity',
     accessorKey: 'severity',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ưu tiên' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.priority')}
+      />
     ),
     cell: ({ row }) => {
       const severity = row.getValue('severity') as AlarmSeverity;
@@ -99,7 +109,7 @@ export const maintenanceColumns = (
             : 'text-calendar-gray';
       return (
         <div className={`font-bold ${color}`}>
-          {AlarmSeverityLabel[severity]}
+          {t(AlarmSeverityLabel[severity] as any)}
         </div>
       );
     },
@@ -110,14 +120,17 @@ export const maintenanceColumns = (
     id: 'created_at',
     accessorKey: 'created_at',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian gửi cảnh báo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.warning_time')}
+      />
     ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('created_at') as string);
       return <div>{time}</div>;
     },
     meta: {
-      label: 'Thời gian bắt đầu',
+      label: t('maintenance.start_time'),
       variant: 'dateRangeSingle'
     },
     enableColumnFilter: true,
@@ -128,7 +141,10 @@ export const maintenanceColumns = (
     id: 'timeSpend',
     accessorKey: 'timeSpend',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian kéo dài' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.duration')}
+      />
     ),
     cell: ({ row }) => {
       const resolvedTime = row.original.resolved_at;
@@ -147,10 +163,10 @@ export const maintenanceColumns = (
     id: 'sendBy',
     accessorKey: 'sendBy',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Người gửi' />
+      <DataTableColumnHeader column={column} title={t('maintenance.sender')} />
     ),
     cell: ({ row }) => {
-      return <div>Hệ thống</div>;
+      return <div>{t('maintenance.system')}</div>;
     },
     enableSorting: false,
     enableHiding: false
@@ -159,7 +175,10 @@ export const maintenanceColumns = (
     id: 'status',
     accessorKey: 'status',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái xử lý' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.process_status')}
+      />
     ),
     cell: ({ row }) => {
       const status = row.getValue('status') as AlarmStatus;
@@ -170,7 +189,9 @@ export const maintenanceColumns = (
             ? 'text-yellow-2'
             : 'text-calendar-green';
       return (
-        <div className={`${color} font-bold`}>{AlarmStatusLabel[status]}</div>
+        <div className={`${color} font-bold`}>
+          {t(AlarmStatusLabel[status] as any)}
+        </div>
       );
     },
     enableSorting: false,
@@ -180,7 +201,7 @@ export const maintenanceColumns = (
     id: 'assignee_id',
     accessorKey: 'assignee_id',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Người xử lý' />
+      <DataTableColumnHeader column={column} title={t('maintenance.handler')} />
     ),
     cell: ({ row }) => {
       const assigneeId = row.getValue('assignee_id') as string;
@@ -201,7 +222,10 @@ export const maintenanceColumns = (
     id: 'resolved_at',
     accessorKey: 'resolved_at',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian kết thúc' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.end_time')}
+      />
     ),
     cell: ({ row }) => {
       const resolved = row.getValue('resolved_at') as string;
@@ -217,7 +241,7 @@ export const maintenanceColumns = (
   {
     id: 'actions',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader column={column} title={t('maintenance.action')} />
     ),
     size: 57,
     cell: ({ row }) => {

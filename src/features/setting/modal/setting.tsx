@@ -36,7 +36,9 @@ export function SettingModal({
         hideCloseButton
       >
         <DialogHeader className='hidden'>
-          <DialogTitle className='text-sm font-bold'>Cài đặt</DialogTitle>
+          <DialogTitle className='text-sm font-bold'>
+            {t('setting.modal.title' as any)}
+          </DialogTitle>
         </DialogHeader>
 
         <div className='flex max-h-[75vh] flex-col overflow-y-auto md:h-[435px] md:flex-row'>

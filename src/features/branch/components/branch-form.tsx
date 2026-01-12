@@ -36,6 +36,7 @@ import {
 } from '@/ui/components/ui/sheet';
 import { TreeProvider } from '@/ui/business/tree/TreeProvider';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type BranchFormProps = {
   initialData: Partial<Group> | null;
@@ -52,6 +53,7 @@ export default function BranchForm({
   pageTitle,
   isEditMode
 }: BranchFormProps) {
+  const { t } = useTranslation();
   const [selectedParent, setSelectedParent] = useState<{
     id: string;
     name: string;
@@ -83,8 +85,6 @@ export default function BranchForm({
     resolver: zodResolver(branchFormSchema),
     defaultValues
   });
-
-  console.log(form.formState.errors);
 
   const createMutation = useCreateGroup({
     onSuccess: () => {
@@ -136,11 +136,15 @@ export default function BranchForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Chi nhánh cha
+                        {t('branch.parent_branch')}
                       </FormLabel>
                       <FormControl>
                         <TreeProvider
                           onRegionChange={(region) => {
+                            if (region?.name === selectedParent?.name) {
+                              setSelectedParent(null);
+                              return;
+                            }
                             field.onChange(region?.id ?? '');
                             setSelectedParent(
                               region
@@ -173,12 +177,12 @@ export default function BranchForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên chi nhánh
+                      {t('branch.branch_name')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên chi nhánh'
+                        placeholder={t('branch.enter_branch_name')}
                         {...field}
                       />
                     </FormControl>
@@ -192,11 +196,13 @@ export default function BranchForm({
                 name='description'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('branch.description')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập mô tả'
+                        placeholder={t('branch.enter_description')}
                         {...field}
                       />
                     </FormControl>
@@ -211,7 +217,7 @@ export default function BranchForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
-                      Vĩ độ & Kinh độ
+                      {t('branch.lat_long')}
                     </FormLabel>
                     <div className='flex gap-1'>
                       <FormField
@@ -219,7 +225,7 @@ export default function BranchForm({
                         name='metadata.long'
                         render={({ field }) => (
                           <Input
-                            placeholder='Kinh độ'
+                            placeholder={t('branch.longitude')}
                             className='!h-[31px] !rounded-[4px] !text-xs placeholder:text-xs'
                             {...field}
                             value={field.value ?? ''}
@@ -248,7 +254,7 @@ export default function BranchForm({
                         name='metadata.lat'
                         render={({ field }) => (
                           <Input
-                            placeholder='Vĩ độ'
+                            placeholder={t('branch.latitude')}
                             className='!h-[31px] !rounded-[4px] !text-xs placeholder:text-xs'
                             {...field}
                             value={field.value ?? ''}
@@ -278,13 +284,13 @@ export default function BranchForm({
                             type='button'
                             className='bg-blue-2 h-[31px] w-[111px] rounded-[4px] text-xs hover:!bg-cyan-600 hover:!brightness-95'
                           >
-                            Chọn vị trí bản đồ
+                            {t('branch.select_map_location')}
                           </Button>
                         </SheetTrigger>
                         <SheetContent side='right' className='gap-0'>
                           <SheetHeader>
                             <SheetTitle className='mx-auto'>
-                              Chọn vị trí bản đồ
+                              {t('branch.select_map_location')}
                             </SheetTitle>
                           </SheetHeader>
                           <div className='relative h-full w-full overflow-hidden'>
@@ -318,13 +324,13 @@ export default function BranchForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('branch.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-[70px] rounded-[4px] text-xs'
                 >
-                  Lưu
+                  {t('branch.save')}
                 </Button>
               </div>
             </form>

@@ -1,21 +1,17 @@
 'use client';
 import { Button } from '@/ui/components/ui/button';
 import { z } from 'zod';
-import {
-  dayofweek,
-  PRIORITY_LABELS,
-  PRIORITY_LABELS_NUMS,
-  PRIORITY_LABELS_NUMS_VIET,
-  RECURRING_LABELS
-} from '@/core/domains/calendars/constant';
+import { dayofweek } from '@/core/domains/calendars/constant';
 import { DateRange } from 'react-day-picker';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { CalendarRangePicker } from '../calendar-range-picker';
-import { TRAIT_UI_MAP } from '@/ui/business/trait/trait';
+import { getTraitUiMap } from '@/ui/business/trait/trait';
 import { SubCatalogueDevice, TRAIT_LABELS } from '@/core/domains/catalogues';
 import { Switch } from '@/ui/components/ui/switch';
 import { Slider } from '@/ui/components/ui/slider';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { LanguageKey } from '@/core/i18n/locales';
 
 type Props = {
   data: z.infer<typeof calendarFormSchema>;
@@ -26,6 +22,7 @@ type Props = {
 export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
   const { catalogues } = useCatalogueStore();
   const allDeviceIds = data.ids;
+  const { t } = useTranslation();
 
   const selectedDevice = catalogues.find((d) => d.type === data.device_type);
 
@@ -39,37 +36,39 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
   return (
     <div className='space-y-3.5 p-5.5 text-xs font-bold text-black'>
       <h3 className='text-primary text-left text-base font-bold'>
-        Xác nhận lịch
+        {t('calendar.confirm_calendar')}
       </h3>
 
       <div className='flex gap-2'>
-        <span className=''>Tên lịch:</span>
+        <span className=''>{t('calendar.calendar_name')}:</span>
         <span className='text-right font-medium'>{data.name}</span>
       </div>
 
       <div className='flex gap-2'>
-        <span className=''>Nhánh thiết bị:</span>
+        <span className=''>{t('calendar.device_branch')}:</span>
         <span className='text-right font-medium'>
           {nameLine.filter(Boolean).join(', ')}
         </span>
       </div>
 
       <div className='flex gap-2'>
-        <span className=''>Loại lịch:</span>
+        <span className=''>{t('calendar.calendar_type')}:</span>
         <span className='text-right font-medium'>
-          {PRIORITY_LABELS_NUMS_VIET[data.priority]}
+          {Number(data.priority) === 1
+            ? t('calendar.priority.emergency' as any)
+            : t('calendar.priority.normal' as any)}
         </span>
       </div>
 
       <div className='flex gap-2'>
-        <span className=''>Lặp lại:</span>
+        <span className=''>{t('calendar.repeat')}:</span>
         <span className='text-right font-medium'>
-          {RECURRING_LABELS[data.recurring]}
+          {t(`calendar.repeat_options.${data.recurring}` as any)}
         </span>
       </div>
 
       <div className='flex items-center gap-5.5'>
-        <span className=''>Ngày áp dụng:</span>
+        <span className=''>{t('calendar.apply_date')}:</span>
         <CalendarRangePicker
           mode={data.date.from && data.date.to ? 'range' : 'single'}
           value={
@@ -83,7 +82,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
 
       {data.monthly && data.monthly.length > 0 && (
         <div className='flex items-center gap-5.5'>
-          <span className=''>Ngày áp dụng:</span>
+          <span className=''>{t('calendar.apply_date')}:</span>
           <CalendarRangePicker
             mode={data.date.from && data.date.to ? 'range' : 'single'}
             value={
@@ -98,7 +97,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
 
       {data.weekly && data.weekly.length > 0 && (
         <div className=''>
-          <span>Ngày trong tuần:</span>
+          <span>{t('calendar.day_of_week')}:</span>
           <div className='flex flex-wrap gap-1 pt-1'>
             {data.weekly.map((value) => {
               const label = dayofweek[Number(value)];
@@ -117,7 +116,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
 
       {data.monthly && data.monthly.length > 0 && (
         <div className=''>
-          <span>Ngày trong tháng:</span>
+          <span>{t('calendar.day_of_month')}:</span>
           <div className='flex flex-wrap gap-1 pt-1'>
             {data.monthly.map((value) => {
               return (
@@ -134,31 +133,40 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
       )}
 
       <div className='flex flex-col gap-2'>
-        <span className=''>Thời gian và hành động:</span>
+        <span className=''>{t('calendar.time_and_action')}:</span>
         {data.schedules?.map((item, index) => (
           <div key={index} className='flex gap-8 font-medium'>
             <span>{index + 1}</span>
             <span>{item.time}</span>
-            {renderAction(item)}
+            {renderAction(item, t, getTraitUiMap(t))}
           </div>
         ))}
       </div>
 
       <div className='flex justify-between gap-2 pt-3'>
         <Button variant='outline' onClick={onBack}>
-          Quay lại
+          {t('calendar.back')}
         </Button>
         <Button onClick={onConfirm} className='bg-primary text-white'>
-          Xác nhận
+          {t('calendar.confirm')}
         </Button>
       </div>
     </div>
   );
 }
 
-function renderAction(item: Props['data']['schedules'][number]) {
+function renderAction(
+  item: Props['data']['schedules'][number],
+  t: (key: LanguageKey) => string,
+  traitUiMap: any
+) {
   const action = item.action;
-  if (!action) return <span className='text-muted-foreground'>Chưa chọn</span>;
+  if (!action)
+    return (
+      <span className='text-muted-foreground'>
+        {t('calendar.not_selected')}
+      </span>
+    );
 
   const { trait, value } = action;
 
@@ -188,7 +196,7 @@ function renderAction(item: Props['data']['schedules'][number]) {
   // fallback cho trait mới
   return (
     <span>
-      {TRAIT_LABELS[trait] ?? trait}: {String(value)}
+      {traitUiMap[trait]?.label ?? trait}: {String(value)}
     </span>
   );
 }

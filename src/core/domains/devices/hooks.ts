@@ -19,6 +19,7 @@ import {
 } from './types';
 import { devicesApi } from './api';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useEffect, useRef } from 'react';
 import { JOURNALS_QUERY_KEY } from '../journals';
 import { useAuthStore } from '../auth';
@@ -86,10 +87,11 @@ export const useTurnOnOffLight = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   return useMutation<DeviceExecuteResponse, Error, DeviceTurnOnOffRequest>({
     mutationFn: (data) => devicesApi.turnOnOffLight(data),
     onSuccess: (data, variables, context) => {
-      toast.success('Request sent successfully!');
+      toast.success(t('toast.request_sent_success'));
       queryClient.invalidateQueries({
         queryKey: [JOURNALS_QUERY_KEY, String(variables.device_id)]
       });
@@ -97,7 +99,7 @@ export const useTurnOnOffLight = (
     },
     onError: (error, variables, context) => {
       console.error('Failed to set state light: ', error);
-      toast.error(error.message || 'Failed to set state light');
+      toast.error(error.message || t('toast.set_light_failed'));
       options?.onError?.(error, variables, context);
     },
     ...options
@@ -112,10 +114,11 @@ export const useSetBrightnessLight = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   return useMutation<DeviceExecuteResponse, Error, DeviceSetBrightnessRequest>({
     mutationFn: (data) => devicesApi.setBrightness(data),
     onSuccess: (data, variables, context) => {
-      toast.success('Request sent successfully!');
+      toast.success(t('toast.request_sent_success'));
       queryClient.invalidateQueries({
         queryKey: [JOURNALS_QUERY_KEY, String(variables.device_id)]
       });
@@ -123,7 +126,7 @@ export const useSetBrightnessLight = (
     },
     onError: (error, variables, context) => {
       console.error('Failed to set brightness light: ', error);
-      toast.error(error.message || 'Failed to set brightness light');
+      toast.error(error.message || t('toast.set_brightness_failed'));
       options?.onError?.(error, variables, context);
     },
     ...options
@@ -135,6 +138,7 @@ export const useCreateDevice = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId } = useAuthStore();
+  const { t } = useTranslation();
   const onSuccessCallback = options?.onSuccess;
   const onErrorCallback = options?.onError;
 
@@ -175,12 +179,12 @@ export const useCreateDevice = (
       }
     },
     onSuccess: (data, variables, context) => {
-      toast.success('Device created successfully!');
+      toast.success(t('toast.create_device_success'));
       queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] });
       onSuccessCallback?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Failed to create device');
+      toast.error(error.message || t('toast.create_device_failed'));
       onErrorCallback?.(error, variables, context);
     }
   });
@@ -313,12 +317,13 @@ export const useSetParent = (
   options?: UseMutationOptions<void, Error, SetDevicesParentGroup>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, SetDevicesParentGroup>({
     ...options,
     mutationFn: (data) => devicesApi.setDevicesParentGroup(data),
     onSuccess: (data, variables, context) => {
-      toast.success('Set devices parent successfully!');
+      toast.success(t('toast.set_parent_success'));
 
       queryClient.invalidateQueries({
         queryKey: [DEVICES_QUERY_KEY]
@@ -327,7 +332,7 @@ export const useSetParent = (
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Failed to set devices parent');
+      toast.error(error.message || t('toast.set_parent_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -337,6 +342,7 @@ export const useDeleteDeviceParent = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -350,11 +356,11 @@ export const useDeleteDeviceParent = (
         queryKey: [DEVICES_QUERY_KEY]
       });
 
-      toast.success('Delete Device Parent successfully');
+      toast.success(t('toast.delete_parent_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Failed to delete Group');
+      toast.error(error.message || t('toast.delete_parent_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -405,14 +411,15 @@ export const useGetDeviceCount = (
 export const useSyncDevices = (
   options?: UseMutationOptions<DeviceQueryResponse, Error, DeviceQueryRequest>
 ) => {
+  const { t } = useTranslation();
   return useMutation<DeviceQueryResponse, Error, DeviceQueryRequest>({
     mutationFn: (data) => devicesApi.queryDevices(data),
     onSuccess: (data, variables, context) => {
-      toast.success('Đồng bộ thiết bị đã được khởi tạo!');
+      toast.success(t('toast.sync_devices_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Không thể đồng bộ thiết bị');
+      toast.error(error.message || t('toast.sync_devices_failed'));
       options?.onError?.(error, variables, context);
     },
     ...options
@@ -435,6 +442,7 @@ export const useUpdateDevice = (
 ) => {
   const queryClient = useQueryClient();
   const { domainId } = useAuthStore();
+  const { t } = useTranslation();
   return useMutation<
     Device,
     Error,
@@ -491,14 +499,14 @@ export const useUpdateDevice = (
       }
     },
     onSuccess: (data, variables, context) => {
-      toast.success('Cập nhật thiết bị thành công!');
+      toast.success(t('toast.update_device_success'));
       queryClient.invalidateQueries({
         queryKey: [DEVICES_QUERY_KEY]
       });
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Không thể cập nhật thiết bị');
+      toast.error(error.message || t('toast.update_device_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -513,6 +521,7 @@ export const useUpdateTagDevice = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<
     Device,
@@ -522,14 +531,14 @@ export const useUpdateTagDevice = (
     mutationFn: ({ deviceId, tags }) =>
       devicesApi.updateDeviceTags(deviceId, tags),
     onSuccess: (data, variables, context) => {
-      toast.success('Xóa thiết bị khỏi nhóm thành công!');
+      toast.success(t('toast.remove_device_from_group_success'));
       queryClient.invalidateQueries({
         queryKey: [DEVICES_QUERY_KEY]
       });
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Không thể xóa thiết bị khỏi nhóm');
+      toast.error(error.message || t('toast.remove_device_from_group_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -540,6 +549,7 @@ export const useDeleteDevice = (
   options?: UseMutationOptions<void, Error, string | number>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string | number>({
     ...options,
@@ -555,11 +565,11 @@ export const useDeleteDevice = (
         queryKey: [DEVICES_QUERY_KEY]
       });
 
-      toast.success('Xóa thiết bị thành công!');
+      toast.success(t('toast.delete_device_success'));
       options?.onSuccess?.(data, deletedId, context);
     },
     onError: (error, variables, context) => {
-      toast.error(error.message || 'Không thể xóa thiết bị');
+      toast.error(error.message || t('toast.delete_device_failed'));
       options?.onError?.(error, variables, context);
     }
   });

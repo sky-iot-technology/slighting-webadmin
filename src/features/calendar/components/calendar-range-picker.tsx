@@ -11,6 +11,7 @@ import {
   PopoverTrigger
 } from '@/ui/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarRangePickerProps = {
   mode?: 'single' | 'range';
@@ -31,6 +32,8 @@ export function CalendarRangePicker({
   className,
   textClassname
 }: CalendarRangePickerProps) {
+  const { t } = useTranslation();
+
   const [date, setDate] = React.useState<DateRange | undefined>(() => {
     if (mode === 'range') {
       if (!value) return undefined;
@@ -183,7 +186,7 @@ export function CalendarRangePicker({
                 !formattedSingle && 'text-muted-foreground'
               )}
             >
-              {formattedSingle || 'Chọn ngày áp dụng'}
+              {formattedSingle || t('general.select_date_apply')}
             </button>
           </PopoverTrigger>
 
@@ -233,7 +236,7 @@ export function CalendarRangePicker({
               setOpenTo(false);
             }}
           >
-            {formattedFrom || 'Ngày bắt đầu'}
+            {formattedFrom || t('general.start_date')}
           </button>
         </PopoverTrigger>
         <PopoverContent align='start' className='w-auto p-0'>
@@ -261,7 +264,7 @@ export function CalendarRangePicker({
               setOpenFrom(false);
             }}
           >
-            {formattedTo || 'Ngày kết thúc'}
+            {formattedTo || t('general.end_date')}
           </button>
         </PopoverTrigger>
         <PopoverContent align='end' className='w-auto p-0'>

@@ -6,7 +6,10 @@ import { CellAction } from './cell-action';
 import { Department, Unit } from '@/core/domains/organizations/type';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
+export const departmentColumns = (
+  t: any,
+  units: Unit[]
+): ColumnDef<Department>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -35,14 +38,17 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Department, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên bộ phận' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.department.table.name')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm kiếm',
+      placeholder: t('organization.department.placeholder.search'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -53,7 +59,10 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
     id: 'unitId',
     accessorKey: 'unitId',
     header: ({ column }: { column: Column<Department, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thuộc đơn vị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.department.table.unit')}
+      />
     ),
     cell: ({ row }) => {
       const unitId = row.getValue('unitId') as string;
@@ -67,7 +76,10 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
     id: 'note',
     accessorKey: 'note',
     header: ({ column }: { column: Column<Department, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ghi chú' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.department.table.note')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('note')}</div>;
@@ -78,7 +90,10 @@ export const departmentColumns = (units: Unit[]): ColumnDef<Department>[] => [
   {
     id: 'actions',
     header: ({ column }: { column: Column<Department, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('organization.department.table.action')}
+      />
     ),
     size: 57,
     cell: ({ row }) => {

@@ -129,11 +129,19 @@ export default function Overview2({
               <SelectValue placeholder='Select Device' />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='Today'>Today</SelectItem>
-              <SelectItem value='This Week'>This Week</SelectItem>
-              <SelectItem value='This Month'>This Month</SelectItem>
-              <SelectItem value='This Year'>This Year</SelectItem>
-              <SelectItem value='All'>All</SelectItem>
+              <SelectItem value='Today'>
+                {t('dashboard.today' as any)}
+              </SelectItem>
+              <SelectItem value='This Week'>
+                {t('dashboard.this_week' as any)}
+              </SelectItem>
+              <SelectItem value='This Month'>
+                {t('dashboard.this_month' as any)}
+              </SelectItem>
+              <SelectItem value='This Year'>
+                {t('dashboard.this_year' as any)}
+              </SelectItem>
+              <SelectItem value='All'>{t('dashboard.all' as any)}</SelectItem>
             </SelectContent>
           </Select>
         </div>

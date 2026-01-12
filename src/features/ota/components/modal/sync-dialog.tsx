@@ -19,11 +19,14 @@ type SyncDeviceProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 export default function SyncDeviceDialog({
   data,
   open,
   onOpenChange
 }: SyncDeviceProps) {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<string>('devices');
 
   const [selectedDevices, setSelectedDevices] = useState<string[]>([]);
@@ -63,12 +66,12 @@ export default function SyncDeviceDialog({
   const handleExecuteOta = async () => {
     if (isPending) return;
     if (activeTab === 'devices' && selectedDevices.length === 0) {
-      toast.warning('Vui lòng chọn ít nhất 1 thiết bị');
+      toast.warning(t('ota.sync.warning.select_device' as any));
       return;
     }
 
     if (activeTab === 'groups' && selectedGroups.length === 0) {
-      toast.warning('Vui lòng chọn ít nhất 1 chi nhánh');
+      toast.warning(t('ota.sync.warning.select_group' as any));
       return;
     }
     executeOta(
@@ -113,15 +116,18 @@ export default function SyncDeviceDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTitle className='hidden'>Đồng bộ</DialogTitle>
-      <DialogDescription className='hidden'>Đồng bộ</DialogDescription>
+      <DialogTitle className='hidden'>{t('ota.title.sync' as any)}</DialogTitle>
+      <DialogDescription className='hidden'>
+        {t('ota.title.sync' as any)}
+      </DialogDescription>
       <DialogContent
         className='flex w-[800px] !max-w-[85vw] flex-col gap-4 rounded-lg bg-white p-4'
         hideCloseButton
       >
         <h2 className='flex justify-between text-center text-[16px] font-bold sm:text-left'>
           <div>
-            Đồng bộ <span className='text-primary'>{data.name}</span>
+            {t('ota.title.sync' as any)}{' '}
+            <span className='text-primary'>{data.name}</span>
           </div>
           <span className='text-calendar-radio-green'>{data.info.version}</span>
         </h2>
@@ -135,10 +141,10 @@ export default function SyncDeviceDialog({
             >
               <TabsList className='flex w-full !bg-transparent text-[12px]'>
                 <TabsTrigger value='devices' className={TabClassName}>
-                  Thiết bị
+                  {t('ota.sync.tabs.items' as any)}
                 </TabsTrigger>
                 <TabsTrigger value='groups' className={TabClassName}>
-                  Chi nhánh
+                  {t('ota.sync.tabs.groups' as any)}
                 </TabsTrigger>
               </TabsList>
             </Tabs>
@@ -166,14 +172,16 @@ export default function SyncDeviceDialog({
             className='h-[30px] w-[64px] rounded-[4px]'
             onClick={() => onOpenChange(false)}
           >
-            Hủy
+            {t('ota.button.cancel' as any)}
           </Button>
           <Button
             className='bg-primary h-[30px] w-[100px] rounded-[4px] text-white'
             onClick={handleExecuteOta}
             disabled={isPending || pending}
           >
-            {isPending || pending ? 'Đang đồng bộ' : 'Đồng bộ'}
+            {isPending || pending
+              ? t('ota.button.syncing' as any)
+              : t('ota.button.sync' as any)}
           </Button>
         </div>
       </DialogContent>

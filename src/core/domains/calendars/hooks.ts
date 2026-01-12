@@ -4,6 +4,7 @@ import type {
 } from '@tanstack/react-query';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 import { calendarApi } from './api';
 import {
@@ -55,6 +56,7 @@ export const useCreateCalendars = (
   options?: UseMutationOptions<Calendar, Error, CreateCalendarDto>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<Calendar, Error, CreateCalendarDto>({
     ...options,
@@ -67,12 +69,12 @@ export const useCreateCalendars = (
       // Add the new calendar to the cache
       queryClient.setQueryData([CALENDARS_QUERY_KEY, 'detail', data.id], data);
 
-      toast.success('Calendar created successfully!');
+      toast.success(t('toast.create_calendar_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to create calendar:', error);
-      toast.error(error.message || 'Failed to create calendar');
+      toast.error(error.message || t('toast.create_calendar_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -82,6 +84,7 @@ export const useDeleteCalendars = (
   options?: UseMutationOptions<void, Error, string | number>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string | number>({
     ...options,
@@ -100,12 +103,12 @@ export const useDeleteCalendars = (
         predicate: (query) => query.queryKey[0] === DEVICE_CALENDARS_QUERY_KEY
       });
 
-      toast.success('Calendar deleted successfully');
+      toast.success(t('toast.delete_calendar_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete calendar: ', error);
-      toast.error(error.message || 'Failed to delete calendar');
+      toast.error(error.message || t('toast.delete_calendar_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -115,6 +118,7 @@ export const useDeleteMultiCalendars = (
   options?: UseMutationOptions<void, Error, (string | number)[]>
 ) => {
   const queryClient = useQueryClient();
+  const { t, tTime } = useTranslation();
 
   return useMutation<void, Error, (string | number)[]>({
     ...options,
@@ -134,15 +138,17 @@ export const useDeleteMultiCalendars = (
 
       toast.success(
         deletedIds.length > 1
-          ? `Đã xoá ${deletedIds.length} lịch bảo trì`
-          : 'Lịch bảo trì đã được xoá'
+          ? tTime('toast.delete_multi_calendar_success', {
+              count: deletedIds.length
+            })
+          : t('toast.delete_multi_calendar_success_single')
       );
 
       options?.onSuccess?.(data, deletedIds, context);
     },
     onError: (error, variables, context) => {
       console.error('❌ Delete calendars failed:', error);
-      toast.error(error.message || 'Xoá lịch bảo trì thất bại');
+      toast.error(error.message || t('toast.delete_multi_calendar_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -180,6 +186,7 @@ export const useUpdateCalendar = (
   >
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<Calendar, Error, { id: string; data: UpdateCalendarDto }>({
     ...options,
@@ -195,12 +202,12 @@ export const useUpdateCalendar = (
         data
       );
 
-      toast.success('Calendar update successfully!');
+      toast.success(t('toast.update_calendar_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update calendar:', error);
-      toast.error(error.message || 'Failed to update calendar');
+      toast.error(error.message || t('toast.update_calendar_failed'));
       options?.onError?.(error, variables, context);
     }
   });

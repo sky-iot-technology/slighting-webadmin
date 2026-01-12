@@ -107,7 +107,8 @@ export default function MaintenancePage() {
           totalItems={totalItems}
           columns={maintenanceColumns(
             users?.users || [],
-            devices?.devices || []
+            devices?.devices || [],
+            t as any
           )}
           onTableReady={setMaintenanceTable}
           onSelectionChange={(data) => setSelectedIds(data)}
@@ -116,7 +117,7 @@ export default function MaintenancePage() {
         />
       </PermissionGuard>
     );
-  }, [data, loadingAll, error]);
+  }, [data, loadingAll, error, t, users, devices]);
 
   const workorderTableMemo = useMemo(() => {
     const workorders = workorderData?.woker_orders ?? [];
@@ -126,14 +127,14 @@ export default function MaintenancePage() {
         <WorkorderTable
           data={workorders}
           totalItems={totalItems}
-          columns={workorderColumns(users?.users || [])}
+          columns={workorderColumns(users?.users || [], t as any)}
           onTableReady={setWorkoderTable}
           isLoading={workorderLoading}
           error={workorderError}
         />
       </PermissionGuard>
     );
-  }, [workorderData, workorderLoading, workorderError]);
+  }, [workorderData, workorderLoading, workorderError, t, users]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -192,7 +193,7 @@ export default function MaintenancePage() {
                   value='alert'
                   className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
                 >
-                  Cảnh báo
+                  {t('maintenance.alert')}
                 </TabsTrigger>
               </PermissionGuard>
 
@@ -201,7 +202,7 @@ export default function MaintenancePage() {
                   value='workorder'
                   className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
                 >
-                  Giao việc
+                  {t('maintenance.work_order')}
                 </TabsTrigger>
               </PermissionGuard>
             </TabsList>
@@ -224,7 +225,9 @@ export default function MaintenancePage() {
                       onClick={() => setOpen(true)}
                     >
                       <IconPlus className='h-4 w-4' />
-                      <span className='text-xs'>Tạo công việc</span>
+                      <span className='text-xs'>
+                        {t('maintenance.create_work_order')}
+                      </span>
                     </Button>
                   </PermissionGuard>
                 }
@@ -259,8 +262,11 @@ export default function MaintenancePage() {
           alarmId={selectedAlarm?.id ?? ''}
           pageTitle={
             selectedAlarm
-              ? `Tạo công việc: ${selectedAlarm.measurement}`
-              : 'Tạo công việc'
+              ? t('maintenance.create_work_order_title').replace(
+                  '{{measurement}}',
+                  selectedAlarm.measurement
+                )
+              : t('maintenance.create_work_order')
           }
           open={open}
           onOpenChange={setOpen}

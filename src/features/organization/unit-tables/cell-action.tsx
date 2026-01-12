@@ -13,12 +13,15 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 interface CellActionProps {
   id: string;
   disabled?: boolean;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -84,7 +87,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('organization.action.view' as any)}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -99,7 +102,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span>Sửa</span>
+            <span>{t('organization.action.edit' as any)}</span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
@@ -115,7 +118,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span className='text-destructive'>Xóa</span>
+            <span className='text-destructive'>
+              {t('organization.action.delete' as any)}
+            </span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -8,6 +8,7 @@ import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { SelectedTag } from './tag-sidebar';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface TagContentProps {
   filters: GetDevicesParamsDto;
@@ -20,6 +21,7 @@ export const TagContent = memo(function TagContent({
   selectedTag,
   onTableReady
 }: TagContentProps) {
+  const { t } = useTranslation();
   const canViewDevice = useCan('device', 'view');
 
   const { data, isLoading, error } = useGetDevices(
@@ -39,7 +41,7 @@ export const TagContent = memo(function TagContent({
         <TagTable
           data={data?.devices ?? []}
           totalItems={data?.total ?? 0}
-          columns={tagColumns(catalogues, treeData, selectedTag)}
+          columns={tagColumns(catalogues, treeData, selectedTag, t)}
           onTableReady={onTableReady}
           isLoading={isLoading}
           error={error}

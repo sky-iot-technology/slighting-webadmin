@@ -18,6 +18,7 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 
 export const workorderColumns = (
   users: User[],
+  t: (key: string) => string,
   options?: {
     onViewAction?: (id: string) => void;
     onEditAction?: (id: string) => void;
@@ -51,14 +52,17 @@ export const workorderColumns = (
     id: 'work_order_name',
     accessorKey: 'work_order_name',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên công việc' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.work_order_name')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('work_order_name')}</div>;
     },
     meta: {
       label: 'work_order_name',
-      placeholder: 'Tìm tên công việc',
+      placeholder: t('maintenance.placeholder_work_order_name'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -69,7 +73,10 @@ export const workorderColumns = (
     id: 'measurement',
     accessorKey: 'measurement',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên cảnh báo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.warning_name')}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('measurement')}</div>;
@@ -81,7 +88,10 @@ export const workorderColumns = (
     id: 'severity',
     accessorKey: 'severity',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ưu tiên' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.priority')}
+      />
     ),
     cell: ({ row }) => {
       const severity = row.getValue('severity') as WorkOrderSeverity;
@@ -93,7 +103,7 @@ export const workorderColumns = (
             : 'text-calendar-gray';
       return (
         <div className={`font-bold ${color}`}>
-          {WorkOderSeverityLabel[severity]}
+          {t(WorkOderSeverityLabel[severity] as any)}
         </div>
       );
     },
@@ -104,7 +114,10 @@ export const workorderColumns = (
     id: 'work_order_status',
     accessorKey: 'work_order_status',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái xử lý' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.process_status')}
+      />
     ),
     cell: ({ row }) => {
       const status = row.getValue('work_order_status') as WorkOrderStatus;
@@ -118,7 +131,7 @@ export const workorderColumns = (
               : 'text-calendar-gray';
       return (
         <div className={`font-bold ${color}`}>
-          {WorkOrderStatusLabel[status]}
+          {t(WorkOrderStatusLabel[status] as any)}
         </div>
       );
     },
@@ -129,7 +142,10 @@ export const workorderColumns = (
     id: 'start_date',
     accessorKey: 'start_date',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian bắt đầu' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.start_time')}
+      />
     ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('start_date') as string);
@@ -142,12 +158,15 @@ export const workorderColumns = (
     id: 'department',
     accessorKey: 'department',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Đơn vị xử lý' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.unit_handling')}
+      />
     ),
     cell: ({ row }) => {
       const department = row.getValue('department') as string;
       const name = department.split(':')[1];
-      return <div>{name}</div>;
+      return <div>{t(`maintenance.team_${name}` as any)}</div>;
     },
     enableSorting: false,
     enableHiding: false
@@ -156,7 +175,7 @@ export const workorderColumns = (
     id: 'assignee_id',
     accessorKey: 'assignee_id',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Người xử lý' />
+      <DataTableColumnHeader column={column} title={t('maintenance.handler')} />
     ),
     cell: ({ row }) => {
       const assigneeId = row.getValue('assignee_id') as string;
@@ -177,7 +196,10 @@ export const workorderColumns = (
     id: 'action',
     accessorKey: 'action',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái giám sát' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.supervisor_status')}
+      />
     ),
     cell: ({ row }) => {
       const actions = row.getValue('action') as WorkOrderAction;
@@ -191,7 +213,7 @@ export const workorderColumns = (
               : 'text-calendar-gray';
       return (
         <div className={`font-bold ${color}`}>
-          {WorkOrderActionLabel[actions]}
+          {t(WorkOrderActionLabel[actions] as any)}
         </div>
       );
     },
@@ -202,7 +224,10 @@ export const workorderColumns = (
     id: 'end_date',
     accessorKey: 'end_date',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian kết thúc' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.end_time')}
+      />
     ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('end_date') as string);
@@ -214,7 +239,7 @@ export const workorderColumns = (
   {
     id: 'actions',
     header: ({ column }: { column: Column<WorkOrder, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader column={column} title={t('maintenance.action')} />
     ),
     size: 57,
     cell: ({ row }) => {

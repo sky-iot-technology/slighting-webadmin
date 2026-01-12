@@ -16,6 +16,7 @@ import {
   User,
   UserListResponseDto
 } from './types';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export const USERS_QUERY_KEY = 'users';
 
@@ -100,18 +101,19 @@ export const useChangePasswordByAdmin = (
   options?: UseMutationOptions<void, Error, { id: string; secret: string }>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   return useMutation<void, Error, { id: string; secret: string }>({
     ...options,
     mutationFn: ({ id, secret }) => usersApi.changepassByAdmin(id, secret),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
 
-      toast.success('Update password successfully!');
+      toast.success(t('toast.update_password_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update password:', error);
-      toast.error(error.message || 'Failed to update password');
+      toast.error(error.message || t('toast.update_password_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -121,18 +123,19 @@ export const useChangePassword = (
   options?: UseMutationOptions<void, Error, ChangePassDto>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   return useMutation<void, Error, ChangePassDto>({
     ...options,
     mutationFn: (data) => usersApi.changepass(data),
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
 
-      toast.success('Update password successfully!');
+      toast.success(t('toast.update_password_success'));
       options?.onSuccess?.(data, variables, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to update password:', error);
-      toast.error(error.message || 'Failed to update password');
+      toast.error(error.message || t('toast.update_password_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -142,6 +145,7 @@ export const useCreateUser = (
   options?: UseMutationOptions<User, Error, CreateUserDto>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<User, Error, CreateUserDto>({
     ...options,
@@ -151,13 +155,13 @@ export const useCreateUser = (
       // queryClient.setQueryData({
       //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
       // });
-      toast.success('Tạo user thành công!');
+      toast.success(t('toast.create_user_success'));
       options?.onSuccess?.(data, variables, context);
     },
 
     onError: (error, variables, context) => {
       console.error('Failed to create user:', error);
-      toast.error(error.message || 'Tạo user thất bại');
+      toast.error(error.message || t('toast.create_user_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -167,6 +171,7 @@ export const useUpdateUser = (
   options?: UseMutationOptions<User, Error, { id: string; data: UpdateUserDto }>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<User, Error, { id: string; data: UpdateUserDto }>({
     ...options,
@@ -176,13 +181,13 @@ export const useUpdateUser = (
       // queryClient.setQueryData({
       //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
       // });
-      toast.success('Update user thành công!');
+      toast.success(t('toast.update_user_success'));
       options?.onSuccess?.(data, variables, context);
     },
 
     onError: (error, variables, context) => {
       console.error('Failed to update user:', error);
-      toast.error(error.message || 'Update user thất bại');
+      toast.error(error.message || t('toast.update_user_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -192,6 +197,7 @@ export const useDeleteUser = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -206,12 +212,12 @@ export const useDeleteUser = (
         queryKey: [USERS_QUERY_KEY]
       });
 
-      toast.success('User deleted successfully');
+      toast.success(t('toast.delete_user_success'));
       options?.onSuccess?.(data, deleteId, context);
     },
     onError: (error, variables, context) => {
       console.error('Failed to delete user: ', error);
-      toast.error(error.message || 'Failed to delete user');
+      toast.error(error.message || t('toast.delete_user_failed'));
       options?.onError?.(error, variables, context);
     }
   });
@@ -221,6 +227,7 @@ export const useUpdateUserStatus = (
   options?: UseMutationOptions<User, Error, { id: string; enabled: boolean }>
 ) => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   return useMutation<User, Error, { id: string; enabled: boolean }>({
     ...options,
@@ -236,13 +243,13 @@ export const useUpdateUserStatus = (
       // queryClient.setQueryData({
       //   queryKey: [USERS_QUERY_KEY, 'detail', data.id]
       // });
-      toast.success('Update user thành công!');
+      toast.success(t('toast.update_user_success'));
       options?.onSuccess?.(data, variables, context);
     },
 
     onError: (error, variables, context) => {
       console.error('Failed to update user:', error);
-      toast.error(error.message || 'Update user thất bại');
+      toast.error(error.message || t('toast.update_user_failed'));
       options?.onError?.(error, variables, context);
     }
   });

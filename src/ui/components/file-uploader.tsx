@@ -14,6 +14,7 @@ import { Progress } from '@/ui/components/ui/progress';
 import { ScrollArea } from '@/ui/components/ui/scroll-area';
 import { useControllableState } from '@/core/shared/hooks/use-controllable-state';
 import { cn, formatBytes } from '@/lib/utils';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -111,16 +112,21 @@ export function FileUploader(props: FileUploaderProps) {
     prop: valueProp,
     onChange: onValueChange
   });
+  const { t, tTime } = useTranslation();
 
   const onDrop = React.useCallback(
     (acceptedFiles: File[], rejectedFiles: FileRejection[]) => {
       if (!multiple && maxFiles === 1 && acceptedFiles.length > 1) {
-        toast.error('Cannot upload more than 1 file at a time');
+        toast.error(t('general.file_upload_error_single' as any));
         return;
       }
 
       if ((files?.length ?? 0) + acceptedFiles.length > maxFiles) {
-        toast.error(`Cannot upload more than ${maxFiles} files`);
+        toast.error(
+          tTime('general.file_upload_error_max_files' as any, {
+            count: maxFiles
+          })
+        );
         return;
       }
 
@@ -136,7 +142,9 @@ export function FileUploader(props: FileUploaderProps) {
 
       if (rejectedFiles.length > 0) {
         rejectedFiles.forEach(({ file }) => {
-          toast.error(`File ${file.name} was rejected`);
+          toast.error(
+            tTime('general.file_rejected' as any, { filename: file.name })
+          );
         });
       }
 
@@ -149,12 +157,12 @@ export function FileUploader(props: FileUploaderProps) {
           updatedFiles.length > 0 ? `${updatedFiles.length} files` : `file`;
 
         toast.promise(onUpload(updatedFiles), {
-          loading: `Uploading ${target}...`,
+          loading: tTime('general.uploading_target' as any, { target }),
           success: () => {
             setFiles([]);
-            return `${target} uploaded`;
+            return tTime('general.upload_success' as any, { target });
           },
-          error: `Failed to upload ${target}`
+          error: tTime('general.upload_failed' as any, { target })
         });
       }
     },
@@ -216,7 +224,7 @@ export function FileUploader(props: FileUploaderProps) {
                   />
                 </div>
                 <p className='text-muted-foreground font-medium'>
-                  Drop the files here
+                  {t('general.drop_files_here' as any)}
                 </p>
               </div>
             ) : (
@@ -229,14 +237,17 @@ export function FileUploader(props: FileUploaderProps) {
                 </div>
                 <div className='space-y-px'>
                   <p className='text-muted-foreground font-medium'>
-                    Drag {`'n'`} drop files here, or click to select files
+                    {t('general.drag_drop_files' as any)}
                   </p>
                   <p className='text-muted-foreground/70 text-sm'>
-                    You can upload
                     {maxFiles > 1
-                      ? ` ${maxFiles === Infinity ? 'multiple' : maxFiles}
-                      files (up to ${formatBytes(maxSize)} each)`
-                      : ` a file with ${formatBytes(maxSize)}`}
+                      ? tTime('general.upload_info_multiple' as any, {
+                          count: maxFiles === Infinity ? 'multiple' : maxFiles,
+                          size: formatBytes(maxSize)
+                        })
+                      : tTime('general.upload_info_single' as any, {
+                          size: formatBytes(maxSize)
+                        })}
                   </p>
                 </div>
               </div>
@@ -253,6 +264,7 @@ export function FileUploader(props: FileUploaderProps) {
                 file={file}
                 onRemove={() => onRemove(index)}
                 progress={progresses?.[file.name]}
+                t={t}
               />
             ))}
           </div>
@@ -266,9 +278,10 @@ interface FileCardProps {
   file: File;
   onRemove: () => void;
   progress?: number;
+  t: any;
 }
 
-function FileCard({ file, progress, onRemove }: FileCardProps) {
+function FileCard({ file, progress, onRemove, t }: FileCardProps) {
   return (
     <div className='relative flex items-center space-x-4'>
       <div className='flex flex-1 space-x-4'>
@@ -304,7 +317,7 @@ function FileCard({ file, progress, onRemove }: FileCardProps) {
           className='size-8 rounded-full'
         >
           <IconX className='text-muted-foreground' />
-          <span className='sr-only'>Remove file</span>
+          <span className='sr-only'>{t('general.remove_file' as any)}</span>
         </Button>
       </div>
     </div>
@@ -332,6 +345,7 @@ export function AvatarUploader(props: AvatarUploaderProps) {
     className,
     ...dropzoneProps
   } = props;
+  const { t, tTime } = useTranslation();
 
   const [file, setFile] = useControllableState<File | null>({
     prop: valueProp,
@@ -349,14 +363,18 @@ export function AvatarUploader(props: AvatarUploaderProps) {
       setFile(selected);
 
       if (rejectedFiles.length) {
-        toast.error(`File ${rejectedFiles[0].file.name} was rejected`);
+        toast.error(
+          tTime('general.file_rejected' as any, {
+            filename: rejectedFiles[0].file.name
+          })
+        );
       }
 
       if (onUpload) {
         toast.promise(onUpload(selected), {
-          loading: 'Uploading avatar...',
-          success: 'Avatar updated',
-          error: 'Failed to upload avatar'
+          loading: t('general.uploading_avatar' as any),
+          success: t('general.avatar_updated' as any),
+          error: t('general.upload_failed_avatar' as any)
         });
       }
     },
@@ -413,7 +431,7 @@ export function AvatarUploader(props: AvatarUploaderProps) {
                   setFile(null);
                   onValueChange?.(null);
                 }}
-                aria-label='Remove avatar'
+                aria-label={t('general.remove_avatar' as any)}
               >
                 <IconX className='text-muted-foreground h-4 w-4' />
               </button>
@@ -427,7 +445,7 @@ export function AvatarUploader(props: AvatarUploaderProps) {
                 />
               </div>
               <p className='text-muted-foreground font-medium'>
-                Drop the files here
+                {t('general.drop_files_here' as any)}
               </p>
             </div>
           ) : (
@@ -440,7 +458,7 @@ export function AvatarUploader(props: AvatarUploaderProps) {
               </div>
               <div className='space-y-px'>
                 <p className='text-muted-foreground font-medium'>
-                  Drag {`'n'`} drop avatar here, or click to select avatar
+                  {t('general.drag_drop_avatar' as any)}
                 </p>
               </div>
             </div>

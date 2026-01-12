@@ -83,7 +83,9 @@ const ACCEPTED_IMAGE_TYPES = [
   'image/webp'
 ];
 // Form schema for editable fields
-const overviewFormSchema = z.object({
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
+const baseOverviewFormSchema = z.object({
   // Required fields (matching deviceFormSchema)
   image: z
     .instanceof(File)
@@ -93,29 +95,16 @@ const overviewFormSchema = z.object({
       'Invalid image type'
     )
     .optional(),
-  name: z.string().min(2, { message: 'Tên thiết bị phải có ít nhất 2 ký tự' }),
-  type: z.string().min(1, { message: 'Loại thiết bị không được bỏ trống' }),
-  parent_group_id: z
-    .string()
-    .min(1, { message: 'Chi nhánh không được bỏ trống' }),
-  serial: z.string().min(1, { message: 'Serial không được bỏ trống' }),
+  name: z.string().min(2),
+  type: z.string().min(1),
+  parent_group_id: z.string().min(1),
+  serial: z.string().min(1),
   tags: z.array(z.string()).optional(),
 
   // Optional fields
   imei: z.string().optional(),
-  lat: z
-    .string()
-    .optional()
-    .refine((v) => v === undefined || v === '' || isValidLat(v), {
-      message: 'Vĩ độ phải là số trong khoảng -90 đến 90'
-    }),
-
-  lon: z
-    .string()
-    .optional()
-    .refine((v) => v === undefined || v === '' || isValidLon(v), {
-      message: 'Kinh độ phải là số trong khoảng -180 đến 180'
-    }),
+  lat: z.string().optional(),
+  lon: z.string().optional(),
   address: z.string().optional(),
   note: z.string().optional(),
   manufacturer: z.string().optional(),
@@ -124,9 +113,10 @@ const overviewFormSchema = z.object({
   expiration_date: z.date().or(z.number()).optional()
 });
 
-type OverviewFormValues = z.infer<typeof overviewFormSchema>;
+type OverviewFormValues = z.infer<typeof baseOverviewFormSchema>;
 
 export function OverviewTab({ device }: OverviewTabProps) {
+  const { t } = useTranslation();
   const canUpdate = useCan('device', 'update');
   const [avatarChanged, setAvatarChanged] = useState(false);
   const [oldAvatarUrl, setOldAvatarUrl] = useState<string | null>(null);
@@ -305,6 +295,71 @@ export function OverviewTab({ device }: OverviewTabProps) {
       }
     }
   }, [device.parent_group_id, groupsData]);
+
+  const overviewFormSchema = useMemo(
+    () =>
+      z.object({
+        // Required fields (matching deviceFormSchema)
+        image: z
+          .instanceof(File)
+          .refine((file) => file.size <= MAX_FILE_SIZE, 'Max file size is 5MB')
+          .refine(
+            (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
+            'Invalid image type'
+          )
+          .optional(),
+        name: z
+          .string()
+          .min(2, {
+            message: t('products.detail.overview.validation.name_min' as any)
+          }),
+        type: z
+          .string()
+          .min(1, {
+            message: t(
+              'products.detail.overview.validation.type_required' as any
+            )
+          }),
+        parent_group_id: z
+          .string()
+          .min(1, {
+            message: t(
+              'products.detail.overview.validation.branch_required' as any
+            )
+          }),
+        serial: z
+          .string()
+          .min(1, {
+            message: t(
+              'products.detail.overview.validation.serial_required' as any
+            )
+          }),
+        tags: z.array(z.string()).optional(),
+
+        // Optional fields
+        imei: z.string().optional(),
+        lat: z
+          .string()
+          .optional()
+          .refine((v) => v === undefined || v === '' || isValidLat(v), {
+            message: t('products.detail.overview.validation.lat_invalid' as any)
+          }),
+
+        lon: z
+          .string()
+          .optional()
+          .refine((v) => v === undefined || v === '' || isValidLon(v), {
+            message: t('products.detail.overview.validation.lon_invalid' as any)
+          }),
+        address: z.string().optional(),
+        note: z.string().optional(),
+        manufacturer: z.string().optional(),
+        installation_date: z.date().or(z.number()).optional(),
+        purchase_date: z.date().or(z.number()).optional(),
+        expiration_date: z.date().or(z.number()).optional()
+      }),
+    [t]
+  );
 
   // Initialize form with device data
   const form = useForm<OverviewFormValues>({
@@ -638,7 +693,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           ? 'opacity-0 group-hover:opacity-100'
                           : 'opacity-100'
                       )}
-                      title={previewAvatarUrl ? 'Đổi ảnh' : 'Thêm ảnh'}
+                      title={
+                        previewAvatarUrl
+                          ? t(
+                              'products.detail.overview.label.change_image' as any
+                            )
+                          : t('products.detail.overview.label.add_image' as any)
+                      }
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Image
@@ -648,7 +709,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         height={12}
                       />
                       <span className='text-xs'>
-                        {previewAvatarUrl ? 'Đổi ảnh' : 'Thêm ảnh'}
+                        {previewAvatarUrl
+                          ? t(
+                              'products.detail.overview.label.change_image' as any
+                            )
+                          : t(
+                              'products.detail.overview.label.add_image' as any
+                            )}
                       </span>
                     </label>
 
@@ -682,7 +749,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     <div className='grid grid-cols-2 gap-4 text-sm'>
                       <div>
                         <span className='text-muted-foreground'>
-                          Mã thiết bị:
+                          {t('products.detail.overview.label.id' as any)}:
                         </span>
                         <span className='ml-2 font-medium'>
                           {device.device_info?.imei}
@@ -690,7 +757,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                       </div>
                       <div>
                         <span className='text-muted-foreground'>
-                          Loại thiết bị:
+                          {t('products.detail.overview.label.type' as any)}:
                         </span>
                         <span className='ml-2 font-medium'>
                           {catalogueOptions.find(
@@ -699,18 +766,23 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         </span>
                       </div>
                       <div>
-                        <span className='text-muted-foreground'>Serial:</span>
+                        <span className='text-muted-foreground'>
+                          {t('products.detail.overview.label.serial' as any)}:
+                        </span>
                         <span className='ml-2 font-medium'>{serial}</span>
                       </div>
                       <div>
                         <span className='text-muted-foreground'>
-                          Nhà sản xuất:
+                          {t(
+                            'products.detail.overview.label.manufacturer' as any
+                          )}
+                          :
                         </span>
                         <span className='ml-2 font-medium'>{manufacturer}</span>
                       </div>
                       <div>
                         <span className='text-muted-foreground mr-2'>
-                          Trạng thái thiết bị:
+                          {t('products.detail.overview.label.status' as any)}:
                         </span>
                         {device.device_info?.online ? (
                           <span className='text-green-600'>Online</span>
@@ -730,11 +802,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='text-muted-foreground text-sm'>
-                              Tên thiết bị
+                              {t('products.detail.overview.label.name' as any)}
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder='Tên thiết bị'
+                                placeholder={t(
+                                  'products.detail.overview.placeholder.name' as any
+                                )}
                                 {...field}
                                 className='font-medium'
                               />
@@ -751,11 +825,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='text-muted-foreground text-sm'>
-                              Mã thiết bị:
+                              {t('products.detail.overview.label.id' as any)}:
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder='Mã thiết bị'
+                                placeholder={t(
+                                  'products.detail.overview.placeholder.id' as any
+                                )}
                                 {...field}
                                 className='font-medium'
                               />
@@ -770,7 +846,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='text-muted-foreground text-sm'>
-                              Loại thiết bị:
+                              {t('products.detail.overview.label.type' as any)}:
                             </FormLabel>
                             <Select
                               value={field.value}
@@ -778,7 +854,11 @@ export function OverviewTab({ device }: OverviewTabProps) {
                             >
                               <FormControl>
                                 <SelectTrigger className='w-full font-medium'>
-                                  <SelectValue placeholder='Chọn loại thiết bị' />
+                                  <SelectValue
+                                    placeholder={t(
+                                      'products.detail.overview.placeholder.type' as any
+                                    )}
+                                  />
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
@@ -802,11 +882,16 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='text-muted-foreground text-sm'>
-                              Serial:
+                              {t(
+                                'products.detail.overview.label.serial' as any
+                              )}
+                              :
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder='Serial'
+                                placeholder={t(
+                                  'products.detail.overview.label.serial' as any
+                                )}
                                 {...field}
                                 className='font-medium'
                               />
@@ -821,11 +906,16 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel className='text-muted-foreground text-sm'>
-                              Nhà sản xuất:
+                              {t(
+                                'products.detail.overview.label.manufacturer' as any
+                              )}
+                              :
                             </FormLabel>
                             <FormControl>
                               <Input
-                                placeholder='Nhà sản xuất'
+                                placeholder={t(
+                                  'products.detail.overview.label.manufacturer' as any
+                                )}
                                 {...field}
                                 className='font-medium'
                               />
@@ -843,7 +933,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
 
           {/* Device Information Section */}
           <Card className='mt-4 border-none py-1 shadow-none'>
-            <CardTitle className='font-bold'>Thông tin thiết bị</CardTitle>
+            <CardTitle className='font-bold'>
+              {t('products.detail.overview.section.device_info' as any)}
+            </CardTitle>
             <CardContent className='space-y-2 px-0'>
               {/* Row 1 */}
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
@@ -853,13 +945,17 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='tags'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nhóm yêu thích</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.favorite_group' as any)}
+                        </FormLabel>
                         <FormControl>
                           <MultiSelect
                             options={tagOptions}
                             defaultValue={field.value ?? []}
                             onValueChange={(val) => field.onChange(val)}
-                            placeholder={'Chọn nhóm thiết bị'}
+                            placeholder={t(
+                              'products.form.placeholder.favorite_group' as any
+                            )}
                             disabled={!isEditMode}
                             resetOnDefaultValueChange={true}
                             className='disabled:bg-muted !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
@@ -875,7 +971,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                   />
                 </div>
                 <div className='space-y-2 md:col-span-2'>
-                  <Label>Kinh độ & Vĩ độ</Label>
+                  <Label>{t('products.form.label.coordinates' as any)}</Label>
                   <div className='flex gap-2'>
                     <FormField
                       control={form.control}
@@ -885,7 +981,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Kinh độ'
+                              placeholder={t(
+                                'products.form.placeholder.lon' as any
+                              )}
                               disabled={!isEditMode}
                               {...field}
                               className={cn(
@@ -923,7 +1021,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Vĩ độ'
+                              placeholder={t(
+                                'products.form.placeholder.lat' as any
+                              )}
                               disabled={!isEditMode}
                               {...field}
                               className={cn(
@@ -959,13 +1059,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           type='button'
                           className='bg-blue-2 rounded-sm hover:!bg-cyan-600 hover:!brightness-95'
                         >
-                          Vị trí bản đồ
+                          {t('products.detail.overview.label.location' as any)}
                         </Button>
                       </SheetTrigger>
                       <SheetContent side='right' className='gap-0'>
                         <SheetHeader>
                           <SheetTitle className='mx-auto'>
-                            Chọn vị trí bản đồ
+                            {t('products.detail.overview.sheet.title' as any)}
                           </SheetTitle>
                         </SheetHeader>
                         <div className='relative h-full w-full overflow-hidden'>
@@ -1007,7 +1107,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='parent_group_id'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Chi nhánh</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.branch' as any)}
+                        </FormLabel>
                         {/* <Select
                           value={field.value}
                           onValueChange={field.onChange}
@@ -1072,11 +1174,15 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='address'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Địa chỉ</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.address' as any)}
+                        </FormLabel>
                         <FormControl>
                           <Input
                             disabled={!isEditMode}
-                            placeholder='Địa chỉ'
+                            placeholder={t(
+                              'products.form.placeholder.address' as any
+                            )}
                             {...field}
                             className={cn(!isEditMode && 'disabled:opacity-90')}
                           />
@@ -1092,11 +1198,15 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='note'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ghi chú</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.note' as any)}
+                        </FormLabel>
                         <FormControl>
                           <Input
                             disabled={!isEditMode}
-                            placeholder='Nhập ghi chú'
+                            placeholder={t(
+                              'products.form.placeholder.note' as any
+                            )}
                             {...field}
                             className={cn(!isEditMode && 'disabled:opacity-90')}
                           />
@@ -1112,7 +1222,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
 
           {/* Product Information Section */}
           <Card className='border-none py-1 shadow-none'>
-            <CardTitle className='font-bold'>Thông tin sản phẩm</CardTitle>
+            <CardTitle className='font-bold'>
+              {t('products.detail.overview.section.product_info' as any)}
+            </CardTitle>
             <CardContent className='space-y-2 px-0'>
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
                 <div className='space-y-2'>
@@ -1121,7 +1233,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='installation_date'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ngày lắp đặt</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.installation_date' as any)}
+                        </FormLabel>
                         <FormControl>
                           <DateInput
                             value={
@@ -1132,7 +1246,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   : undefined
                             }
                             onChange={field.onChange}
-                            placeholder='Chọn ngày lắp đặt'
+                            placeholder={t(
+                              'products.form.label.installation_date' as any
+                            )}
                             disabled={!isEditMode}
                           />
                         </FormControl>
@@ -1147,7 +1263,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='purchase_date'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ngày áp dụng bảo hành</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.warranty_date' as any)}
+                        </FormLabel>
                         <FormControl>
                           <DateInput
                             value={
@@ -1158,7 +1276,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   : undefined
                             }
                             onChange={field.onChange}
-                            placeholder='Chọn ngày bảo hành'
+                            placeholder={t(
+                              'products.form.label.warranty_date' as any
+                            )}
                             disabled={!isEditMode}
                           />
                         </FormControl>
@@ -1173,7 +1293,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     name='expiration_date'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Ngày hết hạn bảo hành</FormLabel>
+                        <FormLabel>
+                          {t('products.form.label.warranty_expiration' as any)}
+                        </FormLabel>
                         <div className='flex w-full items-center gap-2'>
                           <FormControl>
                             <DateInput
@@ -1185,7 +1307,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                     : undefined
                               }
                               onChange={field.onChange}
-                              placeholder='Chọn ngày hết hạn bảo hành'
+                              placeholder={t(
+                                'products.form.label.warranty_expiration' as any
+                              )}
                               disabled={!isEditMode}
                             />
                           </FormControl>
@@ -1201,7 +1325,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 setIsReminderModalOpen(true);
                               }}
                             >
-                              Xem lời nhắc
+                              {t(
+                                'products.detail.overview.button.view_reminders' as any
+                              )}
                             </Button>
                           )}
                         </div>
@@ -1228,7 +1354,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                 className='bg-primary hover:bg-primary/90'
               >
                 <Edit2 className='mr-2 h-4 w-4' />
-                Chỉnh sửa
+                {t('products.detail.overview.button.edit' as any)}
               </Button>
             ) : (
               <>
@@ -1239,7 +1365,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                   disabled={updateDeviceMutation.isPending}
                 >
                   <X className='mr-2 h-4 w-4' />
-                  Hủy
+                  {t('products.detail.overview.button.cancel' as any)}
                 </Button>
                 <Button
                   type='submit'
@@ -1248,7 +1374,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
                   className='bg-primary hover:bg-primary/90'
                 >
                   <Save className='mr-2 h-4 w-4' />
-                  {updateDeviceMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+                  {updateDeviceMutation.isPending
+                    ? t('products.detail.overview.button.saving' as any)
+                    : t('products.detail.overview.button.save' as any)}
                 </Button>
               </>
             )}
@@ -1268,7 +1396,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                 >
                   <AccordionTrigger>
                     <CardTitle className='text-base font-bold'>
-                      Thông số thiết bị
+                      {t('products.detail.overview.section.attributes' as any)}
                     </CardTitle>
                   </AccordionTrigger>
 
@@ -1280,7 +1408,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         onClick={handleSyncDevices}
                       >
                         <RefreshCw className='mr-2 h-4 w-4' />
-                        Đồng bộ
+                        {t('products.detail.activity.sync' as any)}
                       </Button>
                     </div>
 

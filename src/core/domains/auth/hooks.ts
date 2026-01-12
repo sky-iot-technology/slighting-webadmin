@@ -19,6 +19,7 @@ import {
   usePermissionStore
 } from '../permissions';
 import { toast } from 'sonner';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 // Query keys
 export const authKeys = {
@@ -32,7 +33,9 @@ export function useLogin() {
   const router = useRouter();
   const { setUser, setTokens, setLoading, setError, setDomainId } =
     useAuthStore();
+  useAuthStore();
   const setPermissions = usePermissionStore((s) => s.setPermissions);
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: authApi.login,
@@ -61,22 +64,21 @@ export function useLogin() {
         }
 
         queryClient.setQueryData(authKeys.user(), user);
-        toast.success('Đăng nhập thành công!');
+        toast.success(t('toast.login_success'));
         const nextRoute = getFirstAccessibleRoute(uiPermission);
         router.push(nextRoute ?? '/404');
         setLoading(false);
       } catch (error) {
         setLoading(false);
         setError('Failed to fetch user profile');
-        toast.error(
-          'Đăng nhập thành công nhưng không thể lấy thông tin người dùng'
-        );
+        toast.error(t('toast.login_failed_user_info'));
       }
     },
     onError: (error: Error) => {
       setLoading(false);
-      setError(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
-      toast.error(error.message || 'Đăng nhập thất bại. Vui lòng thử lại.');
+      setError(error.message || t('toast.login_failed'));
+
+      toast.error(error.message || t('toast.login_failed'));
     }
   });
 }
@@ -84,7 +86,9 @@ export function useLogin() {
 export function useSignup() {
   const queryClient = useQueryClient();
   const router = useRouter();
+
   const { setLoading, setError } = useAuthStore();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: authApi.signup,
@@ -95,13 +99,15 @@ export function useSignup() {
     onSuccess: (data) => {
       setLoading(false);
       queryClient.setQueryData(authKeys.tokens(), data);
-      toast.success('Đăng ký thành công! Vui lòng đăng nhập.');
+
+      toast.success(t('toast.signup_success'));
       router.push('/auth/sign-in');
     },
     onError: (error: Error) => {
       setLoading(false);
-      setError(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
-      toast.error(error.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+      setError(error.message || t('toast.signup_failed'));
+
+      toast.error(error.message || t('toast.signup_failed'));
     }
   });
 }
@@ -110,7 +116,9 @@ export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
   const { clearAuth, setLoading } = useAuthStore();
+
   const { clearPermissions } = usePermissionStore();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: authApi.logout,
@@ -122,7 +130,8 @@ export function useLogout() {
       clearPermissions();
       setLoading(false);
       queryClient.clear();
-      toast.success('Đăng xuất thành công!');
+
+      toast.success(t('toast.logout_success'));
       router.push('/auth/sign-in');
     },
     onError: (error: Error) => {
@@ -132,7 +141,8 @@ export function useLogout() {
       cookieUtils.clearAuthCookies();
       setLoading(false);
       queryClient.clear();
-      toast.success('Đăng xuất thành công!');
+
+      toast.success(t('toast.logout_success'));
       router.push('/auth/sign-in');
     }
   });
@@ -142,7 +152,9 @@ export const useUpdateProfile = (
   options?: UseMutationOptions<User, Error, Partial<User>>
 ) => {
   const queryClient = useQueryClient();
+
   const { updateUser, setLoading, setError, user } = useAuthStore();
+  const { t } = useTranslation();
 
   return useMutation<User, Error, Partial<User>>({
     ...options,
@@ -160,16 +172,13 @@ export const useUpdateProfile = (
       updateUser(updatedUser);
       setLoading(false);
       queryClient.setQueryData(authKeys.user(), updatedUser);
-      toast.success('Cập nhật thông tin thành công!');
+
+      toast.success(t('toast.update_profile_success'));
     },
     onError: (error: Error) => {
       setLoading(false);
-      setError(
-        error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
-      );
-      toast.error(
-        error.message || 'Cập nhật thông tin thất bại. Vui lòng thử lại.'
-      );
+      setError(error.message || t('toast.update_profile_failed'));
+      toast.error(error.message || t('toast.update_profile_failed'));
     }
   });
 };
@@ -178,7 +187,9 @@ export const useUploadAvatar = (
   options?: UseMutationOptions<{ url: string; path: string }, Error, File>
 ) => {
   const queryClient = useQueryClient();
+
   const { updateUser, setLoading, setError, user } = useAuthStore();
+  const { t } = useTranslation();
 
   return useMutation({
     ...options,
@@ -208,12 +219,13 @@ export const useUploadAvatar = (
       queryClient.invalidateQueries({
         queryKey: authKeys.user()
       });
-      toast.success('Cập nhật ảnh đại diện thành công!');
+
+      toast.success(t('toast.upload_avatar_success'));
     },
     onError: (err) => {
       setLoading(false);
       setError(err.message);
-      toast.error('Tải ảnh đại diện thất bại, vui lòng thử lại');
+      toast.error(t('toast.upload_avatar_failed'));
     }
   });
 };
@@ -222,7 +234,9 @@ export const useDeleteAvatar = (
   options?: UseMutationOptions<void, Error, string>
 ) => {
   const queryClient = useQueryClient();
+
   const { updateUser, setLoading, setError, user } = useAuthStore();
+  const { t } = useTranslation();
 
   return useMutation<void, Error, string>({
     ...options,
@@ -246,12 +260,13 @@ export const useDeleteAvatar = (
       queryClient.invalidateQueries({
         queryKey: authKeys.user()
       });
-      toast.success('Xóa ảnh đại diện thành công!');
+
+      toast.success(t('toast.delete_avatar_success'));
     },
     onError: (err) => {
       setLoading(false);
       setError(err.message);
-      toast.error('Không thể xóa ảnh đại diện!');
+      toast.error(t('toast.delete_avatar_failed'));
     }
   });
 };
@@ -270,6 +285,7 @@ export function useCurrentUser() {
 
 export function useRefreshToken() {
   const { setTokens, setError, refreshToken } = useAuthStore();
+  const { t } = useTranslation();
 
   return useMutation({
     mutationFn: () => authApi.refreshToken(refreshToken || ''),
@@ -277,7 +293,7 @@ export function useRefreshToken() {
       setTokens(data.access_token, data.refresh_token);
     },
     onError: (error: Error) => {
-      setError(error.message || 'Token refresh failed');
+      setError(error.message || t('toast.token_refresh_failed'));
     }
   });
 }

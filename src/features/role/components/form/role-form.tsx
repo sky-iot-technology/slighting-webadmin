@@ -33,6 +33,7 @@ import {
 } from '@/core/domains/permissions';
 import { useMemo } from 'react';
 import { permissionArrayToMap } from '../../helper';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type RoleFormProps = {
   pageTitle: string;
@@ -47,6 +48,7 @@ export default function RoleForm({
   initialData,
   isViewOnly = false
 }: RoleFormProps) {
+  const { t } = useTranslation();
   const defaultValues = useMemo(() => {
     return (
       initialData
@@ -119,12 +121,12 @@ export default function RoleForm({
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên vai trò
+                      {t('role.form.label.name' as any)}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên đơn vị'
+                        placeholder={t('role.form.placeholder.name' as any)}
                         {...field}
                         disabled={isViewOnly}
                       />
@@ -139,11 +141,13 @@ export default function RoleForm({
                 name='note'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Ghi chú</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('role.form.label.note' as any)}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập ghi chú'
+                        placeholder={t('role.form.placeholder.note' as any)}
                         {...field}
                         disabled={isViewOnly}
                       />
@@ -159,7 +163,7 @@ export default function RoleForm({
                 render={({ field }) => (
                   <FormItem className='flex h-full flex-1 flex-col'>
                     <FormLabel className='text-xs font-bold'>
-                      Phân quyền
+                      {t('role.form.label.permission' as any)}
                     </FormLabel>
                     {/* <FormControl> */}
                     <RolePermissionUI
@@ -180,14 +184,14 @@ export default function RoleForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('role.form.button.cancel' as any)}
                 </Button>
                 {!isViewOnly && (
                   <Button
                     type='submit'
                     className='h-full w-16 rounded-[4px] text-xs'
                   >
-                    Lưu
+                    {t('role.form.button.save' as any)}
                   </Button>
                 )}
               </div>

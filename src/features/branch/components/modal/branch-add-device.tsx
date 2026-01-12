@@ -3,6 +3,7 @@ import {
   useGetDevices,
   useSetParent
 } from '@/core/domains/devices';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useDebounce } from '@/core/shared/hooks/use-debounce';
 import { cn } from '@/lib/utils';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
@@ -35,6 +36,7 @@ export default function BranchAddDevice({
   onOpenChange,
   regionId
 }: BranchAddDeviceProps) {
+  const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 400);
 
@@ -78,16 +80,21 @@ export default function BranchAddDevice({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTitle className='hidden'>Thêm Nhiều thiết bị</DialogTitle>
+      <DialogTitle className='hidden'>
+        {t('branch.add_multiple_devices')}
+      </DialogTitle>
       <DialogDescription className='hidden'>
-        Thêm Nhiều thiết bị
+        {t('branch.add_multiple_devices')}
       </DialogDescription>
       <DialogContent
         className='flex w-full max-w-[90vw] flex-col gap-4 rounded-lg bg-white p-4 sm:max-w-[830px]'
         hideCloseButton
       >
         <h2 className='text-center text-[16px] font-bold sm:text-left'>
-          Thêm <span className='text-primary'>Nhiều thiết bị</span>
+          {t('branch.add')}{' '}
+          <span className='text-primary'>
+            {t('branch.add_multiple_devices').replace(t('branch.add'), '')}
+          </span>
         </h2>
 
         <div className='bg-background flex h-[28px] w-full items-center rounded-[6px] px-2 sm:w-[260px]'>
@@ -102,14 +109,14 @@ export default function BranchAddDevice({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className='text-foreground placeholder:text-muted-foreground w-full bg-transparent text-xs focus:outline-none'
-            placeholder='Tìm kiếm thiết bị...'
+            placeholder={t('branch.search_device')}
           />
         </div>
 
         <div className='flex w-full flex-col gap-4 sm:flex-row'>
           <div className='flex h-[330px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
             <div className='flex-shrink-0 border-b px-2.5 py-1.5 text-[14px] font-semibold'>
-              Chọn thiết bị
+              {t('branch.select_device')}
             </div>
             <CustomScrollbar className='flex-1 overflow-y-auto'>
               <div className='flex flex-col'>
@@ -149,7 +156,7 @@ export default function BranchAddDevice({
                           {item.name}
                         </span>
                         <span className='text-muted-foreground truncate text-[10px] font-extralight'>
-                          Mã: {item.device_info.serial_number}
+                          {t('branch.code')}: {item.device_info.serial_number}
                         </span>
                       </div>
                       <div
@@ -157,7 +164,9 @@ export default function BranchAddDevice({
                           'h-2.5 w-2.5 rounded-full',
                           isOnline ? 'bg-green-500' : 'bg-red-500'
                         )}
-                        title={isOnline ? 'Online' : 'Offline'}
+                        title={
+                          isOnline ? t('branch.online') : t('branch.offline')
+                        }
                       />
                     </div>
                   );
@@ -168,7 +177,7 @@ export default function BranchAddDevice({
 
           <div className='flex h-[330px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
             <div className='flex-shrink-0 border-b px-2.5 py-1.5 text-[14px] font-semibold'>
-              Thiết bị đã chọn
+              {t('branch.selected_device')}
               <span className='text-primary ml-1'>({selected.length})</span>
             </div>
             <CustomScrollbar className='flex-1 overflow-y-auto'>
@@ -205,14 +214,14 @@ export default function BranchAddDevice({
             className='h-[30px] w-[64px] rounded-[4px]'
             onClick={() => onOpenChange(false)}
           >
-            Hủy
+            {t('branch.cancel')}
           </Button>
           <Button
             className='bg-primary h-[30px] w-[84px] rounded-[4px] text-white'
             onClick={handleAddParent}
             disabled={!selected.length}
           >
-            Thêm
+            {t('branch.add')}
           </Button>
         </div>
       </DialogContent>

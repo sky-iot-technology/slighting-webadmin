@@ -12,6 +12,7 @@ import { parseAsInteger, useQueryState } from 'nuqs';
 import { Button } from '@/ui/components/ui/button';
 import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import RoleDialog from '../modal/role-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
 interface RoleTableParams<TData, TValue> {
@@ -28,6 +29,7 @@ export function RoleTable<TData, TValue>({
   isLoading = false,
   error = null
 }: RoleTableParams<TData, TValue>) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
@@ -77,10 +79,10 @@ export function RoleTable<TData, TValue>({
               onClick={() => setOpen(true)}
             >
               <IconPlus className='h-3 w-3' />
-              Thêm
+              {t('role.button.add' as any)}
             </Button>
             <RoleDialog
-              pageTitle='Thêm vai trò'
+              pageTitle={t('role.modal.add.title' as any)}
               open={open}
               onOpenChange={setOpen}
               // initialData={{ group_ids: region?.id ? [region.id] : [] }}

@@ -15,6 +15,7 @@ import Image from 'next/image';
 import WorkorderHistory from '../modal/workorder-history-dialog';
 import { useDeleteWorkOrder } from '@/core/domains/workorders';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
@@ -29,6 +30,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   onViewAction,
   onEditAction
 }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
@@ -91,7 +93,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('maintenance.actions.detail' as any)}</span>
           </DropdownMenuItem>
 
           <PermissionGuard module='maintenance.workorder' action='update'>
@@ -111,7 +113,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                   height={12}
                 />
               </div>
-              <span>Sửa</span>
+              <span>{t('maintenance.actions.edit' as any)}</span>
             </DropdownMenuItem>
           </PermissionGuard>
 
@@ -127,7 +129,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                 height={12}
               />
             </div>
-            <span>Lịch sử</span>
+            <span>{t('maintenance.actions.history' as any)}</span>
           </DropdownMenuItem>
           <PermissionGuard module='maintenance.workorder' action='delete'>
             <DropdownMenuItem
@@ -143,7 +145,9 @@ export const CellAction: React.FC<CellActionProps> = ({
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('maintenance.actions.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

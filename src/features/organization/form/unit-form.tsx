@@ -22,12 +22,15 @@ import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
 import { unitSchema } from '@/core/domains/organizations/schemas';
 
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 type UnitFormProps = {
   pageTitle: string;
   onClose?: () => void;
 };
 
 export default function UnitForm({ onClose, pageTitle }: UnitFormProps) {
+  const { t } = useTranslation();
   //   const defaultValues = useMemo(() => {
   //     return (
   //       formData ??
@@ -81,12 +84,12 @@ export default function UnitForm({ onClose, pageTitle }: UnitFormProps) {
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên đơn vị
+                      {t('organization.unit.label.name')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên đơn vị'
+                        placeholder={t('organization.unit.placeholder.name')}
                         {...field}
                       />
                     </FormControl>
@@ -100,11 +103,13 @@ export default function UnitForm({ onClose, pageTitle }: UnitFormProps) {
                 name='address'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Địa chỉ</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('organization.unit.label.address')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập địa chỉ'
+                        placeholder={t('organization.unit.placeholder.address')}
                         {...field}
                       />
                     </FormControl>
@@ -118,11 +123,13 @@ export default function UnitForm({ onClose, pageTitle }: UnitFormProps) {
                 name='note'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Ghi chú</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('organization.unit.label.note')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập ghi chú'
+                        placeholder={t('organization.unit.placeholder.note')}
                         {...field}
                       />
                     </FormControl>
@@ -138,13 +145,13 @@ export default function UnitForm({ onClose, pageTitle }: UnitFormProps) {
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('organization.button.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Lưu
+                  {t('organization.button.save')}
                 </Button>
               </div>
             </form>

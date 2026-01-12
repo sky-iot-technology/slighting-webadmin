@@ -12,6 +12,7 @@ import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useDeleteMultiCalendars } from '@/core/domains/calendars';
 import { PermissionGuard, useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface ProductTableParams<TData, TValue> {
   data: TData[];
@@ -29,6 +30,7 @@ export function CalendarTable<TData, TValue>({
   isLoading = false,
   error = null
 }: ProductTableParams<TData, TValue>) {
+  const { t } = useTranslation();
   const canDelete = useCan('device', 'delete');
   const [open, setOpen] = useState(false);
 
@@ -88,7 +90,7 @@ export function CalendarTable<TData, TValue>({
                 onClick={() => setOpen(true)}
               >
                 <IconPlus className='h-3 w-3' />
-                Thêm
+                {t('calendar.add' as any)}
               </Button>
             </PermissionGuard>
           }
@@ -99,7 +101,7 @@ export function CalendarTable<TData, TValue>({
         {/* <DataTableToolbar table={table} /> */}
       </div>
       <CalendarDeviceDialog
-        pageTitle='Thêm lịch'
+        pageTitle={t('calendar.add_calendar' as any)}
         open={open}
         onOpenChange={setOpen}
         initialData={{ client_id: clientId }}

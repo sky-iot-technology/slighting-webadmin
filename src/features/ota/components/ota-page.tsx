@@ -38,13 +38,14 @@ export default function OtaPage() {
   }, [catalogues]);
 
   const columns = useMemo<ColumnDef<OtaItem>[]>(() => {
-    return OtaColumns.map((col) => {
+    return OtaColumns(t).map((col) => {
       if (col.id !== 'category_type') return col;
 
       return {
         ...col,
         meta: {
           ...col.meta,
+          label: t('ota.table.category'),
           options: typeOptions
         },
         cell: ({ cell }) => {
@@ -54,7 +55,9 @@ export default function OtaPage() {
         }
       };
     });
-  }, [typeOptions]);
+  }, [typeOptions, t]);
+
+  const isFilterReady = typeOptions.length > 0;
 
   return (
     <div className='h-full w-full p-3'>
@@ -65,6 +68,7 @@ export default function OtaPage() {
           columns={columns as ColumnDef<OtaItem, any>[]}
           isLoading={isLoading}
           error={error}
+          isFilterReady={isFilterReady}
         />
       </div>
     </div>

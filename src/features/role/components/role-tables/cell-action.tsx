@@ -13,6 +13,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import RoleDialog from '../modal/role-dialog';
 import { PermissionGuard, useDeleteRole } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
@@ -20,6 +21,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -34,7 +36,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
     <>
       {/* View */}
       <RoleDialog
-        pageTitle='Chi tiết vai trò'
+        pageTitle={t('role.modal.view.title' as any)}
         open={openView}
         onOpenChange={setOpenView}
         isViewOnly={true}
@@ -46,11 +48,13 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={deleteRole.isPending}
+        title={t('role.modal.delete.title' as any)}
+        description={t('role.modal.delete.description' as any)}
       />
 
       {/* ✏️ Edit */}
       <RoleDialog
-        pageTitle='Chỉnh sửa vai trò'
+        pageTitle={t('role.modal.edit.title' as any)}
         open={openEdit}
         onOpenChange={setOpenEdit}
         roleId={id}
@@ -83,7 +87,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('role.action.view' as any)}</span>
           </DropdownMenuItem>
 
           <PermissionGuard module='role' action='update' fallback={null}>
@@ -99,7 +103,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                   height={12}
                 />
               </div>
-              <span>Sửa</span>
+              <span>{t('role.action.edit' as any)}</span>
             </DropdownMenuItem>
           </PermissionGuard>
 
@@ -117,7 +121,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('role.action.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

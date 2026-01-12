@@ -15,9 +15,9 @@ type TraitRenderProps = {
   disabled?: boolean;
 };
 
-export const TRAIT_UI_MAP: Record<TraitKey, TraitUIConfig> = {
+export const getTraitUiMap = (t: any): Record<TraitKey, TraitUIConfig> => ({
   'lms.devices.traits.OnOff': {
-    label: 'Bật / Tắt',
+    label: t('calendar.on_off' as any),
     defaultValue: false,
     render: ({ value, onChange, disabled }) => (
       <div className='flex items-center gap-2'>
@@ -32,14 +32,14 @@ export const TRAIT_UI_MAP: Record<TraitKey, TraitUIConfig> = {
             value ? 'text-green-600' : 'text-gray-400'
           }`}
         >
-          {value ? 'Bật' : 'Tắt'}
+          {value ? t('calendar.on' as any) : t('calendar.off' as any)}
         </span>
       </div>
     )
   },
 
   'lms.devices.traits.Brightness': {
-    label: 'Độ sáng',
+    label: t('calendar.brightness' as any),
     defaultValue: 0,
     render: ({ value = 0, onChange, disabled }) => (
       <div className='flex items-center gap-2'>
@@ -57,7 +57,7 @@ export const TRAIT_UI_MAP: Record<TraitKey, TraitUIConfig> = {
   },
 
   'lms.devices.traits.Volume': {
-    label: 'Âm lượng',
+    label: t('calendar.volume' as any),
     defaultValue: 50,
     render: ({ value = 50, onChange }) => (
       <Slider
@@ -70,10 +70,10 @@ export const TRAIT_UI_MAP: Record<TraitKey, TraitUIConfig> = {
   },
 
   'lms.devices.traits.Mute': {
-    label: 'Tắt tiếng',
+    label: t('calendar.mute' as any),
     defaultValue: false,
     render: ({ value, onChange }) => (
       <Switch checked={!!value} onCheckedChange={onChange} />
     )
   }
-};
+});

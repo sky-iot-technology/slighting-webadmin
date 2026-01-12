@@ -1,4 +1,5 @@
 'use client';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import { PermissionFormMap } from '@/core/domains/permissions';
 import {
   isActionDisabled,
@@ -15,11 +16,29 @@ type RolePermissionSectionProps = {
   disabled?: boolean;
 };
 
+const UI_MODULE_LABEL_MAP: Record<string, string> = {
+  dashboard: 'navbar.dashboard',
+  map: 'navbar.map',
+  device: 'navbar.device_management',
+  calendar: 'navbar.calendar_management',
+  maintenance: 'navbar.maintenance_management',
+  'maintenance.alarm': 'maintenance.alert',
+  'maintenance.workorder': 'maintenance.work_order',
+  department: 'navbar.organization_management',
+  ota: 'navbar.firmware_management',
+  tag: 'navbar.favorite_groups',
+  branch: 'navbar.branches',
+  role: 'navbar.roles',
+  users: 'navbar.users'
+};
+
 export default function RolePermissionSection({
   value,
   onChange,
   disabled
 }: RolePermissionSectionProps) {
+  const { t } = useTranslation();
+
   const selectedModules = Object.keys(value);
 
   const allPermissions: PermissionFormMap = uiModules.reduce((acc, ui) => {
@@ -92,7 +111,9 @@ export default function RolePermissionSection({
                 }
               }}
             />
-            <span className='text-xs font-semibold'>Chọn tất cả</span>
+            <span className='text-xs font-semibold'>
+              {t('role.form.label.selectAll')}
+            </span>
           </div>
 
           {uiModules.map((ui) => {
@@ -109,7 +130,9 @@ export default function RolePermissionSection({
                       toggleModule(ui.value, !!checked)
                     }
                   />
-                  <span className='text-xs'>{ui.label}</span>
+                  <span className='text-xs'>
+                    {t(UI_MODULE_LABEL_MAP[ui.value] as any)}
+                  </span>
                 </div>
 
                 {/* Actions */}
@@ -132,17 +155,7 @@ export default function RolePermissionSection({
                             }
                           />
                           <span className='text-xs'>
-                            {act === 'view'
-                              ? 'Xem'
-                              : act === 'create'
-                                ? 'Thêm'
-                                : act === 'update'
-                                  ? 'Sửa'
-                                  : act === 'sync'
-                                    ? 'Đồng bộ'
-                                    : act === 'control'
-                                      ? 'Điều khiển'
-                                      : 'Xóa'}
+                            {t(`role.action.${act}` as any)}
                           </span>
                         </label>
                       );

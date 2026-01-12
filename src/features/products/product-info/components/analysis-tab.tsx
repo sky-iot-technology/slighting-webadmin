@@ -14,51 +14,53 @@ import {
 } from '@/ui/components/ui/select';
 import { Button } from '@/ui/components/ui/button';
 import { Download } from 'lucide-react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface AnalysisTabProps {
   device: Device;
 }
 
-const analysisStats = [
-  {
-    icon: '/assets/icons/total-device.svg',
-    label: 'Điện năng tiêu thụ',
-    value: '12.5 kWh',
-    trend: 8,
-    shadow: '!shadow-primary',
-    trendType: 'up' as const,
-    bgColor: 'bg-card-primary'
-  },
-  {
-    icon: '/assets/icons/online.svg',
-    label: 'Độ sáng trung bình',
-    value: '85%',
-    trend: 0,
-    shadow: '!shadow-success',
-    trendType: 'up' as const,
-    bgColor: 'bg-card-success'
-  },
-  {
-    icon: '/assets/icons/offline.svg',
-    label: 'Thời gian hoạt động',
-    value: '8.5h',
-    trend: 0,
-    shadow: '!shadow-default',
-    trendType: 'up' as const
-  },
-  {
-    icon: '/assets/icons/alert.svg',
-    label: 'Hiệu suất',
-    value: '98.2%',
-    trend: 0,
-    shadow: '!shadow-danger',
-    trendType: 'up' as const,
-    bgColor: 'bg-card-danger'
-  }
-];
-
 export function AnalysisTab({ device: _device }: AnalysisTabProps) {
+  const { t } = useTranslation();
+
+  const analysisStats = [
+    {
+      icon: '/assets/icons/total-device.svg',
+      label: t('products.detail.analysis.stats.power'),
+      value: '12.5 kWh',
+      trend: 8,
+      shadow: '!shadow-primary',
+      trendType: 'up' as const,
+      bgColor: 'bg-card-primary'
+    },
+    {
+      icon: '/assets/icons/online.svg',
+      label: t('products.detail.analysis.stats.brightness'),
+      value: '85%',
+      trend: 0,
+      shadow: '!shadow-success',
+      trendType: 'up' as const,
+      bgColor: 'bg-card-success'
+    },
+    {
+      icon: '/assets/icons/offline.svg',
+      label: t('products.detail.analysis.stats.uptime'),
+      value: '8.5h',
+      trend: 0,
+      shadow: '!shadow-default',
+      trendType: 'up' as const
+    },
+    {
+      icon: '/assets/icons/alert.svg',
+      label: t('products.detail.analysis.stats.efficiency'),
+      value: '98.2%',
+      trend: 0,
+      shadow: '!shadow-danger',
+      trendType: 'up' as const,
+      bgColor: 'bg-card-danger'
+    }
+  ];
   return (
     <div className='flex flex-1 flex-col space-y-2 bg-white'>
       {/* Time period selector */}
@@ -68,11 +70,21 @@ export function AnalysisTab({ device: _device }: AnalysisTabProps) {
             <SelectValue placeholder='Select period' />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value='today'>Hôm nay</SelectItem>
-            <SelectItem value='7days'>7 ngày</SelectItem>
-            <SelectItem value='30days'>30 ngày</SelectItem>
-            <SelectItem value='90days'>90 ngày</SelectItem>
-            <SelectItem value='all'>Tất cả</SelectItem>
+            <SelectItem value='today'>
+              {t('products.detail.analysis.period.today' as any)}
+            </SelectItem>
+            <SelectItem value='7days'>
+              {t('products.detail.analysis.period.days7' as any)}
+            </SelectItem>
+            <SelectItem value='30days'>
+              {t('products.detail.analysis.period.days30' as any)}
+            </SelectItem>
+            <SelectItem value='90days'>
+              {t('products.detail.analysis.period.days90' as any)}
+            </SelectItem>
+            <SelectItem value='all'>
+              {t('products.detail.analysis.period.all' as any)}
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -103,7 +115,7 @@ export function AnalysisTab({ device: _device }: AnalysisTabProps) {
       <div className='mr-[22px] mb-[26px] ml-[28px] flex justify-end'>
         <Button className='bg-green-600 hover:bg-green-700'>
           <Download className='mr-2 h-4 w-4' />
-          Xuất báo cáo
+          {t('products.detail.analysis.button.export' as any)}
         </Button>
       </div>
     </div>

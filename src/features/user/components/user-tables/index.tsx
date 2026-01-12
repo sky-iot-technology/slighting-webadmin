@@ -14,6 +14,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { useState } from 'react';
 import UserDialog from '../modal/user-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 interface UserTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -29,6 +30,7 @@ export function UserTable<TData, TValue>({
   error = null
 }: UserTableParams<TData, TValue>) {
   const [open, setOpen] = useState(false);
+  const { t } = useTranslation();
 
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
@@ -75,7 +77,7 @@ export function UserTable<TData, TValue>({
               onClick={() => setOpen(true)}
             >
               <IconPlus className='h-3 w-3' />
-              Thêm
+              {t('user.add' as any)}
             </Button>
           </PermissionGuard>
         }
@@ -84,7 +86,7 @@ export function UserTable<TData, TValue>({
         // onDeleteAll={handleDelete}
       />
       <UserDialog
-        pageTitle='Thêm người dùng'
+        pageTitle={t('user.add_title' as any)}
         open={open}
         onOpenChange={setOpen}
       />

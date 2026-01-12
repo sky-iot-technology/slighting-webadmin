@@ -11,6 +11,7 @@ import {
 } from '@/ui/components/ui/select';
 import { cn } from '@/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
@@ -25,6 +26,8 @@ export function DataTablePagination<TData>({
   totalRows,
   ...props
 }: DataTablePaginationProps<TData>) {
+  const { t, tTime } = useTranslation();
+
   const { pageIndex, pageSize } = table.getState().pagination;
   const start = totalRows === 0 ? 0 : pageIndex * pageSize + 1;
   const end = Math.min((pageIndex + 1) * pageSize, totalRows);
@@ -123,15 +126,17 @@ export function DataTablePagination<TData>({
 
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
           <>
-            {table.getFilteredSelectedRowModel().rows.length} of{' '}
-            {table.getFilteredRowModel().rows.length} row(s) selected.
+            {tTime('general.rows_selected', {
+              selected: table.getFilteredSelectedRowModel().rows.length,
+              total: table.getFilteredRowModel().rows.length
+            })}
           </>
         )}
       </div>
       <div className='flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
         {totalRows > pageSize && (
           <div className='flex items-center justify-center text-sm font-medium'>
-            {start} - {end} trong {totalRows}
+            {start} - {end} {t('general.start_end')} {totalRows}
           </div>
         )}
 
@@ -220,7 +225,7 @@ export function DataTablePagination<TData>({
           >
             <SelectTrigger className='h-8 [&[data-size]]:h-8'>
               <SelectValue>
-                {table.getState().pagination.pageSize} hàng
+                {table.getState().pagination.pageSize} {t('general.line')}
               </SelectValue>
             </SelectTrigger>
             <SelectContent side='top'>

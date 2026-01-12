@@ -10,7 +10,9 @@ import { formatDateString } from '../../helper';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 import { cn } from '@/lib/utils';
 
-export const columns: ColumnDef<Calendar>[] = [
+export const calendarColumns = (
+  t: (key: any) => string
+): ColumnDef<Calendar>[] => [
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
@@ -92,7 +94,10 @@ export const columns: ColumnDef<Calendar>[] = [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên lịch' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.calendar_name')}
+      />
     ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
@@ -100,7 +105,7 @@ export const columns: ColumnDef<Calendar>[] = [
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm tên lịch',
+      placeholder: t('calendar.search_calendar_name'),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -111,12 +116,16 @@ export const columns: ColumnDef<Calendar>[] = [
     id: 'priority',
     accessorKey: 'priority',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Loại lịch' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.calendar_type')}
+      />
     ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const priority = row.getValue('priority') as string;
-      const label = PRIORITY_LABELS[priority] || 'Không xác định';
+      const label =
+        t(`calendar.priority.${priority}`) || t('calendar.undefined');
       const color =
         priority === 'emergency'
           ? 'text-calendar-red'
@@ -132,7 +141,7 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'time',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian' />
+      <DataTableColumnHeader column={column} title={t('calendar.time')} />
     ),
     cell: ({ row }) => {
       if (row.depth === 0) {
@@ -185,7 +194,7 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'status',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái' />
+      <DataTableColumnHeader column={column} title={t('calendar.status')} />
     ),
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
@@ -223,13 +232,13 @@ export const columns: ColumnDef<Calendar>[] = [
         icon = isOn
           ? '/assets/icons/calendarOnline.svg'
           : '/assets/icons/calendarOffline.svg';
-        label = isOn ? 'Bật' : 'Tắt';
+        label = isOn ? t('calendar.on') : t('calendar.off');
       } else if (command.includes('Brightness')) {
         icon = '/assets/icons/calendarOnline.svg';
         const brightness = params.brightness;
         label = `${brightness}%`;
       } else {
-        label = 'Không xác định';
+        label = t('calendar.undefined');
       }
 
       return (
@@ -246,7 +255,7 @@ export const columns: ColumnDef<Calendar>[] = [
     id: 'startDate',
     accessorKey: 'startDate',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ngày bắt đầu' />
+      <DataTableColumnHeader column={column} title={t('calendar.start_date')} />
     ),
     meta: {
       label: '',
@@ -268,7 +277,7 @@ export const columns: ColumnDef<Calendar>[] = [
     id: 'endDate',
     accessorKey: 'endDate',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ngày kết thúc' />
+      <DataTableColumnHeader column={column} title={t('calendar.end_date')} />
     ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
@@ -289,7 +298,10 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     accessorKey: 'createdDate',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ngày tạo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.created_date')}
+      />
     ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
@@ -302,7 +314,7 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     id: 'actions',
     header: ({ column }: { column: Column<Calendar, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader column={column} title={t('calendar.action')} />
     ),
     size: 57,
     cell: ({ row }) => {

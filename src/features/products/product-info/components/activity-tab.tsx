@@ -47,12 +47,14 @@ import {
 import { format } from 'date-fns';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface ActivityTabProps {
   device: Device;
 }
 
 export function ActivityTab({ device }: ActivityTabProps) {
+  const { t } = useTranslation();
   const canControl = useCan('device', 'control');
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(10);
@@ -429,7 +431,9 @@ export function ActivityTab({ device }: ActivityTabProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value='__all__'>Tất cả thiết bị</SelectItem>
+              <SelectItem value='__all__'>
+                {t('products.detail.activity.select_all' as any)}
+              </SelectItem>
               {allDevices.map((subDevice) => (
                 <SelectItem
                   key={subDevice.device_id}
@@ -446,7 +450,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           onClick={handleSyncDevices}
         >
           <RefreshCw className='mr-2 h-4 w-4' />
-          Đồng bộ
+          {t('products.detail.activity.sync' as any)}
         </Button>
       </div>
       <div className='mt-4 flex items-stretch'>
@@ -457,11 +461,15 @@ export function ActivityTab({ device }: ActivityTabProps) {
             <Table>
               <TableHeader>
                 <TableRow className='bg-muted/50'>
-                  <TableHead className='font-bold'>Thiết bị</TableHead>
                   <TableHead className='font-bold'>
-                    Trạng thái thiết bị
+                    {t('products.detail.activity.table.device' as any)}
                   </TableHead>
-                  <TableHead className='font-bold'>Hành động</TableHead>
+                  <TableHead className='font-bold'>
+                    {t('products.detail.activity.table.status' as any)}
+                  </TableHead>
+                  <TableHead className='font-bold'>
+                    {t('products.detail.activity.table.action' as any)}
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -471,7 +479,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                       colSpan={3}
                       className='text-muted-foreground text-center'
                     >
-                      Không có thiết bị nào
+                      {t('products.detail.activity.table.empty' as any)}
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -509,7 +517,11 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                 currentState ? 'text-green-600' : 'text-red-600'
                               )}
                             >
-                              {currentState ? 'Bật' : 'Tắt'}
+                              {currentState
+                                ? t('products.detail.activity.status.on' as any)
+                                : t(
+                                    'products.detail.activity.status.off' as any
+                                  )}
                             </span>
                           ) : isLight ? (
                             <div className='space-y-2'>
@@ -521,7 +533,13 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                     : 'text-red-600'
                                 )}
                               >
-                                {currentState ? 'Bật' : 'Tắt'}
+                                {currentState
+                                  ? t(
+                                      'products.detail.activity.status.on' as any
+                                    )
+                                  : t(
+                                      'products.detail.activity.status.off' as any
+                                    )}
                                 <span className='px-2'>{`  _ `}</span>
                                 {`${brightness}%`}
                               </span>
@@ -603,7 +621,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           {/* Pagination */}
           <div className='flex items-center justify-between pt-6'>
             <div className='text-muted-foreground text-sm'>
-              {startIndex} - {endIndex} trong {totalDevices}
+              {startIndex} - {endIndex} {t('general.start_end')} {totalDevices}
             </div>
             <div className='flex items-center gap-4'>
               <Pagination>
@@ -656,7 +674,9 @@ export function ActivityTab({ device }: ActivityTabProps) {
         {/* Right Section - Activity History (1/3 width) */}
         <div className='flex-1 space-y-4 rounded-bl-lg border-b border-l'>
           <div className='bg-card h-auto p-3'>
-            <h3 className='mb-4 text-lg font-bold'>Lịch sử hoạt động</h3>
+            <h3 className='mb-4 text-lg font-bold'>
+              {t('products.detail.activity.history.title' as any)}
+            </h3>
             <div className='max-h-[500px] overflow-y-auto'>
               {isLoadingJournals ? (
                 <div className='space-y-3'>
@@ -666,7 +686,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                 </div>
               ) : activityHistory.length === 0 ? (
                 <div className='text-muted-foreground py-8 text-center text-sm'>
-                  Không có lịch sử hoạt động
+                  {t('products.detail.activity.history.empty' as any)}
                 </div>
               ) : (
                 <div className='space-y-2'>

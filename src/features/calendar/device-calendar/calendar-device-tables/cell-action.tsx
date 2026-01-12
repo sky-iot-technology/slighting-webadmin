@@ -16,6 +16,7 @@ import { useDeleteCalendars } from '@/core/domains/calendars';
 import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { CalendarDeviceViewDialog } from '../modal/calendar-device-view-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
@@ -23,6 +24,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -94,7 +96,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('calendar.view_detail' as any)}</span>
           </DropdownMenuItem>
 
           {/* <DropdownMenuItem
@@ -126,7 +128,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>
+                {t('calendar.delete' as any)}
+              </span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

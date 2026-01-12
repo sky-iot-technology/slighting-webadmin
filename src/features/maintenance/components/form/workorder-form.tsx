@@ -49,6 +49,7 @@ import {
   normalizeStartEndDate,
   pickAllowedFields
 } from '../../helper';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type MaintenanceFormProps = {
   pageTitle: string;
@@ -63,6 +64,7 @@ export default function WorkorderForm({
   isView,
   onBack
 }: MaintenanceFormProps) {
+  const { t } = useTranslation();
   const [newFiles, setNewFiles] = useState<File[]>([]);
   const [existingFiles, setExistingFiles] = useState<Attachment[]>(
     initialData.admin_attachments ?? []
@@ -143,18 +145,18 @@ export default function WorkorderForm({
   const actionsOptions = useMemo(() => {
     return Object.values(WorkOrderAction).map((action) => ({
       value: action,
-      label: WorkOrderActionLabel[action]
+      label: t(WorkOrderActionLabel[action] as any)
     }));
-  }, []);
+  }, [t]);
 
   const statusOptions = useMemo(() => {
     return Object.values(WorkOrderStatus)
       .filter((status) => status !== WorkOrderStatus.CLOSED)
       .map((status) => ({
         value: status,
-        label: WorkOrderStatusLabel[status]
+        label: t(WorkOrderStatusLabel[status] as any)
       }));
-  }, []);
+  }, [t]);
 
   const updateWorkOrder = useUpdateWorkOrder();
   const onSubmit = (values: MaintenanceProgressFormValues) => {
@@ -233,7 +235,7 @@ export default function WorkorderForm({
             <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
-                  Thông tin thiết bị
+                  {t('maintenance.device_info')}
                 </CardTitle>
               </CardHeader>
               <CardContent className='px-0'>
@@ -243,12 +245,12 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Tên công việc
+                        {t('maintenance.work_order_name')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                          placeholder='Nhập tên công việc'
+                          placeholder={t('maintenance.enter_work_order_name')}
                           {...field}
                           disabled={!permissions.assignedBy}
                         />
@@ -264,7 +266,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Đơn vị xử lý
+                        {t('maintenance.unit_handling')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -273,14 +275,18 @@ export default function WorkorderForm({
                           disabled={!permissions.assignedBy}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn đơn vị xử lý' />
+                            <SelectValue
+                              placeholder={t(
+                                'maintenance.select_unit_handling'
+                              )}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             <SelectItem value='team:support'>
-                              Team Support
+                              {t('maintenance.team_support')}
                             </SelectItem>
                             <SelectItem value='team:technical'>
-                              Team Technical
+                              {t('maintenance.team_technical')}
                             </SelectItem>
                           </SelectContent>
                         </Select>
@@ -296,7 +302,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Người xử lý
+                        {t('maintenance.handler')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -305,7 +311,9 @@ export default function WorkorderForm({
                           disabled={!permissions.assignedBy}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn người thực hiện' />
+                            <SelectValue
+                              placeholder={t('maintenance.select_executor')}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             {usersOptions.length > 0
@@ -331,13 +339,17 @@ export default function WorkorderForm({
                   name='description'
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
-                      <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                      <FormLabel className='text-xs font-bold'>
+                        {t('maintenance.description')}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder={
-                            permissions.assignedBy ? 'Nhập mô tả' : undefined
+                            permissions.assignedBy
+                              ? t('maintenance.enter_description')
+                              : undefined
                           }
                           {...field}
                         />
@@ -359,7 +371,7 @@ export default function WorkorderForm({
                           width={20}
                           height={20}
                         />
-                        Tập tin đính kèm
+                        {t('maintenance.attachments')}
                       </FormLabel>
                       <FormControl>
                         <FileUpload
@@ -398,7 +410,7 @@ export default function WorkorderForm({
             <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
-                  Cập nhật tiến độ
+                  {t('maintenance.update_progress')}
                 </CardTitle>
               </CardHeader>
               <CardContent className='px-0'>
@@ -408,7 +420,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Trạng thái tiến độ
+                        {t('maintenance.progress_status')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -419,7 +431,9 @@ export default function WorkorderForm({
                           }
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn người thực hiện' />
+                            <SelectValue
+                              placeholder={t('maintenance.select_executor')}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             {statusOptions.length > 0
@@ -446,7 +460,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Ghi chú
+                        {t('maintenance.note')}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -455,7 +469,9 @@ export default function WorkorderForm({
                           }
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder={
-                            permissions.assignedBy ? 'Nhập ghi chú' : undefined
+                            permissions.assignedBy
+                              ? t('maintenance.enter_note')
+                              : undefined
                           }
                           {...field}
                         />
@@ -473,7 +489,7 @@ export default function WorkorderForm({
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
                           <FormLabel className='text-xs font-bold'>
-                            Ngày bắt đầu
+                            {t('maintenance.start_date')}
                           </FormLabel>
                           <FormControl>
                             <CalendarRangePicker
@@ -514,7 +530,7 @@ export default function WorkorderForm({
                       render={({ field }) => (
                         <FormItem className='col-span-2'>
                           <FormLabel className='text-xs font-bold'>
-                            Ngày kết thúc
+                            {t('maintenance.end_date')}
                           </FormLabel>
                           <FormControl>
                             <CalendarRangePicker
@@ -556,7 +572,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Hình ảnh
+                        {t('maintenance.images')}
                       </FormLabel>
                       <FormControl>
                         <ImageUpload
@@ -591,7 +607,7 @@ export default function WorkorderForm({
             <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
-                  Xác nhận tiến độ
+                  {t('maintenance.confirm_progress')}
                 </CardTitle>
               </CardHeader>
               <CardContent className='px-0'>
@@ -601,7 +617,7 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Trạng thái xử lý
+                        {t('maintenance.process_status')}
                       </FormLabel>
                       <FormControl>
                         <Select
@@ -610,7 +626,9 @@ export default function WorkorderForm({
                           disabled={!permissions.assignedBy}
                         >
                           <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                            <SelectValue placeholder='Chọn người thực hiện' />
+                            <SelectValue
+                              placeholder={t('maintenance.select_executor')}
+                            />
                           </SelectTrigger>
                           <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                             {actionsOptions.length > 0
@@ -637,14 +655,16 @@ export default function WorkorderForm({
                   render={({ field }) => (
                     <FormItem className='col-span-2'>
                       <FormLabel className='text-xs font-bold'>
-                        Ghi chú
+                        {t('maintenance.note')}
                       </FormLabel>
                       <FormControl>
                         <Input
                           disabled={!permissions.assignedBy}
                           className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                           placeholder={
-                            permissions.assignedBy ? 'Nhập ghi chú' : undefined
+                            permissions.assignedBy
+                              ? t('maintenance.enter_note')
+                              : undefined
                           }
                           {...field}
                         />
@@ -667,7 +687,7 @@ export default function WorkorderForm({
                 type='button'
                 className='h-full w-16 rounded-[4px] text-xs'
               >
-                Đóng
+                {t('maintenance.close')}
               </Button>
             ) : (
               <>
@@ -679,7 +699,7 @@ export default function WorkorderForm({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('maintenance.cancel')}
                 </Button>
 
                 <Button
@@ -688,7 +708,9 @@ export default function WorkorderForm({
                   className='h-full w-[136px] rounded-[4px] text-xs'
                   disabled={updateWorkOrder.isPending}
                 >
-                  {updateWorkOrder.isPending ? 'Đang cập nhật' : 'Cập nhật'}
+                  {updateWorkOrder.isPending
+                    ? t('maintenance.updating')
+                    : t('maintenance.update')}
                 </Button>
               </>
             )}

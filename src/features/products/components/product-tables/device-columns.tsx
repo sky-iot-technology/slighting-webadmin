@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { formatDateString } from '@/lib/utils';
 import { diffTimeHMS } from '@/features/map/helper';
 
-export const deviceColumns: ColumnDef<Device>[] = [
+export const deviceColumns = (t: any): ColumnDef<Device>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -38,7 +38,10 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'id',
     accessorKey: 'id',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='ID' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.id' as any)}
+      />
     ),
     cell: ({ cell }) => {
       const id = cell.getValue<Device['id']>();
@@ -52,12 +55,15 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên thiết bị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.name' as any)}
+      />
     ),
     cell: ({ cell }) => <div>{cell.getValue<Device['name']>()}</div>,
     meta: {
-      label: 'name',
-      placeholder: 'Tìm kiếm thiết bị',
+      label: t('products.table.name' as any),
+      placeholder: t('products.placeholder.search_device' as any),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -68,10 +74,13 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'type',
     accessorKey: 'type',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Loại thiết bị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.type' as any)}
+      />
     ),
     meta: {
-      label: 'Loại thiết bị',
+      label: t('products.table.type' as any),
       variant: 'select',
       options: []
     },
@@ -83,22 +92,33 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'status',
     accessorKey: 'status',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Trạng thái' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.status' as any)}
+      />
     ),
     cell: ({ row }) => {
       const online = row.original.device_info?.online;
       return (
         <div className={cn(online ? 'text-green-600' : 'text-red-600')}>
-          {online ? 'Online' : 'Offline'}
+          {online
+            ? t('products.table.status_val.online' as any)
+            : t('products.table.status_val.offline' as any)}
         </div>
       );
     },
     meta: {
-      label: 'Trạng thái',
+      label: t('products.table.status' as any),
       variant: 'select',
       options: [
-        { label: 'Online', value: '{"device_info": {"online": true}}' },
-        { label: 'Offline', value: '{"device_info": {"online": false}}' }
+        {
+          label: t('products.table.status_val.online' as any),
+          value: '{"device_info": {"online": true}}'
+        },
+        {
+          label: t('products.table.status_val.offline' as any),
+          value: '{"device_info": {"online": false}}'
+        }
       ]
     },
     enableColumnFilter: true,
@@ -109,10 +129,13 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'parent_group_id',
     accessorKey: 'parent_group_id',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Chi nhánh' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.branch' as any)}
+      />
     ),
     meta: {
-      label: 'Chi nhánh',
+      label: t('products.table.branch' as any),
       variant: 'select'
     },
     enableColumnFilter: true,
@@ -123,8 +146,14 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'asset_status',
     accessorKey: 'device_asset.asset_status',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tình trạng' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.condition' as any)}
+      />
     ),
+    meta: {
+      label: t('products.table.condition' as any)
+    },
     cell: ({ cell }) => {
       const deviceAsset = cell.row.original.device_asset;
       return <div>{deviceAsset?.asset_status}</div>;
@@ -136,8 +165,14 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'updated_at',
     accessorKey: 'updated_at',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian online' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.online_time' as any)}
+      />
     ),
+    meta: {
+      label: t('products.table.online_time' as any)
+    },
     cell: ({ cell }) => {
       const time = diffTimeHMS(cell.row.original.updated_at);
       return <div>{time}</div>;
@@ -149,8 +184,14 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'created_at',
     accessorKey: 'created_at',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Ngày kích hoạt' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.activation_date' as any)}
+      />
     ),
+    meta: {
+      label: t('products.table.activation_date' as any)
+    },
     cell: ({ cell }) => {
       const deviceAsset = cell.row.original.device_asset;
       return <div>{formatDateString(deviceAsset?.created_at)}</div>;
@@ -162,11 +203,23 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'warning',
     accessorKey: 'warning',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Cảnh báo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.warning' as any)}
+      />
     ),
+    meta: {
+      label: t('products.table.warning' as any)
+    },
     cell: ({ cell }) => {
       const warning = cell.row.original.warning;
-      return <div>{warning ? 'Có' : 'Không'}</div>;
+      return (
+        <div>
+          {warning
+            ? t('products.table.warning_val.yes' as any)
+            : t('products.table.warning_val.no' as any)}
+        </div>
+      );
     },
     enableSorting: false,
     enableHiding: false
@@ -175,8 +228,14 @@ export const deviceColumns: ColumnDef<Device>[] = [
     id: 'region',
     accessorKey: 'region',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Địa chỉ' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.address' as any)}
+      />
     ),
+    meta: {
+      label: t('products.table.address' as any)
+    },
     cell: ({ cell }) => {
       const region = cell.row.original.device_info?.region;
       return <div className='max-w-[100px] truncate'>{region || '-'}</div>;
@@ -187,7 +246,10 @@ export const deviceColumns: ColumnDef<Device>[] = [
   {
     id: 'actions',
     header: ({ column }: { column: Column<Device, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.action' as any)}
+      />
     ),
     cell: ({ row }) => <CellAction data={row.original} />,
     size: 60,

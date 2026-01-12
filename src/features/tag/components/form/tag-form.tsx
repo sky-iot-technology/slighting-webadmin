@@ -21,6 +21,7 @@ import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { Input } from '@/ui/components/ui/input';
 import { tagFormSchema } from '@/core/domains/tags/schemas';
 import { CreateTagRequest, useCreateTag } from '@/core/domains/tags';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type TagFormProps = {
   pageTitle: string;
@@ -28,6 +29,7 @@ type TagFormProps = {
 };
 
 export default function TagForm({ onClose, pageTitle }: TagFormProps) {
+  const { t } = useTranslation();
   const form = useForm<z.infer<typeof tagFormSchema>>({
     resolver: zodResolver(tagFormSchema),
     defaultValues: {
@@ -69,12 +71,12 @@ export default function TagForm({ onClose, pageTitle }: TagFormProps) {
                 render={({ field }) => (
                   <FormItem className='col-span-2'>
                     <FormLabel className='text-xs font-bold'>
-                      Tên nhóm
+                      {t('tag.group_name')}
                     </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập tên nhóm'
+                        placeholder={t('tag.enter_group_name')}
                         {...field}
                       />
                     </FormControl>
@@ -88,11 +90,13 @@ export default function TagForm({ onClose, pageTitle }: TagFormProps) {
                 name='description'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className='text-xs font-bold'>Mô tả</FormLabel>
+                    <FormLabel className='text-xs font-bold'>
+                      {t('tag.description')}
+                    </FormLabel>
                     <FormControl>
                       <Input
                         className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                        placeholder='Nhập mô tả'
+                        placeholder={t('tag.enter_description')}
                         {...field}
                       />
                     </FormControl>
@@ -108,13 +112,13 @@ export default function TagForm({ onClose, pageTitle }: TagFormProps) {
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Hủy
+                  {t('tag.cancel')}
                 </Button>
                 <Button
                   type='submit'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Thêm
+                  {t('tag.add')}
                 </Button>
               </div>
             </form>

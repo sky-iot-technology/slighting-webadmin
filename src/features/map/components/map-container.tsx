@@ -134,6 +134,7 @@ export default function MapContainer() {
         isLoading={isLoading}
         isFetching={isFetching}
         selectedDevice={selectedDevice}
+        hover={true}
       />
 
       <div className='absolute top-[15px] left-[9px] z-10'>

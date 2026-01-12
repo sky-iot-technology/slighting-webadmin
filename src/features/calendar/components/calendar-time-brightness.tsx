@@ -20,7 +20,8 @@ import {
 } from '@/ui/components/ui/select';
 import { COMMAND_TO_TRAIT, TraitKey } from '@/core/domains/catalogues';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { TRAIT_UI_MAP } from '@/ui/business/trait/trait';
+import { getTraitUiMap } from '@/ui/business/trait/trait';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 // type BrightnessItem = {
 //   time: string;
@@ -324,6 +325,9 @@ export function TimeBrightnessForm({
   schedules = [],
   disabled = false
 }: TimeBrightnessFormProps) {
+  const { t } = useTranslation();
+  const TRAIT_UI_MAP = getTraitUiMap(t);
+
   if (disabled && schedules)
     return <TimeBrightnessView schedules={schedules} />;
 
@@ -338,7 +342,7 @@ export function TimeBrightnessForm({
   if (!deviceTraits.length && !disabled) {
     return (
       <div className='text-muted-foreground text-xs italic'>
-        Thiết bị không hỗ trợ hành động theo lịch
+        {t('calendar.device_not_support_schedule')}
       </div>
     );
   }
@@ -346,8 +350,8 @@ export function TimeBrightnessForm({
   return (
     <div className='space-y-3 text-xs'>
       <div className='grid grid-cols-[105px_1fr_62px] items-center gap-x-2 gap-y-1 [&_label]:pb-1 [&_label]:font-semibold'>
-        <label className='border-r-1'>Thời gian</label>
-        <label>Hành động</label>
+        <label className='border-r-1'>{t('calendar.time')}</label>
+        <label>{t('calendar.action')}</label>
       </div>
 
       <div className='grid grid-cols-[105px_1fr_62px] items-center gap-x-2 gap-y-1'>
@@ -384,7 +388,9 @@ export function TimeBrightnessForm({
                         }}
                       >
                         <SelectTrigger className='!h-[24px] w-full rounded-[4px] text-xs'>
-                          <SelectValue placeholder='Chọn loại hành động' />
+                          <SelectValue
+                            placeholder={t('calendar.select_action_type')}
+                          />
                         </SelectTrigger>
                         <SelectContent>
                           {deviceTraits.map((t) => (
@@ -463,7 +469,7 @@ export function TimeBrightnessForm({
             append({ time: '', action: undefined });
           }}
         >
-          + Thêm thời gian
+          + {t('calendar.add_time')}
         </Button>
       )}
     </div>
@@ -471,11 +477,17 @@ export function TimeBrightnessForm({
 }
 
 function TimeBrightnessView({ schedules = [] }: { schedules?: SubSchedule[] }) {
+  const { t } = useTranslation();
+  const TRAIT_UI_MAP = getTraitUiMap(t);
   return (
     <div className='space-y-3 text-xs'>
       <div className='grid grid-cols-[105px_1fr] gap-x-2 gap-y-1 font-semibold'>
-        <label className='border-r pb-1 text-[11px]'>Thời gian</label>
-        <label className='pb-1 pl-1.5 text-[11px]'>Hành động</label>
+        <label className='border-r pb-1 text-[11px]'>
+          {t('calendar.time')}
+        </label>
+        <label className='pb-1 pl-1.5 text-[11px]'>
+          {t('calendar.action')}
+        </label>
 
         {schedules.map((s, idx) => {
           const command = s.payload?.command;
@@ -487,7 +499,9 @@ function TimeBrightnessView({ schedules = [] }: { schedules?: SubSchedule[] }) {
             return (
               <React.Fragment key={idx}>
                 <CustomTimePicker value={s.time} disabled />
-                <span className='text-muted-foreground mt-1'>Không hỗ trợ</span>
+                <span className='text-muted-foreground mt-1'>
+                  {t('calendar.not_supported')}
+                </span>
               </React.Fragment>
             );
           }

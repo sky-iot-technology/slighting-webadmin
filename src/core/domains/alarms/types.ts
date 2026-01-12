@@ -63,16 +63,16 @@ export enum AlarmSeverity {
 }
 
 export const AlarmSeverityLabel: Record<AlarmSeverity, string> = {
-  [AlarmSeverity.High]: 'Cao',
-  [AlarmSeverity.Medium]: 'Trung bình',
-  [AlarmSeverity.Low]: 'Thấp'
+  [AlarmSeverity.High]: 'maintenance.severity.high',
+  [AlarmSeverity.Medium]: 'maintenance.severity.medium',
+  [AlarmSeverity.Low]: 'maintenance.severity.low'
 };
 
 export const AlarmStatusLabel: Record<AlarmStatus, string> = {
-  active: 'Đang xử lý',
-  open: 'Chưa xử lý',
-  resolved: 'Đã xử lý',
-  ignored: 'Bỏ qua'
+  active: 'maintenance.alarm_status.active',
+  open: 'maintenance.alarm_status.open',
+  resolved: 'maintenance.alarm_status.resolved',
+  ignored: 'maintenance.alarm_status.ignored'
 };
 
 export interface AcknowledgedAlarm {

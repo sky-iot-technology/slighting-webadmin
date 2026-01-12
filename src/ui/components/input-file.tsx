@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import CustomScrollbar from './custom-scrollbar';
 import { cn } from '@/lib/utils';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B';
@@ -43,6 +44,7 @@ export function FileUpload({
   maxFiles,
   disabled = false
 }: FileUploadProps) {
+  const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
 
   const totalFiles = files.length + (existingFiles?.length ?? 0);
@@ -215,13 +217,15 @@ export function FileUpload({
           <div className='flex flex-col items-center gap-1'>
             <Upload width={12} height={12} className='text-muted-foreground' />
             <span className='text-muted-foreground text-xs'>
-              Nhấp để chọn file
+              {t('general.click_to_select_file')}
             </span>
           </div>
         )}
 
         {(files.length > 0 || (existingFiles?.length ?? 0) > 0) && (
-          <span className='text-muted-foreground text-xs'>Thêm file khác</span>
+          <span className='text-muted-foreground text-xs'>
+            {t('general.add_another_file')}
+          </span>
         )}
       </label>
 
@@ -312,7 +316,7 @@ export function FileUpload({
         files.length === 0 &&
         disabled && ( // disabled = true nghĩa là view
           <div className='text-muted-foreground mt-1 text-xs italic'>
-            Không có tập tin đính kèm
+            {t('general.no_attachments')}
           </div>
         )}
     </div>

@@ -6,6 +6,7 @@ import BranchDialog from './modal/branch-dialog';
 import TreeSidebar from '@/ui/business/tree/TreeSidebar';
 import { IconPlus } from '@tabler/icons-react';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface BranchSidebarProps {
   selectedRegion: SelectedRegion | null;
@@ -16,6 +17,7 @@ export const BranchSidebar = memo(function BranchSidebar({
   selectedRegion,
   onRegionChange
 }: BranchSidebarProps) {
+  const { t } = useTranslation();
   const [openNew, setOpenNew] = useState(false);
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
@@ -28,7 +30,7 @@ export const BranchSidebar = memo(function BranchSidebar({
             onClick={() => setOpenNew(!openNew)}
           >
             <IconPlus className='h-3 w-3' />
-            Thêm chi nhánh
+            {t('branch.add_branch')}
           </Button>
         </div>
       </PermissionGuard>
@@ -39,7 +41,7 @@ export const BranchSidebar = memo(function BranchSidebar({
       />
 
       <BranchDialog
-        pageTitle='Thêm chi nhánh'
+        pageTitle={t('branch.add_branch')}
         open={openNew}
         onOpenChange={setOpenNew}
         groupId={null}

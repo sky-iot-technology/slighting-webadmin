@@ -11,8 +11,9 @@ import {
 } from '@/core/domains/calendars/constant';
 import { formatDateString } from '../../helper';
 import { cn } from '@/lib/utils';
+import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
 
-export const columns: ColumnDef<Calendar>[] = [
+export const columns = (t: any): ColumnDef<Calendar>[] => [
   {
     accessorKey: 'check_box',
     header: ({ table }) => {
@@ -93,26 +94,42 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     id: 'name',
     accessorKey: 'name',
-    header: 'Tên lịch',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.calendar_name')}
+      />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       return <div>{row.getValue('name')}</div>;
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm tên lịch',
+      placeholder: t('calendar.search_calendar_name'),
       variant: 'text'
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'priority',
     accessorKey: 'priority',
-    header: 'Loại lịch',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.calendar_type')}
+      />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const priority = row.getValue('priority') as string;
-      const label = PRIORITY_LABELS[priority] || 'Không xác định';
+      const label = PRIORITY_LABELS[priority]
+        ? t(
+            `calendar.priority.${PRIORITY_LABELS[priority] === 'Theo lịch' ? 'normal' : 'emergency'}`
+          )
+        : t('calendar.undefined');
       const color =
         priority === 'emergency'
           ? 'text-calendar-red'
@@ -123,18 +140,22 @@ export const columns: ColumnDef<Calendar>[] = [
       return <div className={color}>{label}</div>;
     },
     meta: {
-      label: 'Loại lịch',
+      label: t('calendar.calendar_type'),
       variant: 'select',
       options: [
-        { label: 'Khẩn cấp', value: '1' },
-        { label: 'Theo lịch', value: '2' }
+        { label: t('calendar.priority.emergency'), value: '1' },
+        { label: t('calendar.priority.normal'), value: '2' }
       ]
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'time',
-    header: 'Thời gian',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.time')} />
+    ),
     cell: ({ row }) => {
       if (row.depth === 0) {
         const { last_execution_status, schedules } = row.original as any;
@@ -179,11 +200,15 @@ export const columns: ColumnDef<Calendar>[] = [
       }
 
       return <div>{row.getValue('time')}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'status_light',
-    header: 'Trạng thái',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.status')} />
+    ),
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
       let schedule: any;
@@ -220,13 +245,13 @@ export const columns: ColumnDef<Calendar>[] = [
         icon = isOn
           ? '/assets/icons/calendarOnline.svg'
           : '/assets/icons/calendarOffline.svg';
-        label = isOn ? 'Bật' : 'Tắt';
+        label = isOn ? t('calendar.on') : t('calendar.off');
       } else if (command.includes('Brightness')) {
         icon = '/assets/icons/calendarOnline.svg';
         const brightness = params.brightness;
         label = `${brightness}%`;
       } else {
-        label = 'Không xác định';
+        label = t('calendar.undefined');
       }
 
       return (
@@ -235,12 +260,16 @@ export const columns: ColumnDef<Calendar>[] = [
           <span>{label}</span>
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'startDate',
     accessorKey: 'startDate',
-    header: 'Ngày bắt đầu',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.start_date')} />
+    ),
     meta: {
       label: '',
       variant: 'dateRange'
@@ -252,12 +281,16 @@ export const columns: ColumnDef<Calendar>[] = [
         row.original.schedules[0].start_datetime.replace(/Z$/, '')
       );
       return <div>{date}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'endDate',
     accessorKey: 'endDate',
-    header: 'Ngày kết thúc',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.end_date')} />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const date = formatDateString(
@@ -265,22 +298,28 @@ export const columns: ColumnDef<Calendar>[] = [
       );
       return <div>{date}</div>;
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'status',
     accessorKey: 'status',
-    header: 'Trạng thái',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.status')} />
+    ),
     cell: () => null,
     meta: {
-      label: 'Trạng thái',
+      label: t('calendar.status'),
       variant: 'select',
       options: [
-        { label: 'Kích hoạt', value: 'active' },
-        { label: 'Chưa kích hoạt', value: 'inactive' }
+        { label: t('common.active'), value: 'active' },
+        { label: t('common.inactive'), value: 'inactive' }
       ]
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   // {
   //   id: 'group',
@@ -296,7 +335,12 @@ export const columns: ColumnDef<Calendar>[] = [
   {
     id: 'device_sync',
     accessorKey: 'device_sync',
-    header: 'Trạng thái đồng bộ',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.device_sync')}
+      />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const device_state = row.getValue(
@@ -312,27 +356,38 @@ export const columns: ColumnDef<Calendar>[] = [
       return <div className={colorClass}>{label}</div>;
     },
     meta: {
-      label: 'Trạng thái đồng bộ',
+      label: t('calendar.device_sync'),
       variant: 'select',
       options: [
-        { label: 'Đã đồng bộ', value: 'synced' },
-        { label: 'Chưa đồng bộ', value: 'waiting' }
+        { label: t('calendar.synced'), value: 'synced' },
+        { label: t('calendar.waiting_sync'), value: 'waiting' }
       ]
     },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
   },
   {
     accessorKey: 'createdDate',
-    header: 'Ngày tạo',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('calendar.created_date')}
+      />
+    ),
     cell: ({ row }) => {
       if (row.depth > 0) return <div>-</div>;
       const date = formatDateString(row.original.created_at);
       return <div>{date}</div>;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   },
   {
     id: 'actions',
-    header: 'Thao tác',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.action')} />
+    ),
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;

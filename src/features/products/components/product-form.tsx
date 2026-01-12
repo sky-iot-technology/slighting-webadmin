@@ -49,6 +49,7 @@ import {
 } from '@/ui/components/ui/sheet';
 import GoongMapMarker from '@/ui/business/map/goong-marker';
 import { TreeProvider } from '@/ui/business/tree/TreeProvider';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface Device {
   id?: string;
@@ -83,6 +84,7 @@ export default function ProductForm({
   initialData: Device | null;
   pageTitle: string;
 }) {
+  const { t } = useTranslation();
   const router = useRouter();
 
   const [selectedParent, setSelectedParent] = useState<{
@@ -205,10 +207,14 @@ export default function ProductForm({
                       name='id'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Mã thiết bị</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.id' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Mã thiết bị'
+                              placeholder={t(
+                                'products.form.placeholder.id' as any
+                              )}
                               {...field}
                               className='h-9 rounded-sm'
                             />
@@ -224,11 +230,15 @@ export default function ProductForm({
                       name='name'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Tên thiết bị</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.name' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               className='h-9 rounded-sm'
-                              placeholder='Tên thiết bị'
+                              placeholder={t(
+                                'products.form.placeholder.name' as any
+                              )}
                               {...field}
                             />
                           </FormControl>
@@ -243,7 +253,9 @@ export default function ProductForm({
                       name='type'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Loại thiết bị</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.type' as any)}
+                          </FormLabel>
 
                           <Select
                             onValueChange={(value) => field.onChange(value)}
@@ -251,7 +263,11 @@ export default function ProductForm({
                           >
                             <FormControl>
                               <SelectTrigger className='w-full'>
-                                <SelectValue placeholder='Loại thiết bị' />
+                                <SelectValue
+                                  placeholder={t(
+                                    'products.form.placeholder.type' as any
+                                  )}
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
@@ -275,13 +291,17 @@ export default function ProductForm({
                       name='tags'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nhóm yêu thích</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.favorite_group' as any)}
+                          </FormLabel>
                           <FormControl>
                             <MultiSelect
                               options={tagOptions}
                               defaultValue={field.value ?? []}
                               onValueChange={(val) => field.onChange(val)}
-                              placeholder={'Chọn nhóm thiết bị'}
+                              placeholder={t(
+                                'products.form.placeholder.favorite_group' as any
+                              )}
                               disabled={isLoadingTags}
                               resetOnDefaultValueChange={true}
                               className='!min-h-9 w-full rounded-sm text-sm'
@@ -302,11 +322,15 @@ export default function ProductForm({
                       name='lon'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Kinh độ & Vĩ độ</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.coordinates' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Kinh độ'
+                              placeholder={t(
+                                'products.form.placeholder.lon' as any
+                              )}
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => {
@@ -342,7 +366,9 @@ export default function ProductForm({
                           <FormControl>
                             <Input
                               type='number'
-                              placeholder='Vĩ độ'
+                              placeholder={t(
+                                'products.form.placeholder.lat' as any
+                              )}
                               {...field}
                               value={field.value || ''}
                               onChange={(e) => {
@@ -380,13 +406,13 @@ export default function ProductForm({
                             type='button'
                             className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
                           >
-                            Vị trí bản đồ
+                            {t('products.form.button.map_location' as any)}
                           </Button>
                         </SheetTrigger>
                         <SheetContent side='right' className='gap-0'>
                           <SheetHeader>
                             <SheetTitle className='mx-auto'>
-                              Chọn vị trí bản đồ
+                              {t('products.form.sheet.title' as any)}
                             </SheetTitle>
                           </SheetHeader>
                           <div className='relative h-full w-full overflow-hidden'>
@@ -424,7 +450,9 @@ export default function ProductForm({
                       name='parent_group_id'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Chi nhánh</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.branch' as any)}
+                          </FormLabel>
                           {/* <Select
                             onValueChange={(value) => field.onChange(value)}
                             value={field.value}
@@ -490,10 +518,14 @@ export default function ProductForm({
                       name='address'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Địa chỉ</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.address' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Địa chỉ'
+                              placeholder={t(
+                                'products.form.placeholder.address' as any
+                              )}
                               {...field}
                               className='h-9 rounded-sm'
                             />
@@ -509,10 +541,14 @@ export default function ProductForm({
                       name='note'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Ghi chú</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.note' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Ghi chú'
+                              placeholder={t(
+                                'products.form.placeholder.note' as any
+                              )}
                               {...field}
                               className='h-9 rounded-sm'
                             />
@@ -524,7 +560,7 @@ export default function ProductForm({
                   </div>
                   <div className='w-full md:col-span-3'>
                     <CardTitle className='text-md text-left text-black'>
-                      {'Thông tin sản phẩm'}
+                      {t('products.form.label.product_info' as any)}
                     </CardTitle>
                   </div>
                   <div className='w-full'>
@@ -533,10 +569,14 @@ export default function ProductForm({
                       name='serial'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Serial</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.serial' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Nhập số serial thiết bị'
+                              placeholder={t(
+                                'products.form.placeholder.serial' as any
+                              )}
                               {...field}
                               className='h-9 rounded-sm'
                             />
@@ -552,7 +592,9 @@ export default function ProductForm({
                       name='installation_date'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Ngày lắp đặt</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.installation_date' as any)}
+                          </FormLabel>
                           <FormControl>
                             <DateInput
                               value={
@@ -563,7 +605,9 @@ export default function ProductForm({
                                     : undefined
                               }
                               onChange={field.onChange}
-                              placeholder='Chọn ngày lắp đặt'
+                              placeholder={t(
+                                'products.form.placeholder.date' as any
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -577,7 +621,9 @@ export default function ProductForm({
                       name='purchase_date'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Ngày áp dụng bảo hành</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.warranty_date' as any)}
+                          </FormLabel>
                           <FormControl>
                             <DateInput
                               value={
@@ -588,7 +634,9 @@ export default function ProductForm({
                                     : undefined
                               }
                               onChange={field.onChange}
-                              placeholder='Chọn ngày bảo hành'
+                              placeholder={t(
+                                'products.form.placeholder.date' as any
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -602,10 +650,14 @@ export default function ProductForm({
                       name='manufacturer'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nhà sản xuất</FormLabel>
+                          <FormLabel>
+                            {t('products.form.label.manufacturer' as any)}
+                          </FormLabel>
                           <FormControl>
                             <Input
-                              placeholder='Nhà sản xuất'
+                              placeholder={t(
+                                'products.form.placeholder.manufacturer' as any
+                              )}
                               {...field}
                               className='h-9 rounded-sm'
                             />
@@ -621,7 +673,11 @@ export default function ProductForm({
                       name='expiration_date'
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Ngày hết hạn bảo hành</FormLabel>
+                          <FormLabel>
+                            {t(
+                              'products.form.label.warranty_expiration' as any
+                            )}
+                          </FormLabel>
                           <FormControl>
                             <DateInput
                               value={
@@ -632,7 +688,9 @@ export default function ProductForm({
                                     : undefined
                               }
                               onChange={field.onChange}
-                              placeholder='Chọn ngày hết hạn bảo hành'
+                              placeholder={t(
+                                'products.form.placeholder.date' as any
+                              )}
                             />
                           </FormControl>
                           <FormMessage />
@@ -648,10 +706,12 @@ export default function ProductForm({
                   type='button'
                   onClick={() => router.push('/dashboard/product')}
                 >
-                  Huỷ
+                  {t('products.form.button.cancel' as any)}
                 </Button>
                 <Button type='submit' disabled={createDeviceMutation.isPending}>
-                  {createDeviceMutation.isPending ? 'Đang lưu...' : 'Lưu'}
+                  {createDeviceMutation.isPending
+                    ? t('products.form.button.saving' as any)
+                    : t('products.form.button.save' as any)}
                 </Button>
               </div>
             </form>

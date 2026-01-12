@@ -17,6 +17,8 @@ import CalendarDialog from '../modal/calendar-dialog';
 import { Badge } from '@/ui/components/ui/badge';
 import { useDeleteMultiCalendars } from '@/core/domains/calendars';
 import { PermissionGuard, useCan } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+
 interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
@@ -68,6 +70,7 @@ export function CalendarTable<TData, TValue>({
   };
 
   const canDelete = useCan('calendar', 'delete');
+  const { t } = useTranslation();
 
   return (
     <DataTable
@@ -110,7 +113,7 @@ export function CalendarTable<TData, TValue>({
               )}
             </button>
           )}
-          <h3 className='text-xl font-bold'>Danh sách lịch</h3>
+          <h3 className='text-xl font-bold'>{t('calendar.calendar_list')}</h3>
           {region && region.icon && (
             <Badge className='bg-gray-1'>
               <Image
@@ -137,7 +140,7 @@ export function CalendarTable<TData, TValue>({
                 onClick={() => setOpen(true)}
               >
                 <IconPlus className='h-3 w-3' />
-                Thêm
+                {t('calendar.add')}
               </Button>
             </PermissionGuard>
           }
@@ -147,7 +150,7 @@ export function CalendarTable<TData, TValue>({
         />
       </div>
       <CalendarDialog
-        pageTitle='Thêm lịch'
+        pageTitle={t('calendar.add_calendar')}
         open={open}
         onOpenChange={setOpen}
         initialData={{ group_ids: region?.id ? [region.id] : [] }}

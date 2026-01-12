@@ -7,7 +7,7 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 import { OtaData, OtaItem } from '@/core/domains/ota';
 import { formatDateTimeString } from '@/features/maintenance/helper';
 
-export const OtaColumns: ColumnDef<OtaItem>[] = [
+export const OtaColumns = (t: any): ColumnDef<OtaItem>[] => [
   {
     id: 'select',
     header: ({ table }) => {
@@ -40,14 +40,17 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Tên model' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.name' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('name')}</div>;
     },
     meta: {
       label: 'name',
-      placeholder: 'Tìm tên model',
+      placeholder: t('ota.placeholder.search' as any),
       variant: 'text'
     },
     enableColumnFilter: true,
@@ -58,7 +61,10 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
     id: 'category_type',
     accessorKey: 'category_type',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Loại thiết bị' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.category' as any)}
+      />
     ),
     meta: {
       label: 'Loại thiết bị',
@@ -73,7 +79,10 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
     id: 'version',
     accessorKey: 'version',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Phiên bản' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.version' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('version')}</div>;
@@ -85,7 +94,10 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
     id: 'description',
     accessorKey: 'description',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Mô tả' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.description' as any)}
+      />
     ),
     cell: ({ row }) => {
       return <div>{row.getValue('description')}</div>;
@@ -97,7 +109,10 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
     id: 'created_at',
     accessorKey: 'created_at',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thời gian tạo' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.created_at' as any)}
+      />
     ),
     cell: ({ row }) => {
       const time = formatDateTimeString(row.getValue('created_at') as string);
@@ -109,7 +124,10 @@ export const OtaColumns: ColumnDef<OtaItem>[] = [
   {
     id: 'actions',
     header: ({ column }: { column: Column<OtaItem, unknown> }) => (
-      <DataTableColumnHeader column={column} title='Thao tác' />
+      <DataTableColumnHeader
+        column={column}
+        title={t('ota.table.action' as any)}
+      />
     ),
     size: 57,
     cell: ({ row }) => {

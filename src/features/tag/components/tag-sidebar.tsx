@@ -6,6 +6,7 @@ import { IconPlus } from '@tabler/icons-react';
 import Image from 'next/image';
 import { useGetTags, useUpdateTag } from '@/core/domains/tags';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export type SelectedTag = {
   id: string;
@@ -20,6 +21,7 @@ interface TagSidebarProps {
 export const TagSidebar = memo(function TagSidebar({
   onTagChange
 }: TagSidebarProps) {
+  const { t } = useTranslation();
   const [openNew, setOpenNew] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTag, setSelectedTag] = useState<SelectedTag>(null);
@@ -59,7 +61,7 @@ export const TagSidebar = memo(function TagSidebar({
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
       <BranchDialog
-        pageTitle='Thêm nhóm yêu thích'
+        pageTitle={t('tag.add_favorite_group')}
         open={openNew}
         onOpenChange={setOpenNew}
         roleId={null}
@@ -73,7 +75,7 @@ export const TagSidebar = memo(function TagSidebar({
             onClick={() => setOpenNew(!openNew)}
           >
             <IconPlus className='h-3 w-3' />
-            Thêm nhóm
+            {t('tag.add_group')}
           </Button>
         </div>
       </PermissionGuard>
@@ -87,7 +89,7 @@ export const TagSidebar = memo(function TagSidebar({
         />
         <input
           className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'
-          placeholder='Tìm kiếm nhóm'
+          placeholder={t('tag.search_group')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

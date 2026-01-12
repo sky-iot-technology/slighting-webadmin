@@ -21,6 +21,7 @@ import { TimeBrightnessForm } from '../../components/calendar-time-brightness';
 import { useGetDeviceById } from '@/core/domains/devices';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarViewDialogProps = {
   open: boolean;
@@ -33,6 +34,7 @@ export function CalendarDeviceViewDialog({
   onOpenChange,
   id
 }: CalendarViewDialogProps) {
+  const { t } = useTranslation();
   const { treeData } = useRegionTreeStore();
   const { catalogues } = useCatalogueStore();
 
@@ -64,35 +66,41 @@ export function CalendarDeviceViewDialog({
           <DialogContent className='w-[417px] rounded-xl p-5.5' hideCloseButton>
             <DialogHeader>
               <DialogTitle className='text-left text-[16px] font-bold'>
-                Chi tiết lịch:
+                {t('calendar.calendar_detail' as any)}:
                 <span className='text-primary ml-2 font-bold'>{data.name}</span>
               </DialogTitle>
             </DialogHeader>
 
             <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
               <div className='flex gap-2'>
-                <span className=''>Theo nhánh thiết bị:</span>
+                <span className=''>
+                  {t('calendar.device_branch_label' as any)}:
+                </span>
                 <span className='text-right font-medium'>
                   {nameLine.filter(Boolean).join(', ')}
                 </span>
               </div>
 
               <div className='flex gap-2'>
-                <span className=''>Lặp lại:</span>
+                <span className=''>{t('calendar.repeat' as any)}:</span>
                 <span className='text-right font-medium'>
-                  {RECURRING_LABELS[data.schedules[0].recurring]}
+                  {t(
+                    `calendar.repeat_options.${data.schedules[0].recurring}` as any
+                  )}
                 </span>
               </div>
 
               <div className='flex gap-2'>
-                <span className=''>Loại lịch:</span>
+                <span className=''>{t('calendar.calendar_type' as any)}:</span>
                 <span className='text-right font-medium'>
-                  {PRIORITY_LABELS[data.priority]}
+                  {Number(data.priority) === 1
+                    ? t('calendar.priority.emergency' as any)
+                    : t('calendar.priority.normal' as any)}
                 </span>
               </div>
 
               <div className='flex items-center gap-2'>
-                <span className=''>Ngày áp dụng:</span>
+                <span className=''>{t('calendar.apply_date' as any)}:</span>
                 <CalendarRangePicker
                   mode='range'
                   value={{
@@ -109,7 +117,7 @@ export function CalendarDeviceViewDialog({
 
               {weekly && weekly.length > 0 && (
                 <div className=''>
-                  <span>Ngày trong tuần:</span>
+                  <span>{t('calendar.days_of_week' as any)}:</span>
                   <div className='flex flex-wrap gap-1 pt-1'>
                     {weekly.map((value: any) => {
                       const label = dayofweek[Number(value)];
@@ -128,7 +136,7 @@ export function CalendarDeviceViewDialog({
 
               {monthly && monthly.length > 0 && (
                 <div className=''>
-                  <span>Ngày trong tháng:</span>
+                  <span>{t('calendar.days_of_month' as any)}:</span>
                   <div className='flex flex-wrap gap-1 pt-1'>
                     {monthly.map((value: any) => {
                       return (
@@ -145,7 +153,9 @@ export function CalendarDeviceViewDialog({
               )}
 
               <div className='flex flex-col gap-2.5'>
-                <span className=''>Thời gian & Độ sáng:</span>
+                <span className=''>
+                  {t('calendar.time_and_brightness' as any)}:
+                </span>
                 <TimeBrightnessForm
                   deviceTraits={(selectedDevice?.traits ?? []) as TraitKey[]}
                   disabled
@@ -160,7 +170,7 @@ export function CalendarDeviceViewDialog({
                   type='button'
                   className='h-full w-16 rounded-[4px] text-xs'
                 >
-                  Đóng
+                  {t('calendar.close' as any)}
                 </Button>
               </div>
             </div>
