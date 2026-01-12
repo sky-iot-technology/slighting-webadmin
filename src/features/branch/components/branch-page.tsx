@@ -102,7 +102,7 @@ export default function BranchPage() {
         error={error}
       />
     );
-  }, [selectedRegion?.id, data?.total, devices, catalogues, treeData]);
+  }, [selectedRegion?.id, data?.total, devices, catalogues, treeData, t]);
 
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {
