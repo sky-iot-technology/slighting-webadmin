@@ -15,5 +15,6 @@ export const navbar = {
   sign_out: 'Đăng xuất',
   profile: 'Hồ sơ',
   device: 'Thiết bị',
-  deviceInfo: 'Chi tiết thiết bị'
+  deviceInfo: 'Chi tiết thiết bị',
+  kanban: 'Bảng Kanban'
 } as const;

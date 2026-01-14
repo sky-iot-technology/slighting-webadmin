@@ -57,5 +57,6 @@ export const general = {
   remove_avatar: 'Remove avatar',
   uploading_avatar: 'Uploading avatar...',
   avatar_updated: 'Avatar updated',
-  upload_failed_avatar: 'Failed to upload avatar'
+  upload_failed_avatar: 'Failed to upload avatar',
+  program_title: 'Slighting Webadmin'
 } as const;

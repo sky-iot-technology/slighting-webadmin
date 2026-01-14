@@ -58,5 +58,6 @@ export const general = {
   remove_avatar: 'Xóa ảnh đại diện',
   uploading_avatar: 'Đang tải lên ảnh đại diện...',
   avatar_updated: 'Cập nhật ảnh đại diện thành công',
-  upload_failed_avatar: 'Tải lên ảnh đại diện thất bại'
+  upload_failed_avatar: 'Tải lên ảnh đại diện thất bại',
+  program_title: 'Quản trị Web Slighting'
 } as const;

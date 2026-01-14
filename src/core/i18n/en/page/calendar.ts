@@ -22,6 +22,7 @@ export const calendar = {
   scheduled: 'Scheduled',
   emergency: 'Emergency',
   repeat: 'Repeat',
+  device_branch_label: 'Device branch',
   none: 'None',
   daily: 'Daily',
   weekly: 'Weekly',
@@ -60,6 +61,9 @@ export const calendar = {
   view_detail: 'View',
   delete: 'Delete',
   close: 'Close',
+  type: 'Category',
+  group: 'Group',
+  device: 'Device',
   priority: {
     emergency: 'Emergency',
     normal: 'Scheduled',
@@ -72,5 +76,13 @@ export const calendar = {
     monthly: 'Monthly'
   },
   device_sync: 'Sync Status',
-  time_select: 'Select time'
+  time_select: 'Select time',
+  calendar_status: {
+    active: 'Active',
+    inactive: 'Inactive'
+  },
+  sync: {
+    synced: 'Synced',
+    waiting_sync: 'Not synced'
+  }
 } as const;

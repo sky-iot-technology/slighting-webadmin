@@ -22,7 +22,7 @@ function Calendar({
   disablePastDate = false,
   ...props
 }: CalendarProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const [month, setMonth] = React.useState(new Date());
 
   const [internalSelected, setInternalSelected] = React.useState<
@@ -62,6 +62,8 @@ function Calendar({
     setMonth(m);
   };
 
+  const locale = language === 'vi' ? 'vi-VN' : 'en-US';
+
   return (
     <div className={cn('p-4 text-xs leading-[22px]', className)}>
       <div className='mb-3 flex items-center justify-between pl-3'>
@@ -85,7 +87,7 @@ function Calendar({
             <ChevronLeft className='size-4' />
           </button>
           <span className='min-w-[70px] text-center text-[14px] font-bold'>
-            {month.toLocaleString('vi-VN', { month: 'long' })}
+            {month.toLocaleString(locale, { month: 'long' })}
           </span>
           <button
             onClick={goNext}

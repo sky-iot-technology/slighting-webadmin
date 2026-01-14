@@ -21,9 +21,14 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 interface CellActionProps {
   id: string;
   disabled?: boolean;
+  hideDelete?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
+export const CellAction: React.FC<CellActionProps> = ({
+  id,
+  disabled,
+  hideDelete
+}) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -115,23 +120,25 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
           </DropdownMenuItem> */}
 
           <PermissionGuard module='device' action='delete'>
-            <DropdownMenuItem
-              variant='default'
-              onClick={() => setOpen(true)}
-              className='flex w-full items-center text-xs'
-            >
-              <div className='mx-2 flex w-4 justify-center'>
-                <Image
-                  src={'/assets/icons/trash.svg'}
-                  alt='trash'
-                  width={12}
-                  height={12}
-                />
-              </div>
-              <span className='text-destructive'>
-                {t('calendar.delete' as any)}
-              </span>
-            </DropdownMenuItem>
+            {!hideDelete && (
+              <DropdownMenuItem
+                variant='default'
+                onClick={() => setOpen(true)}
+                className='flex w-full items-center text-xs'
+              >
+                <div className='mx-2 flex w-4 justify-center'>
+                  <Image
+                    src={'/assets/icons/trash.svg'}
+                    alt='trash'
+                    width={12}
+                    height={12}
+                  />
+                </div>
+                <span className='text-destructive'>
+                  {t('calendar.delete' as any)}
+                </span>
+              </DropdownMenuItem>
+            )}
           </PermissionGuard>
         </DropdownMenuContent>
       </DropdownMenu>

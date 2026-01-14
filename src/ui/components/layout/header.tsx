@@ -4,6 +4,7 @@ import { Breadcrumbs } from '../breadcrumbs';
 import { Separator } from '../ui/separator';
 import { SidebarTrigger } from '../ui/sidebar';
 import { ModeToggle } from './ThemeToggle/theme-toggle';
+import { Translated } from './translated';
 import { UserNav } from './user-nav';
 import { useBreadcrumbsContextOptional } from '@/core/shared/context/breadcrumbs-context';
 
@@ -20,6 +21,7 @@ export default function Header() {
       </div>
 
       <div className='flex items-center gap-2 px-4'>
+        <Translated />
         <UserNav />
         <ModeToggle />
       </div>

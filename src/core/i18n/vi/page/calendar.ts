@@ -22,6 +22,7 @@ export const calendar = {
   scheduled: 'Theo lịch',
   emergency: 'Khẩn cấp',
   repeat: 'Lặp lại',
+  device_branch_label: 'Nhánh thiết bị',
   none: 'Không',
   daily: 'Hàng ngày',
   weekly: 'Hàng tuần',
@@ -60,6 +61,9 @@ export const calendar = {
   view_detail: 'Xem',
   delete: 'Xóa',
   close: 'Đóng',
+  type: 'Phân loại',
+  group: 'Nhóm',
+  device: 'Thiết bị',
   priority: {
     emergency: 'Khẩn cấp',
     normal: 'Theo lịch',
@@ -72,5 +76,13 @@ export const calendar = {
     monthly: 'Hàng tháng'
   },
   device_sync: 'Đồng bộ',
-  time_select: 'Chọn thời gian'
+  time_select: 'Chọn thời gian',
+  calendar_status: {
+    active: 'Kích hoạt',
+    inactive: 'Chưa kích hoạt'
+  },
+  sync: {
+    synced: 'Đã đồng bộ',
+    waiting: 'Chưa đồng bộ'
+  }
 } as const;

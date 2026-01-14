@@ -11,7 +11,7 @@ export default async function Page(props: PageProps) {
     <PageContainer scrollable>
       <div className='flex-1 space-y-4'>
         <Suspense fallback={<FormCardSkeleton />}>
-          <WorkOrderViewPage pageTitle='Cập nhật công việc' isView={false} />
+          <WorkOrderViewPage isView={false} />
         </Suspense>
       </div>
     </PageContainer>

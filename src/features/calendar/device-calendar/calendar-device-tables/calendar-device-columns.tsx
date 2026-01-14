@@ -12,6 +12,7 @@ import {
 import { formatDateString } from '../../helper';
 import { cn } from '@/lib/utils';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
+import { Badge } from '@/ui/components/ui/badge';
 
 export const columns = (t: any): ColumnDef<Calendar>[] => [
   {
@@ -110,6 +111,27 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
       variant: 'text'
     },
     enableColumnFilter: true,
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
+    id: 'type',
+    accessorKey: 'type',
+    header: ({ column }: { column: any }) => (
+      <DataTableColumnHeader column={column} title={t('calendar.type')} />
+    ),
+    cell: ({ row }) => {
+      if (row.depth > 0) return <div>-</div>;
+      const isGroup =
+        Array.isArray(row.original.group_ids) &&
+        row.original.group_ids.length > 0;
+
+      return (
+        <Badge variant={isGroup ? 'default' : 'secondary'}>
+          {isGroup ? t('calendar.group') : t('calendar.device')}
+        </Badge>
+      );
+    },
     enableSorting: false,
     enableHiding: false
   },
@@ -313,8 +335,8 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
       label: t('calendar.status'),
       variant: 'select',
       options: [
-        { label: t('common.active'), value: 'active' },
-        { label: t('common.inactive'), value: 'inactive' }
+        { label: t('calendar.calendar_status.active'), value: 'active' },
+        { label: t('calendar.calendar_status.inactive'), value: 'inactive' }
       ]
     },
     enableColumnFilter: true,
@@ -346,7 +368,11 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
       const device_state = row.getValue(
         'device_sync'
       ) as keyof typeof DEVICESYNC_LABELS;
-      const label = DEVICESYNC_LABELS[device_state] ?? String(device_state);
+      const label = DEVICESYNC_LABELS[device_state]
+        ? t(
+            `calendar.sync.${DEVICESYNC_LABELS[device_state] === 'Đã đồng bộ' ? 'synced' : 'waiting'}`
+          )
+        : t('calendar.undefined');
       const colorClass =
         device_state === 'synced'
           ? 'text-calendar-radio-green'
@@ -359,8 +385,8 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
       label: t('calendar.device_sync'),
       variant: 'select',
       options: [
-        { label: t('calendar.synced'), value: 'synced' },
-        { label: t('calendar.waiting_sync'), value: 'waiting' }
+        { label: t('calendar.sync.synced'), value: 'synced' },
+        { label: t('calendar.sync.waiting'), value: 'waiting' }
       ]
     },
     enableColumnFilter: true,
@@ -392,6 +418,9 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
       const isDeleted = row.original.is_deleted === true;
+      const hasGroup =
+        Array.isArray(row.original.group_ids) &&
+        row.original.group_ids.length > 0;
 
       return (
         <div
@@ -401,7 +430,11 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
           )}
         >
           {!isSubRow && (
-            <CellAction id={row.original.id} disabled={isDeleted} />
+            <CellAction
+              id={row.original.id}
+              disabled={isDeleted}
+              hideDelete={hasGroup}
+            />
           )}
         </div>
       );

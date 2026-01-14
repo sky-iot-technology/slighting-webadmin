@@ -15,5 +15,6 @@ export const navbar = {
   sign_out: 'Sign Out',
   profile: 'Profile',
   device: 'Device',
-  deviceInfo: 'Device detail'
+  deviceInfo: 'Device detail',
+  kanban: 'Kanban View'
 } as const;
