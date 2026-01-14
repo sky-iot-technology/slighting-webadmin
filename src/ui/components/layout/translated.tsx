@@ -32,6 +32,18 @@ export function Translated() {
               />
             </AvatarFallback>
           </Avatar>
+          <div className='absolute -top-1 -right-1 h-4 w-4 overflow-hidden rounded-full border-2 border-white shadow-sm'>
+            <Image
+              alt='language-flag'
+              src={
+                language === 'vi'
+                  ? '/assets/icons/vietnamese.svg'
+                  : '/assets/icons/english.svg'
+              }
+              fill
+              className='object-cover'
+            />
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
