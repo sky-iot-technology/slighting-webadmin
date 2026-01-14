@@ -1,7 +1,7 @@
 import { GetDevicesParamsDto, useGetDevices } from '@/core/domains/devices';
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { Table } from '@tanstack/react-table';
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { TagTable } from './tag-tables';
 import { tagColumns } from './tag-tables/columns';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
@@ -21,7 +21,7 @@ export const TagContent = memo(function TagContent({
   selectedTag,
   onTableReady
 }: TagContentProps) {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   const canViewDevice = useCan('device', 'view');
 
   const { data, isLoading, error } = useGetDevices(
@@ -35,13 +35,19 @@ export const TagContent = memo(function TagContent({
   const { catalogues } = useCatalogueStore();
   const { treeData } = useRegionTreeStore();
 
+  const columns = useMemo(() => {
+    if (!selectedTag) return [];
+    return tagColumns(catalogues, treeData, selectedTag, t);
+  }, [catalogues, treeData, selectedTag, t, language]);
+
   return (
     <>
       {selectedTag && data && (
         <TagTable
+          key={language}
           data={data?.devices ?? []}
           totalItems={data?.total ?? 0}
-          columns={tagColumns(catalogues, treeData, selectedTag, t)}
+          columns={columns}
           onTableReady={onTableReady}
           isLoading={isLoading}
           error={error}

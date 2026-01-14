@@ -88,16 +88,6 @@ export default function TagPage() {
     setTreeOpen((prev) => !prev);
   }, []);
 
-  const tagContent = useMemo(() => {
-    return (
-      <TagContent
-        filters={filters}
-        selectedTag={selectedTag}
-        onTableReady={setDeviceTable}
-      />
-    );
-  }, [filters, selectedTag, setDeviceTable]);
-
   const canDelete = useCan('device', 'update');
   return (
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px] pb-3'>
@@ -171,7 +161,11 @@ export default function TagPage() {
               className='flex w-full flex-1 flex-col overflow-hidden border-l-1 bg-white'
               ref={containerRef}
             >
-              {tagContent}
+              <TagContent
+                filters={filters}
+                selectedTag={selectedTag}
+                onTableReady={setDeviceTable}
+              />
             </div>
           </div>
         </div>

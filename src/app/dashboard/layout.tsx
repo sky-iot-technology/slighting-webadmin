@@ -9,7 +9,7 @@ import { BreadcrumbsProvider } from '@/core/shared/context/breadcrumbs-context';
 import { RBACGuard } from '@/core/shared/components/rbac-guard';
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard',
+  title: 'Dashboard',
   description: 'Basic dashboard with Next.js and Shadcn'
 };
 

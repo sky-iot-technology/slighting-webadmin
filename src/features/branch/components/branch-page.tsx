@@ -27,7 +27,7 @@ import { PermissionGuard, useCan } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function BranchPage() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
 
   const [treeOpen, setTreeOpen] = useState(true);
   const { treeData } = useRegionTreeStore();
@@ -92,6 +92,7 @@ export default function BranchPage() {
     if (!selectedRegion) return null;
     return (
       <BranchTable
+        key={language}
         data={devices}
         totalItems={Number(data?.total ?? 0)}
         columns={
@@ -102,7 +103,15 @@ export default function BranchPage() {
         error={error}
       />
     );
-  }, [selectedRegion?.id, data?.total, devices, catalogues, treeData, t]);
+  }, [
+    selectedRegion?.id,
+    data?.total,
+    devices,
+    catalogues,
+    treeData,
+    t,
+    language
+  ]);
 
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {

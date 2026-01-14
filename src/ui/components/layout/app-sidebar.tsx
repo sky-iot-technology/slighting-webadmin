@@ -128,8 +128,8 @@ function SidebarLogo({ isOpen }: { isOpen: boolean }) {
           <Image
             src='/assets/images/logo-sidebar.png'
             alt='logo'
-            width={20}
-            height={20}
+            width={35}
+            height={35}
           />
         </div>
       )}

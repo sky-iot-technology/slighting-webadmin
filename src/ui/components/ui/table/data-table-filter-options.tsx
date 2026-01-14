@@ -50,7 +50,7 @@ export function DataTableFilterOptions<TData>({
         .getAllColumns()
         .filter((column) => column.getCanFilter())
         .map((x) => ({ id: x.columnDef.id!, ...x.columnDef.meta })),
-    [table]
+    [table, t]
   );
 
   const [filterValues, setFilterValues] = React.useState<
