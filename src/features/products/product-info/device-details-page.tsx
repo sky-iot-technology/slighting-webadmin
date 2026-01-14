@@ -11,7 +11,12 @@ import {
   TabsTrigger
 } from '@/ui/components/ui/tabs';
 import { ArrowLeft } from 'lucide-react';
-import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams
+} from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { OverviewTab } from './components/overview-tab';
 import { ActivityTab } from './components/activity-tab';
@@ -33,6 +38,14 @@ export default function DeviceDetailsPage() {
   const deviceId = params?.id as string;
 
   const { data: device, isLoading, error } = useGetDeviceById(deviceId);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    const { pathname } = window.location;
+    const newUrl = new URL(pathname, window.location.origin);
+    console.log(newUrl.toString());
+    router.replace(newUrl.toString());
+  };
 
   // Prepare calendar filters
   const calendarFilters: GetCalendarsParamsDto = useMemo(() => {
@@ -112,7 +125,7 @@ export default function DeviceDetailsPage() {
       {/* Tabs */}
       <Tabs
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={handleTabChange}
         className='will-change-auto'
       >
         <TabsList className='bg-card grid h-14 auto-cols-max grid-flow-col py-2 shadow-[0px_4px_4px_0px_rgba(0,71,117,0.4)] will-change-auto'>
