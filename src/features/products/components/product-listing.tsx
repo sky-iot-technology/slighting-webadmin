@@ -24,7 +24,7 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 type ProductListingPage = {};
 
 export default function ProductListingPage({}: ProductListingPage) {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
 
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
@@ -92,7 +92,7 @@ export default function ProductListingPage({}: ProductListingPage) {
   }, [catalogues]);
 
   const columns = useMemo(() => {
-    return deviceColumns(t).map((col) => {
+    return deviceColumns(t, tTime).map((col) => {
       // TYPE FILTER
       if (col.id === 'type') {
         return {

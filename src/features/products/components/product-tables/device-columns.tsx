@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { formatDateString } from '@/lib/utils';
 import { diffTimeHMS } from '@/features/map/helper';
 
-export const deviceColumns = (t: any): ColumnDef<Device>[] => [
+export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
   {
     id: 'select',
     header: ({ table }) => (
@@ -174,7 +174,7 @@ export const deviceColumns = (t: any): ColumnDef<Device>[] => [
       label: t('products.table.online_time' as any)
     },
     cell: ({ cell }) => {
-      const time = diffTimeHMS(cell.row.original.updated_at);
+      const time = diffTimeHMS(cell.row.original.updated_at, tTime);
       return <div>{time}</div>;
     },
     enableSorting: false,
