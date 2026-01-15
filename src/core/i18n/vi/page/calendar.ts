@@ -84,5 +84,19 @@ export const calendar = {
   sync: {
     synced: 'Đã đồng bộ',
     waiting: 'Chưa đồng bộ'
+  },
+  validation: {
+    time_required: 'Thời gian không được để trống',
+    brightness_range: 'Độ sáng phải từ 0–100',
+    invalid_on_off: 'Giá trị bật/tắt không hợp lệ',
+    name_min: 'Tên lịch phải ít nhất 2 ký tự',
+    device_type_invalid: 'Loại thiết bị không hợp lệ',
+    schedule_min: 'Phải có ít nhất 1 lịch con',
+    start_date_required: 'Vui lòng chọn ngày bắt đầu',
+    end_date_required: 'Vui lòng chọn ngày kết thúc',
+    end_date_after_start: 'Ngày kết thúc phải sau ngày bắt đầu',
+    weekly_required: 'Vui lòng chọn ít nhất 1 ngày trong tuần',
+    monthly_required: 'Vui lòng chọn ít nhất 1 ngày trong tháng',
+    ids_min: 'Phải chọn ít nhất 1 thiết bị'
   }
 } as const;

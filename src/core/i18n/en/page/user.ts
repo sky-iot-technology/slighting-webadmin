@@ -65,5 +65,17 @@ export const user = {
   close: 'Close',
   update: 'Update',
   reset_password: 'Reset Password',
-  change_password: 'Change Password'
+  change_password: 'Change Password',
+  validation: {
+    first_name_required: 'First name is required',
+    last_name_required: 'Last name is required',
+    email_invalid: 'Invalid email',
+    role_required: 'Role is required',
+    group_required: 'Group is required',
+    username_required: 'Username is required',
+    password_min: 'Password must be at least 6 characters',
+    password_confirm_mismatch: 'Password confirmation does not match',
+    unit_required: 'Please select at least 1 unit',
+    password_not_match: 'Passwords do not match'
+  }
 } as const;

@@ -17,8 +17,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export function SignInForm() {
+  const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const loginMutation = useLogin();
 
@@ -36,7 +38,7 @@ export function SignInForm() {
 
   return (
     <Form {...form}>
-      <Heading title='Đăng nhập' description='' />
+      <Heading title={t('auth.title' as any)} description='' />
       <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
         <FormField
           control={form.control}
@@ -50,7 +52,7 @@ export function SignInForm() {
                 <Input
                   {...field}
                   type='text'
-                  placeholder='Nhập tên đăng nhập'
+                  placeholder={t('auth.placeholder.username' as any)}
                   className='h-10 rounded-md'
                 />
               </FormControl>
@@ -64,13 +66,15 @@ export function SignInForm() {
           name='password'
           render={({ field }) => (
             <FormItem>
-              <FormLabel className='text-sm font-medium'>Mật khẩu</FormLabel>
+              <FormLabel className='text-sm font-medium'>
+                {t('auth.label.password' as any)}
+              </FormLabel>
               <FormControl>
                 <div className='relative'>
                   <Input
                     {...field}
                     type={showPassword ? 'text' : 'password'}
-                    placeholder='Nhập mật khẩu'
+                    placeholder={t('auth.placeholder.password' as any)}
                     className='h-10 rounded-md'
                   />
                   <button
@@ -104,7 +108,7 @@ export function SignInForm() {
               </FormControl>
               <div className='space-y-1 leading-none'>
                 <FormLabel className='text-sm font-medium'>
-                  Ghi nhớ đăng nhập
+                  {t('auth.label.remember_me' as any)}
                 </FormLabel>
               </div>
             </FormItem>
@@ -116,7 +120,9 @@ export function SignInForm() {
           disabled={loginMutation.isPending}
           className='w-full rounded-md px-4 py-2 focus:ring-2 focus:ring-offset-2 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50'
         >
-          {loginMutation.isPending ? 'Đang đăng nhập...' : 'Đăng nhập'}
+          {loginMutation.isPending
+            ? t('auth.button.logging_in' as any)
+            : t('auth.button.login' as any)}
         </Button>
       </form>
     </Form>

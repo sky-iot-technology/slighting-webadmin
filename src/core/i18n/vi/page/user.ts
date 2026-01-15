@@ -65,5 +65,17 @@ export const user = {
   close: 'Đóng',
   update: 'Cập nhật',
   reset_password: 'Reset mật khẩu',
-  change_password: 'Đổi mật khẩu'
+  change_password: 'Đổi mật khẩu',
+  validation: {
+    first_name_required: 'Vui lòng nhập tên',
+    last_name_required: 'Vui lòng nhập họ',
+    email_invalid: 'Email không hợp lệ',
+    role_required: 'Vui lòng chọn vai trò',
+    group_required: 'Vui lòng chọn nhóm',
+    username_required: 'Vui lòng nhập username',
+    password_min: 'Mật khẩu tối thiểu 6 ký tự',
+    password_confirm_mismatch: 'Xác nhận mật khẩu không đúng',
+    unit_required: 'Vui lòng chọn ít nhất 1 đơn vị',
+    password_not_match: 'Mật khẩu không khớp'
+  }
 } as const;

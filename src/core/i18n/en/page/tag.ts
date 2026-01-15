@@ -25,5 +25,8 @@ export const tag = {
   enter_description: 'Enter description',
   cancel: 'Cancel',
   add: 'Add',
-  update: 'Update'
+  update: 'Update',
+  validation: {
+    name_required: 'Group branch name is required'
+  }
 } as const;

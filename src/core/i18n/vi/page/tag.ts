@@ -25,5 +25,8 @@ export const tag = {
   enter_description: 'Nhập mô tả',
   cancel: 'Hủy',
   add: 'Thêm',
-  update: 'Cập nhật'
+  update: 'Cập nhật',
+  validation: {
+    name_required: 'Tên nhóm chi nhánh không được để trống'
+  }
 } as const;

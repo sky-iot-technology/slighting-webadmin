@@ -95,5 +95,22 @@ export const maintenance = {
     forward: 'Chuyển giao',
     comfirmed: 'Xác nhận hoàn thành',
     cancel: 'Đã hủy'
+  },
+  validation: {
+    assigned_by_required: 'Người giám sát không được để trống',
+    assignee_id_required: 'Người được giao không được để trống',
+    work_order_name_required: 'Tên công việc không được để trống',
+    remarks_required: 'Mô tả không được để trống',
+    department_required: 'Đơn vị không được để trống',
+    start_date_required: 'Vui lòng nhập ngày bắt đầu',
+    end_date_required: 'Vui lòng nhập ngày hoàn thành',
+    end_date_invalid: 'Ngày hoàn thành phải lớn hơn hoặc bằng ngày bắt đầu',
+    file_max: 'Chỉ được tải lên tối đa 5 tập tin',
+    file_size_max: 'File không vượt quá 5MB',
+    id_required: 'Mã không được bỏ trống',
+    image_max: 'Chỉ được tối đa 5 hình ảnh (bao gồm cả file cũ và mới)',
+    total_size_max: 'Tổng dung lượng file tải lên không vượt quá 5MB',
+    status_required: 'Vui lòng chọn trạng thái thiết bị',
+    action_required: 'Vui lòng chọn trạng thái xử lý'
   }
 } as const;

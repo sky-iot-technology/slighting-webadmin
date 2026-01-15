@@ -1,9 +1,9 @@
 import { z } from 'zod';
 
 const otaBaseSchema = z.object({
-  name: z.string().min(1, 'Tên OTA không được để trống'),
-  category_type: z.string().min(1, 'Loại thiết bị không được để trống'),
-  version: z.string().min(1, 'Phiên bản không được để trống'),
+  name: z.string().min(1, 'ota.validation.name_required'),
+  category_type: z.string().min(1, 'ota.validation.category_required'),
+  version: z.string().min(1, 'ota.validation.version_required'),
   description: z.string().optional()
 });
 
@@ -15,7 +15,7 @@ export const otaFormSchema = otaBaseSchema
     if (!(data.file instanceof File)) {
       ctx.addIssue({
         path: ['file'],
-        message: 'Vui lòng chọn tệp OTA',
+        message: 'ota.validation.file_required',
         code: z.ZodIssueCode.custom
       });
       return;
@@ -24,7 +24,7 @@ export const otaFormSchema = otaBaseSchema
     if (data.file.size > 5 * 1024 * 1024) {
       ctx.addIssue({
         path: ['file'],
-        message: 'File không vượt quá 5MB',
+        message: 'ota.validation.file_size_max',
         code: z.ZodIssueCode.custom
       });
     }
@@ -42,7 +42,7 @@ export const otaUpdateSchema = otaBaseSchema
     if (!(data.file instanceof File)) {
       ctx.addIssue({
         path: ['file'],
-        message: 'File không hợp lệ',
+        message: 'ota.validation.file_invalid',
         code: z.ZodIssueCode.custom
       });
       return;
@@ -51,7 +51,7 @@ export const otaUpdateSchema = otaBaseSchema
     if (data.file.size > 5 * 1024 * 1024) {
       ctx.addIssue({
         path: ['file'],
-        message: 'File không vượt quá 5MB',
+        message: 'ota.validation.file_size_max',
         code: z.ZodIssueCode.custom
       });
     }

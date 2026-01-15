@@ -50,5 +50,8 @@ export const role = {
       title: 'Xóa vai trò',
       description: 'Bạn có chắc chắn muốn xóa vai trò này?'
     }
+  },
+  validation: {
+    name_required: 'Tên vai trò không được để trống'
   }
 };

@@ -55,5 +55,13 @@ export const ota = {
       status: 'Status',
       updating: 'Updating firmware'
     }
+  },
+  validation: {
+    name_required: 'OTA name is required',
+    category_required: 'Device type is required',
+    version_required: 'Version is required',
+    file_required: 'Please select an OTA file',
+    file_size_max: 'File must not exceed 5MB',
+    file_invalid: 'Invalid file'
   }
 };

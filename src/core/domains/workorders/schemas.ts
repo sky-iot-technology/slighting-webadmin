@@ -2,28 +2,37 @@ import { z } from 'zod';
 
 const FileSchema = z
   .instanceof(File)
-  .refine((file) => file.size <= 5 * 1024 * 1024, 'File không vượt quá 5MB');
+  .refine(
+    (file) => file.size <= 5 * 1024 * 1024,
+    'maintenance.validation.file_size_max'
+  );
 
 export const workOrderFormSchema = z
   .object({
-    assigned_by: z.string().min(1, 'Người giám sát không được để trống'),
-    assignee_id: z.string().min(1, 'Người được giao không được để trống'),
+    assigned_by: z
+      .string()
+      .min(1, 'maintenance.validation.assigned_by_required'),
+    assignee_id: z
+      .string()
+      .min(1, 'maintenance.validation.assignee_id_required'),
 
-    work_order_name: z.string().min(1, 'Tên công việc không được để trống'),
-    remarks: z.string().min(1, 'Mô tả không được để trống'),
+    work_order_name: z
+      .string()
+      .min(1, 'maintenance.validation.work_order_name_required'),
+    remarks: z.string().min(1, 'maintenance.validation.remarks_required'),
 
-    department: z.string().min(1, 'Đơn vị không được để trống'),
+    department: z.string().min(1, 'maintenance.validation.department_required'),
 
-    start_date: z.string().min(1, 'Vui lòng nhập ngày bắt đầu'),
-    end_date: z.string().min(1, 'Vui lòng nhập ngày hoàn thành'),
+    start_date: z.string().min(1, 'maintenance.validation.start_date_required'),
+    end_date: z.string().min(1, 'maintenance.validation.end_date_required'),
 
     admin_attachments: z
       .array(FileSchema)
-      .max(5, 'Chỉ được tải lên tối đa 5 tập tin')
+      .max(5, 'maintenance.validation.file_max')
       .optional()
   })
   .refine((data) => new Date(data.end_date) >= new Date(data.start_date), {
-    message: 'Ngày hoàn thành phải lớn hơn hoặc bằng ngày bắt đầu',
+    message: 'maintenance.validation.end_date_invalid',
     path: ['end_date']
   });
 
@@ -31,13 +40,17 @@ export type WorkOrderFormSchema = z.infer<typeof workOrderFormSchema>;
 
 export const maintenanceProgressSchema = z
   .object({
-    id: z.string().min(1, { message: 'Mã không được bỏ trống' }),
+    id: z.string().min(1, { message: 'maintenance.validation.id_required' }),
     /* -------- Thông tin thiết bị -------- */
-    work_order_name: z.string().min(1, 'Vui lòng nhập tên công việc'),
+    work_order_name: z
+      .string()
+      .min(1, 'maintenance.validation.work_order_name_required'),
 
-    assignee_id: z.string().min(1, 'Vui lòng chọn người xử lý'),
+    assignee_id: z
+      .string()
+      .min(1, 'maintenance.validation.assignee_id_required'),
 
-    department: z.string().min(1, 'Đơn vị không được để trống'),
+    department: z.string().min(1, 'maintenance.validation.department_required'),
 
     description: z.string().optional().default(''),
 
@@ -54,7 +67,7 @@ export const maintenanceProgressSchema = z
           ctx.addIssue({
             path: [],
             code: z.ZodIssueCode.custom,
-            message: 'Chỉ được tối đa 5 tập tin (bao gồm cả file cũ và mới)'
+            message: 'maintenance.validation.file_max'
           });
         }
         const totalSize = val.new.reduce((sum, file) => sum + file.size, 0);
@@ -62,19 +75,21 @@ export const maintenanceProgressSchema = z
         if (totalSize > 5 * 1024 * 1024) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Tổng dung lượng file tải lên không vượt quá 5MB',
+            message: 'maintenance.validation.total_size_max',
             path: []
           });
         }
       }),
 
     /* -------- Cập nhật tiến độ -------- */
-    work_order_status: z.string().min(1, 'Vui lòng chọn trạng thái thiết bị'),
+    work_order_status: z
+      .string()
+      .min(1, 'maintenance.validation.status_required'),
 
     assignee_content: z.string().optional().default(''),
 
-    start_date: z.string().min(1, 'Vui lòng nhập ngày bắt đầu'),
-    end_date: z.string().min(1, 'Vui lòng nhập ngày hoàn thành'),
+    start_date: z.string().min(1, 'maintenance.validation.start_date_required'),
+    end_date: z.string().min(1, 'maintenance.validation.end_date_required'),
 
     attachments: z
       .object({
@@ -89,7 +104,7 @@ export const maintenanceProgressSchema = z
           ctx.addIssue({
             path: [],
             code: z.ZodIssueCode.custom,
-            message: 'Chỉ được tối đa 5 hình ảnh (bao gồm cả file cũ và mới)'
+            message: 'maintenance.validation.image_max'
           });
         }
         const totalSize = val.new.reduce((sum, file) => sum + file.size, 0);
@@ -97,14 +112,14 @@ export const maintenanceProgressSchema = z
         if (totalSize > 5 * 1024 * 1024) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Tổng dung lượng file tải lên không vượt quá 5MB',
+            message: 'maintenance.validation.total_size_max',
             path: []
           });
         }
       }),
 
     /* -------- Xác nhận tiến độ -------- */
-    action: z.string().min(1, 'Vui lòng chọn trạng thái xử lý'),
+    action: z.string().min(1, 'maintenance.validation.action_required'),
 
     remarks: z.string().optional().default('')
   })
@@ -117,7 +132,7 @@ export const maintenanceProgressSchema = z
     },
     {
       path: ['end_date'],
-      message: 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu'
+      message: 'maintenance.validation.end_date_invalid'
     }
   );
 

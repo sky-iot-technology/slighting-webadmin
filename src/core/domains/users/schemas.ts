@@ -3,20 +3,22 @@ import { CreateUserDto, UpdateUserDto, UserRole, UserStatus } from './types';
 
 export const userFormSchema = z
   .object({
-    firstName: z.string().min(1, 'Vui lòng nhập tên'),
-    lastName: z.string().min(1, 'Vui lòng nhập họ'),
-    email: z.string().email('Email không hợp lệ'),
-    role: z.string().min(1, 'Vui lòng chọn vai trò'),
-    group: z.string().min(1, 'Vui lòng chọn nhóm'),
-    username: z.string().min(1, 'Vui lòng nhập username'),
+    firstName: z.string().min(1, 'user.validation.first_name_required'),
+    lastName: z.string().min(1, 'user.validation.last_name_required'),
+    email: z.string().email('user.validation.email_invalid'),
+    role: z.string().min(1, 'user.validation.role_required'),
+    group: z.string().min(1, 'user.validation.group_required'),
+    username: z.string().min(1, 'user.validation.username_required'),
 
-    password: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
+    password: z.string().min(6, 'user.validation.password_min'),
 
-    confirmPassword: z.string().min(6, 'Xác nhận mật khẩu không đúng'),
+    confirmPassword: z
+      .string()
+      .min(6, 'user.validation.password_confirm_mismatch'),
     // optional fields
     phone: z.string().optional(),
     //unit still testing
-    unit: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất 1 đơn vị'),
+    unit: z.array(z.string()).min(1, 'user.validation.unit_required'),
     //
     department: z.string().optional(),
     address: z.string().optional(),
@@ -27,29 +29,29 @@ export const userFormSchema = z
       return data.password === data.confirmPassword;
     },
     {
-      message: 'Mật khẩu không khớp',
+      message: 'user.validation.password_not_match',
       path: ['confirmPassword']
     }
   );
 
 export const changenewpassFormSchema = z
   .object({
-    oldpassword: z.string().trim().min(6, 'validation.password_min'),
-    newpassword: z.string().trim().min(6, 'validation.password_min'),
-    confirmPassword: z.string().trim().min(6, 'validation.password_min')
+    oldpassword: z.string().trim().min(6, 'user.validation.password_min'),
+    newpassword: z.string().trim().min(6, 'user.validation.password_min'),
+    confirmPassword: z.string().trim().min(6, 'user.validation.password_min')
   })
   .refine((data) => data.newpassword === data.confirmPassword, {
-    message: 'validation.password_not_match',
+    message: 'user.validation.password_not_match',
     path: ['confirmPassword']
   });
 
 export const changepassFormSchema = z
   .object({
-    newpassword: z.string().min(6, 'validation.password_min'),
-    confirmPassword: z.string().min(6, 'validation.password_min')
+    newpassword: z.string().min(6, 'user.validation.password_min'),
+    confirmPassword: z.string().min(6, 'user.validation.password_min')
   })
   .refine((data) => data.newpassword === data.confirmPassword, {
-    message: 'validation.password_not_match',
+    message: 'user.validation.password_not_match',
     path: ['confirmPassword']
   });
 
@@ -63,7 +65,7 @@ export const updateUserSchema = z.object({
   username: z.string().optional(),
   phone: z.string().optional(),
   //unit still testing
-  unit: z.array(z.string()).min(1, 'Vui lòng chọn ít nhất 1 đơn vị'),
+  unit: z.array(z.string()).min(1, 'user.validation.unit_required'),
   //
   department: z.string().optional(),
   address: z.string().optional(),

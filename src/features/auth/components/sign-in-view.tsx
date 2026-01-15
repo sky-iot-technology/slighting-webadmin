@@ -2,6 +2,7 @@ import { ModeToggle } from '@/ui/components/layout/ThemeToggle/theme-toggle';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { SignInForm } from './sign-in-form';
+import { Translated } from '@/ui/components/layout/translated';
 
 export const metadata: Metadata = {
   title: 'Authentication',
@@ -34,7 +35,8 @@ export default function SignInViewPage() {
           <SignInForm />
         </div>
       </div>
-      <div className='absolute top-4 right-4'>
+      <div className='absolute top-4 right-4 flex gap-2'>
+        <Translated />
         <ModeToggle />
       </div>
     </div>

@@ -445,10 +445,19 @@ export function TimeBrightnessForm({
                   <Trash2 className='h-2 w-2' />
                 </Button>
               )}
+              {/* Time Error */}
               {errors.schedules?.[index]?.time?.message && (
                 <div className='col-span-3'>
                   <p className='mt-0.5 text-xs text-red-500'>
-                    {errors.schedules[index].time?.message}
+                    {t(errors.schedules[index].time?.message as any)}
+                  </p>
+                </div>
+              )}
+              {/* Action Value Error */}
+              {errors.schedules?.[index]?.action?.value?.message && (
+                <div className='col-span-3'>
+                  <p className='mt-0.5 text-xs text-red-500'>
+                    {t(errors.schedules[index].action?.value?.message as any)}
                   </p>
                 </div>
               )}

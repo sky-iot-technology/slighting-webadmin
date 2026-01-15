@@ -95,5 +95,22 @@ export const maintenance = {
     forward: 'Forward',
     comfirmed: 'Confirm Completion',
     cancel: 'Cancelled'
+  },
+  validation: {
+    assigned_by_required: 'Supervisor is required',
+    assignee_id_required: 'Assignee is required',
+    work_order_name_required: 'Work order name is required',
+    remarks_required: 'Description is required',
+    department_required: 'Department is required',
+    start_date_required: 'Start date is required',
+    end_date_required: 'End date is required',
+    end_date_invalid: 'End date must be greater than or equal to start date',
+    file_max: 'Max 5 files allowed',
+    file_size_max: 'File size must not exceed 5MB',
+    id_required: 'ID is required',
+    image_max: 'Max 5 images allowed (including old and new)',
+    total_size_max: 'Total upload size must not exceed 5MB',
+    status_required: 'Please select device status',
+    action_required: 'Please select process status'
   }
 } as const;

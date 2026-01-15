@@ -55,5 +55,13 @@ export const ota = {
       status: 'Trạng thái',
       updating: 'Đang cập nhật firmware'
     }
+  },
+  validation: {
+    name_required: 'Tên OTA không được để trống',
+    category_required: 'Loại thiết bị không được để trống',
+    version_required: 'Phiên bản không được để trống',
+    file_required: 'Vui lòng chọn tệp OTA',
+    file_size_max: 'File không vượt quá 5MB',
+    file_invalid: 'File không hợp lệ'
   }
 };

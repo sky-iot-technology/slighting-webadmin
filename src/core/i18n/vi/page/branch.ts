@@ -56,5 +56,12 @@ export const branch = {
   created_at: 'Ngày tạo',
   updated_at: 'Cập nhật cuối',
   device_count: '{{count}} thiết bị',
-  all: 'Tất cả'
+  all: 'Tất cả',
+  validation: {
+    name_required: 'Tên chi nhánh không được để trống',
+    lat_min: 'Vĩ độ phải ≥ -90',
+    lat_max: 'Vĩ độ phải ≤ 90',
+    long_min: 'Kinh độ phải ≥ -180',
+    long_max: 'Kinh độ phải ≤ 180'
+  }
 } as const;

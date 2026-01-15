@@ -41,13 +41,16 @@ export const products = {
       description: 'Are you sure you want to delete this device?'
     }
   },
+  new: {
+    add_product: 'Add Product'
+  },
   form: {
     label: {
       id: 'Device ID',
       name: 'Device Name',
       type: 'Device Type',
       favorite_group: 'Favorite Group',
-      coordinates: 'Coordinates',
+      coordinates: 'Longitude & Latitude',
       branch: 'Branch',
       address: 'Address',
       note: 'Note',
@@ -116,7 +119,10 @@ export const products = {
         branch_required: 'Branch is required',
         serial_required: 'Serial is required',
         lat_invalid: 'Latitude must be between -90 and 90',
-        lon_invalid: 'Longitude must be between -180 and 180'
+        lon_invalid: 'Longitude must be between -180 and 180',
+        id_required: 'ID is required',
+        image_size: 'Max file size is 5MB',
+        image_type: 'Invalid image type'
       },
       sheet: {
         title: 'Select Map Location'

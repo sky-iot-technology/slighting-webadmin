@@ -56,5 +56,12 @@ export const branch = {
   created_at: 'Created At',
   updated_at: 'Last Updated',
   device_count: '{{count}} devices',
-  all: 'All'
+  all: 'All',
+  validation: {
+    name_required: 'Branch name is required',
+    lat_min: 'Latitude must be ≥ -90',
+    lat_max: 'Latitude must be ≤ 90',
+    long_min: 'Longitude must be ≥ -180',
+    long_max: 'Longitude must be ≤ 180'
+  }
 } as const;

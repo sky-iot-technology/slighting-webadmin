@@ -14,7 +14,7 @@ const scheduleActionSchema = z.object({
 
 export const subScheduleSchema = z
   .object({
-    time: z.string().min(1, 'Thời gian không được để trống'),
+    time: z.string().min(1, { message: 'calendar.validation.time_required' }),
     action: scheduleActionSchema.optional(),
     enabled: z.boolean().default(true)
   })
@@ -27,7 +27,7 @@ export const subScheduleSchema = z
       if (typeof value !== 'number' || value < 0 || value > 100) {
         ctx.addIssue({
           path: ['action', 'value'],
-          message: 'Độ sáng phải từ 0–100',
+          message: 'calendar.validation.brightness_range',
           code: z.ZodIssueCode.custom
         });
       }
@@ -37,7 +37,7 @@ export const subScheduleSchema = z
       if (typeof value !== 'boolean') {
         ctx.addIssue({
           path: ['action', 'value'],
-          message: 'Giá trị bật/tắt không hợp lệ',
+          message: 'calendar.validation.invalid_on_off',
           code: z.ZodIssueCode.custom
         });
       }
@@ -46,14 +46,14 @@ export const subScheduleSchema = z
 
 export const calendarFormSchema = z
   .object({
-    name: z.string().min(2, { message: 'Tên lịch phải ít nhất 2 ký tự' }),
+    name: z.string().min(2, { message: 'calendar.validation.name_min' }),
     description: z.string().optional(),
     output_channel: z.string().default('alerts'),
     output_topic: z.string().default('schedule'),
     device_type: z
       .string()
       .refine((val) => val.startsWith('lms.devices.types.'), {
-        message: 'Loại thiết bị không hợp lệ'
+        message: 'calendar.validation.device_type_invalid'
       }),
     group_ids: z.array(z.string()).optional(),
     client_id: z.string().default('default'),
@@ -62,12 +62,14 @@ export const calendarFormSchema = z
     recurring: z
       .enum(['none', 'daily', 'weekly', 'monthly', 'custom'])
       .default('none'),
-    schedules: z.array(subScheduleSchema).min(1, 'Phải có ít nhất 1 lịch con'),
+    schedules: z
+      .array(subScheduleSchema)
+      .min(1, 'calendar.validation.schedule_min'),
     date: z.object({
       from: z.date().optional(),
       to: z.date().optional()
     }),
-    ids: z.array(z.string()).min(1, 'Phải chọn ít nhất 1 thiết bị'),
+    ids: z.array(z.string()).min(1, 'calendar.validation.ids_min'),
     weekly: z.array(z.string()).optional(),
     monthly: z.array(z.string()).optional()
   })
@@ -79,7 +81,7 @@ export const calendarFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['date'],
-        message: 'Vui lòng chọn ngày bắt đầu'
+        message: 'calendar.validation.start_date_required'
       });
       return;
     }
@@ -88,7 +90,7 @@ export const calendarFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['date'],
-        message: 'Vui lòng chọn ngày kết thúc'
+        message: 'calendar.validation.end_date_required'
       });
     }
 
@@ -96,7 +98,7 @@ export const calendarFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['date'],
-        message: 'Ngày kết thúc phải sau ngày bắt đầu'
+        message: 'calendar.validation.end_date_after_start'
       });
     }
 
@@ -104,7 +106,7 @@ export const calendarFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['weekly'],
-        message: 'Vui lòng chọn ít nhất 1 ngày trong tuần'
+        message: 'calendar.validation.weekly_required'
       });
     }
 
@@ -112,7 +114,7 @@ export const calendarFormSchema = z
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         path: ['monthly'],
-        message: 'Vui lòng chọn ít nhất 1 ngày trong tháng'
+        message: 'calendar.validation.monthly_required'
       });
     }
   });

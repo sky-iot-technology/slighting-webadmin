@@ -50,5 +50,8 @@ export const role = {
       title: 'Delete Role',
       description: 'Are you sure you want to delete this role?'
     }
+  },
+  validation: {
+    name_required: 'Role name is required'
   }
 };

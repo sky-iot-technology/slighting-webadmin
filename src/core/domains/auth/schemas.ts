@@ -3,12 +3,12 @@ import { z } from 'zod';
 export const loginSchema = z.object({
   username: z
     .string()
-    .min(1, 'Tên đăng nhập là bắt buộc')
-    .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự'),
+    .min(1, 'auth.validation.username_required')
+    .min(3, 'auth.validation.username_min'),
   password: z
     .string()
-    .min(1, 'Mật khẩu là bắt buộc')
-    .min(6, 'Mật khẩu phải có ít nhất 6 ký tự'),
+    .min(1, 'auth.validation.password_required')
+    .min(6, 'auth.validation.password_min'),
   rememberMe: z.boolean().optional()
 });
 
@@ -16,31 +16,36 @@ export const signupSchema = z
   .object({
     username: z
       .string()
-      .min(1, 'Tên đăng nhập là bắt buộc')
-      .min(3, 'Tên đăng nhập phải có ít nhất 3 ký tự'),
+      .min(1, 'auth.validation.username_required')
+      .min(3, 'auth.validation.username_min'),
     password: z
       .string()
-      .min(6, 'Mật khẩu phải có ít nhất 6 ký tự')
+      .min(6, 'auth.validation.password_min')
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        'Mật khẩu phải chứa ít nhất một chữ hoa, một chữ thường và một số'
+        'auth.validation.password_regex'
       ),
-    confirmPassword: z.string().min(1, 'Xác nhận mật khẩu là bắt buộc'),
+    confirmPassword: z
+      .string()
+      .min(1, 'auth.validation.confirm_password_required'),
     agreeToTerms: z
       .boolean()
-      .refine((val) => val === true, 'Bạn phải đồng ý với điều khoản sử dụng')
+      .refine((val) => val === true, 'auth.validation.terms_required')
   })
   .refine((data) => data.password === data.confirmPassword, {
-    message: 'Mật khẩu xác nhận không khớp',
+    message: 'auth.validation.passwords_mismatch',
     path: ['confirmPassword']
   });
 
 export const profileUpdateSchema = z.object({
   name: z
     .string()
-    .min(1, 'Họ và tên là bắt buộc')
-    .min(2, 'Họ và tên phải có ít nhất 2 ký tự'),
-  email: z.string().min(1, 'Email là bắt buộc').email('Email không hợp lệ')
+    .min(1, 'auth.validation.name_required')
+    .min(2, 'auth.validation.name_min'),
+  email: z
+    .string()
+    .min(1, 'auth.validation.email_required')
+    .email('auth.validation.email_invalid')
 });
 
 const metadataSchema = z.object({

@@ -41,6 +41,9 @@ export const products = {
       description: 'Bạn có chắc chắn muốn xoá thiết bị này?'
     }
   },
+  new: {
+    add_product: 'Thêm thiết bị'
+  },
   form: {
     label: {
       id: 'Mã thiết bị',
@@ -116,7 +119,10 @@ export const products = {
         branch_required: 'Chi nhánh không được bỏ trống',
         serial_required: 'Serial không được bỏ trống',
         lat_invalid: 'Vĩ độ phải là số trong khoảng -90 đến 90',
-        lon_invalid: 'Kinh độ phải là số trong khoảng -180 đến 180'
+        lon_invalid: 'Kinh độ phải là số trong khoảng -180 đến 180',
+        id_required: 'Mã không được bỏ trống',
+        image_size: 'Kích thước tệp tối đa là 5MB',
+        image_type: 'Loại hình ảnh không hợp lệ'
       },
       sheet: {
         title: 'Chọn vị trí bản đồ'

@@ -52,21 +52,32 @@ export const deviceFormSchema = z.object({
   // Image upload (optional)
   image: z
     .instanceof(File)
-    .refine((file) => file.size <= MAX_FILE_SIZE, 'Max file size is 5MB')
+    .refine(
+      (file) => file.size <= MAX_FILE_SIZE,
+      'products.detail.overview.validation.image_size'
+    )
     .refine(
       (file) => ACCEPTED_IMAGE_TYPES.includes(file.type),
-      'Invalid image type'
+      'products.detail.overview.validation.image_type'
     )
     .optional(),
 
   // Required fields
-  id: z.string().min(1, { message: 'Mã không được bỏ trống' }),
-  name: z.string().min(2, { message: 'Tên thiết bị phải có ít nhất 2 ký tự' }),
-  type: z.string().min(1, { message: 'Loại thiết bị không được bỏ trống' }),
+  id: z
+    .string()
+    .min(1, { message: 'products.detail.overview.validation.id_required' }),
+  name: z
+    .string()
+    .min(2, { message: 'products.detail.overview.validation.name_min' }),
+  type: z
+    .string()
+    .min(1, { message: 'products.detail.overview.validation.type_required' }),
   parent_group_id: z
     .string()
-    .min(1, { message: 'Chi nhánh không được bỏ trống' }),
-  serial: z.string().min(1, { message: 'Serial không được bỏ trống' }),
+    .min(1, { message: 'products.detail.overview.validation.branch_required' }),
+  serial: z
+    .string()
+    .min(1, { message: 'products.detail.overview.validation.serial_required' }),
 
   // Optional fields
   tags: z.array(z.string()).default([]),
@@ -98,14 +109,14 @@ export const deviceFormSchema = z.object({
     .string()
     .optional()
     .refine((v) => v === undefined || v === '' || isValidLat(v), {
-      message: 'Vĩ độ phải là số trong khoảng -90 đến 90'
+      message: 'products.detail.overview.validation.lat_invalid'
     }),
 
   lon: z
     .string()
     .optional()
     .refine((v) => v === undefined || v === '' || isValidLon(v), {
-      message: 'Kinh độ phải là số trong khoảng -180 đến 180'
+      message: 'products.detail.overview.validation.lon_invalid'
     }),
 
   // Additional fields

@@ -83,6 +83,20 @@ export const calendar = {
   },
   sync: {
     synced: 'Synced',
-    waiting_sync: 'Not synced'
+    waiting: 'Not synced'
+  },
+  validation: {
+    time_required: 'Time is required',
+    brightness_range: 'Brightness must be 0-100',
+    invalid_on_off: 'Invalid on/off value',
+    name_min: 'Calendar name must be at least 2 characters',
+    device_type_invalid: 'Invalid device type',
+    schedule_min: 'Must have at least 1 schedule',
+    start_date_required: 'Start date is required',
+    end_date_required: 'End date is required',
+    end_date_after_start: 'End date must be after start date',
+    weekly_required: 'Please select at least 1 day of week',
+    monthly_required: 'Please select at least 1 day of month',
+    ids_min: 'Please select at least 1 device'
   }
 } as const;

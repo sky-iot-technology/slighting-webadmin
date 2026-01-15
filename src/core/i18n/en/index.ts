@@ -16,6 +16,7 @@ import { ota } from './page/ota';
 import { products } from './page/products';
 import { role } from './page/role';
 import { user } from './page/user';
+import { auth } from './page/auth';
 
 export const en = {
   navbar,
@@ -34,5 +35,6 @@ export const en = {
   ota,
   products,
   role,
-  user
+  user,
+  auth
 } as const;

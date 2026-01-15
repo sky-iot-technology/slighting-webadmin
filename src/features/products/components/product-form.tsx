@@ -162,7 +162,7 @@ export default function ProductForm({
     <Card className='mx-auto w-full'>
       <CardHeader>
         <CardTitle className='text-primary text-left text-xl'>
-          {pageTitle}
+          {t('products.new.add_product')}
         </CardTitle>
       </CardHeader>
       <CardContent>
