@@ -128,8 +128,8 @@ export default function DeviceDetailsPage() {
         onValueChange={handleTabChange}
         className='will-change-auto'
       >
-        <TabsList className='bg-card grid h-14 auto-cols-max grid-flow-col py-2 shadow-[0px_4px_4px_0px_rgba(0,71,117,0.4)] will-change-auto'>
-          <div className='w-14'>
+        <TabsList className='bg-card flex h-auto max-w-[85vw] items-center justify-start overflow-x-auto py-2 shadow-[0px_4px_4px_0px_rgba(0,71,117,0.4)] will-change-auto md:grid md:h-14 md:max-w-none md:auto-cols-max md:grid-flow-col md:overflow-visible'>
+          <div className='w-14 shrink-0'>
             <div className='flex items-center justify-center'>
               <Button
                 variant='ghost'

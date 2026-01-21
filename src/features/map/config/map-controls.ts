@@ -21,5 +21,6 @@ export const mapControllerProps = {
   onTransitionStart: () => {},
   onTransitionEnd: () => {},
   onTransitionInterrupt: () => {},
-  onResize: () => {}
+  onResize: () => {},
+  trackReisze: true
 };

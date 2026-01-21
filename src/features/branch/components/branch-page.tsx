@@ -254,6 +254,7 @@ export default function BranchPage() {
                   isLoading={isLoading}
                   isFetching={isFetching}
                   selectedDevice={selectedDevice}
+                  onDeleteSuccess={() => setSelectedRegion(null)}
                 />
               ) : activeTab === 'devices' && selectedRegion ? (
                 devicesTableMemo

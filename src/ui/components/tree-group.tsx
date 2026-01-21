@@ -1,4 +1,5 @@
 import { RegionNode } from '@/core/domains/groups';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import { NodeRendererProps, Tree } from 'react-arborist';
@@ -29,6 +30,7 @@ type RegionTreeProps = {
   searchTerm?: string;
   searchMatch?: (node: any, term: string) => boolean;
   filter?: boolean;
+  showSelectAll?: boolean;
 };
 
 const nodeRenderers = {
@@ -51,19 +53,23 @@ export function RegionTree({
   overscanCount,
   searchTerm = '',
   searchMatch,
-  filter = false
+  filter = false,
+  showSelectAll = false
 }: RegionTreeProps) {
-  const enhancedData: RegionNode[] = filter
-    ? [
-        {
-          id: '__all__',
-          slug: 'all',
-          name: 'Tất cả',
-          children: []
-        },
-        ...data
-      ]
-    : data;
+  const { t } = useTranslation();
+
+  const enhancedData: RegionNode[] =
+    filter || showSelectAll
+      ? [
+          {
+            id: '__all__',
+            slug: 'all',
+            name: t('branch.all'),
+            children: []
+          },
+          ...data
+        ]
+      : data;
 
   const renderFn =
     typeof renderNode === 'string' ? nodeRenderers[renderNode] : renderNode;

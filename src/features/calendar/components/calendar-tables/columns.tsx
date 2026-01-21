@@ -234,8 +234,14 @@ export const calendarColumns = (
           : '/assets/icons/calendarOffline.svg';
         label = isOn ? t('calendar.on') : t('calendar.off');
       } else if (command.includes('Brightness')) {
-        icon = '/assets/icons/calendarOnline.svg';
-        const brightness = params.brightness;
+        const brightness = Number(params?.brightness ?? 0);
+
+        const isOnByBrightness = brightness > 0;
+
+        icon = isOnByBrightness
+          ? '/assets/icons/calendarOnline.svg'
+          : '/assets/icons/calendarOffline.svg';
+
         label = `${brightness}%`;
       } else {
         label = t('calendar.undefined');

@@ -417,7 +417,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
 
   return (
     <>
-      <div className='flex items-center justify-end gap-2'>
+      <div className='flex items-center justify-center gap-2 sm:justify-end'>
         <div className='w-50'>
           <Select
             value={selectedDeviceId ?? '__all__'}
@@ -453,7 +453,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           {t('products.detail.activity.sync' as any)}
         </Button>
       </div>
-      <div className='mt-4 flex items-stretch'>
+      <div className='mt-4 flex flex-col items-stretch lg:flex-row'>
         {/* Left Section - Device List and Actions (2/3 width) */}
 
         <div className='flex-[2]'>
@@ -563,7 +563,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                 className='data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
                               />
                             ) : isLight ? (
-                              <div className='flex max-w-xs flex-1 items-center gap-3'>
+                              <div className='flex max-w-xs flex-1 flex-col items-center gap-3 sm:flex-row'>
                                 <Switch
                                   checked={currentState}
                                   disabled={
@@ -577,31 +577,33 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                   }
                                   className='data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
                                 />
-                                <Slider
-                                  value={[brightness]}
-                                  onValueChange={([val]) => {
-                                    setBrightnessMap((prev) => ({
-                                      ...prev,
-                                      [subDevice.device_id]: val
-                                    }));
-                                  }}
-                                  onValueCommit={([val]) => {
-                                    handleBrightnessChange(
-                                      subDevice.device_id,
-                                      val
-                                    );
-                                  }}
-                                  min={0}
-                                  max={100}
-                                  step={1}
-                                  disabled={
-                                    !canControl || !isOnline || isPending
-                                  }
-                                  className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
-                                />
-                                <span className='min-w-[3rem] text-right text-sm font-medium'>
-                                  {brightness}%
-                                </span>
+                                <div className='flex w-full'>
+                                  <Slider
+                                    value={[brightness]}
+                                    onValueChange={([val]) => {
+                                      setBrightnessMap((prev) => ({
+                                        ...prev,
+                                        [subDevice.device_id]: val
+                                      }));
+                                    }}
+                                    onValueCommit={([val]) => {
+                                      handleBrightnessChange(
+                                        subDevice.device_id,
+                                        val
+                                      );
+                                    }}
+                                    min={0}
+                                    max={100}
+                                    step={1}
+                                    disabled={
+                                      !canControl || !isOnline || isPending
+                                    }
+                                    className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+                                  />
+                                  <span className='min-w-[3rem] text-right text-sm font-medium'>
+                                    {brightness}%
+                                  </span>
+                                </div>
                               </div>
                             ) : isSensor ? (
                               <div className='text-muted-foreground text-sm'></div>
@@ -672,7 +674,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
         </div>
 
         {/* Right Section - Activity History (1/3 width) */}
-        <div className='flex-1 space-y-4 rounded-bl-lg border-b border-l'>
+        <div className='flex-1 space-y-4 sm:rounded-bl-lg sm:border-b sm:border-l'>
           <div className='bg-card h-auto p-3'>
             <h3 className='mb-4 text-lg font-bold'>
               {t('products.detail.activity.history.title' as any)}

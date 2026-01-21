@@ -29,6 +29,7 @@ export function Translated() {
                 src={'/assets/icons/translated.svg'}
                 width={16}
                 height={16}
+                className='dark:brightness-0 dark:invert'
               />
             </AvatarFallback>
           </Avatar>

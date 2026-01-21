@@ -26,6 +26,7 @@ import { DeviceHoverCard } from '@/features/map/components/device-hover-card';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
 const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_web.json';
+// const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_dark.json';
 type SelectedRegion = { id: string; name: string } | null;
 
 type GoongMapProps = {
@@ -248,6 +249,17 @@ export default function GoongMap({
   useMapLayers(mapRef, devices, selectedRegion?.id);
   useMapResize(mapContainerRef, mapRef, setViewport);
 
+  const safeAnchor = useMemo(() => {
+    if (!hoverInfo?.feature?.properties) return 'bottom';
+    const { lat, lon } = hoverInfo.feature.properties;
+    const centerLat = viewport.latitude ?? 0;
+    const centerLon = viewport.longitude ?? 0;
+
+    const v = lat > centerLat ? 'top' : 'bottom';
+    const h = lon > centerLon ? 'right' : 'left';
+    return `${v}-${h}`;
+  }, [hoverInfo, viewport]);
+
   return (
     <div
       ref={mapContainerRef}
@@ -314,14 +326,20 @@ export default function GoongMap({
         {hoverInfo && hover && (
           <Popup
             tipSize={5}
-            anchor='bottom'
+            anchor={safeAnchor as any}
             longitude={hoverInfo.feature.properties.lon}
             latitude={hoverInfo.feature.properties.lat}
             closeButton={false}
-            className='z-50 [&_.mapboxgl-popup-content]:!bg-transparent [&_.mapboxgl-popup-content]:!p-0 [&_.mapboxgl-popup-content]:!shadow-none [&_.mapboxgl-popup-tip]:!hidden'
+            className='z-50 [&_.mapboxgl-popup-content]:!bg-transparent [&_.mapboxgl-popup-content]:!p-0 [&_.mapboxgl-popup-content]:!shadow-none [&_.mapboxgl-popup-tip]:!hidden [&.mapboxgl-popup-anchor-bottom-left]:!-mt-[25px] [&.mapboxgl-popup-anchor-bottom-left]:!ml-[15px] [&.mapboxgl-popup-anchor-bottom-right]:!-mt-[25px] [&.mapboxgl-popup-anchor-bottom-right]:!-ml-[15px] [&.mapboxgl-popup-anchor-top-left]:!mt-[10px] [&.mapboxgl-popup-anchor-top-left]:!ml-[15px] [&.mapboxgl-popup-anchor-top-right]:!mt-[10px] [&.mapboxgl-popup-anchor-top-right]:!-ml-[15px]'
             offsetLeft={0}
             offsetTop={0}
-            dynamicPosition={true}
+            dynamicPosition={false}
+            sortByDepth={true}
+            captureScroll={false}
+            captureDrag={true}
+            captureClick={true}
+            captureDoubleClick={true}
+            capturePointerMove={false}
           >
             <DeviceHoverCard
               featureProperties={hoverInfo.feature.properties}

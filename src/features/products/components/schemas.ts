@@ -72,9 +72,10 @@ export const deviceFormSchema = z.object({
   type: z
     .string()
     .min(1, { message: 'products.detail.overview.validation.type_required' }),
-  parent_group_id: z
-    .string()
-    .min(1, { message: 'products.detail.overview.validation.branch_required' }),
+  // parent_group_id: z
+  //   .string()
+  //   .min(1, { message: 'products.detail.overview.validation.branch_required' }),
+  parent_group_id: z.string().optional(),
   serial: z
     .string()
     .min(1, { message: 'products.detail.overview.validation.serial_required' }),

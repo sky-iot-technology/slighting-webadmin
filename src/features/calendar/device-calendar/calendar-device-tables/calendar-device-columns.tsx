@@ -263,14 +263,20 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
       let icon = '/assets/icons/calendarOffline.svg';
       let label = '';
 
-      if (command.includes('OnOff')) {
+      if (command.includes('lms.devices.commands.OnOff')) {
         icon = isOn
           ? '/assets/icons/calendarOnline.svg'
           : '/assets/icons/calendarOffline.svg';
         label = isOn ? t('calendar.on') : t('calendar.off');
-      } else if (command.includes('Brightness')) {
-        icon = '/assets/icons/calendarOnline.svg';
-        const brightness = params.brightness;
+      } else if (command.includes('lms.devices.commands.BrightnessAbsolute')) {
+        const brightness = Number(params?.brightness ?? 0);
+
+        const isOnByBrightness = brightness > 0;
+
+        icon = isOnByBrightness
+          ? '/assets/icons/calendarOnline.svg'
+          : '/assets/icons/calendarOffline.svg';
+
         label = `${brightness}%`;
       } else {
         label = t('calendar.undefined');

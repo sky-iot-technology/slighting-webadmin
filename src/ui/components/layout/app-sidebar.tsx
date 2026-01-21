@@ -282,7 +282,7 @@ function MainMenuItemModal({
 
 export default function AppSidebar() {
   const pathname = usePathname();
-  const { open } = useSidebar();
+  const { open, isMobile } = useSidebar();
   const [openSettingModal, setOpenSettingModal] = React.useState(false);
   const navItemsPermission = useNavItems();
   const { t } = useTranslation();
@@ -331,7 +331,9 @@ export default function AppSidebar() {
                     >
                       <SidebarMenuItem>
                         <CollapsibleTrigger asChild>
-                          <SidebarMenuButton isActive={!!isActive && !open}>
+                          <SidebarMenuButton
+                            isActive={!!isActive && !open && !isMobile}
+                          >
                             <MenuItemIcon
                               icon={Icon}
                               isActive={!!isActive}

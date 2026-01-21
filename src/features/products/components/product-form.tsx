@@ -154,6 +154,7 @@ export default function ProductForm({
   function onSubmit(values: DeviceFormValues) {
     // Convert form values to API payload format
     const apiPayload = convertFormToApiPayload(values);
+    // console.log(apiPayload);
     // Call API to create device
     createDeviceMutation.mutate(apiPayload);
   }
@@ -506,6 +507,7 @@ export default function ProductForm({
                             buttonClassName='!rounded-sm !bg-white'
                             treeClassName='!w-full !rounded-sm '
                             insideClassName='!text-sm'
+                            showSelectAll={true}
                           />
                           <FormMessage />
                         </FormItem>

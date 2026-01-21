@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/ui/components/ui/button';
-import { memo, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 import BranchDialog from './modal/tag-dialog';
 import { IconPlus } from '@tabler/icons-react';
 import Image from 'next/image';
@@ -57,6 +57,21 @@ export const TagSidebar = memo(function TagSidebar({
         tag.alias.toLowerCase().includes(term)
     );
   }, [data?.tag, searchTerm]);
+
+  useEffect(() => {
+    if (data?.tag?.length && !selectedTag) {
+      const firstTag = data.tag[0];
+
+      const defaultTag = {
+        id: String(firstTag.id),
+        alias: firstTag.alias,
+        name: firstTag.name
+      };
+
+      setSelectedTag(defaultTag);
+      onTagChange(defaultTag);
+    }
+  }, [data?.tag, selectedTag, onTagChange]);
 
   return (
     <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>

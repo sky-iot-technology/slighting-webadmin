@@ -138,7 +138,7 @@ export default function CalendarDeviceForm({
                       <FormControl>
                         <MultiSelect
                           options={
-                            data?.devices.map((b) => ({
+                            data?.devices?.map((b) => ({
                               value: b.device_id,
                               label: b.name
                             })) ?? []

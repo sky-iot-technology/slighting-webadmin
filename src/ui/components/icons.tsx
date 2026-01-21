@@ -85,7 +85,7 @@ export const Icons = {
       alt='maintenance'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   map: (props: any) => (
@@ -94,7 +94,7 @@ export const Icons = {
       alt='map'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   calendar: (props: any) => (
@@ -103,7 +103,7 @@ export const Icons = {
       alt='calendar'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   management: (props: any) => (
@@ -112,7 +112,7 @@ export const Icons = {
       alt='management'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   branch: (props: any) => (
@@ -121,7 +121,7 @@ export const Icons = {
       alt='branch'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   organization: (props: any) => (
@@ -130,16 +130,16 @@ export const Icons = {
       alt='organization'
       width={20}
       height={20}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   role: (props: any) => (
     <Image
       src={'/assets/icons/role.svg'}
       alt='role'
-      width={14}
-      height={14}
-      className={`dark:invert ${props.className || ''}`}
+      width={17}
+      height={17}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   userAgent: (props: any) => (
@@ -148,7 +148,7 @@ export const Icons = {
       alt='user'
       width={17}
       height={24}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   deviceMenu: (props: any) => (
@@ -157,7 +157,7 @@ export const Icons = {
       alt='device-menu'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   love: (props: any) => (
@@ -166,7 +166,7 @@ export const Icons = {
       alt='love'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   firmware: (props: any) => (
@@ -175,7 +175,7 @@ export const Icons = {
       alt='firmware'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   setting: (props: any) => (
@@ -184,7 +184,7 @@ export const Icons = {
       alt='setting'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   display: (props: any) => (
@@ -193,7 +193,7 @@ export const Icons = {
       alt='display'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   alertSetting: (props: any) => (
@@ -202,7 +202,7 @@ export const Icons = {
       alt='alertSetting'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   shield: (props: any) => (
@@ -211,7 +211,7 @@ export const Icons = {
       alt='shield'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   ),
   system: (props: any) => (
@@ -220,7 +220,7 @@ export const Icons = {
       alt='system'
       width={17}
       height={17}
-      className={`dark:invert ${props.className || ''}`}
+      className={`dark:brightness-0 dark:invert ${props.className || ''}`}
     />
   )
 };

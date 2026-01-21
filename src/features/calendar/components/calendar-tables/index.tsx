@@ -56,7 +56,14 @@ export function CalendarTable<TData, TValue>({
     shallow: false,
     debounceMs: 500,
     getExpandedRowModel: getExpandedRowModel(),
-    getSubRows: (row: any) => row.schedules,
+    getSubRows: (row: any) => {
+      if (!Array.isArray(row.schedules)) return [];
+      return [...row.schedules].sort((a: any, b: any) => {
+        const timeA = a.time || '';
+        const timeB = b.time || '';
+        return timeA.localeCompare(timeB);
+      });
+    },
     getRowCanExpand: (row: any) =>
       Array.isArray(row.original.schedules) && row.original.schedules.length > 0
   });

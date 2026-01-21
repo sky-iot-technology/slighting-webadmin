@@ -33,8 +33,9 @@ export function TreeProvider({
   disabled,
   disabledClassName,
   open: openProp,
-  onOpenChange
-}: TreeProviderProps) {
+  onOpenChange,
+  showSelectAll
+}: TreeProviderProps & { showSelectAll?: boolean }) {
   const { t } = useTranslation();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -123,6 +124,11 @@ export function TreeProvider({
           selectedId={selectedRegion?.id}
           filter={filter}
           classname={insideClassName}
+          showSelectAll={showSelectAll}
+          onSelectAll={() => {
+            onRegionChange({ id: '', name: '' } as any);
+            setOpen(false);
+          }}
         />
       </div>
     </div>

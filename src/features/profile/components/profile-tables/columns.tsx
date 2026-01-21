@@ -13,7 +13,6 @@ export const UserColumns = (): ColumnDef<any>[] => [
 
       return (
         <Card className='relative overflow-hidden rounded-md border !py-0 shadow-[0_2px_2px_rgba(0,0,0,0.25)]'>
-          <div className='absolute top-0 left-0 h-full w-2 bg-red-500 blur-xs' />
           <CardContent className='flex items-center gap-3 !rounded-[8px] !px-3 !pt-2 !pb-1 text-sm font-medium'>
             <Image
               src='/assets/icons/info.svg'

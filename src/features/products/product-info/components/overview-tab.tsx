@@ -308,32 +308,25 @@ export function OverviewTab({ device }: OverviewTabProps) {
             'Invalid image type'
           )
           .optional(),
-        name: z
-          .string()
-          .min(2, {
-            message: t('products.detail.overview.validation.name_min' as any)
-          }),
-        type: z
-          .string()
-          .min(1, {
-            message: t(
-              'products.detail.overview.validation.type_required' as any
-            )
-          }),
-        parent_group_id: z
-          .string()
-          .min(1, {
-            message: t(
-              'products.detail.overview.validation.branch_required' as any
-            )
-          }),
-        serial: z
-          .string()
-          .min(1, {
-            message: t(
-              'products.detail.overview.validation.serial_required' as any
-            )
-          }),
+        name: z.string().min(2, {
+          message: t('products.detail.overview.validation.name_min' as any)
+        }),
+        type: z.string().min(1, {
+          message: t('products.detail.overview.validation.type_required' as any)
+        }),
+        // parent_group_id: z
+        //   .string()
+        //   .min(1, {
+        //     message: t(
+        //       'products.detail.overview.validation.branch_required' as any
+        //     )
+        //   }),
+        parent_group_id: z.string().optional(),
+        serial: z.string().min(1, {
+          message: t(
+            'products.detail.overview.validation.serial_required' as any
+          )
+        }),
         tags: z.array(z.string()).optional(),
 
         // Optional fields
@@ -667,9 +660,9 @@ export function OverviewTab({ device }: OverviewTabProps) {
         <form onSubmit={form.handleSubmit(onSubmit)}>
           {/* Device Header */}
           <Card className='border-none py-1 shadow-none'>
-            <div className='flex gap-6'>
+            <div className='flex flex-col gap-6 md:flex-row'>
               {/* Device Image Placeholder */}
-              <div className='group bg-muted relative flex h-40 w-64 flex-shrink-0 items-center justify-center overflow-hidden rounded-lg'>
+              <div className='group bg-muted relative flex h-40 w-full flex-shrink-0 items-center justify-center overflow-hidden rounded-lg md:w-64'>
                 {previewAvatarUrl ? (
                   <Image
                     src={String(previewAvatarUrl)}
@@ -746,7 +739,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         {device.name}
                       </h2>
                     </div>
-                    <div className='grid grid-cols-2 gap-4 text-sm'>
+                    <div className='grid grid-cols-1 gap-4 text-sm md:grid-cols-2'>
                       <div>
                         <span className='text-muted-foreground'>
                           {t('products.detail.overview.label.id' as any)}:
@@ -987,7 +980,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               disabled={!isEditMode}
                               {...field}
                               className={cn(
-                                'flex-1',
+                                'flex-1 text-sm',
                                 !isEditMode && 'disabled:opacity-90'
                               )}
                               onChange={(e) => {
@@ -1027,7 +1020,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               disabled={!isEditMode}
                               {...field}
                               className={cn(
-                                'flex-1',
+                                'flex-1 text-sm',
                                 !isEditMode && 'disabled:opacity-90'
                               )}
                               onChange={(e) => {
@@ -1162,6 +1155,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           treeClassName='!w-full !rounded-sm '
                           insideClassName='!text-sm'
                           disabled={!isEditMode}
+                          showSelectAll={true}
                         />
                         <FormMessage />
                       </FormItem>
@@ -1296,8 +1290,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         <FormLabel>
                           {t('products.form.label.warranty_expiration' as any)}
                         </FormLabel>
-                        <div className='flex w-full items-center gap-2'>
-                          <FormControl>
+                        <div className='flex w-full flex-col gap-2 md:flex-row'>
+                          <FormControl className='w-full min-w-0'>
                             <DateInput
                               value={
                                 field.value instanceof Date
@@ -1311,17 +1305,16 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'products.form.label.warranty_expiration' as any
                               )}
                               disabled={!isEditMode}
+                              className='!w-full'
                             />
                           </FormControl>
                           {!isEditMode && (
                             <Button
                               type='button'
                               variant='link'
-                              className='text-green-600 hover:text-green-700'
+                              className='self-start text-green-600 hover:text-green-700'
                               onClick={() => {
-                                if (!canUpdate) {
-                                  return;
-                                }
+                                if (!canUpdate) return;
                                 setIsReminderModalOpen(true);
                               }}
                             >

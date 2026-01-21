@@ -27,8 +27,9 @@ export function BranchDetailTab({
   devices,
   isLoading,
   isFetching,
-  selectedDevice
-}: BranchDetailTabProps) {
+  selectedDevice,
+  onDeleteSuccess
+}: BranchDetailTabProps & { onDeleteSuccess?: () => void }) {
   const { t, tTime } = useTranslation();
   const hasRegion = !!selectedRegionId;
 
@@ -49,7 +50,10 @@ export function BranchDetailTab({
             <span className='text-[16px] font-bold'>
               {t('branch.branch_info' as any)}
             </span>
-            <BranchActionMenu id={selectedRegionId ?? ''} />
+            <BranchActionMenu
+              id={selectedRegionId ?? ''}
+              onDeleted={onDeleteSuccess}
+            />
           </div>
 
           <div className='flex gap-2'>
