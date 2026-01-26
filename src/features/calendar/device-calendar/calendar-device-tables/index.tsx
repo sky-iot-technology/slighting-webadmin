@@ -80,7 +80,9 @@ export function CalendarTable<TData, TValue>({
       paginationClassName='py-3'
       headerClassName='bg-white border-t-1'
       rowClassName='text-xs font-normal'
-      getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      getRowClassName={(row) =>
+        row.is_deleted ? 'opacity-50 dark:bg-gray-6' : ''
+      }
       isLoading={isLoading}
       error={error}
     >

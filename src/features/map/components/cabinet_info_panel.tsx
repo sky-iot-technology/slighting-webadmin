@@ -272,7 +272,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
           value='info'
           className='flex h-full flex-col gap-1.5 overflow-y-auto pt-1.5 pr-[7px] pl-[9px] [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none'
         >
-          <Card className='bg-map-background dark:bg-card-primary @container/card gap-0 rounded-lg p-0'>
+          <Card className='bg-map-background dark:bg-aw @container/card gap-0 rounded-lg p-0'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.device_info')}

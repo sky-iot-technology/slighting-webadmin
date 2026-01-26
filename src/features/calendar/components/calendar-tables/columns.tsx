@@ -46,7 +46,7 @@ export const calendarColumns = (
         <div
           className={cn(
             'flex w-full items-center gap-2 transition-opacity',
-            isDeleted && 'pointer-events-none opacity-50 select-none'
+            isDeleted && 'pointer-events-none select-none'
           )}
         >
           {!isChild && (

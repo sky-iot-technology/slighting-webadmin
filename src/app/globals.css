@@ -83,6 +83,7 @@
   --gray-3: oklch(0.6696 0.0186 267.71);
   --gray-4: oklch(0.5473 0.0072 255.51 / 40%);
   --gray-5: oklch(0.3103 0.0189 254.8);
+  --gray-6: oklch(0.2224 0.0196 248.73);
   --orange-1: oklch(0.9892 0.0102 81.8);
   --blue-1: oklch(0.9823 0.0143 213.1);
   --green-1: oklch(0.985 0.0267 140.18);
@@ -230,6 +231,7 @@
   --color-gray-3: var(--gray-3);
   --color-gray-4: var(--gray-4);
   --color-gray-5: var(--gray-5);
+  --color-gray-6: var(--gray-5);
   --color-orange-1: var(--orange-1);
   --color-blue-1: var(--blue-1);
   --color-green-1: var(--green-1);

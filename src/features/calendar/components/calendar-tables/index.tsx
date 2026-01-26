@@ -89,7 +89,9 @@ export function CalendarTable<TData, TValue>({
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal bg-card'
-      getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
+      getRowClassName={(row) =>
+        row.is_deleted ? 'opacity-50 dark:bg-gray-6' : ''
+      }
       isLoading={isLoading}
       error={error}
       loadingRowCount={pageSize}
