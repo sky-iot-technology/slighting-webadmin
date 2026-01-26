@@ -77,5 +77,11 @@ export const user = {
     password_confirm_mismatch: 'Xác nhận mật khẩu không đúng',
     unit_required: 'Vui lòng chọn ít nhất 1 đơn vị',
     password_not_match: 'Mật khẩu không khớp'
+  },
+  modal: {
+    delete: {
+      title: 'Xóa Người Dùng',
+      description: 'Bạn có chắc chắn muốn xóa người dùng: {{name}} ?'
+    }
   }
 } as const;

@@ -20,11 +20,16 @@ import { RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 import { findNodeById, findNodeId } from '@/features/calendar/helper';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useProductParams } from '../hooks/use-product-params';
+import { DataTableSkeleton } from '@/ui/components/ui/table/data-table-skeleton';
 
 type ProductListingPage = {};
 
 export default function ProductListingPage({}: ProductListingPage) {
   const { t, tTime } = useTranslation();
+
+  // Initialize persistence hook to restore/save params
+  const { isReady } = useProductParams();
 
   const searchParams = useSearchParams();
   const page = searchParams.get('page');
@@ -59,7 +64,9 @@ export default function ProductListingPage({}: ProductListingPage) {
     ...filtersExcludePagination
   } as const;
 
-  const { data, isLoading, error, refetch } = useGetDevices(filters);
+  const { data, isLoading, error, refetch } = useGetDevices(filters, {
+    enabled: isReady
+  });
 
   const { data: onlineData, refetch: refetchOnline } = useGetDeviceCount(
     true,
@@ -167,6 +174,10 @@ export default function ProductListingPage({}: ProductListingPage) {
     toast.success(t('products.message.sync_initiated' as any));
     await Promise.all([refetch(), refetchOnline(), refetchOffline()]);
   };
+
+  if (!isReady) {
+    return <DataTableSkeleton columnCount={5} rowCount={8} filterCount={2} />;
+  }
 
   return (
     <div className='flex h-full w-full flex-col'>

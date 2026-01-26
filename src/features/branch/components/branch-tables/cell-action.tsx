@@ -19,11 +19,18 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
+  name: string;
+  branch: string;
   disabled?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
-  const { t } = useTranslation();
+export const CellAction: React.FC<CellActionProps> = ({
+  id,
+  name,
+  branch,
+  disabled
+}) => {
+  const { t, tTime } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const router = useRouter();
@@ -50,6 +57,11 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={deleteDeviceParent.isPending}
+        title={t('branch.modal.delete2.title' as any)}
+        description={tTime('branch.modal.delete2.description' as any, {
+          name: name,
+          branch: branch
+        })}
       />
 
       <DropdownMenu modal={false} open={hasActions ? undefined : false}>

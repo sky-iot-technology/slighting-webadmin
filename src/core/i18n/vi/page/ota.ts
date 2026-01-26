@@ -63,5 +63,11 @@ export const ota = {
     file_required: 'Vui lòng chọn tệp OTA',
     file_size_max: 'File không vượt quá 5MB',
     file_invalid: 'File không hợp lệ'
+  },
+  modal: {
+    delete: {
+      title: 'Xóa OTA',
+      description: 'Bạn có chắc chắn muốn xoá OTA {{name}} ?'
+    }
   }
 };

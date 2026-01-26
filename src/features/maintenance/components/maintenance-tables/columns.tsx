@@ -248,11 +248,16 @@ export const maintenanceColumns = (
       const isSubRow = row.depth > 0;
       const device = devices.find((d) => d.id === row.original.client_id);
       const status = row.getValue('status') as AlarmStatus;
+      const metadata = row.getValue('metadata') as Alarm['metadata'];
+      const measurement = row.getValue('measurement') as string;
+      const cause = row.original.cause;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
           {!isSubRow && (
             <CellAction
               active={!['open', 'ignored'].includes(status)}
+              imei={metadata.imei}
+              alertName={measurement + ' ' + cause}
               id={String(row.original.id)}
               lat={device?.device_info.lat || 0}
               lng={device?.device_info.lon || 0}

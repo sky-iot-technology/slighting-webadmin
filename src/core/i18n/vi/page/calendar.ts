@@ -100,5 +100,15 @@ export const calendar = {
     weekly_required: 'Vui lòng chọn ít nhất 1 ngày trong tuần',
     monthly_required: 'Vui lòng chọn ít nhất 1 ngày trong tháng',
     ids_min: 'Phải chọn ít nhất 1 thiết bị'
+  },
+  modal: {
+    delete: {
+      title: 'Xóa Lịch',
+      description: 'Bạn có chắc chắn muốn xoá lịch {{name}} của thiết bị này?'
+    },
+    delete2: {
+      title: 'Xóa Lịch',
+      description: 'Bạn có chắc chắn muốn xoá lịch {{name}} ?'
+    }
   }
 } as const;

@@ -63,5 +63,11 @@ export const ota = {
     file_required: 'Please select an OTA file',
     file_size_max: 'File must not exceed 5MB',
     file_invalid: 'Invalid file'
+  },
+  modal: {
+    delete: {
+      title: 'Delete OTA',
+      description: 'Are you sure you want to delete OTA {{name}} ?'
+    }
   }
 };

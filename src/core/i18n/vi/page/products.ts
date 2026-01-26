@@ -38,7 +38,7 @@ export const products = {
   modal: {
     delete: {
       title: 'Xoá thiết bị',
-      description: 'Bạn có chắc chắn muốn xoá thiết bị này?'
+      description: 'Bạn có chắc chắn muốn xoá thiết bị {{name}} này?'
     }
   },
   new: {

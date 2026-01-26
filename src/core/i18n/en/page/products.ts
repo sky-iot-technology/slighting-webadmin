@@ -38,7 +38,7 @@ export const products = {
   modal: {
     delete: {
       title: 'Delete Device',
-      description: 'Are you sure you want to delete this device?'
+      description: 'Are you sure you want to delete device {{name}}?'
     }
   },
   new: {

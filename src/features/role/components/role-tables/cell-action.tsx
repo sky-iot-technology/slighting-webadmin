@@ -17,11 +17,16 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
+  name: string;
   disabled?: boolean;
 }
 
-export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
-  const { t } = useTranslation();
+export const CellAction: React.FC<CellActionProps> = ({
+  id,
+  name,
+  disabled
+}) => {
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -49,7 +54,9 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
         onConfirm={handleConfirmDelete}
         loading={deleteRole.isPending}
         title={t('role.modal.delete.title' as any)}
-        description={t('role.modal.delete.description' as any)}
+        description={tTime('role.modal.delete.description' as any, {
+          name: name
+        })}
       />
 
       {/* ✏️ Edit */}

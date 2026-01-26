@@ -48,7 +48,7 @@ export const role = {
     },
     delete: {
       title: 'Delete Role',
-      description: 'Are you sure you want to delete this role?'
+      description: 'Are you sure you want to delete this role: {{name}}?'
     }
   },
   validation: {

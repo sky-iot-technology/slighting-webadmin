@@ -28,5 +28,14 @@ export const tag = {
   update: 'Cập nhật',
   validation: {
     name_required: 'Tên nhóm chi nhánh không được để trống'
+  },
+  detail: 'Chi tiết',
+  delete: 'Xóa',
+  modal: {
+    delete: {
+      title: 'Xóa thiết bị',
+      description:
+        'Bạn có chắc chắn muốn xoá thiết bị {{name}} khỏi nhóm {{group}} ?'
+    }
   }
 } as const;

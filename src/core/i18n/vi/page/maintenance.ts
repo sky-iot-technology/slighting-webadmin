@@ -112,5 +112,16 @@ export const maintenance = {
     total_size_max: 'Tổng dung lượng file tải lên không vượt quá 5MB',
     status_required: 'Vui lòng chọn trạng thái thiết bị',
     action_required: 'Vui lòng chọn trạng thái xử lý'
+  },
+  modal: {
+    delete: {
+      title: 'Xóa cảnh báo',
+      description:
+        'Bạn có chắc chắn muốn xoá cảnh báo {{name}} của thiết bị {{device}} này?'
+    },
+    delete2: {
+      title: 'Xóa giao giệc',
+      description: 'Bạn có chắc chắn muốn xoá công việc {{name}} này?'
+    }
   }
 } as const;

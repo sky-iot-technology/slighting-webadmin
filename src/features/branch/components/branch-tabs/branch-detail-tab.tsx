@@ -6,9 +6,10 @@ import { parseIsoDate } from '../../helper';
 import GoongMap from '@/ui/business/map/goong-map';
 import { cn } from '@/lib/utils';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { SelectedRegion } from '@/ui/components/tree-group';
 
 type BranchDetailTabProps = {
-  selectedRegionId?: string;
+  selectedRegion?: SelectedRegion;
   treeData: RegionNode[];
   group?: Group | null;
   devices: Device[];
@@ -21,7 +22,7 @@ type BranchDetailTabProps = {
 };
 
 export function BranchDetailTab({
-  selectedRegionId,
+  selectedRegion,
   treeData,
   group,
   devices,
@@ -31,7 +32,7 @@ export function BranchDetailTab({
   onDeleteSuccess
 }: BranchDetailTabProps & { onDeleteSuccess?: () => void }) {
   const { t, tTime } = useTranslation();
-  const hasRegion = !!selectedRegionId;
+  const hasRegion = !!selectedRegion;
 
   return (
     <div className='relative flex h-[calc(100dvh-52px)] w-full flex-col overflow-hidden rounded-[8px] md:h-full md:flex-row'>
@@ -51,7 +52,8 @@ export function BranchDetailTab({
               {t('branch.branch_info' as any)}
             </span>
             <BranchActionMenu
-              id={selectedRegionId ?? ''}
+              id={selectedRegion?.id ?? ''}
+              name={selectedRegion?.name ?? ''}
               onDeleted={onDeleteSuccess}
             />
           </div>
@@ -59,7 +61,7 @@ export function BranchDetailTab({
           <div className='flex gap-2'>
             <span>{t('branch.branch_label' as any)}:</span>
             <span className='font-bold'>
-              {findParentNode(treeData, selectedRegionId ?? '')?.name ?? '—'}
+              {findParentNode(treeData, selectedRegion?.id ?? '')?.name ?? '—'}
             </span>
           </div>
 
@@ -100,7 +102,7 @@ export function BranchDetailTab({
       <div className='relative min-h-[300px] min-w-[1px] flex-1'>
         <GoongMap
           selectedRegion={{
-            id: selectedRegionId ?? '',
+            id: selectedRegion?.id ?? '',
             name: group?.name ?? ''
           }}
           devices={devices}

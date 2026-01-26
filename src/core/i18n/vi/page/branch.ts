@@ -63,5 +63,16 @@ export const branch = {
     lat_max: 'Vĩ độ phải ≤ 90',
     long_min: 'Kinh độ phải ≥ -180',
     long_max: 'Kinh độ phải ≤ 180'
+  },
+  modal: {
+    delete: {
+      title: 'Xóa Chi Nhánh',
+      description: 'Bạn có chắc chắn muốn xoá chi nhánh {{name}} ?'
+    },
+    delete2: {
+      title: 'Xóa Thiết Bị Khỏi Chi Nhánh',
+      description:
+        'Bạn có chắc chắn muốn xoá thiết bị {{name}} khỏi chi nhánh {{branch}} ?'
+    }
   }
 } as const;

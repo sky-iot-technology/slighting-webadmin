@@ -19,6 +19,7 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
+  name: string;
   disabled?: boolean;
   onViewAction?: () => void;
   onEditAction?: () => void;
@@ -26,11 +27,12 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({
   id,
+  name,
   disabled,
   onViewAction,
   onEditAction
 }) => {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
@@ -53,6 +55,10 @@ export const CellAction: React.FC<CellActionProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={deleteWorkOrder.isPending}
+        title={t('maintenance.modal.delete2.title' as any)}
+        description={tTime('maintenance.modal.delete2.description' as any, {
+          name: name
+        })}
       />
       {openHistory && (
         <WorkorderHistory

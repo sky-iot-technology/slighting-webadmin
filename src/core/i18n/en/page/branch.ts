@@ -63,5 +63,16 @@ export const branch = {
     lat_max: 'Latitude must be ≤ 90',
     long_min: 'Longitude must be ≥ -180',
     long_max: 'Longitude must be ≤ 180'
+  },
+  modal: {
+    delete: {
+      title: 'Delete Branch',
+      description: 'Are you sure you want to delete branch {{name}} ?'
+    },
+    delete2: {
+      title: 'Delete Device From Branches',
+      description:
+        'Are you sure you want to delete device {{name}} from {{branch}}?'
+    }
   }
 } as const;

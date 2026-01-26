@@ -328,7 +328,9 @@ export const calendarColumns = (
 
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction id={row.original.id} />}
+          {!isSubRow && (
+            <CellAction name={row.getValue('name')} id={row.original.id} />
+          )}
         </div>
       );
     },

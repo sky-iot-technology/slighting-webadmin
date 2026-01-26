@@ -248,7 +248,7 @@ export default function BranchPage() {
             >
               {activeTab === 'detail' && selectedRegion ? (
                 <BranchDetailTab
-                  selectedRegionId={selectedRegion?.id}
+                  selectedRegion={selectedRegion}
                   treeData={treeData}
                   group={group}
                   devices={devices ?? []}

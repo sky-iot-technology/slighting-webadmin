@@ -112,5 +112,16 @@ export const maintenance = {
     total_size_max: 'Total upload size must not exceed 5MB',
     status_required: 'Please select device status',
     action_required: 'Please select process status'
+  },
+  modal: {
+    delete: {
+      title: 'Delete Alert',
+      description:
+        'Are you sure you want to delete alert {{name}} of {{device}}?'
+    },
+    delete2: {
+      title: 'Delete Work Order',
+      description: 'Are you sure you want to delete work order {{name}}?'
+    }
   }
 } as const;

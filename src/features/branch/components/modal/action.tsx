@@ -18,16 +18,18 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface BranchActionMenuProps {
   id: string;
+  name: string;
   disabled?: boolean;
   onDeleted?: () => void;
 }
 
 export function BranchActionMenu({
   id,
+  name,
   disabled,
   onDeleted
 }: BranchActionMenuProps) {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
 
   const [openConfirm, setOpenConfirm] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
@@ -60,6 +62,10 @@ export function BranchActionMenu({
         onClose={() => setOpenConfirm(false)}
         onConfirm={handleDelete}
         loading={deleteGroup.isPending}
+        title={t('branch.modal.delete.title' as any)}
+        description={tTime('branch.modal.delete.description' as any, {
+          name: name
+        })}
       />
 
       {/* Edit Modal */}

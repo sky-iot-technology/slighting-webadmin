@@ -15,6 +15,7 @@ import Image from 'next/image';
 import { Device, useUpdateTagDevice } from '@/core/domains/devices';
 import { SelectedTag } from '../tag-sidebar';
 import { PermissionGuard } from '@/core/domains/permissions';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   data: Device;
@@ -27,6 +28,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   selectedTag,
   disabled
 }) => {
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const updateDeviceTags = useUpdateTagDevice();
@@ -56,6 +58,11 @@ export const CellAction: React.FC<CellActionProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={updateDeviceTags.isPending}
+        title={t('tag.modal.delete.title' as any)}
+        description={tTime('tag.modal.delete.description' as any, {
+          name: data.name,
+          group: selectedTag?.name || '-'
+        })}
       />
 
       <DropdownMenu modal={false}>
@@ -85,7 +92,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                 height={12}
               />
             </div>
-            <span>Chi tiết</span>
+            <span>{t('tag.detail')}</span>
           </DropdownMenuItem>
           <PermissionGuard module='device' action='update' fallback={null}>
             <DropdownMenuItem
@@ -101,7 +108,7 @@ export const CellAction: React.FC<CellActionProps> = ({
                   height={12}
                 />
               </div>
-              <span className='text-destructive'>Xóa</span>
+              <span className='text-destructive'>{t('tag.delete')}</span>
             </DropdownMenuItem>
           </PermissionGuard>
         </DropdownMenuContent>

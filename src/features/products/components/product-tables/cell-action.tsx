@@ -20,7 +20,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const deleteDevice = useDeleteDevice({
@@ -41,7 +41,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         onConfirm={onConfirm}
         loading={deleteDevice.isPending}
         title={t('products.modal.delete.title' as any)}
-        description={t('products.modal.delete.description' as any)}
+        description={tTime('products.modal.delete.description' as any, {
+          name: data.name
+        })}
       />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

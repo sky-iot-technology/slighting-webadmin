@@ -24,7 +24,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openSync, setOpenSync] = useState(false);
@@ -47,6 +47,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={isPending}
+        title={t('ota.modal.delete.title' as any)}
+        description={tTime('ota.modal.delete.description' as any, {
+          name: data.name
+        })}
       />
 
       <SyncDeviceDialog

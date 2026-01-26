@@ -28,5 +28,14 @@ export const tag = {
   update: 'Update',
   validation: {
     name_required: 'Group branch name is required'
+  },
+  detail: 'Detail',
+  delete: 'Delete',
+  modal: {
+    delete: {
+      title: 'Delete Device',
+      description:
+        'Are you sure you want to delete device {{name}} from {{group}} ?'
+    }
   }
 } as const;

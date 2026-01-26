@@ -100,5 +100,16 @@ export const calendar = {
     weekly_required: 'Please select at least 1 day of week',
     monthly_required: 'Please select at least 1 day of month',
     ids_min: 'Please select at least 1 device'
+  },
+  modal: {
+    delete: {
+      title: 'Delete Schedule',
+      description:
+        'Are you sure you want to delete schedule {{name}} of this device ?'
+    },
+    delete2: {
+      title: 'Delete Schedule',
+      description: 'Are you sure you want to delete schedule {{name}} ?'
+    }
   }
 } as const;

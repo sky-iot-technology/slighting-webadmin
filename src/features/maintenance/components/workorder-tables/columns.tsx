@@ -250,6 +250,7 @@ export const workorderColumns = (
           {!isSubRow && (
             <CellAction
               id={id}
+              name={row.getValue('work_order_name')}
               onViewAction={
                 options?.onViewAction
                   ? () => options.onViewAction!(row.original.id)

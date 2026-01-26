@@ -441,6 +441,7 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
           {!isSubRow && (
             <CellAction
               id={row.original.id}
+              name={row.getValue('name')}
               disabled={isDeleted}
               hideDelete={hasGroup}
             />

@@ -37,6 +37,8 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   active: boolean;
+  imei: string;
+  alertName: string;
   id: string;
   lat: number;
   lng: number;
@@ -46,13 +48,15 @@ interface CellActionProps {
 
 export const CellAction: React.FC<CellActionProps> = ({
   active,
+  imei,
+  alertName,
   id,
   lat,
   lng,
   disabled,
   onViewAction
 }) => {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
   const [openMap, setOpenMap] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -110,6 +114,11 @@ export const CellAction: React.FC<CellActionProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={deleteAlarm.isPending}
+        title={t('maintenance.modal.delete.title' as any)}
+        description={tTime('maintenance.modal.delete.description' as any, {
+          name: alertName,
+          device: imei
+        })}
       />
 
       <DropdownMenu modal={false}>

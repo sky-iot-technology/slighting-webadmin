@@ -48,7 +48,7 @@ export const role = {
     },
     delete: {
       title: 'Xóa vai trò',
-      description: 'Bạn có chắc chắn muốn xóa vai trò này?'
+      description: 'Bạn có chắc chắn muốn xóa vai trò: {{name}} ?'
     }
   },
   validation: {

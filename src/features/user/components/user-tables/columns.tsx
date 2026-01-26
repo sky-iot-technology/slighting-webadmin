@@ -115,9 +115,13 @@ export const userColumns = (t: any): ColumnDef<User>[] => [
     ),
     size: 57,
     cell: ({ row }) => {
+      const user = row.original as User;
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          <CellAction id={String(row.original.id)} />
+          <CellAction
+            name={`${user.first_name} ${user.last_name}`}
+            id={String(row.original.id)}
+          />
         </div>
       );
     },

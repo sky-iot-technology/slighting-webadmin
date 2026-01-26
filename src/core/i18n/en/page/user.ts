@@ -77,5 +77,11 @@ export const user = {
     password_confirm_mismatch: 'Password confirmation does not match',
     unit_required: 'Please select at least 1 unit',
     password_not_match: 'Passwords do not match'
+  },
+  modal: {
+    delete: {
+      title: 'Delete User',
+      description: 'Are you sure you want to delete this user: {{name}}?'
+    }
   }
 } as const;

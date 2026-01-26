@@ -215,10 +215,17 @@ export const branchColumns = (
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
-
+      const id = row.getValue('parent_group_id');
+      const name = findNodeById(trees, String(id))?.name || '—';
       return (
         <div className='flex min-h-[32px] items-center justify-center'>
-          {!isSubRow && <CellAction id={String(row.original.id)} />}
+          {!isSubRow && (
+            <CellAction
+              name={row.getValue('name')}
+              branch={name}
+              id={String(row.original.id)}
+            />
+          )}
         </div>
       );
     },

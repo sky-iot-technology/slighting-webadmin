@@ -20,16 +20,18 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   id: string;
+  name: string;
   disabled?: boolean;
   hideDelete?: boolean;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
   id,
+  name,
   disabled,
   hideDelete
 }) => {
-  const { t } = useTranslation();
+  const { t, tTime } = useTranslation();
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
@@ -53,6 +55,10 @@ export const CellAction: React.FC<CellActionProps> = ({
         onClose={() => setOpen(false)}
         onConfirm={handleConfirmDelete}
         loading={deleteCalendar.isPending}
+        title={t('calendar.modal.delete.title' as any)}
+        description={tTime('calendar.modal.delete.description' as any, {
+          name: name
+        })}
       />
 
       {/* ✏️ Edit */}
