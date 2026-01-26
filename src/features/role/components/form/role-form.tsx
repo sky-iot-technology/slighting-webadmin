@@ -102,8 +102,8 @@ export default function RoleForm({
   };
 
   return (
-    <CustomScrollbar className='!h-full max-h-[660px] overflow-y-auto px-5 pt-3 pb-5 lg:max-h-full'>
-      <Card className='bg-background mx-auto !h-full w-full gap-1.5 border-0 py-0 shadow-none'>
+    <CustomScrollbar className='bg-card !h-full max-h-[660px] overflow-y-auto px-5 pt-3 pb-5 lg:max-h-full'>
+      <Card className='bg-card mx-auto !h-full w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
             {pageTitle}

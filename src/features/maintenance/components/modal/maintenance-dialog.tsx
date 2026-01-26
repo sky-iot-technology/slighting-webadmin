@@ -26,7 +26,7 @@ export default function MaintenanceDialog({
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
       <DialogContent
-        className='!w-[90vw] !max-w-[649px] rounded-xl p-0'
+        className='bg-card !w-[90vw] !max-w-[649px] rounded-xl p-0'
         hideCloseButton
       >
         <MaintenanceForm

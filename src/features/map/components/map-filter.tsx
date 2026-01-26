@@ -35,18 +35,20 @@ export default function MapFilter({
           <TreeProvider
             onRegionChange={onRegionChange}
             selectedRegion={selectedRegion}
+            buttonClassName={'dark:!bg-background'}
+            insideClassName='dark:bg-action'
           />
 
           <SearchBar devices={devices} onSelectDevice={onSelectDevice} />
         </div>
       </div>
-      <div className='fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-gray-200 bg-white p-1'>
+      <div className='bg-card fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-gray-200 p-1'>
         <Button
           variant={'outline'}
           className={cn(
             'hover:text-success cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-green-50 sm:h-[28px] md:h-[30px]',
             statusFilter === 'online' &&
-              'text-success border-green-200 bg-green-50'
+              'text-success border-green-200 bg-green-50 dark:bg-green-50'
           )}
           onClick={() =>
             onStatusChange?.(statusFilter === 'online' ? 'all' : 'online')
@@ -68,7 +70,7 @@ export default function MapFilter({
           className={cn(
             'hover:text-destructive cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-red-50 sm:h-[28px] md:h-[30px]',
             statusFilter === 'offline' &&
-              'text-destructive border-red-200 bg-red-50'
+              'text-destructive border-red-200 bg-red-50 dark:bg-red-50'
           )}
           onClick={() =>
             onStatusChange?.(statusFilter === 'offline' ? 'all' : 'offline')

@@ -67,23 +67,23 @@ export default function OrganizationPage() {
 
   return (
     <div className='h-full w-full p-3'>
-      <div className={`flex h-full w-full flex-1 flex-col bg-white pt-1`}>
+      <div className={`bg-card flex h-full w-full flex-1 flex-col pt-1`}>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
+            className='!bg-card w-full flex-shrink-0 sm:w-auto'
           >
-            <TabsList className='flex !bg-transparent text-[12px]'>
+            <TabsList className='!bg-card flex text-[12px]'>
               <TabsTrigger
                 value='unit'
-                className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
               >
                 {t('organization.tab.unit')}
               </TabsTrigger>
               <TabsTrigger
                 value='department'
-                className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[4px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
               >
                 {t('organization.tab.department')}
               </TabsTrigger>
@@ -93,7 +93,7 @@ export default function OrganizationPage() {
           {activeTab === 'unit' && unitTable && (
             <DataTableCustomToolbar
               table={unitTable}
-              className='w-auto flex-1 py-3'
+              className='bg-card w-auto flex-1 py-3'
               actions={
                 <Button
                   variant='default'
@@ -114,7 +114,7 @@ export default function OrganizationPage() {
           {activeTab === 'department' && departmentTable && (
             <DataTableCustomToolbar
               table={departmentTable}
-              className='w-auto flex-1'
+              className='bg-card w-auto flex-1 py-3'
               actions={
                 <Button
                   variant='default'

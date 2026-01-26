@@ -86,17 +86,17 @@ export function BrightnessGraph() {
 
     return (
       <div className='rounded-lg bg-[linear-gradient(144deg,var(--map-gradient-start)_21.04%,var(--map-gradient-end)_47.8%)] p-2 text-[8px]'>
-        <div className='mb-1 text-[10px] font-medium'>{label}</div>
+        <div className='mb-1 text-[10px] font-medium text-black'>{label}</div>
 
         {typeof brightness === 'number' && (
-          <div className='mb-1'>
+          <div className='mb-1 text-black'>
             {t('map.chart_brightness')}:{' '}
             <span className='text-blue-600'>{brightness}%</span>
           </div>
         )}
 
         {statusText && (
-          <div>
+          <div className='text-black'>
             {t('map.chart_status')}:{' '}
             <span className={`${statusColor}`}>{statusText}</span>
           </div>
@@ -108,7 +108,7 @@ export function BrightnessGraph() {
   const ticksX = ['00:00', '06:00', '12:00', '18:00'];
 
   return (
-    <Card className='bg-inherited @container/card gap-1 border-0 !pt-1 shadow-none'>
+    <Card className='bg-inherited dark:bg-card-primary @container/card gap-1 border-0 !pt-1 shadow-none'>
       <CardHeader className='flex flex-col items-stretch space-y-0 border-0 !p-0 sm:flex-row'>
         <div className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
           <CardTitle className='mt-1 pt-1 text-xs font-bold'>
@@ -117,7 +117,7 @@ export function BrightnessGraph() {
         </div>
       </CardHeader>
       <CardHeader className='flex items-center justify-end p-0'>
-        <div className='bg-map-button-graph flex h-[18px] w-[51px] items-center justify-center rounded-[4px]'>
+        <div className='bg-map-button-graph dark:bg-gray-1 flex h-[18px] w-[51px] items-center justify-center rounded-[4px]'>
           <Button
             size={'sm'}
             className='h-3.5 w-12 rounded-[4px] !bg-[linear-gradient(180deg,var(--map-button-today-start)_0%,var(--map-button-today-end)_100%)] text-[10px]'

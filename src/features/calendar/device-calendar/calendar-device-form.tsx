@@ -117,8 +117,8 @@ export default function CalendarDeviceForm({
 
   return (
     <div className='overflow-hidden rounded-[10px]'>
-      <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
-        <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+      <CustomScrollbar className='bg-card max-h-[660px] overflow-y-auto p-5.5'>
+        <Card className='bg-card mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
           <CardHeader className='px-0'>
             <CardTitle className='text-primary text-left text-[16px] font-bold'>
               {pageTitle}
@@ -147,7 +147,7 @@ export default function CalendarDeviceForm({
                           onValueChange={(val) => field.onChange(val)}
                           placeholder={t('calendar.select_device' as any)}
                           resetOnDefaultValueChange={true}
-                          className='!min-h-[31px] w-full !rounded-[4px] px-2'
+                          className='dark:bg-input/30 !min-h-[31px] w-full !rounded-[4px] px-2'
                           popoverClassName='w-[var(--radix-popover-trigger-width)]'
                           textSize='!text-xs'
                           autoSize={true}
@@ -212,7 +212,7 @@ export default function CalendarDeviceForm({
                           value={String(field.value)}
                           defaultValue='2'
                           className={cn(
-                            `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-3.5 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
+                            `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex flex-wrap gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-black dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-black [&_label]:text-xs`
                           )}
                         >
                           <div className='flex items-center space-x-2'>
@@ -248,7 +248,7 @@ export default function CalendarDeviceForm({
                             value={field.value}
                             defaultValue='none'
                             className={cn(
-                              `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white [&_label]:text-xs`
+                              `[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex flex-wrap gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-black dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-black [&_label]:text-xs`
                             )}
                           >
                             <div className='flex items-center space-x-2'>

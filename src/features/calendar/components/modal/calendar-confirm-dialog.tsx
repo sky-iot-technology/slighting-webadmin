@@ -34,7 +34,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
     return null;
   });
   return (
-    <div className='space-y-3.5 p-5.5 text-xs font-bold text-black'>
+    <div className='bg-card space-y-3.5 p-5.5 text-xs font-bold'>
       <h3 className='text-primary text-left text-base font-bold'>
         {t('calendar.confirm_calendar')}
       </h3>
@@ -176,7 +176,7 @@ function renderAction(
       <span className='flex gap-2'>
         <Slider
           value={[v]}
-          className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+          className='dark:[&_[data-slot=slider-thumb]]:!bg-map-range-slider-active dark:[&_[data-slot=slider-thumb]]:border-map-range-slider-active [&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
         />
         {v}%{/* {TRAIT_LABELS[trait] ?? trait}: {v}% */}
       </span>
@@ -187,7 +187,11 @@ function renderAction(
     const v = Boolean(value);
     return (
       <span>
-        <Switch checked={v} className='data-[state=checked]:bg-green-500' />
+        <Switch
+          checked={v}
+          className='dark:data-[state=unchecked]:!bg-gray-3 data-[state=checked]:bg-green-500'
+          thumbClassName='dark:data-[state=checked]:!bg-black dark:data-[state=unchecked]:!bg-black'
+        />
         {/* {TRAIT_LABELS[trait] ?? trait}: {v ? 'Bật' : 'Tắt'} */}
       </span>
     );

@@ -87,7 +87,7 @@ export default function CalendarPage() {
         <div className='flex h-full w-full'>
           <div
             className={cn(
-              'bg-white transition-all duration-300 ease-in-out',
+              'bg-card transition-all duration-300 ease-in-out',
               'overflow-hidden rounded-[1px_1px_4px_4px]',
               'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full md:static md:z-auto md:translate-x-0',
               'md:w-64 md:overflow-visible',
@@ -112,7 +112,7 @@ export default function CalendarPage() {
             />
           )}
 
-          <div className='flex flex-1 flex-col bg-white' ref={containerRef}>
+          <div className='flex flex-1 flex-col' ref={containerRef}>
             <CalendarContent
               filters={filters}
               selectedRegion={selectedRegion}

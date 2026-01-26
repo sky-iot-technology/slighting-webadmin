@@ -56,12 +56,12 @@ export default function ProfilePage() {
   }
 
   return (
-    <Card className='bg-background mx-auto flex w-full gap-1.5 border-0 py-0 shadow-none'>
+    <Card className='bg-background dark:bg-background-all mx-auto flex w-full gap-1.5 border-0 py-0 shadow-none'>
       <CardHeader className='px-0'>
         <CardTitle className='text-primary text-left text-[16px] font-bold'></CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-4 px-0 md:flex-row md:gap-1.5'>
-        <div className='w-full rounded-[4px] bg-white px-[22px] pt-[24px] md:h-[519px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
+        <div className='bg-card w-full rounded-[4px] px-[22px] pt-[24px] md:h-[519px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
           <div className='mb-6 flex flex-col items-center gap-4 md:flex-row md:gap-8'>
             <div className='group relative cursor-pointer'>
               {user.profile_picture ? (
@@ -109,7 +109,7 @@ export default function ProfilePage() {
             <button
               type='button'
               onClick={() => setTab('profile')}
-              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'profile' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
+              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'profile' ? 'bg-primary text-white' : 'hover:bg-accent bg-card'}`}
             >
               <User width={20} height={20} />
               {t('profile.profile')}
@@ -118,7 +118,7 @@ export default function ProfilePage() {
             <button
               type='button'
               onClick={() => setTab('account')}
-              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'account' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
+              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'account' ? 'bg-primary text-white' : 'hover:bg-accent bg-card'}`}
             >
               <UserCog width={20} height={20} />
               {t('profile.account')}
@@ -127,7 +127,7 @@ export default function ProfilePage() {
             <button
               type='button'
               onClick={() => setTab('password')}
-              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'password' ? 'bg-primary text-white' : 'hover:bg-accent bg-white text-black'}`}
+              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold ${tab === 'password' ? 'bg-primary text-white' : 'hover:bg-accent bg-card'}`}
             >
               <LockKeyhole width={20} height={20} />
               {t('profile.changePass')}
@@ -136,14 +136,14 @@ export default function ProfilePage() {
             <button
               type='button'
               onClick={() => setOpen(!open)}
-              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold text-black`}
+              className={`flex h-[31px] w-[186px] cursor-pointer items-center gap-3 rounded-[4px] p-3 font-bold`}
             >
               <LogOut width={20} height={20} />
               {t('profile.singout')}
             </button>
           </div>
         </div>
-        <div className='flex-1 rounded-[4px] bg-white'>
+        <div className='bg-card flex-1 rounded-[4px]'>
           {tab === 'profile' && <Profile user={user} />}
           {tab === 'account' && <AccountForm initialData={user} />}
           {tab === 'password' && <PasswordForm />}

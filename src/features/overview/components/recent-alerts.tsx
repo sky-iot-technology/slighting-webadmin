@@ -73,7 +73,7 @@ const data = [
 export function RecentAlerts() {
   const { t } = useTranslation();
   return (
-    <Card className='!shadow-default h-full gap-1.5 border-none py-3'>
+    <Card className='!shadow-default dark:bg-card-primary h-full gap-1.5 border-none py-3'>
       <CardHeader className='flex items-center gap-3.5 py-2'>
         <Image
           src={'/assets/icons/lastestWarning.svg'}
@@ -92,7 +92,7 @@ export function RecentAlerts() {
               return (
                 <div
                   key={alert.id}
-                  className='bg-card-success flex items-center rounded-xl px-3 py-2'
+                  className='bg-card-success dark:bg-card flex items-center rounded-xl px-3 py-2'
                 >
                   <Avatar className='h-9 w-9'>
                     <div className='bg-muted flex h-full w-full items-center justify-center rounded-full'>

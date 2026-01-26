@@ -120,7 +120,7 @@ export default function BranchForm({
 
   return (
     <CustomScrollbar className='max-h-[660px] overflow-y-auto p-5.5'>
-      <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+      <Card className='bg-card mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
             {pageTitle}
@@ -161,8 +161,10 @@ export default function BranchForm({
                               : undefined
                           }
                           className='!h-[31px] !w-full !text-xs'
-                          buttonClassName='!rounded-[4px]'
+                          buttonClassName='!rounded-[4px] !bg-white dark:!bg-input/30'
                           treeClassName='!w-full !rounded-[4px]'
+                          insideClassName='dark:bg-action'
+                          showSelectAll={true}
                         />
                       </FormControl>
                       <FormMessage />

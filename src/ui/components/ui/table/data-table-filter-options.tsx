@@ -132,7 +132,7 @@ export function DataTableFilterOptions<TData>({
           role='combobox'
           variant='outline'
           size='sm'
-          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 border-none p-0 lg:flex'
+          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 p-0 lg:flex'
         >
           {/* <ListFilter /> */}
           <Image
@@ -140,11 +140,12 @@ export function DataTableFilterOptions<TData>({
             alt='filter'
             width={16}
             height={16}
+            className='dark:brightness-0 dark:invert'
           />
         </Button>
       </PopoverTrigger>
       <PopoverContent align='end' className='w-80 p-0'>
-        <div className='flex flex-col gap-1.5 p-3'>
+        <div className='dark:bg-action flex flex-col gap-1.5 p-3'>
           {/* Filters from props */}
           {filterOptions
             .filter(
@@ -202,8 +203,9 @@ export function DataTableFilterOptions<TData>({
                   {opt.variant === 'regionTree' && (
                     <TreeProvider
                       className='!h-9 !w-full'
-                      buttonClassName='!bg-white'
+                      buttonClassName='!bg-white dark:!bg-input/30'
                       treeClassName='!w-full'
+                      insideClassName='bg-action'
                       filter={true}
                       selectedRegion={(() => {
                         const slug = Array.isArray(value)

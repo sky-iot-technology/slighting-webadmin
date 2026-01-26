@@ -47,7 +47,7 @@ export default function UserPage() {
 
   return (
     <div className='h-full w-full p-3'>
-      <div className='flex h-full w-full flex-1 bg-white'>
+      <div className='bg-card flex h-full w-full flex-1'>
         <UserTable
           data={data?.users ?? []}
           totalItems={data?.total ?? 0}

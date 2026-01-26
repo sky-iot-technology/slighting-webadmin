@@ -305,7 +305,7 @@ export default function ProductForm({
                               )}
                               disabled={isLoadingTags}
                               resetOnDefaultValueChange={true}
-                              className='!min-h-9 w-full rounded-sm text-sm'
+                              className='dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm'
                               popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
                               itemClassName='text-base'
                               autoSize={true}
@@ -504,9 +504,9 @@ export default function ProductForm({
                             open={open}
                             onOpenChange={setOpen}
                             className='!h-9 !w-full !text-sm'
-                            buttonClassName='!rounded-sm !bg-white'
+                            buttonClassName='!rounded-sm !bg-white dark:!bg-input/30'
                             treeClassName='!w-full !rounded-sm '
-                            insideClassName='!text-sm'
+                            insideClassName='!text-sm dark:bg-action'
                             showSelectAll={true}
                           />
                           <FormMessage />
@@ -561,7 +561,7 @@ export default function ProductForm({
                     />
                   </div>
                   <div className='w-full md:col-span-3'>
-                    <CardTitle className='text-md text-left text-black'>
+                    <CardTitle className='text-md text-left'>
                       {t('products.form.label.product_info' as any)}
                     </CardTitle>
                   </div>

@@ -81,7 +81,7 @@ export function ImageUpload({
         {!isUploadDisabled && (
           <label
             htmlFor='image-upload'
-            className='hover:bg-accent flex w-fit cursor-pointer items-center rounded-[4px] border px-3 py-1.5 text-xs transition-colors'
+            className='hover:bg-accent dark:bg-gray-5 flex w-fit cursor-pointer items-center rounded-[4px] border px-3 py-1.5 text-xs transition-colors'
           >
             <Upload className='mr-2 h-3 w-3' />
             {t('general.choose_picture')}
@@ -139,7 +139,7 @@ export function ImageUpload({
             {[...Array(3)].map((_, i) => (
               <div
                 key={i}
-                className='border-muted bg-muted/30 flex aspect-square h-[105px] w-full items-center justify-center rounded-[6px] border'
+                className='border-muted bg-muted/30 dark:bg-gray-5 flex aspect-square h-[105px] w-full items-center justify-center rounded-[6px] border'
               >
                 <ImageIcon className='text-muted-foreground h-5 w-5' />
               </div>

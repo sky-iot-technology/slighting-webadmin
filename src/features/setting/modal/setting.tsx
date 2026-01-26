@@ -32,7 +32,7 @@ export function SettingModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className='max-w-[300px] rounded-[4px] p-0 sm:max-w-[600px] md:!max-w-[705px]'
+        className='dark:bg-card max-w-[300px] rounded-[4px] p-0 sm:max-w-[600px] md:!max-w-[705px]'
         hideCloseButton
       >
         <DialogHeader className='hidden'>
@@ -98,7 +98,7 @@ export function SettingModal({
           </div>
 
           {/* Content Panel */}
-          <div className='bg-muted flex-1 md:max-w-[486px]'>
+          <div className='bg-muted dark:bg-card-primary flex-1 md:max-w-[486px]'>
             {activeTab === 'alert' && <AlertSetting />}
             {activeTab === 'display' && <DisplaySetting />}
             {activeTab === 'security' && <SecureSetting />}

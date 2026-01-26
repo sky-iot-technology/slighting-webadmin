@@ -68,7 +68,10 @@ export function DataTable<TData>({
             <ScrollArea className='h-full w-full'>
               <Table className={cn('', tableClassName)}>
                 <TableHeader
-                  className={cn('bg-muted sticky top-0 z-10', headerClassName)}
+                  className={cn(
+                    'bg-muted dark:bg-blue-4 sticky top-0 z-10',
+                    headerClassName
+                  )}
                 >
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow
@@ -95,7 +98,7 @@ export function DataTable<TData>({
                     </TableRow>
                   ))}
                 </TableHeader>
-                <TableBody className={cn('', bodyClassName)}>
+                <TableBody className={cn('bg-card', bodyClassName)}>
                   {isLoading ? (
                     // Loading state: show skeleton rows
                     Array.from({ length: loadingRowCount }).map((_, i) => (
@@ -165,10 +168,10 @@ export function DataTable<TData>({
                           key={row.id}
                           data-state={row.getIsSelected() && 'selected'}
                           className={cn(
-                            'data-[state=selected]:bg-calendar-table-select',
                             rowClassName,
                             row.depth > 0 && 'bg-calendar-table-children',
-                            getRowClassName?.(row.original)
+                            getRowClassName?.(row.original),
+                            'data-[state=selected]:!bg-calendar-table-select'
                           )}
                         >
                           {row.getVisibleCells().map((cell, cellIndex) => (
@@ -211,7 +214,9 @@ export function DataTable<TData>({
           </div>
         </div>
         {actionBar && <div className='flex flex-col gap-2.5'>{actionBar}</div>}
-        <div className={cn('flex flex-col gap-2.5', paginationClassName)}>
+        <div
+          className={cn('bg-card flex flex-col gap-2.5', paginationClassName)}
+        >
           <DataTablePagination table={table} totalRows={totalRows} />
         </div>
       </div>

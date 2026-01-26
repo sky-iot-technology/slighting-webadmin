@@ -1055,7 +1055,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 							)} */}
               <CommandList
                 className={cn(
-                  'multiselect-scrollbar max-h-[40vh] overflow-y-auto',
+                  'multiselect-scrollbar dark:bg-action max-h-[40vh] overflow-y-auto',
                   screenSize === 'mobile' && 'max-h-[50vh]',
                   'overscroll-behavior-y-contain'
                 )}

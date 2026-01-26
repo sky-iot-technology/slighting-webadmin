@@ -64,6 +64,8 @@ export const calendar = {
   type: 'Category',
   group: 'Group',
   device: 'Device',
+  days_of_week: 'Day of week',
+  days_of_month: 'Day of month',
   priority: {
     emergency: 'Emergency',
     normal: 'Scheduled',

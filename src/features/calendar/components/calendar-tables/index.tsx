@@ -88,18 +88,18 @@ export function CalendarTable<TData, TValue>({
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'
-      rowClassName='text-xs font-normal bg-white'
+      rowClassName='text-xs font-normal bg-card'
       getRowClassName={(row) => (row.is_deleted ? 'opacity-50' : '')}
       isLoading={isLoading}
       error={error}
       loadingRowCount={pageSize}
     >
-      <div className='flex flex-col gap-2 bg-white py-3 md:flex-row md:items-center md:gap-2'>
+      <div className='bg-card flex flex-col gap-2 py-3 md:flex-row md:items-center md:gap-2'>
         <div className='flex gap-2'>
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className='min-h-[12px] w-5 min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
+              className='dark:hover:bg-input min-h-[12px] w-5 min-w-[12px] cursor-pointer rounded p-1 hover:bg-gray-100'
             >
               {isSidebarOpen ? (
                 <Image
@@ -107,7 +107,7 @@ export function CalendarTable<TData, TValue>({
                   alt='chevronLeft'
                   width={8}
                   height={8}
-                  className='shrink-0'
+                  className='shrink-0 dark:brightness-0 dark:invert'
                 />
               ) : (
                 <Image
@@ -115,14 +115,14 @@ export function CalendarTable<TData, TValue>({
                   alt='chevronRight'
                   width={8}
                   height={8}
-                  className='shrink-0'
+                  className='shrink-0 dark:brightness-0 dark:invert'
                 />
               )}
             </button>
           )}
           <h3 className='text-xl font-bold'>{t('calendar.calendar_list')}</h3>
           {region && region.icon && (
-            <Badge className='bg-gray-1'>
+            <Badge className='bg-gray-1 dark:bg-gray-5'>
               <Image
                 src={region.icon || '/assets/icons/default-region.svg'}
                 alt='region icon'
@@ -130,7 +130,9 @@ export function CalendarTable<TData, TValue>({
                 height={14}
                 className='h-[14px] w-[14px]'
               />
-              <span className='text-xs text-black'>{region.name}</span>
+              <span className='text-xs text-black dark:text-white'>
+                {region.name}
+              </span>
             </Badge>
           )}
         </div>

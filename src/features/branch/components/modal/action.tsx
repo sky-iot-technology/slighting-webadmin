@@ -98,7 +98,7 @@ export function BranchActionMenu({
 
         <DropdownMenuContent
           align='end'
-          className='flex w-34 flex-col gap-2 p-2'
+          className='bg-action flex w-34 flex-col gap-2 p-2'
         >
           {canUpdate && (
             <>

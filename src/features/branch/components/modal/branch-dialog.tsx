@@ -58,7 +58,10 @@ export default function BranchDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
-      <DialogContent className='w-[417px] rounded-xl p-0' hideCloseButton>
+      <DialogContent
+        className='bg-card w-[417px] rounded-xl p-0'
+        hideCloseButton
+      >
         {move ? (
           <BranchMoveForm
             initialData={initialFormData as Partial<Group>}

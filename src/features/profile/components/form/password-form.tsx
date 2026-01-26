@@ -53,7 +53,7 @@ export default function PasswordForm() {
   };
 
   return (
-    <Card className='mx-auto h-full w-full gap-1.5 border-0 bg-white px-5 py-0 pt-3 pb-5 shadow-none'>
+    <Card className='bg-card mx-auto h-full w-full gap-1.5 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
       <CardHeader className='px-0'>
         <CardTitle className='text-primary text-left text-[20px] font-bold'>
           {t('profile.changePass')}

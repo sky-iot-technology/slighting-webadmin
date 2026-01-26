@@ -75,7 +75,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align='end'
-          className='flex w-30 flex-col gap-2 p-2'
+          className='bg-action flex w-30 flex-col gap-2 p-2'
         >
           <PermissionGuard module='ota' action='update'>
             <DropdownMenuItem

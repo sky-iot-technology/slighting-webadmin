@@ -162,7 +162,7 @@ export default function WorkorderHistory({
               />
             </div>
 
-            <div className='rounded-b-[8px] bg-white'>
+            <div className='bg-card rounded-b-[8px]'>
               <CustomScrollbar className='max-h-[50dvh] max-w-[100vw] overflow-y-auto px-4 py-2'>
                 <div className='space-y-3'>
                   {historyData?.histories.map((data, index) => {
@@ -199,7 +199,7 @@ export default function WorkorderHistory({
                           </p>
                           <p className='text-muted-foreground text-sm'>
                             {t('maintenance.in_charge')}:{' '}
-                            <span className='text-black'>
+                            <span className=''>
                               {user
                                 ? `${user.last_name} ${user.first_name}`
                                 : t('maintenance.system')}

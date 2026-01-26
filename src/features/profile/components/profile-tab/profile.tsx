@@ -174,13 +174,13 @@ export default function Profile({ user }: ProfileProps) {
             <TabsList className='flex w-full !bg-transparent text-[12px]'>
               <TabsTrigger
                 value='user'
-                className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
+                className='group data-[state=active]:!bg-blue-3 !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
               >
                 {t('profile.user')}
               </TabsTrigger>
               <TabsTrigger
                 value='work'
-                className='group data-[state=active]:bg-primary !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
+                className='group data-[state=active]:!bg-blue-3 !h-[38px] flex-1 cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
               >
                 {t('profile.work')}
               </TabsTrigger>

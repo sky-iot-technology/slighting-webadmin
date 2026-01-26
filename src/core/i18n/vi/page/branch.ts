@@ -44,7 +44,7 @@ export const branch = {
       view: 'Chi tiết',
       edit: 'Chỉnh sửa',
       move: 'Di chuyển',
-      delete: 'Xóa nhánh',
+      delete: 'Xóa',
       title: 'Chỉnh sửa nhánh',
       moveTitle: 'Di chuyển nhánh'
     }

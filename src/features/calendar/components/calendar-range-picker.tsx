@@ -146,7 +146,7 @@ export function CalendarRangePicker({
       <div
         className={cn(
           className,
-          'border-input bg-muted text-muted-foreground flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs opacity-50'
+          'border-input bg-muted dark:bg-gray-5 text-muted-foreground flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs opacity-50'
         )}
       >
         {mode === 'single' ? (
@@ -154,14 +154,14 @@ export function CalendarRangePicker({
             {formattedSingle || 'Chưa có ngày áp dụng'}
           </span>
         ) : (
-          <div className='flex w-full justify-between font-medium text-black'>
+          <div className='flex w-full justify-between font-medium'>
             <button className='flex-1 text-center'>{formattedFrom}</button>
             <span className='mx-1'>-</span>
             <button className='flex-1 text-center'>{formattedTo}</button>
           </div>
         )}
 
-        <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4' />
+        <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4 dark:brightness-0 dark:invert' />
       </div>
     );
   }
@@ -171,7 +171,7 @@ export function CalendarRangePicker({
       <div
         className={cn(
           className,
-          'border-input bg-background flex h-[31px] items-center rounded-[6px] border px-2 text-xs',
+          'border-input bg-background dark:bg-input/30 flex h-[31px] items-center rounded-[6px] border px-2 text-xs',
           'w-[36px] justify-center lg:w-[200px] lg:justify-between'
         )}
         onClick={() => setOpenFrom(true)}
@@ -201,14 +201,14 @@ export function CalendarRangePicker({
         </Popover>
 
         {!formattedSingle ? (
-          <CalendarIcon className='text-muted-foreground h-4 w-4 cursor-pointer' />
+          <CalendarIcon className='text-muted-foreground h-4 w-4 cursor-pointer dark:brightness-0 dark:invert' />
         ) : (
           <>
             <div className='flex items-center justify-between'>
               <span className='text-xs font-medium lg:hidden'>
                 {formattedSingle}
               </span>
-              <CalendarIcon className='text-muted-foreground mb-0.5 h-4 w-4 cursor-pointer' />
+              <CalendarIcon className='text-muted-foreground mb-0.5 h-4 w-4 cursor-pointer dark:brightness-0 dark:invert' />
             </div>
           </>
         )}
@@ -220,7 +220,7 @@ export function CalendarRangePicker({
     <div
       className={cn(
         className,
-        'border-input bg-background flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
+        'border-input bg-background dark:bg-input/30 flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
       )}
     >
       {/* Ngày bắt đầu */}
@@ -277,7 +277,7 @@ export function CalendarRangePicker({
         </PopoverContent>
       </Popover>
 
-      <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4' />
+      <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4 dark:brightness-0 dark:invert' />
     </div>
   );
 }

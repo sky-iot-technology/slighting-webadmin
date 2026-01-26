@@ -11,6 +11,7 @@
 :root {
   --radius: 0.65rem;
   --background: oklch(0.9854 0.0013 286.38);
+  --background-all: oklch(0.1761 0.0278 270.32);
   --foreground: oklch(0.337 0.0222 267.37);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.337 0.0222 267.37);
@@ -79,6 +80,9 @@
   --calendar-table-select: oklch(0.9778 0.0117 239.9);
   --gray-1: oklch(0.9791 0 0);
   --gray-2: oklch(0.9427 0.0058 264.53);
+  --gray-3: oklch(0.6696 0.0186 267.71);
+  --gray-4: oklch(0.5473 0.0072 255.51 / 40%);
+  --gray-5: oklch(0.3103 0.0189 254.8);
   --orange-1: oklch(0.9892 0.0102 81.8);
   --blue-1: oklch(0.9823 0.0143 213.1);
   --green-1: oklch(0.985 0.0267 140.18);
@@ -86,7 +90,12 @@
   --yellow-1: oklch(0.9769 0.0186 75.33);
   --yellow-2: oklch(0.7098 0.149251 75.7526);
   --blue-2: oklch(0.6407 0.1081 203.59);
+  --blue-3: oklch(0.4684 0.1474 254.62);
+  --blue-4: oklch(0.2781 0.0296 256.85);
   --pink-1: oklch(0.5341 0.214 7.16);
+  --black-1: oklch(0.1822 0 0);
+  --black-2: oklch(0.2046 0 0);
+  --action: oklch(1 0 0);
 }
 
 .dark {
@@ -96,7 +105,7 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.546 0.245 262.881);
+  --primary: oklch(0.5122 0.1457 253.33);
   --primary-foreground: oklch(0.379 0.146 265.522);
   --secondary: oklch(0.274 0.006 286.033);
   --secondary-foreground: oklch(0.985 0 0);
@@ -121,6 +130,24 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.488 0.243 264.376);
+  --card-primary: oklch(0.2275 0.0181 270.5);
+  --calendar-table-select: oklch(0.256 0.0584 239.74);
+  --calendar-table-children: oklch(0.1572 0.0453 250.69);
+  --calendar-time-hover: oklch(0.26 0.025 163.17);
+  --calendar-radio-gray: oklch(0.3103 0.0189 254.8);
+  --blue-3: oklch(0.5122 0.1457 253.33);
+  --gray-1: oklch(0.4167 0.0291 235.23);
+  --gray-2: oklch(0.2275 0.0181 270.5);
+  --tree-select: oklch(0.4001 0.131502 254.9433);
+  --tree-hover: oklch(0.25 0 0);
+  --action: oklch(0.2275 0.0181 270.5);
+  --map-track-slider-active: oklch(0.3364 0.0716 240.17);
+  --map-range-slider-active: oklch(0.6839 0.1686 244.44);
+  --orange-1: oklch(0.2212 0.0152 76.09);
+  --blue-1: oklch(0.2727 0.015 217.98);
+  --green-1: oklch(0.2311 0.023 142.22);
+  --purple-1: oklch(0.2376 0.0305 292.52);
+  --yellow-1: oklch(0.2212 0.0152 76.09);
 }
 
 @theme inline {
@@ -129,6 +156,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
+  --color-background-all: var(--background-all);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
@@ -195,9 +223,13 @@
   --color-calendar-radio-green: var(--calendar-radio-green);
   --color-calendar-time-hover: var(--calendar-time-hover);
   --color-calendar-table-children: var(--calendar-table-children);
+  --color-calendar-table-select: var(--calendar-table-select);
   --color-cyan-1: var(--cyan-1);
   --color-gray-1: var(--gray-1);
   --color-gray-2: var(--gray-2);
+  --color-gray-3: var(--gray-3);
+  --color-gray-4: var(--gray-4);
+  --color-gray-5: var(--gray-5);
   --color-orange-1: var(--orange-1);
   --color-blue-1: var(--blue-1);
   --color-green-1: var(--green-1);
@@ -205,7 +237,12 @@
   --color-yellow-1: var(--yellow-1);
   --color-yellow-2: var(--yellow-2);
   --color-blue-2: var(--blue-2);
+  --color-blue-3: var(--blue-3);
+  --color-blue-4: var(--blue-4);
   --color-pink-1: var(--pink-1);
+  --color-black-1: var(--black-1);
+  --color-black-2: var(--black-2);
+  --color-action: var(--action);
 }
 
 /* Table row selection styles */

@@ -123,7 +123,10 @@ export const CellAction: React.FC<CellActionProps> = ({
             <IconDotsVertical className='h-4 w-4' />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align='end' className='flex flex-col gap-2 p-2'>
+        <DropdownMenuContent
+          align='end'
+          className='bg-action flex flex-col gap-2 p-2'
+        >
           <PermissionGuard module='maintenance.workorder' action='view'>
             {active && (
               <DropdownMenuItem
@@ -173,7 +176,7 @@ export const CellAction: React.FC<CellActionProps> = ({
               </DropdownMenuSubTrigger>
 
               <DropdownMenuPortal>
-                <DropdownMenuSubContent className='min-w-[140px] space-y-1.5 p-2'>
+                <DropdownMenuSubContent className='bg-action min-w-[140px] space-y-1.5 p-2'>
                   <DropdownMenuItem
                     onClick={handleAcknowledge}
                     className='flex cursor-pointer gap-2 text-xs'

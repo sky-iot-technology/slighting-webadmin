@@ -110,7 +110,7 @@ export default function DeviceDetailsPage() {
               router.back();
             }}
           >
-            <ArrowLeft className='mr-2 h-4 w-4' />
+            <ArrowLeft className='mr-2 h-4 w-4 dark:brightness-0 dark:invert' />
             Quay lại
           </Button>
         </div>
@@ -138,7 +138,7 @@ export default function DeviceDetailsPage() {
                   router.back();
                 }}
               >
-                <ArrowLeft className='h-4 w-4' />
+                <ArrowLeft className='h-4 w-4 dark:brightness-0 dark:invert' />
               </Button>
             </div>
           </div>

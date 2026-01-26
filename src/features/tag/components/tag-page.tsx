@@ -66,6 +66,7 @@ export default function TagPage() {
 
   const handleTagChange = useCallback(
     (tag: SelectedTag) => {
+      console.log('1');
       const params = new URLSearchParams(searchParams.toString());
 
       const isSame = tag && selectedTag && tag.id === selectedTag.id;
@@ -95,7 +96,7 @@ export default function TagPage() {
         <div className='flex h-full w-full'>
           <div
             className={cn(
-              'bg-white transition-all duration-300 ease-in-out',
+              'transition-all duration-300 ease-in-out',
               'overflow-hidden rounded-[1px_1px_4px_4px]',
               'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full md:static md:z-auto md:translate-x-0',
               'md:w-64 md:overflow-visible',
@@ -103,7 +104,9 @@ export default function TagPage() {
               !treeOpen && 'md:w-0'
             )}
           >
-            {treeOpen && <TagSidebar onTagChange={handleTagChange} />}
+            <div className={treeOpen ? 'block h-full' : 'hidden'}>
+              <TagSidebar onTagChange={handleTagChange} />
+            </div>
           </div>
 
           {treeOpen && (
@@ -114,12 +117,12 @@ export default function TagPage() {
           )}
 
           <div className='flex w-full flex-col'>
-            <div className='bg-white py-3'>
+            <div className='bg-card py-3'>
               <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
                 <div className='flex items-center gap-2'>
                   <button
                     onClick={handleToggleSidebar}
-                    className='flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                    className='dark:hover:bg-input flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                   >
                     <Image
                       src={
@@ -130,6 +133,7 @@ export default function TagPage() {
                       alt='toggle'
                       width={8}
                       height={8}
+                      className='dark:brightness-0 dark:invert'
                     />
                   </button>
                   <span className='text-[20px] font-bold'>
@@ -158,7 +162,7 @@ export default function TagPage() {
             </div>
 
             <div
-              className='flex w-full flex-1 flex-col overflow-hidden border-l-1 bg-white'
+              className='flex w-full flex-1 flex-col overflow-hidden border-l-1'
               ref={containerRef}
             >
               <TagContent

@@ -1,5 +1,6 @@
 import { RegionNode } from '@/core/domains/groups';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { ReactNode } from 'react';
 import { NodeRendererProps, Tree } from 'react-arborist';
@@ -87,7 +88,10 @@ export function RegionTree({
       overscanCount={overscanCount}
       paddingTop={paddingTop}
       padding={padding}
-      className={classname}
+      className={cn(
+        classname,
+        'text-xs [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-transparent [&::-webkit-scrollbar-thumb]:transition-all [&::-webkit-scrollbar-thumb]:duration-300 hover:[&::-webkit-scrollbar-thumb]:bg-gray-400 [&::-webkit-scrollbar-track]:bg-transparent'
+      )}
     >
       {(props) => renderFn({ ...props, onSelect, selectedId })}
     </Tree>
@@ -119,7 +123,7 @@ function DefaultNode({
         paddingLeft: node.level === 0 ? 8 : style.paddingLeft
       }}
       ref={dragHandle}
-      className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded-md px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
+      className={`hover:bg-primary/5 dark:hover:bg-input/50 mx-1 flex items-center gap-1 rounded-[4px] px-2 py-1 ${isSelected ? 'bg-tree-select text-primary dark:text-white' : 'hover:bg-tree-hover'}`}
     >
       {hasChildren ? (
         <span
@@ -134,6 +138,7 @@ function DefaultNode({
               alt='chevronDown'
               width={9}
               height={9}
+              className='dark:brightness-0 dark:invert'
             />
           ) : (
             <Image
@@ -141,6 +146,7 @@ function DefaultNode({
               alt='chevronRight'
               width={4.5}
               height={8.25}
+              className='dark:brightness-0 dark:invert'
             />
           )}
         </span>
@@ -192,7 +198,7 @@ function IconNode({
         paddingLeft: node.level === 0 ? 8 : style.paddingLeft
       }}
       ref={dragHandle}
-      className={`hover:bg-primary/5 mx-1 flex items-center gap-1 rounded px-2 py-1 ${isSelected ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
+      className={`hover:bg-primary/5 dark:hover:bg-input/50 mx-1 flex items-center gap-1 rounded-[4px] px-2 py-1 ${isSelected ? 'bg-tree-select text-primary dark:text-white' : 'hover:bg-tree-hover'}`}
     >
       {hasChildren ? (
         <span
@@ -207,6 +213,7 @@ function IconNode({
               alt='chevronDown'
               width={9}
               height={9}
+              className='dark:brightness-0 dark:invert'
             />
           ) : (
             <Image
@@ -214,6 +221,7 @@ function IconNode({
               alt='chevronRight'
               width={4.5}
               height={8.25}
+              className='dark:brightness-0 dark:invert'
             />
           )}
         </span>

@@ -9,7 +9,7 @@ export function SecureSetting() {
       <h2 className='mb-2 text-sm font-bold'>
         {t('setting.tab.secure.2fa_title' as any)}
       </h2>
-      <div className='mb-4 flex items-center justify-between rounded-[8px] bg-white p-4'>
+      <div className='bg-card mb-4 flex items-center justify-between rounded-[8px] p-4'>
         <span className='text-sm font-medium'>
           {t('setting.tab.secure.activate_2fa' as any)}
         </span>
@@ -20,7 +20,7 @@ export function SecureSetting() {
       <h2 className='mb-2 text-sm font-bold'>
         {t('setting.tab.secure.password_title' as any)}
       </h2>
-      <div className='flex items-center justify-between rounded-[8px] bg-white p-4'>
+      <div className='bg-card flex items-center justify-between rounded-[8px] p-4'>
         <span className='text-sm font-medium'>
           {t('setting.tab.secure.change_password_desc' as any)}
         </span>

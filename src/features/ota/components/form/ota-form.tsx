@@ -39,6 +39,7 @@ import {
 } from '@/core/domains/ota/schemas';
 import { FileUpload } from '@/ui/components/input-file';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import Image from 'next/image';
 
 type OtaFormProps = {
   initialData: Partial<OtaItem> | null;
@@ -105,7 +106,7 @@ export default function OtaForm({
 
   return (
     <CustomScrollbar className='h-full flex-1 overflow-y-auto p-5.5 sm:p-6'>
-      <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+      <Card className='mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
             {pageTitle}
@@ -212,6 +213,13 @@ export default function OtaForm({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className='text-xs font-bold'>
+                      <Image
+                        src={'/assets/icons/file.svg'}
+                        alt='file'
+                        width={20}
+                        height={20}
+                        className='dark:brightness-0 dark:invert'
+                      />
                       {t('ota.label.file' as any)}
                     </FormLabel>
                     <FormControl>
@@ -226,7 +234,7 @@ export default function OtaForm({
                       />
                     </FormControl>
                     {existingFile && (
-                      <div className='bg-muted mt-2 rounded-[4px] border px-3 py-2 text-xs'>
+                      <div className='bg-muted dark:bg-input/30 mt-2 rounded-[4px] border px-3 py-2 text-xs'>
                         <div className='flex items-center justify-between gap-2'>
                           <div className='truncate'>
                             <span className='font-medium'>

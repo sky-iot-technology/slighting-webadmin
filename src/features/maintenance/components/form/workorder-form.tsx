@@ -232,7 +232,7 @@ export default function WorkorderForm({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='mt-2'>
           <div className='flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:gap-8'>
-            <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
+            <Card className='dark:bg-card-primary flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
                   {t('maintenance.device_info')}
@@ -370,6 +370,7 @@ export default function WorkorderForm({
                           alt='file'
                           width={20}
                           height={20}
+                          className='dark:brightness-0 dark:invert'
                         />
                         {t('maintenance.attachments')}
                       </FormLabel>
@@ -407,7 +408,7 @@ export default function WorkorderForm({
               </CardContent>
             </Card>
 
-            <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
+            <Card className='dark:bg-card-primary flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
                   {t('maintenance.update_progress')}
@@ -604,7 +605,7 @@ export default function WorkorderForm({
               </CardContent>
             </Card>
 
-            <Card className='flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
+            <Card className='dark:bg-card-primary flex-1 gap-1.5 px-[20px] py-2 shadow-none'>
               <CardHeader className='px-0'>
                 <CardTitle className='mt-1 text-left text-[16px] font-bold'>
                   {t('maintenance.confirm_progress')}

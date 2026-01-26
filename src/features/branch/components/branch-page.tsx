@@ -128,7 +128,7 @@ export default function BranchPage() {
         <div className='flex h-full w-full'>
           <div
             className={cn(
-              'bg-white transition-all duration-300 ease-in-out',
+              'bg-card transition-all duration-300 ease-in-out',
               'overflow-hidden rounded-[1px_1px_4px_4px]',
               // mobile drawer
               'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full',
@@ -152,13 +152,13 @@ export default function BranchPage() {
             />
           )}
           <div className='flex w-full flex-col'>
-            <div className='bg-white py-3'>
+            <div className='bg-card py-3'>
               {selectedRegion && (
                 <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
                   <div className='flex items-center gap-2'>
                     <button
                       onClick={handleToggleSidebar}
-                      className='ml-2 flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
+                      className='dark:hover:bg-input ml-2 flex h-5 w-5 cursor-pointer items-center justify-center rounded p-1 hover:bg-gray-100'
                     >
                       <Image
                         src={
@@ -169,6 +169,7 @@ export default function BranchPage() {
                         alt='toggle'
                         width={8}
                         height={8}
+                        className='dark:brightness-0 dark:invert'
                       />
                     </button>
                     <Tabs
@@ -176,22 +177,22 @@ export default function BranchPage() {
                       onValueChange={setActiveTab}
                       className='min-w-0 flex-1 sm:w-auto'
                     >
-                      <TabsList className='flex bg-transparent text-[14px] font-medium'>
+                      <TabsList className='!bg-card flex text-[14px] font-medium'>
                         <TabsTrigger
                           value='detail'
-                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                          className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
                         >
                           {t('branch.detail')}
                         </TabsTrigger>
                         <TabsTrigger
                           value='devices'
-                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                          className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
                         >
                           {t('branch.devices')}
                         </TabsTrigger>
                         <TabsTrigger
                           value='config'
-                          className='group data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                          className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[4px] data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-transparent'
                         >
                           {t('branch.config')}
                         </TabsTrigger>
@@ -242,7 +243,7 @@ export default function BranchPage() {
             </div>
 
             <div
-              className='bg-gray-1 flex w-full flex-1 flex-col overflow-hidden pt-1 pl-1'
+              className='bg-gray-1 dark:bg-background flex w-full flex-1 flex-col overflow-hidden pt-1 pl-1'
               ref={containerRef}
             >
               {activeTab === 'detail' && selectedRegion ? (
@@ -259,7 +260,7 @@ export default function BranchPage() {
               ) : activeTab === 'devices' && selectedRegion ? (
                 devicesTableMemo
               ) : activeTab === 'config' && selectedRegion ? (
-                <div className='relative h-full w-full min-w-0 overflow-hidden rounded-[8px] bg-white px-2.5 py-3'>
+                <div className='bg-card relative h-full w-full min-w-0 overflow-hidden rounded-[8px] px-2.5 py-3'>
                   <BranchConfigTab />
                 </div>
               ) : (

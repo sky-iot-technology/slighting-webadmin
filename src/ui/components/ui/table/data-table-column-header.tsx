@@ -32,7 +32,12 @@ export function DataTableColumnHeader<TData, TValue>({
 }: DataTableColumnHeaderProps<TData, TValue>) {
   if (!column.getCanSort() && !column.getCanHide()) {
     return (
-      <div className={cn('text-sm font-bold text-black', className)}>
+      <div
+        className={cn(
+          'text-sm font-bold text-black dark:text-white',
+          className
+        )}
+      >
         {title}
       </div>
     );

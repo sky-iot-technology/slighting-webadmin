@@ -37,7 +37,7 @@ export type CatalogueDeviceType =
 
 export const COMMAND_TO_TRAIT: Record<string, TraitKey> = {
   'lms.devices.commands.OnOff': 'lms.devices.traits.OnOff',
-  'lms.devices.commands.Brightness': 'lms.devices.traits.Brightness'
+  'lms.devices.commands.BrightnessAbsolute': 'lms.devices.traits.Brightness'
 };
 
 export interface SubCatalogueDevice {

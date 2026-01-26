@@ -21,13 +21,13 @@ export const CalendarSidebar = memo(function CalendarSidebar({
   const { t } = useTranslation();
   return (
     <div className='flex h-full flex-col pt-1.5 pr-[9px] pl-2'>
-      <div className='bg-background mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
+      <div className='bg-background dark:bg-gray-2 mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
         <Image
           src={'/assets/icons/search.svg'}
           alt='search'
           width={11}
           height={11}
-          className='text-muted-foreground mr-2 ml-1.5'
+          className='text-muted-foreground mr-2 ml-1.5 dark:brightness-0 dark:invert'
         />
         <input
           className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'

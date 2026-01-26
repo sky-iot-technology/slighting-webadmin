@@ -12,7 +12,7 @@ export const UserColumns = (): ColumnDef<any>[] => [
       const title = row.getValue('title') as string;
 
       return (
-        <Card className='relative overflow-hidden rounded-md border !py-0 shadow-[0_2px_2px_rgba(0,0,0,0.25)]'>
+        <Card className='dark:bg-card-primary relative overflow-hidden rounded-md border !py-0 shadow-[0_2px_2px_rgba(0,0,0,0.25)]'>
           <CardContent className='flex items-center gap-3 !rounded-[8px] !px-3 !pt-2 !pb-1 text-sm font-medium'>
             <Image
               src='/assets/icons/info.svg'

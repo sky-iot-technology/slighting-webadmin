@@ -681,7 +681,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                     <label
                       htmlFor='device-avatar-upload'
                       className={cn(
-                        'absolute top-2 right-2 flex h-8 w-24 cursor-pointer items-center justify-center gap-2 rounded-[20px] bg-white shadow transition hover:bg-gray-100',
+                        'dark:bg-card-primary absolute top-2 right-2 flex h-8 w-24 cursor-pointer items-center justify-center gap-2 rounded-[20px] bg-white shadow transition hover:bg-gray-100',
                         previewAvatarUrl
                           ? 'opacity-0 group-hover:opacity-100'
                           : 'opacity-100'
@@ -951,7 +951,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                             )}
                             disabled={!isEditMode}
                             resetOnDefaultValueChange={true}
-                            className='disabled:bg-muted !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
+                            className='disabled:bg-muted dark:disabled:!bg-gray-5 dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
                             popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
                             itemClassName='text-sm'
                             autoSize={true}
@@ -1150,10 +1150,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           open={open}
                           onOpenChange={setOpen}
                           className='!h-9 !w-full !text-sm'
-                          buttonClassName={cn('!rounded-sm !bg-white')}
-                          disabledClassName='disabled:opacity-90 disabled:!bg-muted'
-                          treeClassName='!w-full !rounded-sm '
-                          insideClassName='!text-sm'
+                          buttonClassName={cn(
+                            '!rounded-sm !bg-white dark:!bg-input/30'
+                          )}
+                          disabledClassName='disabled:opacity-90 disabled:!bg-muted dark:disabled:!bg-gray-5'
+                          treeClassName='!w-full !rounded-sm'
+                          insideClassName='!text-sm dark:bg-action'
                           disabled={!isEditMode}
                           showSelectAll={true}
                         />
@@ -1244,6 +1246,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.label.installation_date' as any
                             )}
                             disabled={!isEditMode}
+                            className='dark:disabled:!bg-gray-5'
                           />
                         </FormControl>
                         <FormMessage />
@@ -1274,6 +1277,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.label.warranty_date' as any
                             )}
                             disabled={!isEditMode}
+                            className='dark:disabled:!bg-gray-5'
                           />
                         </FormControl>
                         <FormMessage />
@@ -1305,7 +1309,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'products.form.label.warranty_expiration' as any
                               )}
                               disabled={!isEditMode}
-                              className='!w-full'
+                              className='dark:disabled:!bg-gray-5 !w-full'
                             />
                           </FormControl>
                           {!isEditMode && (

@@ -25,7 +25,8 @@ export const getTraitUiMap = (t: any): Record<TraitKey, TraitUIConfig> => ({
           checked={!!value}
           onCheckedChange={onChange}
           disabled={disabled}
-          className='data-[state=checked]:bg-green-500'
+          className='dark:data-[state=unchecked]:!bg-gray-3 data-[state=checked]:bg-green-500'
+          thumbClassName='dark:data-[state=checked]:!bg-black dark:data-[state=unchecked]:!bg-black'
         />
         <span
           className={`pt-0.5 text-[11px] font-medium ${
@@ -49,7 +50,7 @@ export const getTraitUiMap = (t: any): Record<TraitKey, TraitUIConfig> => ({
           step={1}
           disabled={disabled}
           onValueChange={(v) => onChange(v[0])}
-          className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+          className='dark:[&_[data-slot=slider-thumb]]:!bg-map-range-slider-active dark:[&_[data-slot=slider-thumb]]:border-map-range-slider-active [&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active w-[120px] cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
         />
         <span className='ml-1'>{value}%</span>
       </div>

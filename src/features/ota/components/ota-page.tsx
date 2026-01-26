@@ -60,8 +60,8 @@ export default function OtaPage() {
   const isFilterReady = typeOptions.length > 0;
 
   return (
-    <div className='h-full w-full p-3'>
-      <div className='flex h-full w-full flex-1 bg-white'>
+    <div className='dark:bg-background-all h-full w-full p-3'>
+      <div className='bg-card flex h-full w-full flex-1'>
         <OtaTable
           data={(data?.data as OtaItem[]) || []}
           totalItems={data?.total || 0}

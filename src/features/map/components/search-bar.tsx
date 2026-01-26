@@ -83,7 +83,7 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
           alt='search'
           width={11}
           height={11}
-          className='text-muted-foreground mr-1 pb-0.5'
+          className='text-muted-foreground mr-1 pb-0.5 dark:brightness-0 dark:invert'
         />
         <button
           type='button'
@@ -109,10 +109,10 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
 
       {/* Drop down for search type */}
       {dropdownMode === 'type' && (
-        <div className='bg-popover animate-fade-in absolute z-10 mt-0.5 w-[160px] rounded-md border shadow-md sm:w-[180px] md:w-[217px]'>
+        <div className='bg-action animate-fade-in absolute z-10 mt-0.5 w-[160px] rounded-md border shadow-md sm:w-[180px] md:w-[217px]'>
           <ul className='p-1'>
             <li
-              className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'deviceName' ? 'bg-tree-select text-primary' : 'hover:bg-tree-hover'}`}
+              className={`cursor-pointer rounded-md px-3 py-2 ${searchType === 'deviceName' ? 'bg-tree-select text-primary dark:text-white' : 'hover:bg-tree-hover'}`}
               onClick={() => handleTypeChange('deviceName')}
             >
               {t('map.deviceName')}

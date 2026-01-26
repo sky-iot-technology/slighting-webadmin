@@ -99,7 +99,10 @@ export default function CalendarDeviceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
-      <DialogContent className='w-[417px] rounded-xl p-0' hideCloseButton>
+      <DialogContent
+        className='w-[417px] overflow-hidden rounded-xl p-0'
+        hideCloseButton
+      >
         {step === 1 && (
           <CalendarDeviceForm
             initialData={initialFormData as Partial<Calendar>}

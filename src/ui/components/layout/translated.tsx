@@ -49,7 +49,7 @@ export function Translated() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         defaultValue={language}
-        className='w-56'
+        className='!bg-action w-56'
         align='end'
         forceMount
       >

@@ -59,12 +59,12 @@ function CabinetInfoPanel(props: InfoModalProps) {
   const time = diffTimeHMS(data.updated_at, tTime);
 
   return (
-    <CustomScrollbar className='bg-background flex max-h-[600px] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
-      <div className='bg-background sticky top-0 z-10'>
+    <CustomScrollbar className='bg-card flex max-h-[600px] flex-col overflow-y-auto rounded-xl sm:w-[300px] md:w-[370px] lg:max-h-[calc(100dvh-140px)]'>
+      <div className='bg-card sticky top-0 z-10'>
         <div className='my-2 ml-[20px] flex h-[67px] items-center gap-2.5'>
           <div className='relative flex-shrink-0'>
             <Avatar className='h-[50px] w-[50px]'>
-              <div className='bg-muted flex h-full w-full items-center justify-center rounded-full'>
+              <div className='bg-muted flex h-full w-full items-center justify-center rounded-full dark:bg-white'>
                 <Image
                   src={`${data.type === 'lms.devices.types.STL_SMART' ? '/assets/icons/device-light.svg' : '/assets/icons/device.svg'}`}
                   alt='search'
@@ -78,7 +78,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             />
           </div>
           <div className='mr-auto flex flex-col items-start'>
-            <p className='text-map-title text-base leading-[30px] font-extrabold'>
+            <p className='text-primary text-base leading-[30px] font-extrabold'>
               {data.name}
             </p>
             <p className='text-muted-foreground text-xs leading-5'>
@@ -96,10 +96,10 @@ function CabinetInfoPanel(props: InfoModalProps) {
       <Separator />
 
       <Tabs defaultValue='info' className='gap-0'>
-        <TabsList className='bg-background h-[50px] w-full rounded-none px-0 py-0'>
+        <TabsList className='bg-background dark:bg-card h-[50px] w-full rounded-none px-0 py-0'>
           <TabsTrigger
             value='info'
-            className='group data-[state=active]:text-primary data-[state=active]:bg-background rounded-none data-[state=active]:shadow-none'
+            className='group data-[state=active]:text-primary dark:data-[state=active]:!text-primary data-[state=active]:bg-background dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none dark:text-white'
           >
             <div className='flex flex-col items-center justify-center gap-[3px]'>
               <Image
@@ -107,7 +107,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 alt='info'
                 width={11}
                 height={13}
-                className='group-data-[state=active]:hidden'
+                className='group-data-[state=active]:hidden dark:brightness-0 dark:invert'
               />
               <Image
                 src='/assets/icons/info-active.svg'
@@ -121,7 +121,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
           </TabsTrigger>
           <TabsTrigger
             value='operation'
-            className='group data-[state=active]:text-primary data-[state=active]:bg-background rounded-none data-[state=active]:shadow-none'
+            className='group data-[state=active]:text-primary data-[state=active]:bg-background dark:data-[state=active]:!text-primary dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none dark:text-white'
           >
             <div className='flex flex-col items-center justify-center gap-[3px]'>
               <Image
@@ -129,7 +129,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 alt='info'
                 width={13}
                 height={13.5}
-                className='group-data-[state=active]:hidden'
+                className='group-data-[state=active]:hidden dark:brightness-0 dark:invert'
               />
               <Image
                 src='/assets/icons/operation-active.svg'
@@ -149,7 +149,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
           value='operation'
           className='bg-map-background flex flex-col gap-1.5 pt-1.5 pr-[5px] pl-1.5 [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none [&_span]:py-1'
         >
-          <Card className='@container/card gap-0 rounded-lg border-none p-0 px-[15px]'>
+          <Card className='dark:bg-card-primary @container/card gap-0 rounded-lg border-none p-0 px-[15px]'>
             <CardHeader className='gap-0 p-0 pr-[5px] pb-[4px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.operation_info')}
@@ -194,7 +194,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             </CardContent>
           </Card>
 
-          <Card className='@container/card gap-0 rounded-lg p-0 px-[15px]'>
+          <Card className='dark:bg-card-primary @container/card gap-0 rounded-lg p-0 px-[15px]'>
             <CardHeader className='gap-0 p-0 pb-0.5'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.maintenance_info')}
@@ -231,7 +231,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             </CardContent>
           </Card>
 
-          <Card className='@container/card gap-0 rounded-lg p-0 px-[15px] [&_span]:py-1'>
+          <Card className='dark:bg-card-primary @container/card gap-0 rounded-lg p-0 px-[15px] [&_span]:py-1'>
             <CardHeader className='gap-0 p-0 pb-[4px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.statistic_alert')}
@@ -272,7 +272,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
           value='info'
           className='flex h-full flex-col gap-1.5 overflow-y-auto pt-1.5 pr-[7px] pl-[9px] [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none'
         >
-          <Card className='bg-map-background @container/card gap-0 rounded-lg p-0'>
+          <Card className='bg-map-background dark:bg-card-primary @container/card gap-0 rounded-lg p-0'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.device_info')}
@@ -300,7 +300,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             </CardContent>
           </Card>
 
-          <Card className='bg-map-background @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
+          <Card className='bg-map-background dark:bg-card-primary @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
             <CardHeader className='gap-0 pr-[5px] pb-0.5 pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.connect')}
@@ -336,7 +336,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             </CardContent>
           </Card>
 
-          <Card className='bg-map-background @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
+          <Card className='bg-map-background dark:bg-card-primary @container/card gap-0 rounded-lg p-0 [&_span]:py-1'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.parameter')}

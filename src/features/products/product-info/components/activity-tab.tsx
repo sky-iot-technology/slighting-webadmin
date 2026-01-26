@@ -560,7 +560,8 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                     checked
                                   )
                                 }
-                                className='data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
+                                className='dark:data-[state=unchecked]:!bg-gray-3 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
+                                thumbClassName='dark:data-[state=checked]:!bg-black dark:data-[state=unchecked]:!bg-black'
                               />
                             ) : isLight ? (
                               <div className='flex max-w-xs flex-1 flex-col items-center gap-3 sm:flex-row'>
@@ -575,7 +576,8 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                       checked
                                     )
                                   }
-                                  className='data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
+                                  className='dark:data-[state=unchecked]:!bg-gray-3 data-[state=checked]:bg-green-500 data-[state=unchecked]:bg-red-500'
+                                  thumbClassName='dark:data-[state=checked]:!bg-black dark:data-[state=unchecked]:!bg-black'
                                 />
                                 <div className='flex w-full'>
                                   <Slider
@@ -598,7 +600,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                                     disabled={
                                       !canControl || !isOnline || isPending
                                     }
-                                    className='[&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
+                                    className='dark:[&_[data-slot=slider-thumb]]:!bg-map-range-slider-active dark:[&_[data-slot=slider-thumb]]:border-map-range-slider-active [&_[data-slot=slider-thumb]]:border-primary [&_[data-slot=slider-track]]:bg-map-track-slider-active [&_[data-slot=slider-range]]:bg-map-range-slider-active cursor-pointer self-center [&_[data-slot=slider-range]]:!h-[4px] [&_[data-slot=slider-thumb]]:!h-3 [&_[data-slot=slider-thumb]]:!w-3 [&_[data-slot=slider-thumb]]:rounded-full [&_[data-slot=slider-thumb]]:border-[0.5px] [&_[data-slot=slider-thumb]]:shadow-none [&_[data-slot=slider-thumb]]:hover:ring-1 [&_[data-slot=slider-thumb]]:focus-visible:ring-1 [&_[data-slot=slider-track]]:!h-[4px]'
                                   />
                                   <span className='min-w-[3rem] text-right text-sm font-medium'>
                                     {brightness}%
@@ -697,7 +699,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                     return (
                       <div
                         key={activity.id}
-                        className='rounded-md bg-blue-50 px-3 py-2 dark:bg-blue-950/20'
+                        className='dark:bg-card-primary rounded-md bg-blue-50 px-3 py-2'
                       >
                         <div className='flex items-center gap-2'>
                           <IconComponent className='h-3.5 w-3.5 shrink-0 text-orange-500' />

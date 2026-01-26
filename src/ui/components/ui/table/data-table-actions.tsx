@@ -125,20 +125,21 @@ export function DataTableActionsPopover<TData>({
           variant='outline'
           size='sm'
           aria-label='Actions menu'
-          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 border-none p-0 lg:flex'
+          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 p-0 lg:flex'
         >
           <Image
             src={'/assets/icons/options.svg'}
             alt='filter'
             width={16}
             height={16}
+            className='dark:brightness-0 dark:invert'
           />
         </Button>
       </PopoverTrigger>
 
       <PopoverContent
         align='end'
-        className='inline-flex !w-auto min-w-[10rem] flex-col space-y-1 p-2'
+        className='dark:bg-action inline-flex !w-auto min-w-[10rem] flex-col space-y-1 p-2'
       >
         <input
           ref={fileInputRef}

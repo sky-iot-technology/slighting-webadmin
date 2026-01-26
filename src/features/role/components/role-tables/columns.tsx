@@ -95,6 +95,8 @@ export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
     size: 57,
     cell: ({ row }) => {
       return <CellAction id={String(row.original.id)} />;
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

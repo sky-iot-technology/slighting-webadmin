@@ -17,6 +17,7 @@ export function StatusCell({ user }: StatusCellProps) {
   return (
     <Switch
       className='data-[state=unchecked]:bg-map-range-slider-inactive data-[state=checked]:bg-map-range-slider-active ml-3'
+      thumbClassName='dark:data-[state=checked]:!bg-black dark:data-[state=unchecked]:!bg-black'
       checked={isEnabled}
       disabled={updateStatus.isPending || !canUpdate}
       onCheckedChange={(val) =>

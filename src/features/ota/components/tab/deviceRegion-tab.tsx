@@ -113,7 +113,8 @@ export default function DeviceRegionTab({
         onRegionChange={handleRegionChange}
         selectedRegion={selectedRegion ?? undefined}
         className='z-[50] !h-[31px] !w-full !text-xs'
-        buttonClassName='!rounded-[4px]'
+        buttonClassName='!rounded-[4px] !bg-white dark:!bg-input/30'
+        insideClassName='dark:bg-action'
         treeClassName='!w-full !rounded-[4px]'
       />
 

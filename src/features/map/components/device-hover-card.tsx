@@ -66,7 +66,7 @@ export function DeviceHoverCard({
 
   return (
     <div
-      className='animate-in fade-in zoom-in-95 w-[250px] rounded-xl border border-gray-100 bg-white shadow-xl duration-200 dark:border-gray-600 dark:bg-gray-800'
+      className='animate-in fade-in zoom-in-95 bg-card w-[250px] rounded-xl border border-gray-100 shadow-xl duration-200 dark:border-gray-600'
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
       onMouseMove={onMouseMove}
@@ -78,7 +78,7 @@ export function DeviceHoverCard({
           <>
             <div className='flex items-start justify-between rounded-t-xl border-b border-gray-100 bg-gray-50/50 p-4 dark:border-gray-700 dark:bg-gray-800/30'>
               <div className='flex items-center gap-3'>
-                <div className='flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-gray-700'>
+                <div className='flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-white'>
                   <span className='material-icons-round font-icon text-gray-600 dark:text-gray-300'>
                     <Image
                       alt='electric'

@@ -84,7 +84,7 @@ export function TreeProvider({
         onClick={() => setOpen(!open)}
         className={cn(
           buttonClassName,
-          'border-input bg-background flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
+          'border-input bg-background dark:bg-input/30 flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
           disabled ? (disabledClassName ?? 'bg-muted opacity-60') : undefined
         )}
       >
@@ -105,7 +105,7 @@ export function TreeProvider({
           alt='toggle'
           width={12}
           height={12}
-          className='h-3 w-3'
+          className='h-3 w-3 opacity-50 dark:brightness-0 dark:invert'
         />
       </button>
       <div

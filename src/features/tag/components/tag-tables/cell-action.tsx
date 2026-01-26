@@ -71,7 +71,7 @@ export const CellAction: React.FC<CellActionProps> = ({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align='end'
-          className='flex w-31.5 flex-col gap-2 p-2'
+          className='bg-action flex w-31.5 flex-col gap-2 p-2'
         >
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/product/info/${data.id}`)}

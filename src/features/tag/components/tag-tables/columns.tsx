@@ -164,7 +164,9 @@ export const tagColumns = (
     cell: ({ row }) => {
       return (
         <div>
-          <Badge className='bg-pink-1/5 text-pink-1'>{selectedTag?.name}</Badge>
+          <Badge className='bg-pink-1/5 dark:bg-black-2 text-pink-1'>
+            {selectedTag?.name}ss
+          </Badge>
         </div>
       );
     },
@@ -182,7 +184,9 @@ export const tagColumns = (
       const name = findNodeById(trees, String(id))?.name || '—';
       return (
         <div>
-          <Badge className='bg-primary/5 text-primary'>{name}</Badge>
+          <Badge className='bg-primary/5 dark:bg-black-2 text-primary'>
+            {name}
+          </Badge>
         </div>
       );
     },

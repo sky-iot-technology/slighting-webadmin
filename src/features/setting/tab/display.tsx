@@ -5,10 +5,13 @@ import { RadioGroup, RadioGroupItem } from '@/ui/components/ui/radio-group';
 import Image from 'next/image';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useLanguageStore } from '@/core/domains/language/store';
+import { useTheme } from 'next-themes';
 
 export function DisplaySetting() {
   const { t } = useTranslation();
   const { language, toggleLanguage } = useLanguageStore();
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
   return (
     <div className='w-full p-4'>
       <h2 className='mb-2 text-sm font-bold'>
@@ -17,10 +20,11 @@ export function DisplaySetting() {
 
       {/* CARD LIGHT/DARK */}
       <RadioGroup
-        defaultValue='light'
+        value={resolvedTheme}
+        onValueChange={(value) => setTheme(value)}
         className={cn(
-          '[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray mb-4 grid gap-4 rounded-[8px] bg-white p-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white',
-          'grid-cols-1 sm:grid-cols-2'
+          '[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray bg-card mb-4 grid gap-4 rounded-[8px] p-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white',
+          'grid-cols-1 sm:grid-cols-2 dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-black dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-black'
         )}
       >
         {/* LIGHT */}
@@ -73,14 +77,14 @@ export function DisplaySetting() {
         {t('setting.tab.display.language' as any)}
       </h2>
 
-      <div className='flex flex-col justify-between gap-3 rounded-[8px] bg-white p-4 md:flex-row'>
+      <div className='bg-card flex flex-col justify-between gap-3 rounded-[8px] p-4 md:flex-row'>
         <span className='text-sm font-medium'>
           {t('setting.tab.display.change_language' as any)}
         </span>
 
         <RadioGroup
           defaultValue={language}
-          className='[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex flex-wrap gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white'
+          className='[&_[data-state=checked]]:border-calendar-radio-green [&_[data-state=checked]]:bg-calendar-radio-green [&_[data-state=unchecked]]:border-calendar-radio-gray [&_[data-state=unchecked]]:bg-calendar-radio-gray flex flex-wrap gap-4 [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-white [&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-white dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:fill-black dark:[&_[data-state=checked]_[data-slot=radio-group-indicator]_.lucide-circle]:stroke-black'
           onValueChange={toggleLanguage}
         >
           <div className='flex items-center gap-2'>

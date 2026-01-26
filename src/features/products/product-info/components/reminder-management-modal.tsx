@@ -172,7 +172,7 @@ export function ReminderManagementModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className='max-h-[90vh] w-[80vw] !max-w-full overflow-y-auto'>
+      <DialogContent className='bg-card max-h-[90vh] w-[80vw] !max-w-full overflow-y-auto'>
         <DialogHeader>
           <DialogTitle>
             {t('products.detail.reminders.title' as any)}

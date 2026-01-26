@@ -64,6 +64,8 @@ export const calendar = {
   type: 'Phân loại',
   group: 'Nhóm',
   device: 'Thiết bị',
+  days_of_week: 'Ngày trong tuần',
+  days_of_month: 'Ngày trong tháng',
   priority: {
     emergency: 'Khẩn cấp',
     normal: 'Theo lịch',

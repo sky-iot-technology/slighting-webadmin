@@ -87,7 +87,7 @@ export default function BranchAddDevice({
         {t('branch.add_multiple_devices')}
       </DialogDescription>
       <DialogContent
-        className='flex w-full max-w-[90vw] flex-col gap-4 rounded-lg bg-white p-4 sm:max-w-[830px]'
+        className='bg-card flex w-full max-w-[90vw] flex-col gap-4 rounded-lg p-4 sm:max-w-[830px]'
         hideCloseButton
       >
         <h2 className='text-center text-[16px] font-bold sm:text-left'>
@@ -97,13 +97,13 @@ export default function BranchAddDevice({
           </span>
         </h2>
 
-        <div className='bg-background flex h-[28px] w-full items-center rounded-[6px] px-2 sm:w-[260px]'>
+        <div className='bg-background dark:bg-gray-2 flex h-[28px] w-full items-center rounded-[6px] px-2 sm:w-[260px]'>
           <Image
             src={'/assets/icons/search.svg'}
             alt='search'
             width={11}
             height={11}
-            className='text-muted-foreground mr-2'
+            className='text-muted-foreground mr-2 dark:brightness-0 dark:invert'
           />
           <input
             value={searchTerm}
@@ -136,7 +136,7 @@ export default function BranchAddDevice({
                         })
                       }
                       className={cn(
-                        'flex h-[50px] w-full cursor-pointer items-center gap-2.5 border-b px-2.5 py-1 transition hover:bg-gray-50'
+                        'dark:hover:bg-input flex h-[50px] w-full cursor-pointer items-center gap-2.5 border-b px-2.5 py-1 transition hover:bg-gray-50'
                       )}
                     >
                       <div
@@ -185,7 +185,7 @@ export default function BranchAddDevice({
                 {selected.map((item, index) => (
                   <div
                     key={index}
-                    className='flex h-[50px] w-full items-center justify-between border-b px-2.5 py-1 transition hover:bg-gray-50'
+                    className='dark:hover:bg-input flex h-[50px] w-full items-center justify-between border-b px-2.5 py-1 transition hover:bg-gray-50'
                   >
                     <div className='flex flex-col'>
                       <span className='text-[12px] font-semibold'>

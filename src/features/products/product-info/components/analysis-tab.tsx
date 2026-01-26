@@ -30,39 +30,39 @@ export function AnalysisTab({ device: _device }: AnalysisTabProps) {
       label: t('products.detail.analysis.stats.power'),
       value: '12.5 kWh',
       trend: 8,
-      shadow: '!shadow-primary',
+      shadow: '!shadow-primary dark:!shadow-none',
       trendType: 'up' as const,
       bgColor: 'bg-card-primary'
     },
     {
-      icon: '/assets/icons/online.svg',
+      icon: '/assets/icons/averageLight.svg',
       label: t('products.detail.analysis.stats.brightness'),
       value: '85%',
       trend: 0,
-      shadow: '!shadow-success',
+      shadow: '!shadow-success dark:!shadow-none',
       trendType: 'up' as const,
       bgColor: 'bg-card-success'
     },
     {
-      icon: '/assets/icons/offline.svg',
+      icon: '/assets/icons/activeTime.svg',
       label: t('products.detail.analysis.stats.uptime'),
       value: '8.5h',
       trend: 0,
-      shadow: '!shadow-default',
+      shadow: '!shadow-default dark:!shadow-none',
       trendType: 'up' as const
     },
     {
-      icon: '/assets/icons/alert.svg',
+      icon: '/assets/icons/efficiency.svg',
       label: t('products.detail.analysis.stats.efficiency'),
       value: '98.2%',
       trend: 0,
-      shadow: '!shadow-danger',
+      shadow: '!shadow-danger dark:!shadow-none',
       trendType: 'up' as const,
       bgColor: 'bg-card-danger'
     }
   ];
   return (
-    <div className='flex flex-1 flex-col space-y-2 bg-white'>
+    <div className='bg-card flex flex-1 flex-col space-y-2'>
       {/* Time period selector */}
       <div className='my-[9px] mr-[22px] flex items-center justify-end space-y-2'>
         <Select defaultValue='7days'>

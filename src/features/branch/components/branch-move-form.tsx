@@ -91,7 +91,7 @@ export default function BranchMoveForm({
 
   return (
     <CustomScrollbar className='overflow-y-auto p-5.5'>
-      <Card className='bg-background mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
+      <Card className='mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
           <CardTitle className='text-primary text-left text-[16px] font-bold'>
             {pageTitle}

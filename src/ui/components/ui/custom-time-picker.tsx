@@ -188,7 +188,7 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: dropdownPosition === 'top' ? 5 : -5 }}
             transition={{ duration: 0.15 }}
-            className={`absolute left-0 z-[99] flex flex-col rounded-[4px] border border-gray-300 bg-white p-1 shadow-lg ${dropdownPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} `}
+            className={`bg-card absolute left-0 z-[99] flex flex-col rounded-[4px] border border-gray-300 p-1 shadow-lg ${dropdownPosition === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'} `}
             style={{
               width: '100%'
             }}

@@ -226,7 +226,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
         />
       ) : (
         <div className='h-full min-h-[500px] w-full flex-1'>
-          <div className={`min-h-[500px] w-full flex-col bg-white`}>
+          <div className={`bg-card min-h-[500px] w-full flex-col`}>
             <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
               <Tabs
                 value={activeTab}
@@ -237,7 +237,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                   <PermissionGuard module='maintenance.alarm' action='view'>
                     <TabsTrigger
                       value='alert'
-                      className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                     >
                       {t('products.detail.maintenance.tabs.alert' as any)}
                     </TabsTrigger>
@@ -246,7 +246,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                   <PermissionGuard module='maintenance.workorder' action='view'>
                     <TabsTrigger
                       value='workorder'
-                      className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                     >
                       {t('products.detail.maintenance.tabs.workorder' as any)}
                     </TabsTrigger>

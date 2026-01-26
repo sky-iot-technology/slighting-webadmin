@@ -37,7 +37,7 @@ export function BranchDetailTab({
     <div className='relative flex h-[calc(100dvh-52px)] w-full flex-col overflow-hidden rounded-[8px] md:h-full md:flex-row'>
       <div
         className={cn(
-          'bg-white px-6 pt-3 pb-5 transition-transform duration-300',
+          'bg-card px-6 pt-3 pb-5 transition-transform duration-300',
           'w-full md:w-[285px]',
           'relative',
           hasRegion

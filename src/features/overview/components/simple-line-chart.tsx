@@ -26,7 +26,7 @@ export function SimpleLineChart() {
   const { t } = useTranslation();
   const [chartType, setChartType] = React.useState('area');
   return (
-    <Card className='!shadow-simple pb- @container/card my-4 mr-[22px] ml-[28px] gap-0.5 border-none px-0 py-0'>
+    <Card className='!shadow-simple pb- dark:bg-card-primary @container/card my-4 mr-[22px] ml-[28px] gap-0.5 border-none px-0 py-0'>
       <CardHeader className='mt-[12px] mr-[3px] ml-[12px] flex items-center justify-between space-y-0 px-0 py-0 pb-2'>
         <div className='flex items-center space-x-3.5'>
           <Image

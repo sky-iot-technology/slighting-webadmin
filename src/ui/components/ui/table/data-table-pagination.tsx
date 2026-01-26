@@ -149,7 +149,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(0)}
             disabled={!table.getCanPreviousPage()}
           >
-            <ChevronsLeft />
+            <ChevronsLeft className='dark:brightness-0 dark:invert' />
           </Button>
           <Button
             aria-label='Go to previous page'
@@ -159,7 +159,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftIcon className='dark:brightness-0 dark:invert' />
           </Button>
           {/* Page number buttons */}
           {pageNumbers.map((page, index) => {
@@ -203,7 +203,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <ChevronRightIcon />
+            <ChevronRightIcon className='dark:brightness-0 dark:invert' />
           </Button>
           <Button
             aria-label='Go to last page'
@@ -213,7 +213,7 @@ export function DataTablePagination<TData>({
             onClick={() => table.setPageIndex(table.getPageCount() - 1)}
             disabled={!table.getCanNextPage()}
           >
-            <ChevronsRight />
+            <ChevronsRight className='dark:brightness-0 dark:invert' />
           </Button>
         </div>
         <div className='flex items-center space-x-2'>

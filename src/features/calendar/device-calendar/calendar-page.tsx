@@ -46,7 +46,7 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
     <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
       <div className='h-full w-full rounded-[4px] pb-[7px]'>
         <div className='flex h-full w-full'>
-          <div className='flex flex-1 flex-col bg-white' ref={containerRef}>
+          <div className='bg-card flex flex-1 flex-col' ref={containerRef}>
             <CalendarContent deviceId={deviceId} filters={filters} />
           </div>
         </div>

@@ -162,7 +162,7 @@ const DateInput = React.forwardRef<HTMLInputElement, DateInputProps>(
                 )}
                 {...props}
               />
-              <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+              <CalendarIcon className='ml-auto h-4 w-4 opacity-50 dark:brightness-0 dark:invert' />
             </Button>
           </PopoverTrigger>
           <PopoverContent className='w-auto p-0' align='start'>

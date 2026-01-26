@@ -65,7 +65,7 @@ function Calendar({
   const locale = language === 'vi' ? 'vi-VN' : 'en-US';
 
   return (
-    <div className={cn('p-4 text-xs leading-[22px]', className)}>
+    <div className={cn('dark:bg-action p-4 text-xs leading-[22px]', className)}>
       <div className='mb-3 flex items-center justify-between pl-3'>
         <div className='flex items-center text-[14px] font-bold'>
           <span className='leading-none'>{t('general.year')}</span>

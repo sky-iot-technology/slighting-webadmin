@@ -80,7 +80,7 @@ export default function ChangepassDialog({
       </DialogDescription>
       <DialogContent className='!w-[90vw] !max-w-[417px] rounded-xl p-0'>
         {/* <CustomScrollbar className='max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'> */}
-        <Card className='bg-background mx-auto w-full gap-1.5 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
+        <Card className='bg-card mx-auto w-full gap-1.5 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
           <CardHeader className='px-0'>
             <CardTitle className='text-primary text-left text-[20px] font-bold'>
               {t('user.change_password_title' as any)}

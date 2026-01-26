@@ -209,7 +209,7 @@ export function FileUpload({
       <label
         htmlFor={isUploadDisabled ? undefined : 'file-upload'}
         className={cn(
-          'flex min-h-[59px] w-full items-center justify-center rounded-[4px] border border-dashed px-1.5 py-1.5 transition-colors',
+          'dark:bg-input/30 dark:aria-invalid:ring-destructive/40 flex min-h-[59px] w-full items-center justify-center rounded-[4px] border border-dashed px-1.5 py-1.5 transition-colors',
           isUploadDisabled ? 'hidden' : 'hover:bg-accent cursor-pointer'
         )}
       >
@@ -239,7 +239,7 @@ export function FileUpload({
             {existingFiles?.map((file) => (
               <div
                 key={file.file_url}
-                className='bg-muted flex h-[43px] w-full items-center gap-2 rounded-[6px] px-2 py-2'
+                className='bg-muted dark:bg-input/30 flex h-[43px] w-full items-center gap-2 rounded-[6px] px-2 py-2'
               >
                 <a
                   href={file.file_url}
@@ -277,7 +277,7 @@ export function FileUpload({
             {files.map((file) => (
               <div
                 key={file.name}
-                className='bg-muted flex h-[43px] w-full items-center gap-2 rounded-[6px] px-2 py-2'
+                className='bg-muted dark:bg-input/30 flex h-[43px] w-full items-center gap-2 rounded-[6px] px-2 py-2'
               >
                 <div className='flex min-w-0 flex-1 gap-2'>
                   <Image

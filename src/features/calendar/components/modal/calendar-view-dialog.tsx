@@ -82,7 +82,10 @@ export function CalendarViewDialog({
     <>
       {!isLoading && (
         <Dialog open={open} onOpenChange={onOpenChange}>
-          <DialogContent className='w-[417px] rounded-xl p-5.5' hideCloseButton>
+          <DialogContent
+            className='bg-card w-[417px] rounded-xl p-5.5'
+            hideCloseButton
+          >
             <DialogHeader>
               <DialogTitle className='text-left text-[16px] font-bold'>
                 {t('calendar.calendar_detail')}:
@@ -90,7 +93,7 @@ export function CalendarViewDialog({
               </DialogTitle>
             </DialogHeader>
 
-            <div className='mt-2 space-y-3.5 text-xs font-bold text-black'>
+            <div className='mt-2 space-y-3.5 text-xs font-bold'>
               <div className='flex gap-2'>
                 <span className=''>{t('calendar.parent_branch')}:</span>
                 <span className='text-right font-medium'>{displayText}</span>

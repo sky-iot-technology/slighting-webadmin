@@ -180,18 +180,18 @@ export default function MaintenancePage() {
 
   return (
     <div className='h-full w-full p-3'>
-      <div className={`flex h-full w-full flex-1 flex-col bg-white pt-1`}>
+      <div className={`bg-card flex h-full w-full flex-1 flex-col pt-1`}>
         <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
           <Tabs
             value={activeTab}
             onValueChange={handleTabChange}
-            className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
+            className='!bg-card w-full flex-shrink-0 sm:w-auto'
           >
-            <TabsList className='flex !bg-transparent text-[12px]'>
+            <TabsList className='!bg-card flex text-[12px]'>
               <PermissionGuard module='maintenance.alarm' action='view'>
                 <TabsTrigger
                   value='alert'
-                  className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                  className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                 >
                   {t('maintenance.alert')}
                 </TabsTrigger>
@@ -200,7 +200,7 @@ export default function MaintenancePage() {
               <PermissionGuard module='maintenance.workorder' action='view'>
                 <TabsTrigger
                   value='workorder'
-                  className='group data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white'
+                  className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                 >
                   {t('maintenance.work_order')}
                 </TabsTrigger>

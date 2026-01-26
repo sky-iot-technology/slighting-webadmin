@@ -69,7 +69,7 @@ export const calendarColumns = (
                   alt='chevronDown'
                   width={12}
                   height={12}
-                  className='h-3.5 w-3.5'
+                  className='h-3.5 w-3.5 dark:brightness-0 dark:invert'
                 />
               ) : (
                 <Image
@@ -77,7 +77,7 @@ export const calendarColumns = (
                   alt='chevronRight'
                   width={12}
                   height={12}
-                  className='h-3.5 w-3.5'
+                  className='h-3.5 w-3.5 dark:brightness-0 dark:invert'
                 />
               )}
             </button>

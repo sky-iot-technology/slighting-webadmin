@@ -65,7 +65,7 @@ export const CellAction: React.FC<CellActionProps> = ({ id, disabled }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align='end'
-          className='flex flex-col gap-2 p-2 md:w-31.5'
+          className='bg-action flex flex-col gap-2 p-2 md:w-31.5'
         >
           {canView && (
             <>

@@ -61,6 +61,8 @@ export default function SyncDeviceDialog({
         data-[state=active]:after:h-[0.5px]
         data-[state=active]:after:w-full
         data-[state=active]:after:bg-primary
+        !border-none
+        dark:data-[state=active]:bg-transparent
    `;
   const { mutate: executeOta, isPending } = useExcuteOta();
   const handleExecuteOta = async () => {
@@ -121,7 +123,7 @@ export default function SyncDeviceDialog({
         {t('ota.title.sync' as any)}
       </DialogDescription>
       <DialogContent
-        className='flex w-[800px] !max-w-[85vw] flex-col gap-4 rounded-lg bg-white p-4'
+        className='bg-card flex w-[800px] !max-w-[85vw] flex-col gap-4 rounded-lg p-4'
         hideCloseButton
       >
         <h2 className='flex justify-between text-center text-[16px] font-bold sm:text-left'>

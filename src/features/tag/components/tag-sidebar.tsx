@@ -16,6 +16,7 @@ export type SelectedTag = {
 
 interface TagSidebarProps {
   onTagChange: (tag: SelectedTag) => void;
+  className?: string;
 }
 
 export const TagSidebar = memo(function TagSidebar({
@@ -74,7 +75,7 @@ export const TagSidebar = memo(function TagSidebar({
   }, [data?.tag, selectedTag, onTagChange]);
 
   return (
-    <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
+    <div className={`bg-card flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
       <BranchDialog
         pageTitle={t('tag.add_favorite_group')}
         open={openNew}
@@ -94,13 +95,13 @@ export const TagSidebar = memo(function TagSidebar({
           </Button>
         </div>
       </PermissionGuard>
-      <div className='bg-background mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
+      <div className='bg-background dark:bg-gray-2 mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
         <Image
           src={'/assets/icons/search.svg'}
           alt='search'
           width={11}
           height={11}
-          className='text-muted-foreground mr-2 ml-1.5'
+          className='text-muted-foreground mr-2 ml-1.5 dark:brightness-0 dark:invert'
         />
         <input
           className='text-foreground placeholder:text-muted-foreground w-full flex-1 bg-transparent text-xs focus:outline-none'
@@ -123,7 +124,7 @@ export const TagSidebar = memo(function TagSidebar({
                     name: tag.name
                   })
                 }
-                className={`group hover:bg-primary/5 mb-1 flex w-full cursor-pointer justify-between gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary' : ''}`}
+                className={`group hover:bg-tree-hover mb-1 flex w-full cursor-pointer justify-between gap-2 rounded px-2 py-1 text-xs ${active ? 'bg-tree-select text-primary dark:text-white' : ''}`}
               >
                 <span className='flex items-center gap-2'>
                   <Image

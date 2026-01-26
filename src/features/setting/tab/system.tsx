@@ -8,7 +8,7 @@ export function SystemSetting() {
       <h2 className='mb-2 text-sm font-bold'>
         {t('setting.tab.system.title' as any)}
       </h2>
-      <div className='mb-4 flex flex-col gap-4 rounded-[8px] bg-white p-4 text-sm'>
+      <div className='bg-card mb-4 flex flex-col gap-4 rounded-[8px] p-4 text-sm'>
         <div className='flex items-center justify-between'>
           <span>{t('setting.tab.system.version' as any)}:</span>
           <span>v2.0.2</span>

@@ -89,8 +89,8 @@ export default function Overview2({
           value: data.device_summary.total_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'up' as const,
-          shadow: '!shadow-primary',
-          bgColor: 'bg-card-primary'
+          shadow: '!shadow-primary dark:!shadow-none',
+          bgColor: 'bg-card-primary dark:!bg-card-primary'
         },
         {
           icon: '/assets/icons/online.svg',
@@ -98,8 +98,8 @@ export default function Overview2({
           value: data.device_summary.online_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'up' as const,
-          shadow: '!shadow-success',
-          bgColor: 'bg-card-success'
+          shadow: '!shadow-success dark:!shadow-none',
+          bgColor: 'bg-card-success dark:!bg-card-primary'
         },
         {
           icon: '/assets/icons/offline.svg',
@@ -107,7 +107,8 @@ export default function Overview2({
           value: data.device_summary.offline_devices.toLocaleString(),
           trend: 1.8,
           trendType: 'down' as const,
-          shadow: '!shadow-default'
+          shadow: '!shadow-default dark:!shadow-none',
+          bgColor: 'dark:!bg-card-primary'
         },
         {
           icon: '/assets/icons/alert.svg',
@@ -115,14 +116,14 @@ export default function Overview2({
           value: data.device_summary.error_devices.toLocaleString(),
           trend: 5.2,
           trendType: 'down' as const,
-          shadow: '!shadow-danger',
-          bgColor: 'bg-card-danger'
+          shadow: '!shadow-danger dark:!shadow-none',
+          bgColor: 'bg-card-danger dark:!bg-card-primary'
         }
       ]
     : stats;
   return (
     <PageContainer>
-      <div className='flex flex-1 flex-col space-y-2 bg-white'>
+      <div className='bg-card flex flex-1 flex-col space-y-2'>
         <div className='my-[9px] mr-[22px] flex items-center justify-end space-y-2'>
           <Select defaultValue='All'>
             <SelectTrigger className='h-[30px] w-[96px] rounded-sm px-2 text-sm leading-[15px] shadow-none'>

@@ -48,7 +48,7 @@ export function DeviceTypePieChart() {
   const totalCount = chartData.reduce((acc, cur) => acc + cur.value, 0);
 
   return (
-    <Card className='!shadow-pie-chart @container/card border-none py-3'>
+    <Card className='!shadow-pie-chart dark:bg-card-primary @container/card border-none py-3'>
       <CardHeader className='mx-3 px-0'>
         <div className='flex items-center gap-3.5 py-2'>
           <Image

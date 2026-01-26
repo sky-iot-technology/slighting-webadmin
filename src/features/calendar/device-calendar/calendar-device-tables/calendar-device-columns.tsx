@@ -127,7 +127,10 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
         row.original.group_ids.length > 0;
 
       return (
-        <Badge variant={isGroup ? 'default' : 'secondary'}>
+        <Badge
+          variant={isGroup ? 'default' : 'secondary'}
+          className={isGroup ? 'dark:text-white' : ''}
+        >
           {isGroup ? t('calendar.group') : t('calendar.device')}
         </Badge>
       );
@@ -444,6 +447,8 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
           )}
         </div>
       );
-    }
+    },
+    enableSorting: false,
+    enableHiding: false
   }
 ];

@@ -25,7 +25,7 @@ export function AnimatedSearchInput({ column, columnMeta }: any) {
   return (
     <div
       className={cn(
-        'border-input bg-background flex h-7.5 items-center overflow-hidden rounded-[4px] border transition-all duration-300 ease-in-out',
+        'border-input bg-background dark:bg-gray-2 flex h-7.5 items-center overflow-hidden rounded-[4px] border transition-all duration-300 ease-in-out',
         expanded ? 'w-[164px] pl-2 lg:w-[218px]' : 'w-9 justify-center'
       )}
     >
@@ -41,7 +41,7 @@ export function AnimatedSearchInput({ column, columnMeta }: any) {
           alt='search'
           width={11}
           height={11}
-          className='text-muted-foreground'
+          className='dark:brightness-0 dark:invert'
         />
       </div>
 

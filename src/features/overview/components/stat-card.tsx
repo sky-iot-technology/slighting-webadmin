@@ -33,7 +33,7 @@ export function StatCard({
   return (
     <Card
       className={cn(
-        '@container/card gap-3 border-none py-1.5',
+        'dark:!bg-card-primary @container/card gap-3 border-none py-1.5',
         bgColor,
         shadow
       )}
@@ -53,7 +53,7 @@ export function StatCard({
             <CardDescription className='text-foreground text-sm leading-[22px]'>
               {label}
             </CardDescription>
-            <CardTitle className='text-card-title text-xl leading-[30px] font-bold tabular-nums @[250px]/card:text-3xl'>
+            <CardTitle className='text-xl leading-[30px] font-bold tabular-nums @[250px]/card:text-3xl'>
               {value}
             </CardTitle>
           </div>

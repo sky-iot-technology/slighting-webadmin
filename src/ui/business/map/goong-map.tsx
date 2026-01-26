@@ -24,9 +24,12 @@ import { Skeleton } from '@/ui/components/ui/skeleton';
 import { Button } from '@/ui/components/ui/button';
 import { DeviceHoverCard } from '@/features/map/components/device-hover-card';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useTheme } from 'next-themes';
 
-const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_web.json';
-// const mapStyleDefault = 'https://tiles.goong.io/assets/goong_map_dark.json';
+const MAP_STYLE_LIGHT = 'https://tiles.goong.io/assets/goong_map_web.json';
+
+const MAP_STYLE_DARK = 'https://tiles.goong.io/assets/goong_map_dark.json';
+
 type SelectedRegion = { id: string; name: string } | null;
 
 type GoongMapProps = {
@@ -56,9 +59,10 @@ export default function GoongMap({
   hover = false
 }: GoongMapProps) {
   const { t } = useTranslation();
+  const { theme, resolvedTheme } = useTheme();
 
   const [isMapLoading, setIsMapLoading] = useState(true);
-  const [mapStyle, setMapStyle] = useState(mapStyleDefault);
+  const [mapStyle, setMapStyle] = useState(MAP_STYLE_LIGHT);
   const [transitionDuration, setTransitionDuration] = useState(1000);
   const [viewport, setViewport] = useState<ViewportProps>({
     longitude: 106.700981,
@@ -73,6 +77,19 @@ export default function GoongMap({
   const mapRef = useRef<MapRef | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (!mapRef.current) return;
+
+    const nextStyle =
+      resolvedTheme === 'dark' ? MAP_STYLE_DARK : MAP_STYLE_LIGHT;
+
+    if (nextStyle !== mapStyle) {
+      setMapStyle(nextStyle);
+    }
+  }, [resolvedTheme, mapStyle]);
+
+  useMapLayers(mapRef, devices, selectedRegion?.id, mapStyle);
 
   const handleViewportChange = useCallback((options: ViewportProps) => {
     setViewport((prev) => ({ ...prev, ...options }));
@@ -164,14 +181,40 @@ export default function GoongMap({
     [setViewport, setTransitionDuration]
   );
 
+  /**
+   * Safely query features without crashing if style is loading or layers missing.
+   * Look Before You Leap: We filter layers using map.getLayer(id) to ensure we never query a missing layer.
+   */
+  const safeQueryFeatures = (point: [number, number]) => {
+    try {
+      const map = mapRef.current?.getMap();
+      if (!map || !map.isStyleLoaded()) return [];
+
+      const validLayers = ['devices-clusters', 'devices-unclustered'].filter(
+        (id) => !!map.getLayer(id)
+      );
+      if (validLayers.length === 0) return [];
+
+      return map.queryRenderedFeatures(point, {
+        layers: validLayers
+      });
+    } catch (e) {
+      // Squelch errors during style transition
+      return [];
+    }
+  };
+
   const onClick = (event: MapEvent) => {
     if (renderPopup) return;
-    if (!event.features?.length) return;
+
+    // Manual query to be safe
+    const features = safeQueryFeatures(event.point);
+    if (!features?.length) return;
 
     const map = mapRef.current?.getMap();
-    if (!map || !map.getLayer('devices-unclustered')) return;
+    if (!map) return;
 
-    const feature = event.features[0];
+    const feature = features[0];
     if (feature.layer.id === 'devices-unclustered') {
       const { id, lon, lat } = feature.properties;
       flyToDevice(id, lon, lat);
@@ -246,7 +289,6 @@ export default function GoongMap({
     }
   }, [selectedDevice, flyToDevice]);
 
-  useMapLayers(mapRef, devices, selectedRegion?.id);
   useMapResize(mapContainerRef, mapRef, setViewport);
 
   const safeAnchor = useMemo(() => {
@@ -271,9 +313,8 @@ export default function GoongMap({
       <ReactMapGL
         {...mapControllerProps}
         {...viewport}
-        interactiveLayerIds={
-          !isMapLoading ? ['devices-clusters', 'devices-unclustered'] : []
-        }
+        // DISABLED AUTO-INTERACTIVITY to prevent internal library crash
+        interactiveLayerIds={[]}
         ref={mapRef}
         mapStyle={mapStyle}
         onViewportChange={handleViewportChange}
@@ -284,7 +325,9 @@ export default function GoongMap({
           onClick(e);
         }}
         onHover={(event) => {
-          const { features, srcEvent } = event;
+          // Manual safe query
+          const { srcEvent } = event;
+          const features = safeQueryFeatures(event.point);
           const hoveredFeature = features && features[0];
 
           if (
