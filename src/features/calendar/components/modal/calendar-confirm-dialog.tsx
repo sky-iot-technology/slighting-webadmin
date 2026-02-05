@@ -35,7 +35,7 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
   });
   return (
     <div className='bg-card space-y-3.5 p-5.5 text-xs font-bold'>
-      <h3 className='text-primary text-left text-base font-bold'>
+      <h3 className='text-primary-text text-left text-base font-bold'>
         {t('calendar.confirm_calendar')}
       </h3>
 
@@ -169,6 +169,14 @@ function renderAction(
     );
 
   const { trait, value } = action;
+
+  if (!trait) {
+    return (
+      <span className='text-muted-foreground'>
+        {t('calendar.not_selected')}
+      </span>
+    );
+  }
 
   if (trait === 'lms.devices.traits.Brightness') {
     const v = typeof value === 'number' ? value : Number(value ?? 0);

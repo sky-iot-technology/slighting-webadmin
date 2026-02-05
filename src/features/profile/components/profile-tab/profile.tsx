@@ -122,14 +122,14 @@ export default function Profile({ user }: ProfileProps) {
     <div className='flex w-full flex-col md:h-full md:flex-row'>
       {/* Left panel - User info */}
       <div className='w-full px-4 py-2.5 md:w-[282px] md:py-2.5 md:pr-2.5 md:pl-6'>
-        <span className='text-primary text-[20px] font-bold'>
+        <span className='text-primary-text text-[20px] font-bold'>
           {t('profile.profile')}
         </span>
         <div className='mt-6 flex flex-col gap-3.5 md:mt-8'>
           <span className='text-[16px] font-bold'>{t('profile.info')}</span>
           <div className='flex flex-col gap-4 pl-1 text-[14px] md:gap-5'>
             <p className='break-words'>
-              <span className='font-bold'>{t('profile.name')} </span>
+              <span className='font-bold'>{t('profile.name')}: </span>
               {user?.first_name} {user?.last_name}
             </p>
             <p>

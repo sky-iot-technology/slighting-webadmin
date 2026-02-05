@@ -811,11 +811,12 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
               } options selected. ${placeholder}`}
               className={cn(
                 className,
-                'flex h-auto min-h-10 items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit [&_svg]:pointer-events-auto',
+                'dark:bg-input/30 disabled:!bg-muted flex h-auto min-h-10 items-center justify-between rounded-md border bg-inherit py-1 pr-1 pl-3 hover:bg-inherit disabled:opacity-90 [&_svg]:pointer-events-auto',
                 autoSize ? 'w-auto' : 'w-full',
-                responsiveSettings.compactMode && 'min-h-8 text-sm',
+                responsiveSettings.compactMode && 'min-h-8 text-xs',
                 screenSize === 'mobile' && 'min-h-12 text-base',
-                disabled && 'cursor-not-allowed opacity-50'
+                disabled && 'cursor-not-allowed opacity-50',
+                props['aria-invalid'] && 'border-destructive'
               )}
               style={{
                 ...widthConstraints,
@@ -993,7 +994,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       className='flex h-full min-h-6'
                     />
                     <ChevronDown
-                      className='text-muted-foreground mx-2 h-4 cursor-pointer'
+                      className={cn(
+                        textSize,
+                        'text-muted-foreground mx-2 h-4 cursor-default transition-transform',
+                        isPopoverOpen && '-rotate-90'
+                      )}
                       aria-hidden='true'
                     />
                   </div>
@@ -1003,12 +1008,17 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   <span
                     className={cn(
                       textSize,
-                      'text-muted-foreground mx-1 text-sm'
+                      'text-muted-foreground mx-1 text-xs'
                     )}
                   >
                     {placeholder}
                   </span>
-                  <ChevronDown className='text-muted-foreground mx-2 h-4 cursor-pointer' />
+                  <ChevronDown
+                    className={cn(
+                      'text-muted-foreground mx-2 h-4 cursor-default',
+                      isPopoverOpen && '-rotate-90'
+                    )}
+                  />
                 </div>
               )}
             </Button>
@@ -1091,7 +1101,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                       >
                         <CheckIcon className='h-4 w-4 !text-white' />
                       </div>
-                      <span className='text-sm'>
+                      <span className='text-xs'>
                         (Chọn tất cả
                         {getAllOptions().length > 20
                           ? ` - ${getAllOptions().length} options`
@@ -1186,7 +1196,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                               aria-hidden='true'
                             />
                           )}
-                          <span className={cn(textSize, 'text-sm')}>
+                          <span className={cn(textSize, 'text-xs')}>
                             {option.label}
                           </span>
                         </CommandItem>

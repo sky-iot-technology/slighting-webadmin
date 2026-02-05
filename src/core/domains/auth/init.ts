@@ -22,9 +22,12 @@ export function useAuthInit() {
         const accessToken = cookieUtils.getAccessToken();
         const refreshToken = cookieUtils.getRefreshToken();
 
-        if (accessToken && refreshToken) {
+        if (refreshToken) {
           // Try to get current user with the access token
           try {
+            if (!accessToken) {
+              throw { status: 401 };
+            }
             const user = await authApi.getCurrentUser(accessToken);
             setUser(user);
             setTokens(accessToken, refreshToken);
@@ -51,6 +54,17 @@ export function useAuthInit() {
                   newTokens.access_token
                 );
                 setUser(user);
+
+                //Set DomainId for request
+                const domainId = await authApi.getDomain();
+                setDomainId(domainId);
+                //Set role for User (Need to set this again after refresh to ensure consistent state)
+                const roleId = user.metadata?.roleId;
+                if (roleId) {
+                  const res = await rolesApi.getById(roleId);
+                  const uiPermission = normalizeUIPermission(res.permission.ui);
+                  setPermissions(uiPermission);
+                }
               } catch (refreshError) {
                 // Refresh failed, clear everything
                 cookieUtils.clearAuthCookies();

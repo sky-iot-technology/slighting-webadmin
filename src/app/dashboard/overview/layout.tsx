@@ -126,7 +126,7 @@ export default function Overview2({
       <div className='bg-card flex flex-1 flex-col space-y-2'>
         <div className='my-[9px] mr-[22px] flex items-center justify-end space-y-2'>
           <Select defaultValue='All'>
-            <SelectTrigger className='h-[30px] w-[96px] rounded-sm px-2 text-sm leading-[15px] shadow-none'>
+            <SelectTrigger className='h-[30px] rounded-sm px-2 text-sm leading-[15px] shadow-none'>
               <SelectValue placeholder='Select Device' />
             </SelectTrigger>
             <SelectContent>

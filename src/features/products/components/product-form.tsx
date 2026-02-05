@@ -162,7 +162,7 @@ export default function ProductForm({
   return (
     <Card className='mx-auto w-full'>
       <CardHeader>
-        <CardTitle className='text-primary text-left text-xl'>
+        <CardTitle className='text-primary-text text-left text-xl'>
           {t('products.new.add_product')}
         </CardTitle>
       </CardHeader>
@@ -322,8 +322,8 @@ export default function ProductForm({
                       control={form.control}
                       name='lon'
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>
+                        <FormItem className='mt-0 mb-0'>
+                          <FormLabel className=''>
                             {t('products.form.label.coordinates' as any)}
                           </FormLabel>
                           <FormControl>
@@ -362,7 +362,7 @@ export default function ProductForm({
                       control={form.control}
                       name='lat'
                       render={({ field }) => (
-                        <FormItem>
+                        <FormItem className='mt-0 mb-0'>
                           <div className='md:h-3.5'></div>
                           <FormControl>
                             <Input
@@ -396,54 +396,61 @@ export default function ProductForm({
                         </FormItem>
                       )}
                     />
-                    <FormItem>
-                      <div className='md:h-3.5'></div>
-                      {/* <Button variant={'default'} className='bg-cyan-1'>
-                        Vị trí bản đồ
-                      </Button> */}
-                      <Sheet>
-                        <SheetTrigger asChild>
-                          <Button
-                            type='button'
-                            className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
-                          >
-                            {t('products.form.button.map_location' as any)}
-                          </Button>
-                        </SheetTrigger>
-                        <SheetContent side='right' className='gap-0'>
-                          <SheetHeader>
-                            <SheetTitle className='mx-auto'>
-                              {t('products.form.sheet.title' as any)}
-                            </SheetTitle>
-                          </SheetHeader>
-                          <div className='relative h-full w-full overflow-hidden'>
-                            <GoongMapMarker
-                              lat={
-                                isValidLat(form.watch('lat') ?? '')
-                                  ? Number(form.watch('lat'))
-                                  : undefined
-                              }
-                              long={
-                                isValidLon(form.watch('lon') ?? '')
-                                  ? Number(form.watch('lon'))
-                                  : undefined
-                              }
-                              onSelectLocation={({ lat, long }) => {
-                                form.setValue(
-                                  'lat',
-                                  String(Number(lat.toFixed(6)))
-                                );
-                                form.setValue(
-                                  'lon',
-                                  String(Number(long.toFixed(6)))
-                                );
-                              }}
-                            />
-                          </div>
-                        </SheetContent>
-                      </Sheet>
-                      <div className='md:h-4'></div>
-                    </FormItem>
+                    <FormField
+                      control={form.control}
+                      name='lon'
+                      render={({ field }) => (
+                        <FormItem className='mt-0 mb-0'>
+                          <FormLabel className=''>&nbsp;</FormLabel>
+                          <FormControl>
+                            <Sheet>
+                              <SheetTrigger asChild>
+                                <Button
+                                  type='button'
+                                  className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
+                                >
+                                  {t(
+                                    'products.form.button.map_location' as any
+                                  )}
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent side='right' className='gap-0'>
+                                <SheetHeader>
+                                  <SheetTitle className='mx-auto'>
+                                    {t('products.form.sheet.title' as any)}
+                                  </SheetTitle>
+                                </SheetHeader>
+                                <div className='relative h-full w-full overflow-hidden'>
+                                  <GoongMapMarker
+                                    lat={
+                                      isValidLat(form.watch('lat') ?? '')
+                                        ? Number(form.watch('lat'))
+                                        : undefined
+                                    }
+                                    long={
+                                      isValidLon(form.watch('lon') ?? '')
+                                        ? Number(form.watch('lon'))
+                                        : undefined
+                                    }
+                                    onSelectLocation={({ lat, long }) => {
+                                      form.setValue(
+                                        'lat',
+                                        String(Number(lat.toFixed(6)))
+                                      );
+                                      form.setValue(
+                                        'lon',
+                                        String(Number(long.toFixed(6)))
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              </SheetContent>
+                            </Sheet>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                   <div className='w-full'>
                     <FormField

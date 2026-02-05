@@ -8,20 +8,47 @@ export const TraitKeyEnum = z.enum([
 export type TraitKey = z.infer<typeof TraitKeyEnum>;
 
 const scheduleActionSchema = z.object({
-  trait: TraitKeyEnum,
+  trait: TraitKeyEnum.optional(),
   value: z.any()
 });
 
 export const subScheduleSchema = z
   .object({
-    time: z.string().min(1, { message: 'calendar.validation.time_required' }),
-    action: scheduleActionSchema.optional(),
+    time: z.string().nullish(),
+    action: scheduleActionSchema.nullish(),
     enabled: z.boolean().default(true)
   })
   .superRefine((data, ctx) => {
-    if (!data.action) return;
+    const { time, action } = data;
 
-    const { trait, value } = data.action;
+    // Check if both are missing
+    if ((!time || time.length === 0) && (!action || !action.trait)) {
+      ctx.addIssue({
+        path: ['time'],
+        message: 'calendar.validation.time_and_action_required',
+        code: z.ZodIssueCode.custom
+      });
+      return;
+    }
+
+    if (!time || time.length === 0) {
+      ctx.addIssue({
+        path: ['time'],
+        message: 'calendar.validation.time_required',
+        code: z.ZodIssueCode.custom
+      });
+    }
+
+    if (!action || !action.trait) {
+      ctx.addIssue({
+        path: ['action', 'trait'],
+        message: 'calendar.validation.action_required',
+        code: z.ZodIssueCode.custom
+      });
+      return;
+    }
+
+    const { trait, value } = action;
 
     if (trait === 'lms.devices.traits.Brightness') {
       if (typeof value !== 'number' || value < 0 || value > 100) {

@@ -84,7 +84,7 @@ export function CalendarTable<TData, TValue>({
       table={table}
       totalRows={totalItems}
       className='bg-background'
-      wrapperClassName='rounded-[8px] bg-white'
+      wrapperClassName='rounded-[8px] bg-card'
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'

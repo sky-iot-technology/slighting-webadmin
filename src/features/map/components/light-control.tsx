@@ -461,8 +461,12 @@ function LightControl(props: LightInfo) {
       <Table className='hover:!bg-transparent'>
         <TableHeader className='[&_*]:text-background bg-map-lightControl-header [&_*]:text-xs [&_*]:leading-5 [&_*]:font-semibold [&_th]:h-5'>
           <TableRow className='hover:!bg-map-lightControl-header h-5'>
-            <TableHead className='pl-3'>{t('map.line_control')}</TableHead>
-            <TableHead className='pr-3 text-end'>{t('map.action')}</TableHead>
+            <TableHead className='pl-3 !text-white'>
+              {t('map.line_control')}
+            </TableHead>
+            <TableHead className='pr-3 text-end !text-white'>
+              {t('map.action')}
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody className='[&>*]:border-0'>

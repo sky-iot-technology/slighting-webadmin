@@ -1,7 +1,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-
-const STORAGE_KEY = 'product_listing_params';
+import { STORAGE_KEYS } from '../../../core/shared/utils/localStorage';
 
 export function useProductParams() {
   const router = useRouter();
@@ -14,7 +13,9 @@ export function useProductParams() {
     initialized.current = true;
 
     const currentString = searchParams.toString();
-    const storedString = localStorage.getItem(STORAGE_KEY);
+    const storedString = localStorage.getItem(
+      STORAGE_KEYS.PRODUCT_LISTING_PARAMS
+    );
 
     // If we have no params in URL, try to restore
     if (!currentString && storedString) {
@@ -33,12 +34,12 @@ export function useProductParams() {
 
     const currentString = searchParams.toString();
     if (currentString) {
-      localStorage.setItem(STORAGE_KEY, currentString);
+      localStorage.setItem(STORAGE_KEYS.PRODUCT_LISTING_PARAMS, currentString);
     } else {
       // If empty, we should probably clear storage so "Clear Filters" works.
       // However, if we clear storage, next visit gets no defaults.
       // But that is expected behavior if I left the page with no filters.
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(STORAGE_KEYS.PRODUCT_LISTING_PARAMS);
     }
   }, [searchParams, isReady]);
 

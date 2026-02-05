@@ -126,6 +126,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
           onSelectionChange={(data) => setSelectedIds(data)}
           isLoading={loadingAll}
           error={errorAll}
+          fillAvailableSpace={true}
         />
       </PermissionGuard>
     );
@@ -154,6 +155,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
           onTableReady={setWorkoderTable}
           isLoading={workorderLoading}
           error={workorderError}
+          fillAvailableSpace={true}
         />
       </PermissionGuard>
     );
@@ -225,8 +227,8 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
           onBack={() => setSelectedWorkOrderId(null)}
         />
       ) : (
-        <div className='h-full min-h-[500px] w-full flex-1'>
-          <div className={`bg-card min-h-[500px] w-full flex-col`}>
+        <div className='min-h-[500px] w-full'>
+          <div className={`bg-card flex min-h-[500px] w-full flex-col`}>
             <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-0'>
               <Tabs
                 value={activeTab}

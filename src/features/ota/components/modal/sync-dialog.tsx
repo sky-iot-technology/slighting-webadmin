@@ -53,6 +53,7 @@ export default function SyncDeviceDialog({
         px-3
         font-bold
         data-[state=active]:text-primary
+        dark:data-[state=active]:text-primary-text
         data-[state=active]:bg-white
         data-[state=active]:after:content-['']
         data-[state=active]:after:absolute
@@ -129,7 +130,7 @@ export default function SyncDeviceDialog({
         <h2 className='flex justify-between text-center text-[16px] font-bold sm:text-left'>
           <div>
             {t('ota.title.sync' as any)}{' '}
-            <span className='text-primary'>{data.name}</span>
+            <span className='text-primary-text'>{data.name}</span>
           </div>
           <span className='text-calendar-radio-green'>{data.info.version}</span>
         </h2>

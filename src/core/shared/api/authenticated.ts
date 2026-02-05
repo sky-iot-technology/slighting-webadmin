@@ -41,7 +41,7 @@ export class AuthenticatedApiClient extends BaseApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
-        if (error.response?.status === 401 || error.response?.status === 404) {
+        if (error.response?.status === 401) {
           // Try to refresh token automatically
           try {
             const refreshToken = cookieUtils.getRefreshToken();

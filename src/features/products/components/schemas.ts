@@ -81,7 +81,7 @@ export const deviceFormSchema = z.object({
     .min(1, { message: 'products.detail.overview.validation.serial_required' }),
 
   // Optional fields
-  tags: z.array(z.string()).default([]),
+  tags: z.array(z.string()).default([]).optional(),
 
   // Device info fields
   device_info: deviceInfoSchema.optional(),

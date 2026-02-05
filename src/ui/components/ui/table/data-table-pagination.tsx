@@ -12,11 +12,13 @@ import {
 import { cn } from '@/lib/utils';
 import { ChevronLeftIcon, ChevronRightIcon } from '@radix-ui/react-icons';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useEffect } from 'react';
 
 interface DataTablePaginationProps<TData> extends React.ComponentProps<'div'> {
   table: Table<TData>;
   pageSizeOptions?: number[];
   totalRows: number;
+  actionBar?: React.ReactNode;
 }
 
 export function DataTablePagination<TData>({
@@ -24,6 +26,7 @@ export function DataTablePagination<TData>({
   pageSizeOptions = [5, 10, 20, 30, 40, 50],
   className,
   totalRows,
+  actionBar,
   ...props
 }: DataTablePaginationProps<TData>) {
   const { t, tTime } = useTranslation();
@@ -33,7 +36,6 @@ export function DataTablePagination<TData>({
   const end = Math.min((pageIndex + 1) * pageSize, totalRows);
   const totalPages = table.getPageCount();
   const currentPage = pageIndex + 1;
-
   const getPageNumbers = (): (number | 'ellipsis')[] => {
     const pages: (number | 'ellipsis')[] = [];
     const maxVisible = 4;
@@ -106,15 +108,25 @@ export function DataTablePagination<TData>({
 
   const pageNumbers = getPageNumbers();
 
+  useEffect(() => {
+    if (table.getFilteredSelectedRowModel().rows.length > 0) {
+      table.resetRowSelection();
+    }
+  }, [pageIndex, table]);
+
   return (
     <div
       className={cn(
-        'flex w-full flex-col-reverse items-center justify-between gap-4 overflow-auto p-1 sm:flex-row sm:gap-8',
+        'flex w-full flex-col gap-4 p-1 sm:flex-row sm:items-center sm:justify-between',
         className
       )}
       {...props}
     >
       <div className='text-muted-foreground flex-1 text-sm whitespace-nowrap'>
+        {actionBar}
+      </div>
+      <div className='flex flex-col items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+        {/* <div className='flex-1 text-sm text-muted-foreground whitespace-nowrap'> */}
         {/* {table.getFilteredSelectedRowModel().rows.length > 0 ? (
           <>
             {table.getFilteredSelectedRowModel().rows.length} of{' '}
@@ -124,16 +136,16 @@ export function DataTablePagination<TData>({
           <>{table.getFilteredRowModel().rows.length} row(s) total.</>
         )} */}
 
-        {table.getFilteredSelectedRowModel().rows.length > 0 && (
+        {/* {table.getFilteredSelectedRowModel().rows.length > 0 && (
           <>
             {tTime('general.rows_selected', {
               selected: table.getFilteredSelectedRowModel().rows.length,
               total: table.getFilteredRowModel().rows.length
             })}
           </>
-        )}
-      </div>
-      <div className='flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'>
+        )} */}
+        {/* </div> */}
+        {/* <div className='flex flex-col-reverse items-center gap-4 sm:flex-row sm:gap-6 lg:gap-8'> */}
         {totalRows > pageSize && (
           <div className='flex items-center justify-center text-sm font-medium'>
             {start} - {end} {t('general.start_end')} {totalRows}

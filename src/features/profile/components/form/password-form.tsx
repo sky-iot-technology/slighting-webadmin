@@ -14,7 +14,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
+  FormSchemaProvider
 } from '@/ui/components/ui/form';
 import { Button } from '@/ui/components/ui/button';
 import { useMemo, useState } from 'react';
@@ -60,28 +61,31 @@ export default function PasswordForm() {
         </CardTitle>
       </CardHeader>
       <CardContent className='flex h-full justify-center px-0'>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='flex h-full w-full max-w-[420px] flex-col gap-3'
-          >
-            <FormField
-              control={form.control}
-              name='oldpassword'
-              render={({ field }) => (
-                <FormItem className=''>
-                  <FormLabel className='text-[16px] font-bold'>
-                    {t('profile.oldPassword')}
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative w-full md:max-w-[392px]'>
-                      <Input
-                        {...field}
-                        type={showOldPassword ? 'text' : 'password'}
-                        placeholder={t('profile.oldPassword_placeholder')}
-                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
-                        autoComplete='newpassword'
-                      />
+        <FormSchemaProvider schema={changenewpassFormSchema}>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='flex h-full w-full max-w-[420px] flex-col gap-3'
+            >
+              <FormField
+                control={form.control}
+                name='oldpassword'
+                render={({ field }) => (
+                  <FormItem className=''>
+                    <FormLabel className='text-[16px] font-bold'>
+                      {t('profile.oldPassword')}
+                    </FormLabel>
+
+                    <div className='relative w-full'>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type={showOldPassword ? 'text' : 'password'}
+                          placeholder={t('profile.oldPassword_placeholder')}
+                          className='!h-[51px] !w-full !text-sm'
+                          autoComplete='newpassword'
+                        />
+                      </FormControl>
                       <button
                         type='button'
                         onClick={() => setShowOldPassword(!showOldPassword)}
@@ -94,29 +98,30 @@ export default function PasswordForm() {
                         )}
                       </button>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='newpassword'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-[16px] font-bold'>
-                    {t('profile.newPassword')}
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative w-full md:max-w-[392px]'>
-                      <Input
-                        {...field}
-                        type={showNewPassword ? 'text' : 'password'}
-                        placeholder={t('profile.newPassword_placeholder')}
-                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
-                        autoComplete='newpassword'
-                      />
+              <FormField
+                control={form.control}
+                name='newpassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-[16px] font-bold'>
+                      {t('profile.newPassword')}
+                    </FormLabel>
+
+                    <div className='relative w-full'>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type={showNewPassword ? 'text' : 'password'}
+                          placeholder={t('profile.newPassword_placeholder')}
+                          className='!h-[51px] !w-full !text-sm'
+                          autoComplete='newpassword'
+                        />
+                      </FormControl>
                       <button
                         type='button'
                         onClick={() => setShowNewPassword(!showNewPassword)}
@@ -129,31 +134,31 @@ export default function PasswordForm() {
                         )}
                       </button>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='confirmPassword'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className='text-[16px] font-bold'>
-                    {t('profile.confirmNewPassword')}
-                  </FormLabel>
-                  <FormControl>
-                    <div className='relative w-full md:max-w-[392px]'>
-                      <Input
-                        {...field}
-                        type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder={t(
-                          'profile.confirmNewPassword_placeholder'
-                        )}
-                        className='!h-[51px] !w-full !text-sm md:!max-w-[392px]'
-                        autoComplete='confirmPassword'
-                      />
+              <FormField
+                control={form.control}
+                name='confirmPassword'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className='text-[16px] font-bold'>
+                      {t('profile.confirmNewPassword')}
+                    </FormLabel>
+                    <div className='relative w-full'>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          placeholder={t(
+                            'profile.confirmNewPassword_placeholder'
+                          )}
+                          className='!h-[51px] !w-full !text-sm'
+                          autoComplete='confirmPassword'
+                        />
+                      </FormControl>
                       <button
                         type='button'
                         onClick={() =>
@@ -168,22 +173,22 @@ export default function PasswordForm() {
                         )}
                       </button>
                     </div>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <div className='mt-auto flex items-center justify-center'>
-              <Button
-                type='submit'
-                className='h-[40px] w-[130px] rounded-[8px] text-lg'
-              >
-                {t('general.edit')}
-              </Button>
-            </div>
-          </form>
-        </Form>
+              <div className='mt-auto flex items-center justify-center'>
+                <Button
+                  type='submit'
+                  className='h-[40px] w-[130px] rounded-[8px] text-lg'
+                >
+                  {t('general.edit')}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </FormSchemaProvider>
       </CardContent>
     </Card>
   );

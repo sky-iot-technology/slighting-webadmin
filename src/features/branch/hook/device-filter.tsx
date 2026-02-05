@@ -13,7 +13,7 @@ export function useDeviceFiltersFromParams(): GetDevicesParamsDto {
   const type = searchParams.get('type') ?? undefined;
 
   const currentPage = page ? parseInt(page.toString()) : 1;
-  const limit = pageLimit ? parseInt(pageLimit.toString()) : 100;
+  const limit = pageLimit ? parseInt(pageLimit.toString()) : 10;
 
   const validStatuses = [
     'enabled',

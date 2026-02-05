@@ -42,7 +42,7 @@ export function SimpleLineChart() {
         </div>
         <div className='flex items-center space-x-[3px] text-sm leading-[15px]'>
           <Select defaultValue='All'>
-            <SelectTrigger className='h-[30px] w-[96px] rounded-sm px-2 shadow-none'>
+            <SelectTrigger className='h-[30px] rounded-sm px-2 shadow-none'>
               <SelectValue placeholder={t('dashboard.select_period' as any)} />
             </SelectTrigger>
             <SelectContent>
@@ -62,7 +62,7 @@ export function SimpleLineChart() {
             </SelectContent>
           </Select>
           <Select value={chartType} onValueChange={setChartType}>
-            <SelectTrigger className='h-[30px] w-[111px] rounded-sm px-2 shadow-none'>
+            <SelectTrigger className='h-[30px] rounded-sm px-2 shadow-none'>
               <SelectValue
                 placeholder={t('dashboard.select_chart_type' as any)}
               />

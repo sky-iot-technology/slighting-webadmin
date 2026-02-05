@@ -10,18 +10,22 @@ import TimePicker from 'react-time-picker';
 import { motion, AnimatePresence } from 'motion/react';
 import CustomScrollbar from '../custom-scrollbar';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { cn } from '@/lib/utils';
 
 interface CustomTimePickerProps {
   value?: string;
   onChange?: (val: string) => void;
   disabled?: boolean;
+  isInvalid?: boolean;
 }
 
 export const CustomTimePicker = React.memo(function CustomTimePicker({
   value,
   onChange,
-  disabled
-}: CustomTimePickerProps) {
+  disabled,
+  isInvalid,
+  ...props
+}: CustomTimePickerProps & React.ButtonHTMLAttributes<HTMLButtonElement>) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const [hour, setHour] = useState('00');
@@ -161,10 +165,13 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
       <button
         type='button'
         disabled={disabled}
-        className={`border-input flex w-full items-center justify-between rounded-[4px] border px-1 py-1 ${!disabled ? 'cursor-pointer' : ''}`}
+        className={`border-input dark:bg-input/30 flex w-full items-center justify-between rounded-[4px] border px-1 py-1 ${!disabled ? 'cursor-pointer' : ''} ${isInvalid || props['aria-invalid'] ? 'border-destructive' : ''}`}
         onClick={() => setOpen((o) => !o)}
+        {...props}
       >
-        {value || t('calendar.time_select')}
+        <span className={cn(!value && 'text-muted-foreground')}>
+          {value || t('calendar.time_select')}
+        </span>
         <Image
           src={'/assets/icons/time.svg'}
           alt='time'

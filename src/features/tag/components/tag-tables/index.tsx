@@ -54,7 +54,7 @@ export function TagTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      wrapperClassName='rounded-[8px] bg-white'
+      wrapperClassName='rounded-[8px] bg-card'
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'

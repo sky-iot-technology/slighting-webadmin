@@ -146,7 +146,7 @@ export const TagSidebar = memo(function TagSidebar({
                   )}
                 </span>
 
-                <span className='hidden items-baseline gap-3 group-hover:flex'>
+                <span className='mt-0.5 hidden items-baseline gap-3 group-hover:flex'>
                   {editingTagId === tag.id ? (
                     <>
                       {/* Confirm */}
@@ -190,6 +190,7 @@ export const TagSidebar = memo(function TagSidebar({
                             setEditingTagId(String(tag.id));
                             setEditValue(tag.name);
                           }}
+                          className='mt-0.5'
                         >
                           <Image
                             src={'/assets/icons/edit.svg'}

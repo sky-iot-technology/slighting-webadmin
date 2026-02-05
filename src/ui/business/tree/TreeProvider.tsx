@@ -7,6 +7,7 @@ import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { RegionTreeWrapper } from './RegionTreeWrapper';
 import { RegionNode } from '@/core/domains/groups';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { ChevronDown } from 'lucide-react';
 
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
@@ -20,7 +21,8 @@ type TreeProviderProps = {
   disabledClassName?: string;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
-};
+  closeOnClickOutside?: boolean;
+} & React.ComponentProps<'button'>;
 
 export function TreeProvider({
   selectedRegion,
@@ -34,7 +36,9 @@ export function TreeProvider({
   disabledClassName,
   open: openProp,
   onOpenChange,
-  showSelectAll
+  showSelectAll,
+  closeOnClickOutside = true,
+  ...props
 }: TreeProviderProps & { showSelectAll?: boolean }) {
   const { t } = useTranslation();
 
@@ -51,7 +55,7 @@ export function TreeProvider({
   const { treeData } = useRegionTreeStore();
 
   useEffect(() => {
-    if (!open) return;
+    if (!open || !closeOnClickOutside) return;
 
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -62,12 +66,12 @@ export function TreeProvider({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside, true);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside, true);
     };
-  }, [open]);
+  }, [open, closeOnClickOutside]);
 
   return (
     <div
@@ -84,9 +88,11 @@ export function TreeProvider({
         onClick={() => setOpen(!open)}
         className={cn(
           buttonClassName,
-          'border-input bg-background dark:bg-input/30 flex h-full w-full items-center justify-between rounded-md border px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
+          'border-input dark:bg-input/30 flex h-full w-full items-center justify-between rounded-md border bg-transparent px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
           disabled ? (disabledClassName ?? 'bg-muted opacity-60') : undefined
         )}
+        {...props}
       >
         <span
           className={
@@ -96,7 +102,7 @@ export function TreeProvider({
           {selectedRegion?.name || t('branch.all')}
         </span>
 
-        <Image
+        {/* <Image
           src={
             open
               ? '/assets/icons/chevronRight.svg'
@@ -105,13 +111,16 @@ export function TreeProvider({
           alt='toggle'
           width={12}
           height={12}
-          className='h-3 w-3 opacity-50 dark:brightness-0 dark:invert'
+          className='h-3 w-3 dark:brightness-0 dark:invert'
+        /> */}
+        <ChevronDown
+          className={cn('text-muted-foreground h-4', open && '-rotate-90')}
         />
       </button>
       <div
         className={cn(
           treeClassName,
-          'bg-popover absolute z-10 mt-0.5 w-[160px] overflow-x-hidden overflow-y-auto rounded-md border sm:w-[180px] md:w-[217px]',
+          'bg-popover absolute z-10 mt-1 w-[160px] overflow-x-hidden overflow-y-auto !rounded-md border sm:w-[180px] md:w-[217px]',
           open ? 'block opacity-100' : 'hidden opacity-0'
         )}
       >
@@ -119,7 +128,7 @@ export function TreeProvider({
           data={treeData}
           onSelect={(item) => {
             onRegionChange(item);
-            // setOpen(false);
+            setOpen(false);
           }}
           selectedId={selectedRegion?.id}
           filter={filter}

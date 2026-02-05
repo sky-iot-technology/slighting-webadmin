@@ -66,7 +66,6 @@ export default function TagPage() {
 
   const handleTagChange = useCallback(
     (tag: SelectedTag) => {
-      console.log('1');
       const params = new URLSearchParams(searchParams.toString());
 
       const isSame = tag && selectedTag && tag.id === selectedTag.id;
@@ -139,7 +138,7 @@ export default function TagPage() {
                   <span className='text-[20px] font-bold'>
                     {t('tag.group_list')}:
                     {selectedTag && (
-                      <span className='text-primary ml-1'>
+                      <span className='text-primary-text ml-2'>
                         {selectedTag.name}
                       </span>
                     )}
@@ -152,9 +151,9 @@ export default function TagPage() {
                       table={deviceTable}
                       className='w-auto'
                       excel={false}
-                      onDeleteAll={
-                        canDelete ? () => console.log('asdasd') : undefined
-                      }
+                      // onDeleteAll={
+                      //   canDelete ? () => console.log('asdasd') : undefined
+                      // }
                     />
                   </div>
                 )}

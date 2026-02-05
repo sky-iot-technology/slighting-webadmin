@@ -44,9 +44,9 @@ export function SignInForm() {
           control={form.control}
           name='username'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className='mt-3.5 mb-3.5'>
               <FormLabel className='text-sm font-medium'>
-                Tên đăng nhập
+                {t('auth.label.username' as any)}
               </FormLabel>
               <FormControl>
                 <Input
@@ -65,31 +65,31 @@ export function SignInForm() {
           control={form.control}
           name='password'
           render={({ field }) => (
-            <FormItem>
+            <FormItem className='mt-3.5 mb-3.5'>
               <FormLabel className='text-sm font-medium'>
                 {t('auth.label.password' as any)}
               </FormLabel>
-              <FormControl>
-                <div className='relative'>
+              <div className='relative'>
+                <FormControl>
                   <Input
                     {...field}
                     type={showPassword ? 'text' : 'password'}
                     placeholder={t('auth.placeholder.password' as any)}
                     className='h-10 rounded-md'
                   />
-                  <button
-                    type='button'
-                    onClick={() => setShowPassword(!showPassword)}
-                    className='absolute inset-y-0 right-0 flex items-center pr-3'
-                  >
-                    {showPassword ? (
-                      <EyeOff className='h-5 w-5 text-gray-400' />
-                    ) : (
-                      <Eye className='h-5 w-5 text-gray-400' />
-                    )}
-                  </button>
-                </div>
-              </FormControl>
+                </FormControl>
+                <button
+                  type='button'
+                  onClick={() => setShowPassword(!showPassword)}
+                  className='absolute inset-y-0 right-0 flex items-center pr-3'
+                >
+                  {showPassword ? (
+                    <EyeOff className='h-5 w-5 text-gray-400' />
+                  ) : (
+                    <Eye className='h-5 w-5 text-gray-400' />
+                  )}
+                </button>
+              </div>
               <FormMessage />
             </FormItem>
           )}
@@ -99,7 +99,7 @@ export function SignInForm() {
           control={form.control}
           name='rememberMe'
           render={({ field }) => (
-            <FormItem className='flex flex-row items-start space-y-0 space-x-0'>
+            <FormItem className='mt-3.5 mb-3.5 flex flex-row items-start space-y-0 space-x-0'>
               <FormControl>
                 <Checkbox
                   checked={field.value}

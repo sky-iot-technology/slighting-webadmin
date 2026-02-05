@@ -81,7 +81,7 @@ export function UserTable<TData, TValue>({
             </Button>
           </PermissionGuard>
         }
-        filter={true}
+        filter={false}
         excel={false}
         // onDeleteAll={handleDelete}
       />

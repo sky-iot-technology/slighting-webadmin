@@ -78,7 +78,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
             />
           </div>
           <div className='mr-auto flex flex-col items-start'>
-            <p className='text-primary text-base leading-[30px] font-extrabold'>
+            <p className='text-primary-text text-base leading-[30px] font-extrabold'>
               {data.name}
             </p>
             <p className='text-muted-foreground text-xs leading-5'>
@@ -99,46 +99,48 @@ function CabinetInfoPanel(props: InfoModalProps) {
         <TabsList className='bg-background dark:bg-card h-[50px] w-full rounded-none px-0 py-0'>
           <TabsTrigger
             value='info'
-            className='group data-[state=active]:text-primary dark:data-[state=active]:!text-primary data-[state=active]:bg-background dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none dark:text-white'
+            className='peer group data-[state=active]:text-primary-text dark:data-[state=active]:!text-primary-text data-[state=active]:bg-background dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none'
           >
             <div className='flex flex-col items-center justify-center gap-[3px]'>
-              <Image
-                src='/assets/icons/info.svg'
-                alt='info'
-                width={11}
-                height={13}
-                className='group-data-[state=active]:hidden dark:brightness-0 dark:invert'
+              <div
+                className='bg-foreground dark:bg-gray-7 group-data-[state=active]:bg-primary-text dark:group-data-[state=active]:bg-primary-text h-[13px] w-[11px]'
+                style={{
+                  maskImage: "url('/assets/icons/info-active.svg')",
+                  maskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskImage: "url('/assets/icons/info-active.svg')",
+                  WebkitMaskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center'
+                }}
               />
-              <Image
-                src='/assets/icons/info-active.svg'
-                alt='info'
-                width={11}
-                height={13}
-                className='hidden group-data-[state=active]:block'
-              />
-              <p>{t('map.info')}</p>
+              <p className='dark:data-[state=inactive]:text-gray-7'>
+                {t('map.info')}
+              </p>
             </div>
           </TabsTrigger>
           <TabsTrigger
             value='operation'
-            className='group data-[state=active]:text-primary data-[state=active]:bg-background dark:data-[state=active]:!text-primary dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none dark:text-white'
+            className='group data-[state=active]:text-primary-text dark:data-[state=active]:!text-primary-text data-[state=active]:bg-background dark:data-[state=active]:bg-card rounded-none border-none data-[state=active]:shadow-none'
           >
             <div className='flex flex-col items-center justify-center gap-[3px]'>
-              <Image
-                src='/assets/icons/operation.svg'
-                alt='info'
-                width={13}
-                height={13.5}
-                className='group-data-[state=active]:hidden dark:brightness-0 dark:invert'
+              <div
+                className='bg-foreground dark:bg-gray-7 group-data-[state=active]:bg-primary-text dark:group-data-[state=active]:bg-primary-text h-[13.5px] w-[13px]'
+                style={{
+                  maskImage: "url('/assets/icons/operation-active.svg')",
+                  maskSize: 'contain',
+                  maskRepeat: 'no-repeat',
+                  maskPosition: 'center',
+                  WebkitMaskImage: "url('/assets/icons/operation-active.svg')",
+                  WebkitMaskSize: 'contain',
+                  WebkitMaskRepeat: 'no-repeat',
+                  WebkitMaskPosition: 'center'
+                }}
               />
-              <Image
-                src='/assets/icons/operation-active.svg'
-                alt='info'
-                width={13}
-                height={13.5}
-                className='hidden group-data-[state=active]:block'
-              />
-              <p>{t('map.maintenance')}</p>
+              <p className='dark:data-[state=inactive]:text-gray-7'>
+                {t('map.maintenance')}
+              </p>
             </div>
           </TabsTrigger>
         </TabsList>
@@ -272,7 +274,7 @@ function CabinetInfoPanel(props: InfoModalProps) {
           value='info'
           className='flex h-full flex-col gap-1.5 overflow-y-auto pt-1.5 pr-[7px] pl-[9px] [&_[data-slot=card]]:border-none [&_[data-slot=card]]:shadow-none'
         >
-          <Card className='bg-map-background dark:bg-aw @container/card gap-0 rounded-lg p-0'>
+          <Card className='bg-map-background dark:bg-card-primary @container/card gap-0 rounded-lg p-0'>
             <CardHeader className='gap-0 pr-[5px] pb-[4px] pl-[15px]'>
               <CardTitle className='mt-1 pt-1 text-xs font-bold'>
                 {t('map.device_info')}

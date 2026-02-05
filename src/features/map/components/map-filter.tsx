@@ -35,7 +35,7 @@ export default function MapFilter({
           <TreeProvider
             onRegionChange={onRegionChange}
             selectedRegion={selectedRegion}
-            buttonClassName={'dark:!bg-background'}
+            buttonClassName={'dark:!bg-background !bg-background'}
             insideClassName='dark:bg-action'
           />
 

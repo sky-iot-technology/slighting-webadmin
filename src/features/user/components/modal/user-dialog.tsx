@@ -25,7 +25,7 @@ export default function UserDialog({
   isView
 }: UserDialogProps) {
   const { data, isLoading } = useGetUserById(userId ?? '', {
-    enabled: !!userId
+    enabled: !!userId && open
   });
 
   return (
@@ -33,7 +33,7 @@ export default function UserDialog({
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
       <DialogContent
-        className='!w-[90vw] !max-w-[1001px] rounded-xl p-0'
+        className='!w-[90vw] !max-w-[1001px] overflow-hidden rounded-xl p-0'
         hideCloseButton
       >
         {!isLoading && (

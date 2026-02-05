@@ -81,8 +81,8 @@ export function DeviceHoverCard({
                 <div className='flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 bg-gray-100 dark:border-gray-600 dark:bg-white'>
                   <span className='material-icons-round font-icon text-gray-600 dark:text-gray-300'>
                     <Image
-                      alt='electric'
-                      src='/assets/icons/electric.svg'
+                      src={`${data.type === 'lms.devices.types.STL_SMART' ? '/assets/icons/device-light.svg' : '/assets/icons/device.svg'}`}
+                      alt='search'
                       width={24}
                       height={24}
                     />
@@ -184,11 +184,11 @@ export function DeviceHoverCard({
                           )}
                           <div className='flex items-center gap-2'>
                             {device.last_state?.on ? (
-                              <span className='rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-bold text-green-600 dark:bg-green-900/30 dark:text-green-400'>
+                              <span className='h-5 rounded bg-green-100 px-1.5 py-1 text-[10px] font-bold text-green-600 dark:bg-green-900/30 dark:text-green-400'>
                                 {t('map.on')}
                               </span>
                             ) : (
-                              <span className='rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-500 dark:bg-red-900/30 dark:text-red-400'>
+                              <span className='h-5 rounded bg-red-100 px-1.5 py-1 text-[10px] font-bold text-red-500 dark:bg-red-900/30 dark:text-red-400'>
                                 {t('map.off')}
                               </span>
                             )}

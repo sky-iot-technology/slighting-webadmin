@@ -1,5 +1,3 @@
-'use client';
-import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -41,6 +39,7 @@ import { findNodeName, mapCalendarToFormData } from '../helper';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { z } from 'zod';
 
 type CalendarFormProps = {
   initialData: Calendar;
@@ -129,9 +128,9 @@ export default function CalendarForm({
 
   return (
     <CustomScrollbar className='bg-card h-full flex-1 overflow-y-auto p-5.5 sm:p-6'>
-      <Card className='bg-card mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
-        <CardHeader className='px-0'>
-          <CardTitle className='text-primary text-left text-[16px] font-bold'>
+      <Card className='bg-card mx-auto w-full gap-0 border-0 py-0 shadow-none'>
+        <CardHeader className='gap-0 px-0'>
+          <CardTitle className='text-primary-text text-left text-[16px] font-bold'>
             {pageTitle}
           </CardTitle>
         </CardHeader>
@@ -187,25 +186,23 @@ export default function CalendarForm({
                     <FormLabel className='text-xs font-bold'>
                       {t('calendar.device_type')}
                     </FormLabel>
-                    <FormControl>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
                         <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
                           <SelectValue
                             placeholder={t('calendar.select_device_type')}
                           />
                         </SelectTrigger>
-                        <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                          {catalogues.map((c, index) => (
-                            <SelectItem key={index} value={c.type}>
-                              {c.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormControl>
+                      </FormControl>
+                      <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                        {catalogues.map((c, index) => (
+                          <SelectItem key={index} value={c.type}>
+                            {c.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+
                     <FormMessage />
                   </FormItem>
                 )}
@@ -374,26 +371,24 @@ export default function CalendarForm({
                   render={({ field }) => {
                     return (
                       <FormItem className='flex flex-col'>
-                        <div className='flex justify-between'>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('calendar.apply_date')}:
-                          </FormLabel>
-                          <FormControl>
-                            <CalendarRangePicker
-                              mode={showRange ? 'range' : 'single'}
-                              value={
-                                field.value
-                                  ? {
-                                      from: field.value?.from,
-                                      to: field.value?.to
-                                    }
-                                  : undefined
-                              }
-                              onChange={(v) => field.onChange(v)}
-                              disablePastDate={true}
-                            />
-                          </FormControl>
-                        </div>
+                        <FormLabel className='text-xs font-bold'>
+                          {t('calendar.apply_date')}:
+                        </FormLabel>
+                        <FormControl>
+                          <CalendarRangePicker
+                            mode={showRange ? 'range' : 'single'}
+                            value={
+                              field.value
+                                ? {
+                                    from: field.value?.from,
+                                    to: field.value?.to
+                                  }
+                                : undefined
+                            }
+                            onChange={(v) => field.onChange(v)}
+                            disablePastDate={true}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     );

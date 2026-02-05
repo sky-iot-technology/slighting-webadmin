@@ -31,6 +31,7 @@ interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   isLoading?: boolean;
   error?: Error | null;
   loadingRowCount?: number;
+  fillAvailableSpace?: boolean;
 }
 
 export function DataTable<TData>({
@@ -50,18 +51,32 @@ export function DataTable<TData>({
   getRowClassName,
   isLoading = false,
   error = null,
-  loadingRowCount = 10
+  loadingRowCount = 10,
+  fillAvailableSpace = false
 }: DataTableProps<TData>) {
+  const pageSize = table.getState().pagination.pageSize;
+  const isCompact = pageSize <= 10;
+  const totalpage = table.getPageCount();
+
   return (
     <div className={cn('flex flex-1 flex-col', className)}>
       {children}
       {/* Wrapper for table + pagination */}
       <div className={cn('flex flex-1 flex-col rounded-lg', wrapperClassName)}>
-        <div className='relative flex flex-1'>
+        <div
+          className={cn(
+            (isCompact || (!isCompact && totalpage <= 1)) && !fillAvailableSpace
+              ? 'relative flex min-h-0 flex-initial flex-col'
+              : 'relative flex flex-1'
+          )}
+        >
           {/* Table container */}
           <div
             className={cn(
-              'absolute inset-0 flex overflow-hidden rounded-lg border',
+              (isCompact || (!isCompact && totalpage <= 1)) &&
+                !fillAvailableSpace
+                ? 'flex w-full overflow-hidden rounded-lg border'
+                : 'absolute inset-0 flex overflow-hidden rounded-lg border',
               tableContainerClassName
             )}
           >
@@ -213,11 +228,15 @@ export function DataTable<TData>({
             </ScrollArea>
           </div>
         </div>
-        {actionBar && <div className='flex flex-col gap-2.5'>{actionBar}</div>}
+        {/* {actionBar && <div className='flex flex-col flex-1 gap-2.5'>{actionBar}</div>} */}
         <div
           className={cn('bg-card flex flex-col gap-2.5', paginationClassName)}
         >
-          <DataTablePagination table={table} totalRows={totalRows} />
+          <DataTablePagination
+            table={table}
+            totalRows={totalRows}
+            actionBar={actionBar}
+          />
         </div>
       </div>
     </div>

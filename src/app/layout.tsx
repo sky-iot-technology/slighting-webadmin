@@ -50,7 +50,7 @@ export default async function RootLayout({
       </head>
       <body
         className={cn(
-          'bg-background overflow-hidden overscroll-none font-primary antialiased',
+          'bg-background font-primary overflow-hidden overscroll-none antialiased',
           activeThemeValue ? `theme-${activeThemeValue}` : '',
           isScaled ? 'theme-scaled' : '',
           fontVariables
@@ -66,7 +66,7 @@ export default async function RootLayout({
             enableColorScheme
           >
             <Providers activeThemeValue={activeThemeValue as string}>
-              <Toaster />
+              <Toaster position='top-right' />
               {children}
             </Providers>
           </ThemeProvider>

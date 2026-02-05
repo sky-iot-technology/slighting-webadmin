@@ -20,7 +20,7 @@ export const BranchSidebar = memo(function BranchSidebar({
   const { t } = useTranslation();
   const [openNew, setOpenNew] = useState(false);
   return (
-    <div className={`flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
+    <div className={`mt-1.5 flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
       <PermissionGuard module='branch' action='create' fallback={null}>
         <div
           className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
@@ -29,7 +29,7 @@ export const BranchSidebar = memo(function BranchSidebar({
             className='h-7.5 w-[121px] gap-1 text-xs'
             onClick={() => setOpenNew(!openNew)}
           >
-            <IconPlus className='h-3 w-3' />
+            <IconPlus className='!h-4 !w-4' />
             {t('branch.add_branch')}
           </Button>
         </div>

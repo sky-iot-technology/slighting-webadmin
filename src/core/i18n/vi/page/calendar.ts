@@ -99,7 +99,9 @@ export const calendar = {
     end_date_after_start: 'Ngày kết thúc phải sau ngày bắt đầu',
     weekly_required: 'Vui lòng chọn ít nhất 1 ngày trong tuần',
     monthly_required: 'Vui lòng chọn ít nhất 1 ngày trong tháng',
-    ids_min: 'Phải chọn ít nhất 1 thiết bị'
+    ids_min: 'Phải chọn ít nhất 1 thiết bị',
+    action_required: 'Hành động không được để trống',
+    time_and_action_required: 'Thời gian và hành động không được để trống'
   },
   modal: {
     delete: {

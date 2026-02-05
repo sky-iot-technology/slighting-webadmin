@@ -94,7 +94,7 @@ export default function BranchPage() {
       <BranchTable
         key={language}
         data={devices}
-        totalItems={Number(data?.total ?? 0)}
+        totalItems={Number(data?.total)}
         columns={
           branchColumns(catalogues, treeData, t) as ColumnDef<Device, any>[]
         }

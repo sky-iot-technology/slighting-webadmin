@@ -10,13 +10,17 @@ import {
   usePermissionStore
 } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useRoleFiltersFromParams } from '../hook/role-filter';
 
 export default function RolePage() {
   const { t } = useTranslation();
 
+  const filter = useRoleFiltersFromParams();
+
   const canSync = useCan('device', 'sync');
   const { data, isLoading, error } = useGetRoles({
-    status: 'enabled'
+    status: 'enabled',
+    ...filter
   });
 
   const breadcrumbContent = useMemo(

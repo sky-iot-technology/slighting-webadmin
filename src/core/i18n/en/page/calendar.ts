@@ -99,7 +99,9 @@ export const calendar = {
     end_date_after_start: 'End date must be after start date',
     weekly_required: 'Please select at least 1 day of week',
     monthly_required: 'Please select at least 1 day of month',
-    ids_min: 'Please select at least 1 device'
+    ids_min: 'Please select at least 1 device',
+    action_required: 'Action is required',
+    time_and_action_required: 'Time and Action is required'
   },
   modal: {
     delete: {

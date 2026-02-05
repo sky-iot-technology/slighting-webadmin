@@ -80,7 +80,11 @@ export function BrightnessGraph() {
 
     const { brightness, status } = payload[0].payload;
     const statusText =
-      status === 'on' ? 'Bật' : status === 'off' ? 'Tắt' : undefined;
+      status === 'on'
+        ? t('map.chart_onl')
+        : status === 'off'
+          ? t('map.chart_off')
+          : undefined;
     const statusColor =
       status === 'on' ? 'text-map-control-button-success' : 'text-red-500';
 

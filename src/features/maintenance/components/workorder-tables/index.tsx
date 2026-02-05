@@ -15,6 +15,7 @@ interface WorkorderTableParams<TData, TValue> {
   onTableReady?: (table: Table<TData>) => void;
   isLoading?: boolean;
   error?: Error | null;
+  fillAvailableSpace?: boolean;
 }
 export function WorkorderTable<TData, TValue>({
   data,
@@ -22,7 +23,8 @@ export function WorkorderTable<TData, TValue>({
   columns,
   onTableReady,
   isLoading = false,
-  error = null
+  error = null,
+  fillAvailableSpace = false
 }: WorkorderTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
@@ -64,6 +66,7 @@ export function WorkorderTable<TData, TValue>({
       isLoading={isLoading}
       error={error}
       loadingRowCount={pageSize}
+      fillAvailableSpace={fillAvailableSpace}
     ></DataTable>
   );
 }

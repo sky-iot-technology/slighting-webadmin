@@ -30,7 +30,7 @@ type FileUploadProps = {
   onRemoveExisting?: (file: ExistingFile) => void;
   maxFiles?: number;
   disabled?: boolean;
-};
+} & Omit<React.ComponentProps<'label'>, 'onChange'>;
 
 export function FileUpload({
   value,
@@ -42,7 +42,8 @@ export function FileUpload({
   existingFiles,
   onRemoveExisting,
   maxFiles,
-  disabled = false
+  disabled = false,
+  ...props
 }: FileUploadProps) {
   const { t } = useTranslation();
   const [files, setFiles] = useState<File[]>([]);
@@ -194,7 +195,7 @@ export function FileUpload({
     //   </div>
     // </div>
 
-    <div className={`flex flex-col gap-1 ${className}`}>
+    <div className={cn(`flex flex-col gap-1 ${className}`)}>
       <input
         id='file-upload'
         type='file'
@@ -210,8 +211,10 @@ export function FileUpload({
         htmlFor={isUploadDisabled ? undefined : 'file-upload'}
         className={cn(
           'dark:bg-input/30 dark:aria-invalid:ring-destructive/40 flex min-h-[59px] w-full items-center justify-center rounded-[4px] border border-dashed px-1.5 py-1.5 transition-colors',
-          isUploadDisabled ? 'hidden' : 'hover:bg-accent cursor-pointer'
+          isUploadDisabled ? 'hidden' : 'hover:bg-accent cursor-pointer',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
         )}
+        {...props}
       >
         {files.length === 0 && (existingFiles?.length ?? 0) === 0 && (
           <div className='flex flex-col items-center gap-1'>

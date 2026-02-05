@@ -18,11 +18,20 @@ import { cn } from '@/lib/utils';
 import { Label } from '@/ui/components/ui/label';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { LanguageKey } from '@/core/i18n/locales';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from './tooltip';
+import { CircleAlert } from 'lucide-react';
+import { IconAlertCircleFilled } from '@tabler/icons-react';
+import Image from 'next/image';
 
 const Form = FormProvider;
 
 // Create a context to store the schema
-const FormSchemaContext = React.createContext<z.ZodObject<any> | null>(null);
+const FormSchemaContext = React.createContext<z.ZodTypeAny | null>(null);
 
 // Custom hook to access the schema
 function useSchema() {
@@ -34,7 +43,7 @@ function FormSchemaProvider({
   schema,
   children
 }: {
-  schema: z.ZodObject<any>;
+  schema: z.ZodTypeAny;
   children: React.ReactNode;
 }) {
   return (
@@ -106,7 +115,7 @@ function FormItem({ className, ...props }: React.ComponentProps<'div'>) {
     <FormItemContext.Provider value={{ id }}>
       <div
         data-slot='form-item'
-        className={cn('grid gap-2', className)}
+        className={cn('mt-2.5 mb-2.5 grid gap-2', className)}
         {...props}
       />
     </FormItemContext.Provider>
@@ -120,6 +129,7 @@ function FormLabel({
   const { error, formItemId } = useFormField();
   const fieldContext = React.useContext(FormFieldContext);
   const schema = useSchema();
+  const { t } = useTranslation();
 
   // Check if the field is required based on the schema
   const isRequired =
@@ -131,12 +141,42 @@ function FormLabel({
     <Label
       data-slot='form-label'
       data-error={!!error}
-      className={cn('data-[error=true]:text-destructive', className)}
+      className={cn(
+        'data-[error=true]:text-destructive flex items-center justify-between',
+        className
+      )}
       htmlFor={formItemId}
       {...props}
     >
-      {props.children}
-      {isRequired && <span className='text-destructive'>*</span>}
+      <span className='flex'>
+        {props.children}
+        {isRequired && <span className='text-destructive ml-1'>*</span>}
+      </span>
+      {error && (
+        <TooltipProvider>
+          <Tooltip delayDuration={0}>
+            <TooltipTrigger asChild>
+              <Image
+                alt='Error icon'
+                src='/assets/icons/alert-circle.svg'
+                width={16}
+                height={16}
+              />
+            </TooltipTrigger>
+            <TooltipContent
+              side='left'
+              sideOffset={4}
+              className='border-red-1 bg-red-1 !rounded-xs text-white'
+            >
+              <div className='flex flex-col gap-1'>
+                {getErrorMessages(error).map((msg, index) => (
+                  <p key={index}>{t(msg as LanguageKey) ?? msg}</p>
+                ))}
+              </div>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
     </Label>
   );
 }
@@ -173,56 +213,100 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
   );
 }
 
-function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
-  const { t } = useTranslation();
-  const { error, formMessageId } = useFormField();
-  const body = error ? (t(error.message as LanguageKey) ?? '') : props.children;
-  if (!body) {
-    return <div className='h-4'></div>;
+// Helper to recursively get all error messages
+function getErrorMessages(error: any): string[] {
+  if (!error) return [];
+  if (typeof error === 'string') return [error];
+  if (error.message) return [error.message];
+
+  if (Array.isArray(error)) {
+    return error.flatMap(getErrorMessages);
   }
 
-  return (
-    <p
-      data-slot='form-message'
-      id={formMessageId}
-      className={cn('text-destructive text-xs', className)}
-      {...props}
-    >
-      {body}
-    </p>
-  );
+  if (typeof error === 'object') {
+    return Object.values(error).flatMap(getErrorMessages);
+  }
+
+  return [];
+}
+
+function FormMessage({
+  className,
+  force,
+  ...props
+}: React.ComponentProps<'p'> & { force?: boolean }) {
+  const { error, formMessageId } = useFormField();
+  const { t } = useTranslation();
+
+  if (!force || !error) {
+    return null;
+  }
+
+  const messages = getErrorMessages(error);
+
+  return null;
 }
 
 // Helper function to check if a field is required in the Zod schema
-function isFieldRequired(schema: z.ZodObject<any>, fieldName: string): boolean {
+function isFieldRequired(schema: z.ZodTypeAny, fieldName: string): boolean {
+  if (!schema || !fieldName) return false;
+
   try {
-    // Get the shape of the schema
-    const shape =
-      typeof schema._def.shape === 'function'
-        ? schema._def.shape()
-        : schema._def.shape;
+    let currentSchema: any = schema;
+    const parts = fieldName.split('.');
 
-    if (!shape) return false;
+    for (const part of parts) {
+      if (!currentSchema) return false;
 
-    // Check if the field exists in the schema
-    if (!(fieldName in shape)) {
-      return false;
+      // Handle ZodEffects/Optional/Nullable wrappers to retrieve inner object
+      while (
+        currentSchema._def?.typeName === 'ZodEffects' ||
+        currentSchema._def?.typeName === 'ZodOptional' ||
+        currentSchema._def?.typeName === 'ZodNullable' ||
+        currentSchema._def?.typeName === 'ZodDefault'
+      ) {
+        if (currentSchema._def.schema) {
+          currentSchema = currentSchema._def.schema;
+        } else if (currentSchema._def.innerType) {
+          currentSchema = currentSchema._def.innerType;
+        } else {
+          break;
+        }
+      }
+
+      // If it's an object, access the shape
+      if (currentSchema._def?.typeName === 'ZodObject') {
+        const shape = currentSchema.shape || currentSchema._def.shape();
+        currentSchema = shape[part];
+      } else if (
+        currentSchema._def?.typeName === 'ZodArray' &&
+        !isNaN(Number(part))
+      ) {
+        // Handle array access if needed (though usually fieldName for arrays is "items.0")
+        // ZodArray schema applies to all items
+        currentSchema = currentSchema.element;
+      } else {
+        // Can't traverse further
+        return false;
+      }
     }
 
-    // Get the field's schema
-    const fieldSchema = shape[fieldName];
-    if (!fieldSchema) return false;
+    if (!currentSchema) return false;
 
-    // Check if the field is optional
-    return !isOptionalField(fieldSchema);
+    // Check if the final field schema is optional
+    const optional = isOptionalField(currentSchema);
+
+    return !optional;
   } catch (error) {
-    // Silently fail - field will be treated as not required
+    console.error('isFieldRequired error', error);
     return false;
   }
 }
 
 // Helper function to determine if a field is optional
 function isOptionalField(fieldSchema: any): boolean {
+  if (!fieldSchema) return false;
+
   // If the field is wrapped with .optional()
   if (fieldSchema._def?.typeName === 'ZodOptional') {
     return true;

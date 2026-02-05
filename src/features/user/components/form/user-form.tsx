@@ -14,7 +14,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
+  FormSchemaProvider
 } from '@/ui/components/ui/form';
 import { Button } from '@/ui/components/ui/button';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
@@ -136,137 +137,137 @@ export default function UserForm({
     <CustomScrollbar className='bg-card max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'>
       <Card className='bg-card mx-auto w-full gap-1.5 border-0 py-0 shadow-none'>
         <CardHeader className='px-0'>
-          <CardTitle className='text-primary text-left text-[20px] font-bold'>
+          <CardTitle className='text-primary-text text-left text-[20px] font-bold'>
             {pageTitle}
           </CardTitle>
         </CardHeader>
         <CardContent className='px-0'>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-              <div className='flex gap-9'>
-                <div className='hidden flex-shrink-0 md:block'>
-                  {initialData?.profile_picture ? (
-                    <img
-                      src={initialData.profile_picture}
-                      alt='Avatar'
-                      className='h-38 w-38 rounded-full border object-cover shadow-sm'
-                    />
-                  ) : (
-                    <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
-                      <UserPic width={80} height={80} />
-                    </div>
-                  )}
-                </div>
+          <FormSchemaProvider
+            schema={!!initialData ? updateUserSchema : userFormSchema}
+          >
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className=''>
+                <div className='flex gap-9'>
+                  <div className='hidden flex-shrink-0 md:block'>
+                    {initialData?.profile_picture ? (
+                      <img
+                        src={initialData.profile_picture}
+                        alt='Avatar'
+                        className='h-38 w-38 rounded-full border object-cover shadow-sm'
+                      />
+                    ) : (
+                      <div className='flex h-38 w-38 items-center justify-center rounded-full border bg-gray-200 text-xs text-gray-500'>
+                        <UserPic width={80} height={80} />
+                      </div>
+                    )}
+                  </div>
 
-                <div className='flex-1'>
-                  <h3 className='pb-2 text-[16px] font-bold'>
-                    {t('user.personal_info' as any)}
-                  </h3>
-                  <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
-                    <FormField
-                      control={form.control}
-                      name='firstName'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.first_name' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_first_name' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='lastName'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.last_name' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_last_name' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='phone'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('user.phone' as any)}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_phone' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='email'
-                      disabled={!!initialData}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.email' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_email' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='role'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.role_label' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
+                  <div className='flex-1'>
+                    <h3 className='pb-2 text-[16px] font-bold'>
+                      {t('user.personal_info' as any)}
+                    </h3>
+                    <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
+                      <FormField
+                        control={form.control}
+                        name='firstName'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.first_name' as any)}{' '}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_first_name' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='lastName'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.last_name' as any)}{' '}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_last_name' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='phone'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.phone' as any)}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_phone' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='email'
+                        disabled={!!initialData}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.email' as any)}{' '}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_email' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='role'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.role_label' as any)}{' '}
+                            </FormLabel>
                             <Select
                               onValueChange={field.onChange}
                               value={field.value}
                               disabled={isLoading || isView}
                             >
-                              <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                                <SelectValue
-                                  placeholder={
-                                    isLoading
-                                      ? t('user.loading' as any)
-                                      : t('user.select_role' as any)
-                                  }
-                                />
-                              </SelectTrigger>
+                              <FormControl>
+                                <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                                  <SelectValue
+                                    placeholder={
+                                      isLoading
+                                        ? t('user.loading' as any)
+                                        : t('user.select_role' as any)
+                                    }
+                                  />
+                                </SelectTrigger>
+                              </FormControl>
                               <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                                 {roleOptions.length > 0
                                   ? roleOptions.map((role) => (
@@ -286,60 +287,59 @@ export default function UserForm({
                                 </SelectItem> */}
                               </SelectContent>
                             </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='group'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.branch_label' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <TreeProvider
-                              disabled={isView}
-                              onRegionChange={(region) => {
-                                field.onChange(region?.id ?? '');
-                                setSelectedParent(
-                                  region
-                                    ? { id: region.id, name: region.name }
-                                    : null
-                                );
-                              }}
-                              selectedRegion={
-                                selectedParent
-                                  ? {
-                                      id: selectedParent.id,
-                                      name: selectedParent.name
-                                    }
-                                  : undefined
-                              }
-                              className='dark:bg-input/30 !h-[31px] !w-full !text-xs'
-                              buttonClassName='!rounded-[4px] dark:disabled:bg-gray-5 dark:hover:bg-input/50'
-                              insideClassName='dark:bg-action'
-                              treeClassName='!w-full !rounded-[4px]'
-                              showSelectAll={true}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='unit'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('user.unit_label' as any)}
-                          </FormLabel>
-                          <FormControl>
-                            {/* <MultiSelect
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='group'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.branch_label' as any)}{' '}
+                            </FormLabel>
+                            <FormControl>
+                              <TreeProvider
+                                disabled={isView}
+                                onRegionChange={(region) => {
+                                  field.onChange(region?.id ?? '');
+                                  setSelectedParent(
+                                    region
+                                      ? { id: region.id, name: region.name }
+                                      : null
+                                  );
+                                }}
+                                selectedRegion={
+                                  selectedParent
+                                    ? {
+                                        id: selectedParent.id,
+                                        name: selectedParent.name
+                                      }
+                                    : undefined
+                                }
+                                className='dark:bg-input/30 !h-[31px] !w-full !text-xs'
+                                buttonClassName='!rounded-[4px] dark:disabled:bg-gray-5 dark:hover:bg-input/50'
+                                insideClassName='dark:bg-action'
+                                treeClassName='!w-full !rounded-[4px]'
+                                showSelectAll={true}
+                                closeOnClickOutside={true}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='unit'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.unit_label' as any)}
+                            </FormLabel>
+                            <FormControl>
+                              {/* <MultiSelect
                               options={
                                 [{ value: 'team:support', label: 'Team Support' },
                                 { value: 'team:technical', label: 'Team Technical' }
@@ -356,169 +356,167 @@ export default function UserForm({
                               hideSelectAll
                               disabled={isView}
                             /> */}
-                            <MultiSelect
-                              options={[
-                                {
-                                  value: 'team:support',
-                                  label: 'Team Support'
-                                },
-                                {
-                                  value: 'team:technical',
-                                  label: 'Team Technical'
-                                }
-                              ]}
-                              defaultValue={field.value ?? []}
-                              onValueChange={field.onChange}
-                              placeholder={t('user.select_unit' as any)}
-                              resetOnDefaultValueChange
-                              className='dark:bg-input/30 dark:disabled:bg-gray-5 flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 flex-wrap gap-1 !rounded-[4px]'
-                              popoverClassName='
+                              <MultiSelect
+                                options={[
+                                  {
+                                    value: 'team:support',
+                                    label: 'Team Support'
+                                  },
+                                  {
+                                    value: 'team:technical',
+                                    label: 'Team Technical'
+                                  }
+                                ]}
+                                defaultValue={field.value ?? []}
+                                onValueChange={field.onChange}
+                                placeholder={t('user.select_unit' as any)}
+                                resetOnDefaultValueChange
+                                className='dark:bg-input/30 dark:disabled:bg-gray-5 flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 flex-wrap gap-1 !rounded-[4px]'
+                                popoverClassName='
                                 w-[var(--radix-popover-trigger-width)]
                                 max-w-[95vw]
                                 sm:max-w-none
                               '
-                              autoSize
-                              textSize='!text-xs'
-                              hideSelectAll
-                              disabled={isView}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='department'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('user.department_label' as any)}
-                          </FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value}
-                              disabled={isView}
-                            >
-                              <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                                <SelectValue
-                                  placeholder={t(
-                                    'user.select_department' as any
-                                  )}
-                                />
-                              </SelectTrigger>
-                              <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
-                                <SelectItem value='test'>test</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='address'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('user.address' as any)}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_address' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name='note'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='text-xs font-bold'>
-                            {t('user.note' as any)}
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_note' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <h3 className='pb-2 text-[16px] font-bold'>
-                    {t('user.account_info' as any)}
-                  </h3>
-                  <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
-                    <FormField
-                      control={form.control}
-                      disabled={!!initialData}
-                      name='username'
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className='!gap-0.5 text-xs font-bold'>
-                            {t('user.username' as any)}{' '}
-                            <span className='text-red-500'>*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                              placeholder={t('user.enter_username' as any)}
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    {!initialData ? (
-                      <>
-                        <FormField
-                          control={form.control}
-                          name='password'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className='justify-between text-xs font-bold'>
-                                <span>
-                                  {t('user.password' as any)}
-                                  <span className='ml-0.5 text-red-500'>*</span>
-                                </span>
-                                {initialData && (
-                                  <>
-                                    <Image
-                                      src={'/assets/icons/edit.svg'}
-                                      alt='edit'
-                                      width={12}
-                                      height={12}
-                                      className='cursor-pointer'
-                                      onClick={() => setOpen(!open)}
-                                    />
-                                  </>
-                                )}
-                              </FormLabel>
-                              <FormControl>
-                                <div className='relative'>
-                                  <Input
-                                    {...field}
-                                    type={showPassword ? 'text' : 'password'}
+                                autoSize
+                                textSize='!text-xs'
+                                hideSelectAll
+                                disabled={isView}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='department'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.department_label' as any)}
+                            </FormLabel>
+                            <FormControl>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value}
+                                disabled={isView}
+                              >
+                                <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
+                                  <SelectValue
                                     placeholder={t(
-                                      'user.enter_password' as any
+                                      'user.select_department' as any
                                     )}
-                                    className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
                                   />
+                                </SelectTrigger>
+                                <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
+                                  <SelectItem value='test'>test</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='address'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.address' as any)}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_address' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name='note'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.note' as any)}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_note' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <h3 className='pt-2.5 pb-2 text-[16px] font-bold'>
+                      {t('user.account_info' as any)}
+                    </h3>
+                    <div className='grid grid-cols-2 gap-x-3 md:grid-cols-3'>
+                      <FormField
+                        control={form.control}
+                        disabled={!!initialData}
+                        name='username'
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className='text-xs font-bold'>
+                              {t('user.username' as any)}{' '}
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                placeholder={t('user.enter_username' as any)}
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      {!initialData ? (
+                        <>
+                          <FormField
+                            control={form.control}
+                            name='password'
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className='justify-between text-xs font-bold'>
+                                  <span>{t('user.password' as any)}</span>
+                                  {initialData && (
+                                    <>
+                                      <Image
+                                        src={'/assets/icons/edit.svg'}
+                                        alt='edit'
+                                        width={12}
+                                        height={12}
+                                        className='cursor-pointer'
+                                        onClick={() => setOpen(!open)}
+                                      />
+                                    </>
+                                  )}
+                                </FormLabel>
+
+                                <div className='relative'>
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      type={showPassword ? 'text' : 'password'}
+                                      placeholder={t(
+                                        'user.enter_password' as any
+                                      )}
+                                      className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                    />
+                                  </FormControl>
                                   <button
                                     type='button'
                                     onClick={() =>
@@ -533,32 +531,34 @@ export default function UserForm({
                                     )}
                                   </button>
                                 </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                        <FormField
-                          control={form.control}
-                          name='confirmPassword'
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className='!gap-0.5 text-xs font-bold'>
-                                {t('user.confirm_password' as any)}{' '}
-                                <span className='text-red-500'>*</span>
-                              </FormLabel>
-                              <FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name='confirmPassword'
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className='text-xs font-bold'>
+                                  {t('user.confirm_password' as any)}{' '}
+                                </FormLabel>
+
                                 <div className='relative'>
-                                  <Input
-                                    {...field}
-                                    type={
-                                      showConfirmPassword ? 'text' : 'password'
-                                    }
-                                    placeholder={t(
-                                      'user.re_enter_password' as any
-                                    )}
-                                    className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
-                                  />
+                                  <FormControl>
+                                    <Input
+                                      {...field}
+                                      type={
+                                        showConfirmPassword
+                                          ? 'text'
+                                          : 'password'
+                                      }
+                                      placeholder={t(
+                                        'user.re_enter_password' as any
+                                      )}
+                                      className='!h-[31px] !w-full !rounded-[4px] !text-xs placeholder:text-xs'
+                                    />
+                                  </FormControl>
                                   <button
                                     type='button'
                                     onClick={() =>
@@ -575,59 +575,59 @@ export default function UserForm({
                                     )}
                                   </button>
                                 </div>
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </>
-                    ) : !isView ? (
-                      <div className='flex items-center'>
-                        <Button
-                          type='button'
-                          className='h-[30px] rounded-[4px] border-1 text-xs'
-                          variant={'ghost'}
-                          onClick={() => setOpen(!open)}
-                        >
-                          {t('user.reset_password' as any)}
-                        </Button>
-                      </div>
-                    ) : (
-                      <></>
-                    )}
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                        </>
+                      ) : !isView ? (
+                        <div className='flex items-center'>
+                          <Button
+                            type='button'
+                            className='mt-6 h-[31px] rounded-[4px] border-1 text-xs'
+                            variant={'ghost'}
+                            onClick={() => setOpen(!open)}
+                          >
+                            {t('user.reset_password' as any)}
+                          </Button>
+                        </div>
+                      ) : (
+                        <></>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className='flex h-[30px] items-center justify-end gap-4'>
-                <Button
-                  onClick={onClose}
-                  variant={'outline'}
-                  type='button'
-                  className='h-full w-16 rounded-[4px] text-xs'
-                >
-                  {isView ? t('user.close' as any) : t('user.cancel' as any)}
-                </Button>
-                {!isView && (
+                <div className='mt-3 flex h-[30px] items-center justify-end gap-4'>
                   <Button
-                    type='submit'
-                    className='h-full w-[91px] rounded-[4px] text-xs'
+                    onClick={onClose}
+                    variant={'outline'}
+                    type='button'
+                    className='h-full w-16 rounded-[4px] text-xs'
                   >
-                    {t('user.save' as any)}
+                    {isView ? t('user.close' as any) : t('user.cancel' as any)}
                   </Button>
-                )}
-              </div>
-            </form>
-          </Form>
-          {initialData && (
-            <>
-              <ChangepassDialog
-                open={open}
-                onOpenChange={setOpen}
-                userId={initialData.id}
-              />
-            </>
-          )}
+                  {!isView && (
+                    <Button
+                      type='submit'
+                      className='h-full w-[91px] rounded-[4px] text-xs'
+                    >
+                      {t('user.save' as any)}
+                    </Button>
+                  )}
+                </div>
+              </form>
+            </Form>
+            {initialData && (
+              <>
+                <ChangepassDialog
+                  open={open}
+                  onOpenChange={setOpen}
+                  userId={initialData.id}
+                />
+              </>
+            )}
+          </FormSchemaProvider>
         </CardContent>
       </Card>
     </CustomScrollbar>

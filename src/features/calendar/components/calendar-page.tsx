@@ -112,7 +112,10 @@ export default function CalendarPage() {
             />
           )}
 
-          <div className='flex flex-1 flex-col' ref={containerRef}>
+          <div
+            className='flex min-w-0 flex-1 flex-col overflow-hidden'
+            ref={containerRef}
+          >
             <CalendarContent
               filters={filters}
               selectedRegion={selectedRegion}

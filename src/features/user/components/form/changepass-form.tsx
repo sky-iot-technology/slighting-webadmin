@@ -19,7 +19,8 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage
+  FormMessage,
+  FormSchemaProvider
 } from '@/ui/components/ui/form';
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
@@ -80,33 +81,35 @@ export default function ChangepassDialog({
       </DialogDescription>
       <DialogContent className='!w-[90vw] !max-w-[417px] rounded-xl p-0'>
         {/* <CustomScrollbar className='max-h-[660px] overflow-y-auto px-5 pt-3 pb-5'> */}
-        <Card className='bg-card mx-auto w-full gap-1.5 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
-          <CardHeader className='px-0'>
-            <CardTitle className='text-primary text-left text-[20px] font-bold'>
+        <Card className='bg-card mx-auto w-full gap-0 border-0 px-5 py-0 pt-3 pb-5 shadow-none'>
+          <CardHeader className='gap-0 px-0'>
+            <CardTitle className='text-primary-text text-left text-[20px] font-bold'>
               {t('user.change_password_title' as any)}
             </CardTitle>
           </CardHeader>
           <CardContent className='px-0'>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-                <FormField
-                  control={form.control}
-                  name='newpassword'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className='text-xs font-bold'>
-                        {t('user.new_password' as any)}
-                        <span className='text-red-500'>*</span>
-                      </FormLabel>
-                      <FormControl>
+            <FormSchemaProvider schema={changepassFormSchema}>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className=''>
+                  <FormField
+                    control={form.control}
+                    name='newpassword'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='text-xs font-bold'>
+                          {t('user.new_password' as any)}
+                        </FormLabel>
+
                         <div className='relative'>
-                          <Input
-                            {...field}
-                            type={showNewPassword ? 'text' : 'password'}
-                            placeholder={t('user.enter_new_password' as any)}
-                            className='!h-[31px] !text-xs'
-                            autoComplete='newpassword'
-                          />
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type={showNewPassword ? 'text' : 'password'}
+                              placeholder={t('user.enter_new_password' as any)}
+                              className='!h-[31px] !text-xs'
+                              autoComplete='newpassword'
+                            />
+                          </FormControl>
                           <button
                             type='button'
                             onClick={() => setShowNewPassword(!showNewPassword)}
@@ -119,30 +122,31 @@ export default function ChangepassDialog({
                             )}
                           </button>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <FormField
-                  control={form.control}
-                  name='confirmPassword'
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className='text-xs font-bold'>
-                        {t('user.confirm_new_password' as any)}{' '}
-                        <span className='text-red-500'>*</span>
-                      </FormLabel>
-                      <FormControl>
+                  <FormField
+                    control={form.control}
+                    name='confirmPassword'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className='text-xs font-bold'>
+                          {t('user.confirm_new_password' as any)}{' '}
+                        </FormLabel>
                         <div className='relative'>
-                          <Input
-                            {...field}
-                            type={showConfirmPassword ? 'text' : 'password'}
-                            placeholder={t('user.re_enter_new_password' as any)}
-                            className='!h-[31px] !text-xs'
-                            autoComplete='confirmPassword'
-                          />
+                          <FormControl>
+                            <Input
+                              {...field}
+                              type={showConfirmPassword ? 'text' : 'password'}
+                              placeholder={t(
+                                'user.re_enter_new_password' as any
+                              )}
+                              className='!h-[31px] !text-xs'
+                              autoComplete='confirmPassword'
+                            />
+                          </FormControl>
                           <button
                             type='button'
                             onClick={() =>
@@ -157,30 +161,30 @@ export default function ChangepassDialog({
                             )}
                           </button>
                         </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className='flex h-[30px] items-center justify-end gap-4'>
-                  <Button
-                    onClick={() => onOpenChange(!open)}
-                    variant={'outline'}
-                    type='button'
-                    className='h-full w-16 rounded-[4px] text-xs'
-                  >
-                    {t('user.cancel' as any)}
-                  </Button>
-                  <Button
-                    type='submit'
-                    className='h-full w-[105px] rounded-[4px] text-xs'
-                  >
-                    {t('user.update' as any)}
-                  </Button>
-                </div>
-              </form>
-            </Form>
+                  <div className='flex h-[30px] items-center justify-end gap-4'>
+                    <Button
+                      onClick={() => onOpenChange(!open)}
+                      variant={'outline'}
+                      type='button'
+                      className='h-full w-16 rounded-[4px] text-xs'
+                    >
+                      {t('user.cancel' as any)}
+                    </Button>
+                    <Button
+                      type='submit'
+                      className='h-full w-[105px] rounded-[4px] text-xs'
+                    >
+                      {t('user.update' as any)}
+                    </Button>
+                  </div>
+                </form>
+              </Form>
+            </FormSchemaProvider>
           </CardContent>
         </Card>
       </DialogContent>

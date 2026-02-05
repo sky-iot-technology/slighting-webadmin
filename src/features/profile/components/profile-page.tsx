@@ -61,7 +61,7 @@ export default function ProfilePage() {
         <CardTitle className='text-primary text-left text-[16px] font-bold'></CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-4 px-0 md:flex-row md:gap-1.5'>
-        <div className='bg-card w-full rounded-[4px] px-[22px] pt-[24px] md:h-[519px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
+        <div className='bg-card h-full w-full rounded-[4px] px-[22px] pt-[24px] md:w-[378px] md:pt-[44px] md:pb-2.5'>
           <div className='mb-6 flex flex-col items-center gap-4 md:flex-row md:gap-8'>
             <div className='group relative cursor-pointer'>
               {user.profile_picture ? (

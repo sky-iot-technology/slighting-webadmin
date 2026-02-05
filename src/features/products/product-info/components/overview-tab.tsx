@@ -745,7 +745,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           {t('products.detail.overview.label.id' as any)}:
                         </span>
                         <span className='ml-2 font-medium'>
-                          {device.device_info?.imei}
+                          {device.device_info?.imei}aaa
                         </span>
                       </div>
                       <div>
@@ -782,6 +782,16 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         ) : (
                           <span className='text-red-600'>Offline</span>
                         )}
+                      </div>
+                      <div>
+                        <Button
+                          className='bg-[#0859AA] hover:bg-[#064488]'
+                          type='button'
+                          onClick={handleSyncDevices}
+                        >
+                          <RefreshCw className='mr-2 h-4 w-4' />
+                          {t('products.detail.activity.sync' as any)}
+                        </Button>
                       </div>
                     </div>
                   </>
@@ -953,7 +963,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                             resetOnDefaultValueChange={true}
                             className='disabled:bg-muted dark:disabled:!bg-gray-5 dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
                             popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
-                            itemClassName='text-sm'
+                            textSize='!text-sm'
                             autoSize={true}
                             // singleLine={true}
                           />
@@ -1046,48 +1056,60 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         </FormItem>
                       )}
                     />
-                    <Sheet>
-                      <SheetTrigger asChild>
-                        <Button
-                          type='button'
-                          className='bg-blue-2 rounded-sm hover:!bg-cyan-600 hover:!brightness-95'
-                        >
-                          {t('products.detail.overview.label.location' as any)}
-                        </Button>
-                      </SheetTrigger>
-                      <SheetContent side='right' className='gap-0'>
-                        <SheetHeader>
-                          <SheetTitle className='mx-auto'>
-                            {t('products.detail.overview.sheet.title' as any)}
-                          </SheetTitle>
-                        </SheetHeader>
-                        <div className='relative h-full w-full overflow-hidden'>
-                          <GoongMapMarker
-                            disabled={!isEditMode}
-                            lat={
-                              isValidLat(form.watch('lat') ?? '')
-                                ? Number(form.watch('lat'))
-                                : undefined
-                            }
-                            long={
-                              isValidLon(form.watch('lon') ?? '')
-                                ? Number(form.watch('lon'))
-                                : undefined
-                            }
-                            onSelectLocation={({ lat, long }) => {
-                              form.setValue(
-                                'lat',
-                                String(Number(lat.toFixed(6)))
-                              );
-                              form.setValue(
-                                'lon',
-                                String(Number(long.toFixed(6)))
-                              );
-                            }}
-                          />
-                        </div>
-                      </SheetContent>
-                    </Sheet>
+                    <FormField
+                      control={form.control}
+                      name='lon'
+                      render={({ field }) => (
+                        <FormItem className=''>
+                          <FormControl>
+                            <Sheet>
+                              <SheetTrigger asChild disabled={!isEditMode}>
+                                <Button
+                                  type='button'
+                                  className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
+                                >
+                                  {t(
+                                    'products.form.button.map_location' as any
+                                  )}
+                                </Button>
+                              </SheetTrigger>
+                              <SheetContent side='right' className='gap-0'>
+                                <SheetHeader>
+                                  <SheetTitle className='mx-auto'>
+                                    {t('products.form.sheet.title' as any)}
+                                  </SheetTitle>
+                                </SheetHeader>
+                                <div className='relative h-full w-full overflow-hidden'>
+                                  <GoongMapMarker
+                                    lat={
+                                      isValidLat(form.watch('lat') ?? '')
+                                        ? Number(form.watch('lat'))
+                                        : undefined
+                                    }
+                                    long={
+                                      isValidLon(form.watch('lon') ?? '')
+                                        ? Number(form.watch('lon'))
+                                        : undefined
+                                    }
+                                    onSelectLocation={({ lat, long }) => {
+                                      form.setValue(
+                                        'lat',
+                                        String(Number(lat.toFixed(6)))
+                                      );
+                                      form.setValue(
+                                        'lon',
+                                        String(Number(long.toFixed(6)))
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              </SheetContent>
+                            </Sheet>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
               </div>
@@ -1151,7 +1173,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           onOpenChange={setOpen}
                           className='!h-9 !w-full !text-sm'
                           buttonClassName={cn(
-                            '!rounded-sm !bg-white dark:!bg-input/30'
+                            '!rounded-sm !bg-white dark:!bg-input/30 !px-2'
                           )}
                           disabledClassName='disabled:opacity-90 disabled:!bg-muted dark:disabled:!bg-gray-5'
                           treeClassName='!w-full !rounded-sm'
@@ -1398,17 +1420,6 @@ export function OverviewTab({ device }: OverviewTabProps) {
                   </AccordionTrigger>
 
                   <AccordionContent>
-                    <div className='mb-2 flex w-full justify-end'>
-                      <Button
-                        className='bg-[#0859AA] hover:bg-[#064488]'
-                        type='button'
-                        onClick={handleSyncDevices}
-                      >
-                        <RefreshCw className='mr-2 h-4 w-4' />
-                        {t('products.detail.activity.sync' as any)}
-                      </Button>
-                    </div>
-
                     <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
                       {Object.entries(sensorInfo.attributes || {}).map(
                         ([key, value]) => {

@@ -21,7 +21,7 @@ type CalendarRangePickerProps = {
   disablePastDate?: boolean;
   className?: string;
   textClassname?: string;
-};
+} & Omit<React.ComponentProps<'div'>, 'onChange'>;
 
 export function CalendarRangePicker({
   mode = 'range',
@@ -30,7 +30,8 @@ export function CalendarRangePicker({
   disabled,
   disablePastDate,
   className,
-  textClassname
+  textClassname,
+  ...props
 }: CalendarRangePickerProps) {
   const { t } = useTranslation();
 
@@ -171,10 +172,12 @@ export function CalendarRangePicker({
       <div
         className={cn(
           className,
-          'border-input bg-background dark:bg-input/30 flex h-[31px] items-center rounded-[6px] border px-2 text-xs',
-          'w-[36px] justify-center lg:w-[200px] lg:justify-between'
+          'border-input dark:bg-input/30 flex h-[31px] items-center rounded-[6px] border bg-transparent px-2 text-xs',
+          'justify-center lg:w-full lg:justify-between',
+          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
         )}
         onClick={() => setOpenFrom(true)}
+        {...props}
       >
         <Popover open={openFrom} onOpenChange={setOpenFrom}>
           <PopoverTrigger asChild>
@@ -220,8 +223,10 @@ export function CalendarRangePicker({
     <div
       className={cn(
         className,
-        'border-input bg-background dark:bg-input/30 flex h-[31px] w-[260px] items-center justify-between rounded-[6px] border px-2 text-xs'
+        'border-input dark:bg-input/30 flex h-[31px] items-center justify-between rounded-[6px] border bg-transparent px-2 text-xs',
+        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
       )}
+      {...props}
     >
       {/* Ngày bắt đầu */}
       <Popover open={openFrom} onOpenChange={setOpenFrom}>
