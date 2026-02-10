@@ -14,10 +14,12 @@ import {
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import Image from 'next/image';
 import { useLanguageStore } from '@/core/domains/language/store';
+import { Separator } from '@radix-ui/react-dropdown-menu';
 
 export function Translated() {
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
+  console.log(language);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -49,15 +51,35 @@ export function Translated() {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         defaultValue={language}
-        className='!bg-action w-56'
+        className='!bg-action'
         align='end'
         forceMount
       >
-        <DropdownMenuGroup>
-          <DropdownMenuItem onClick={() => setLanguage('vi')}>
+        <DropdownMenuGroup className='flex w-full justify-between'>
+          <DropdownMenuItem
+            onClick={() => setLanguage('vi')}
+            className={`${language === 'vi' ? '!bg-primary text-white' : ''}`}
+          >
+            <Image
+              alt='language-flag'
+              src={'/assets/icons/vietnamese.svg'}
+              width={10}
+              height={10}
+              // className='object-cover'
+            />
             {t('setting.tab.display.vi' as any)}
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setLanguage('en')}>
+          <DropdownMenuItem
+            onClick={() => setLanguage('en')}
+            className={`${language === 'en' ? '!bg-primary text-white' : ''}`}
+          >
+            <Image
+              alt='language-flag'
+              src={'/assets/icons/english.svg'}
+              width={10}
+              height={10}
+              // className='object-cover'
+            />
             {t('setting.tab.display.en' as any)}
           </DropdownMenuItem>
         </DropdownMenuGroup>

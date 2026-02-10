@@ -75,10 +75,10 @@ export function CalendarTable<TData, TValue>({
       table={table}
       totalRows={totalItems}
       className='!bg-card'
-      wrapperClassName='mx-1 mt-1 rounded-none'
-      tableContainerClassName='!border-y-1 !border-x-0 rounded-none'
+      wrapperClassName='rounded-none'
+      tableContainerClassName='!border-y-1 !border-x-0 border-none rounded-none'
       paginationClassName='py-3'
-      headerClassName='bg-white border-t-1'
+      headerClassName='border-t-1 border-none shadow-none'
       rowClassName='text-xs font-normal'
       getRowClassName={(row) =>
         row.is_deleted ? 'opacity-50 dark:bg-gray-6' : ''
@@ -86,10 +86,10 @@ export function CalendarTable<TData, TValue>({
       isLoading={isLoading}
       error={error}
     >
-      <div className='bg-card flex items-center gap-2'>
+      <div className='bg-card flex flex-wrap items-center gap-2'>
         <DataTableCustomToolbar
           table={table}
-          className='w-auto flex-1'
+          className='w-auto flex-1 pt-0'
           actions={
             <PermissionGuard module='device' action='update'>
               <Button

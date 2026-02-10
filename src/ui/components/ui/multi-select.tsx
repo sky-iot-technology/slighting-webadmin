@@ -23,6 +23,7 @@ import {
   CommandList,
   CommandSeparator
 } from './command';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 /**
  * Animation types and configurations
@@ -276,6 +277,8 @@ interface MultiSelectProps
    */
   closeOnSelect?: boolean;
 
+  hideXIcon?: boolean;
+
   textSize?: string;
 }
 
@@ -333,11 +336,14 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       deduplicateOptions = false,
       resetOnDefaultValueChange = true,
       closeOnSelect = false,
+      hideXIcon = false,
       textSize,
       ...props
     },
     ref
   ) => {
+    const { t } = useTranslation();
+
     const [selectedValues, setSelectedValues] =
       React.useState<string[]>(defaultValue);
     const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
@@ -829,17 +835,11 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     className={cn(
                       'flex items-center gap-1',
                       singleLine
-                        ? 'multiselect-singleline-scroll overflow-x-auto'
+                        ? '[&::-webkit-scrollbar-thumb]:bg-muted-foreground/30 min-w-0 flex-1 overflow-x-auto [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent'
                         : 'flex-wrap',
                       responsiveSettings.compactMode && 'gap-0.5'
                     )}
-                    style={
-                      singleLine
-                        ? {
-                            paddingBottom: '4px'
-                          }
-                        : {}
-                    }
+                    style={{}}
                   >
                     {selectedValues
                       .slice(0, responsiveSettings.maxCount)
@@ -970,25 +970,27 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     )}
                   </div>
                   <div className='flex items-center justify-between'>
-                    <div
-                      role='button'
-                      tabIndex={0}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleClear();
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
+                    {!hideXIcon && (
+                      <div
+                        role='button'
+                        tabIndex={0}
+                        onClick={(event) => {
                           event.stopPropagation();
                           handleClear();
-                        }
-                      }}
-                      aria-label={`Clear all ${selectedValues.length} selected options`}
-                      className='text-muted-foreground hover:text-foreground focus:ring-ring mx-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm focus:ring-2 focus:ring-offset-1 focus:outline-none'
-                    >
-                      <XIcon className='h-4 w-4' />
-                    </div>
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            handleClear();
+                          }
+                        }}
+                        aria-label={`Clear all ${selectedValues.length} selected options`}
+                        className='text-muted-foreground hover:text-foreground focus:ring-ring mx-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm focus:ring-2 focus:ring-offset-1 focus:outline-none'
+                      >
+                        <XIcon className='h-4 w-4' />
+                      </div>
+                    )}
                     <Separator
                       orientation='vertical'
                       className='flex h-full min-h-6'
@@ -996,7 +998,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                     <ChevronDown
                       className={cn(
                         textSize,
-                        'text-muted-foreground mx-2 h-4 cursor-default transition-transform',
+                        'text-muted-foreground mx-2 h-4 cursor-default opacity-50 transition-transform',
                         isPopoverOpen && '-rotate-90'
                       )}
                       aria-hidden='true'
@@ -1015,7 +1017,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   </span>
                   <ChevronDown
                     className={cn(
-                      'text-muted-foreground mx-2 h-4 cursor-default',
+                      'text-muted-foreground mx-2 h-4 cursor-default opacity-50',
                       isPopoverOpen && '-rotate-90'
                     )}
                   />
@@ -1071,7 +1073,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                 )}
               >
                 <CommandEmpty>
-                  {emptyIndicator || 'No results found.'}
+                  {emptyIndicator || t('general.empty')}
                 </CommandEmpty>{' '}
                 {!hideSelectAll && !searchValue && (
                   <CommandGroup>
@@ -1102,7 +1104,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                         <CheckIcon className='h-4 w-4 !text-white' />
                       </div>
                       <span className='text-xs'>
-                        (Chọn tất cả
+                        ({t('role.form.label.selectAll')}
                         {getAllOptions().length > 20
                           ? ` - ${getAllOptions().length} options`
                           : ''}

@@ -102,7 +102,7 @@ export default function RoleForm({
   };
 
   return (
-    <CustomScrollbar className='bg-card !h-full max-h-[660px] overflow-y-auto px-5 pt-3 pb-5 lg:max-h-full'>
+    <CustomScrollbar className='bg-card !h-full max-h-[660px] overflow-hidden px-5 pt-3 pb-5 lg:max-h-full'>
       <Card className='bg-card mx-auto !h-full w-full gap-0 border-0 py-0 shadow-none'>
         <CardHeader className='gap-0 px-0'>
           <CardTitle className='text-primary-text text-left text-[16px] font-bold'>
@@ -161,7 +161,7 @@ export default function RoleForm({
                 control={form.control}
                 name='permission'
                 render={({ field }) => (
-                  <FormItem className='mt-0 flex h-full flex-1 flex-col'>
+                  <FormItem className='mt-0 flex flex-1 flex-col overflow-hidden'>
                     <FormLabel className='text-xs font-bold'>
                       {t('role.form.label.permission' as any)}
                     </FormLabel>

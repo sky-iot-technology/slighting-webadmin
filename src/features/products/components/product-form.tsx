@@ -217,7 +217,7 @@ export default function ProductForm({
                                 'products.form.placeholder.id' as any
                               )}
                               {...field}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -236,7 +236,7 @@ export default function ProductForm({
                           </FormLabel>
                           <FormControl>
                             <Input
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                               placeholder={t(
                                 'products.form.placeholder.name' as any
                               )}
@@ -305,11 +305,12 @@ export default function ProductForm({
                               )}
                               disabled={isLoadingTags}
                               resetOnDefaultValueChange={true}
-                              className='dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm'
+                              className='dark:!bg-input/30 !min-h-9 w-full rounded-sm'
                               popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
-                              itemClassName='text-base'
+                              textSize='!text-sm'
                               autoSize={true}
-                              // singleLine={false}
+                              singleLine
+                              hideXIcon
                             />
                           </FormControl>
                           <FormMessage />
@@ -351,7 +352,7 @@ export default function ProductForm({
                                   field.onChange(limited.toFixed(6));
                                 }
                               }}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -389,7 +390,7 @@ export default function ProductForm({
                                   field.onChange(limited.toFixed(6));
                                 }
                               }}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -536,7 +537,7 @@ export default function ProductForm({
                                 'products.form.placeholder.address' as any
                               )}
                               {...field}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -559,7 +560,7 @@ export default function ProductForm({
                                 'products.form.placeholder.note' as any
                               )}
                               {...field}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -587,7 +588,7 @@ export default function ProductForm({
                                 'products.form.placeholder.serial' as any
                               )}
                               {...field}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -617,6 +618,7 @@ export default function ProductForm({
                               placeholder={t(
                                 'products.form.placeholder.date' as any
                               )}
+                              className='!text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -646,6 +648,7 @@ export default function ProductForm({
                               placeholder={t(
                                 'products.form.placeholder.date' as any
                               )}
+                              className='!text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -668,7 +671,7 @@ export default function ProductForm({
                                 'products.form.placeholder.manufacturer' as any
                               )}
                               {...field}
-                              className='h-9 rounded-sm'
+                              className='h-9 rounded-sm !text-sm'
                             />
                           </FormControl>
                           <FormMessage />
@@ -700,6 +703,7 @@ export default function ProductForm({
                               placeholder={t(
                                 'products.form.placeholder.date' as any
                               )}
+                              className='!text-sm'
                             />
                           </FormControl>
                           <FormMessage />

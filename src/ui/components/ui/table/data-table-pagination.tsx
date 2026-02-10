@@ -113,7 +113,6 @@ export function DataTablePagination<TData>({
       table.resetRowSelection();
     }
   }, [pageIndex, table]);
-
   return (
     <div
       className={cn(
@@ -151,104 +150,107 @@ export function DataTablePagination<TData>({
             {start} - {end} {t('general.start_end')} {totalRows}
           </div>
         )}
-
-        <div className='flex items-center space-x-2'>
-          <Button
-            aria-label='Go to first page'
-            variant='outline'
-            size='icon'
-            className='hidden size-8 cursor-pointer lg:flex'
-            onClick={() => table.setPageIndex(0)}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronsLeft className='dark:brightness-0 dark:invert' />
-          </Button>
-          <Button
-            aria-label='Go to previous page'
-            variant='outline'
-            size='icon'
-            className='size-8 cursor-pointer'
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            <ChevronLeftIcon className='dark:brightness-0 dark:invert' />
-          </Button>
-          {/* Page number buttons */}
-          {pageNumbers.map((page, index) => {
-            if (page === 'ellipsis') {
-              return (
-                <Button
-                  key={`ellipsis-${index}`}
-                  variant='ghost'
-                  size='icon'
-                  className='size-8 cursor-default'
-                  disabled
-                >
-                  <span className='text-muted-foreground'>...</span>
-                </Button>
-              );
-            }
-            const isActive = page === currentPage;
-            return (
+        {totalRows >= 6 && (
+          <>
+            <div className='flex items-center space-x-2'>
               <Button
-                key={page}
-                aria-label={`Go to page ${page}`}
-                aria-current={isActive ? 'page' : undefined}
-                variant={isActive ? 'default' : 'outline'}
+                aria-label='Go to first page'
+                variant='outline'
                 size='icon'
-                className={cn(
-                  'size-8',
-                  isActive && 'bg-primary text-primary-foreground',
-                  'cursor-pointer'
-                )}
-                onClick={() => table.setPageIndex(page - 1)}
+                className='hidden size-8 cursor-pointer lg:flex'
+                onClick={() => table.setPageIndex(0)}
+                disabled={!table.getCanPreviousPage()}
               >
-                {page}
+                <ChevronsLeft className='dark:brightness-0 dark:invert' />
               </Button>
-            );
-          })}
-          <Button
-            aria-label='Go to next page'
-            variant='outline'
-            size='icon'
-            className='size-8 cursor-pointer'
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronRightIcon className='dark:brightness-0 dark:invert' />
-          </Button>
-          <Button
-            aria-label='Go to last page'
-            variant='outline'
-            size='icon'
-            className='hidden size-8 cursor-pointer lg:flex'
-            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-            disabled={!table.getCanNextPage()}
-          >
-            <ChevronsRight className='dark:brightness-0 dark:invert' />
-          </Button>
-        </div>
-        <div className='flex items-center space-x-2'>
-          <Select
-            value={`${table.getState().pagination.pageSize}`}
-            onValueChange={(value) => {
-              table.setPageSize(Number(value));
-            }}
-          >
-            <SelectTrigger className='h-8 [&[data-size]]:h-8'>
-              <SelectValue>
-                {table.getState().pagination.pageSize} {t('general.line')}
-              </SelectValue>
-            </SelectTrigger>
-            <SelectContent side='top'>
-              {pageSizeOptions.map((pageSize) => (
-                <SelectItem key={pageSize} value={`${pageSize}`}>
-                  {pageSize}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+              <Button
+                aria-label='Go to previous page'
+                variant='outline'
+                size='icon'
+                className='size-8 cursor-pointer'
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+              >
+                <ChevronLeftIcon className='dark:brightness-0 dark:invert' />
+              </Button>
+              {/* Page number buttons */}
+              {pageNumbers.map((page, index) => {
+                if (page === 'ellipsis') {
+                  return (
+                    <Button
+                      key={`ellipsis-${index}`}
+                      variant='ghost'
+                      size='icon'
+                      className='size-8 cursor-default'
+                      disabled
+                    >
+                      <span className='text-muted-foreground'>...</span>
+                    </Button>
+                  );
+                }
+                const isActive = page === currentPage;
+                return (
+                  <Button
+                    key={page}
+                    aria-label={`Go to page ${page}`}
+                    aria-current={isActive ? 'page' : undefined}
+                    variant={isActive ? 'default' : 'outline'}
+                    size='icon'
+                    className={cn(
+                      'size-8',
+                      isActive && 'bg-primary text-primary-foreground',
+                      'cursor-pointer'
+                    )}
+                    onClick={() => table.setPageIndex(page - 1)}
+                  >
+                    {page}
+                  </Button>
+                );
+              })}
+              <Button
+                aria-label='Go to next page'
+                variant='outline'
+                size='icon'
+                className='size-8 cursor-pointer'
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+              >
+                <ChevronRightIcon className='dark:brightness-0 dark:invert' />
+              </Button>
+              <Button
+                aria-label='Go to last page'
+                variant='outline'
+                size='icon'
+                className='hidden size-8 cursor-pointer lg:flex'
+                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                disabled={!table.getCanNextPage()}
+              >
+                <ChevronsRight className='dark:brightness-0 dark:invert' />
+              </Button>
+            </div>
+            <div className='flex items-center space-x-2'>
+              <Select
+                value={`${table.getState().pagination.pageSize}`}
+                onValueChange={(value) => {
+                  table.setPageSize(Number(value));
+                }}
+              >
+                <SelectTrigger className='h-8 [&[data-size]]:h-8'>
+                  <SelectValue>
+                    {table.getState().pagination.pageSize} {t('general.line')}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent side='top'>
+                  {pageSizeOptions.map((pageSize) => (
+                    <SelectItem key={pageSize} value={`${pageSize}`}>
+                      {pageSize}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

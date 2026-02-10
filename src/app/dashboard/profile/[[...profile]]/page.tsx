@@ -7,8 +7,11 @@ export const metadata = {
 
 export default async function Page() {
   return (
-    <PageContainer scrollable={true}>
+    // <PageContainer scrollable={true}>
+    //   <ProfilePage />
+    // </PageContainer>
+    <div className='flex flex-1 p-3'>
       <ProfilePage />
-    </PageContainer>
+    </div>
   );
 }

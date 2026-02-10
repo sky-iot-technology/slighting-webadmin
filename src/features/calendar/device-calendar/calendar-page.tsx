@@ -43,11 +43,11 @@ export default function CalendarDeivcePage({ deviceId }: CalendarDeviceProps) {
   };
 
   return (
-    <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
+    <div className='h-full w-full px-2.5 pt-[13px]'>
       <div className='h-full w-full rounded-[4px] pb-[7px]'>
         <div className='flex h-full w-full'>
           <div
-            className='bg-card flex min-w-0 flex-1 flex-col overflow-hidden'
+            className='bg-card flex min-w-0 flex-1 flex-col overflow-y-auto'
             ref={containerRef}
           >
             <CalendarContent deviceId={deviceId} filters={filters} />

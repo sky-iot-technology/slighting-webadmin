@@ -22,6 +22,7 @@ import {
 } from '@/core/domains/reminders';
 import { Device } from '@/core/domains/devices';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import Image from 'next/image';
 
 interface ReminderManagementModalProps {
   isOpen: boolean;
@@ -107,7 +108,7 @@ export function ReminderManagementModal({
     );
 
     return fields;
-  }, [device]);
+  }, [device, t]);
 
   // Convert reminders to MultiSelect options format
   const reminderOptions = useMemo(() => {
@@ -443,7 +444,12 @@ export function ReminderManagementModal({
                           })
                         }
                       >
-                        <Edit2 className='h-4 w-4' />
+                        <Image
+                          src={'/assets/icons/edit.svg'}
+                          alt='edit'
+                          width={12}
+                          height={12}
+                        />
                       </Button>
                       <Button
                         type='button'
@@ -454,7 +460,12 @@ export function ReminderManagementModal({
                         }
                         disabled={deleteReminderMutation.isPending}
                       >
-                        <Trash2 className='text-destructive h-4 w-4' />
+                        <Image
+                          src={'/assets/icons/trash.svg'}
+                          alt='trash'
+                          width={12}
+                          height={12}
+                        />
                       </Button>
                     </div>
                   </div>

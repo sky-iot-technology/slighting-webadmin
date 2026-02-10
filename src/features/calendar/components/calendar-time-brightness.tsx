@@ -72,12 +72,12 @@ export function TimeBrightnessForm({
 
   return (
     <div className='space-y-3 text-xs'>
-      <div className='grid grid-cols-[105px_1fr_62px] items-center gap-x-2 gap-y-1 [&_label]:pb-1 [&_label]:font-semibold'>
+      <div className='grid grid-cols-[105px_1fr_30px] items-center gap-x-2 gap-y-1 md:grid-cols-[105px_1fr_62px] [&_label]:pb-1 [&_label]:font-semibold'>
         <label className='border-r-1'>{t('calendar.time')}</label>
         <label>{t('calendar.action')}</label>
       </div>
 
-      <div className='grid grid-cols-[105px_1fr_62px] items-center gap-x-2 gap-y-1'>
+      <div className='grid grid-cols-[105px_1fr_30px] items-center gap-x-2 gap-y-1 md:grid-cols-[105px_1fr_62px]'>
         {fields.map((field, index) => {
           const actionType = form.watch(`schedules.${index}.action.trait`);
           return (

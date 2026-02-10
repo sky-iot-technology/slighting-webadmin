@@ -16,7 +16,6 @@ interface MaintenanceTableParams<TData, TValue> {
   isLoading?: boolean;
   error?: Error | null;
   onSelectionChange?: (ids: string[]) => void;
-  fillAvailableSpace?: boolean;
 }
 export function MaintenanceTable<TData, TValue>({
   data,
@@ -25,8 +24,7 @@ export function MaintenanceTable<TData, TValue>({
   onTableReady,
   isLoading = false,
   error = null,
-  onSelectionChange,
-  fillAvailableSpace = false
+  onSelectionChange
 }: MaintenanceTableParams<TData, TValue>) {
   const [pageSize] = useQueryState('perPage', parseAsInteger.withDefault(10));
 
@@ -78,7 +76,6 @@ export function MaintenanceTable<TData, TValue>({
       isLoading={isLoading}
       error={error}
       loadingRowCount={pageSize}
-      fillAvailableSpace={fillAvailableSpace}
     ></DataTable>
   );
 }

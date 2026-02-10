@@ -813,7 +813,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   'products.detail.overview.placeholder.name' as any
                                 )}
                                 {...field}
-                                className='font-medium'
+                                className='!text-sm font-medium'
                               />
                             </FormControl>
                             <FormMessage />
@@ -836,7 +836,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   'products.detail.overview.placeholder.id' as any
                                 )}
                                 {...field}
-                                className='font-medium'
+                                className='!text-sm font-medium'
                               />
                             </FormControl>
                             <FormMessage />
@@ -896,7 +896,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   'products.detail.overview.label.serial' as any
                                 )}
                                 {...field}
-                                className='font-medium'
+                                className='!text-sm font-medium'
                               />
                             </FormControl>
                             <FormMessage />
@@ -920,7 +920,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                   'products.detail.overview.label.manufacturer' as any
                                 )}
                                 {...field}
-                                className='font-medium'
+                                className='!text-sm font-medium'
                               />
                             </FormControl>
                             <FormMessage />
@@ -1202,7 +1202,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.placeholder.address' as any
                             )}
                             {...field}
-                            className={cn(!isEditMode && 'disabled:opacity-90')}
+                            className={cn(
+                              !isEditMode && 'disabled:opacity-90',
+                              '!text-sm'
+                            )}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1226,7 +1229,10 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.placeholder.note' as any
                             )}
                             {...field}
-                            className={cn(!isEditMode && 'disabled:opacity-90')}
+                            className={cn(
+                              !isEditMode && 'disabled:opacity-90',
+                              '!text-sm'
+                            )}
                           />
                         </FormControl>
                         <FormMessage />
@@ -1268,7 +1274,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.label.installation_date' as any
                             )}
                             disabled={!isEditMode}
-                            className='dark:disabled:!bg-gray-5'
+                            className='dark:disabled:!bg-gray-5 !text-sm'
                           />
                         </FormControl>
                         <FormMessage />
@@ -1299,7 +1305,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               'products.form.label.warranty_date' as any
                             )}
                             disabled={!isEditMode}
-                            className='dark:disabled:!bg-gray-5'
+                            className='dark:disabled:!bg-gray-5 !text-sm'
                           />
                         </FormControl>
                         <FormMessage />
@@ -1331,7 +1337,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'products.form.label.warranty_expiration' as any
                               )}
                               disabled={!isEditMode}
-                              className='dark:disabled:!bg-gray-5 !w-full'
+                              className='dark:disabled:!bg-gray-5 !w-full !text-sm'
                             />
                           </FormControl>
                           {!isEditMode && (
@@ -1435,11 +1441,11 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           }
                           return (
                             <div key={key} className='space-y-2'>
-                              <Label>{`${value.n} (${value.u})`}</Label>
+                              <Label>{`${t(`products.sensor.${key}` as any)} (${value.u})`}</Label>
                               <Input
                                 value={_value}
                                 disabled
-                                className='disabled:opacity-90'
+                                className='!text-sm disabled:opacity-90'
                               />
                             </div>
                           );

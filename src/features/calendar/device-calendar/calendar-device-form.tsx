@@ -165,7 +165,7 @@ export default function CalendarDeviceForm({
                             onValueChange={(val) => field.onChange(val)}
                             placeholder={t('calendar.select_device' as any)}
                             resetOnDefaultValueChange={true}
-                            className='dark:bg-input/30 !min-h-[31px] w-full !rounded-[4px] px-2'
+                            className='dark:bg-input/30 !min-h-[31px] w-full !rounded-[4px] !px-1'
                             popoverClassName='w-[var(--radix-popover-trigger-width)]'
                             textSize='!text-xs'
                             autoSize={true}
@@ -356,7 +356,7 @@ export default function CalendarDeviceForm({
                               onValueChange={(val) => field.onChange(val)}
                               placeholder={t('calendar.select_day' as any)}
                               resetOnDefaultValueChange={true}
-                              className='!min-h-[31px] w-full !rounded-[4px] px-2 !text-xs'
+                              className='!min-h-[31px] w-full !rounded-[4px] !px-1 !text-xs'
                               popoverClassName='w-[var(--radix-popover-trigger-width)]'
                               itemClassName=''
                               autoSize={true}

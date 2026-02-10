@@ -1,4 +1,8 @@
 export function parseIsoDate(isoString: string): string {
+  if (!isoString || isoString === '0001-01-01T00:00:00Z') {
+    return '';
+  }
+
   const normalized = isoString.replace(/\.(\d{3})\d*(Z|$)/, '.$1$2');
   const date = new Date(normalized);
 

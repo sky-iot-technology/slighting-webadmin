@@ -80,21 +80,6 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
         />
       </div>
 
-      {data.monthly && data.monthly.length > 0 && (
-        <div className='flex items-center gap-5.5'>
-          <span className=''>{t('calendar.apply_date')}:</span>
-          <CalendarRangePicker
-            mode={data.date.from && data.date.to ? 'range' : 'single'}
-            value={
-              data.date.from
-                ? (data.date as DateRange)
-                : { from: new Date(), to: undefined }
-            }
-            disabled
-          />
-        </div>
-      )}
-
       {data.weekly && data.weekly.length > 0 && (
         <div className=''>
           <span>{t('calendar.day_of_week')}:</span>

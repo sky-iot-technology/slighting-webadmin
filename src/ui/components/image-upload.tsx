@@ -104,7 +104,7 @@ export function ImageUpload({
             style={{ maxHeight }}
           >
             <CustomScrollbar className='overflow-y-auto' style={{ maxHeight }}>
-              <div className='grid grid-cols-3 gap-2 p-1'>
+              <div className='grid grid-cols-2 gap-2 p-1 sm:grid-cols-3'>
                 {/* Existing images */}
                 {existingImages.map((img) => (
                   <ImageCard
@@ -135,17 +135,19 @@ export function ImageUpload({
           </div>
         ) : (
           /* ✅ Placeholder */
-          <div className='mt-1 grid grid-cols-3 gap-2'>
-            {[...Array(3)].map((_, i) => (
-              <div
-                key={i}
-                className='border-muted bg-muted/30 dark:bg-gray-5 flex aspect-square h-[105px] w-full items-center justify-center rounded-[6px] border'
-              >
-                <ImageIcon className='text-muted-foreground h-5 w-5' />
-              </div>
-            ))}
-          </div>
+          // <div className='mt-1 grid grid-cols-2 gap-2 sm:grid-cols-3'>
+          //   {[...Array(3)].map((_, i) => (
+          //     <div
+          //       key={i}
+          //       className='border-muted bg-muted/30 dark:bg-gray-5 flex aspect-square h-[105px] w-full items-center justify-center rounded-[6px] border'
+          //     >
+          //       <ImageIcon className='text-muted-foreground h-5 w-5' />
+          //     </div>
+          //   ))}
+          // </div>
+          <></>
         )}
+
         <Dialog open={!!previewSrc} onOpenChange={() => setPreviewSrc(null)}>
           <DialogTitle className='hidden'>Image</DialogTitle>
           <DialogDescription className='hidden'>Image</DialogDescription>

@@ -90,7 +90,7 @@ export default function RolePermissionSection({
   return (
     <div className='flex h-full w-full max-w-xl flex-col space-y-3 overflow-hidden'>
       <div className='bg-card dark:bg-input/30 flex h-full flex-1 flex-col overflow-hidden rounded-[4px] border'>
-        <CustomScrollbar className='h-[18vw] min-h-[270px] space-y-4 overflow-y-auto p-2 md:min-h-[270px] lg:min-h-full'>
+        <CustomScrollbar className='h-[18vw] min-h-full space-y-4 overflow-y-auto p-2'>
           {/* Chọn tất cả */}
           <div
             className={`flex items-center gap-2 border-b pb-2 ${disabled ? 'hidden' : ''}`}

@@ -60,6 +60,7 @@ export default function BranchDialog({
       <DialogDescription className='hidden'>{pageTitle}</DialogDescription>
       <DialogContent
         className='bg-card w-[417px] rounded-xl p-0'
+        onOpenAutoFocus={(e) => e.preventDefault()}
         hideCloseButton
       >
         {move ? (

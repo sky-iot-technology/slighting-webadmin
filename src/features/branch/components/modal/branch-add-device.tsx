@@ -114,7 +114,7 @@ export default function BranchAddDevice({
         </div>
 
         <div className='flex w-full flex-col gap-4 sm:flex-row'>
-          <div className='flex h-[330px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
+          <div className='flex h-[330px] min-h-[300px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
             <div className='flex-shrink-0 border-b px-2.5 py-1.5 text-[14px] font-semibold'>
               {t('branch.select_device')}
             </div>
@@ -175,7 +175,7 @@ export default function BranchAddDevice({
             </CustomScrollbar>
           </div>
 
-          <div className='flex h-[330px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
+          <div className='flex h-[330px] min-h-[300px] min-w-0 flex-1 flex-col rounded-[8px] border sm:h-[400px]'>
             <div className='flex-shrink-0 border-b px-2.5 py-1.5 text-[14px] font-semibold'>
               {t('branch.selected_device')}
               <span className='text-primary ml-1'>({selected.length})</span>

@@ -29,6 +29,8 @@ export const profile = {
   phone_placeholder: 'Enter phone number',
   address_placeholder: 'Enter address',
   note_placeholder: 'Enter note',
+  unit_placeholder: 'Select unit',
+  department_placeholder: 'Select department',
 
   //password tab
   oldPassword: 'Old Password',

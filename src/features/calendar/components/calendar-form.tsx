@@ -228,7 +228,7 @@ export default function CalendarForm({
                         onValueChange={(val) => field.onChange(val)}
                         placeholder={t('calendar.select_device')}
                         resetOnDefaultValueChange={true}
-                        className='dark:bg-input/30 !min-h-[31px] w-full !rounded-[4px] px-2'
+                        className='dark:bg-input/30 !min-h-[31px] w-full !rounded-[4px] !pr-0 !pl-1'
                         popoverClassName='w-[var(--radix-popover-trigger-width)]'
                         autoSize={true}
                         textSize='!text-xs'

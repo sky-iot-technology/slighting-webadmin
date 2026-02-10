@@ -29,6 +29,8 @@ export const profile = {
   address_placeholder: 'Nhập địa chỉ',
   note: 'Ghi chú',
   note_placeholder: 'Nhập ghi chú',
+  unit_placeholder: 'Chọn đơn vị',
+  department_placeholder: 'Chọn bộ phận',
 
   //password tab
   oldPassword: 'Mật khẩu cũ',

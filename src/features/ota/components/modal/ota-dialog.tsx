@@ -33,6 +33,7 @@ export default function OtaDialog({
       <DialogContent
         className='bg-card !w-[90vw] !max-w-[500px] rounded-xl p-0'
         hideCloseButton
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {!isLoading && (
           <OtaForm

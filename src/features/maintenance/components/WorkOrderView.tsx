@@ -37,7 +37,7 @@ export default function WorkOrderView({
   }
 
   return (
-    <div className='h-full w-full p-3'>
+    <div className='h-full w-full'>
       <div className='bg-card flex w-full flex-col pt-1'>
         <WorkorderForm
           pageTitle={pageTitle}

@@ -11,7 +11,7 @@ import Image from 'next/image';
 import { TagContent } from './tag-content';
 import { Device, GetDevicesParamsDto } from '@/core/domains/devices';
 import { Table } from '@tanstack/react-table';
-import { DataTableToolbar } from '@/ui/components/ui/table/data-table-toolbar';
+import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
 import { useCan } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
@@ -146,11 +146,12 @@ export default function TagPage() {
                 </div>
 
                 {selectedTag && deviceTable && (
-                  <div className='flex w-full items-center gap-2 sm:w-auto sm:justify-end'>
-                    <DataTableToolbar
+                  <div className='flex w-full flex-wrap items-start gap-2 sm:w-auto sm:justify-end'>
+                    <DataTableCustomToolbar
                       table={deviceTable}
-                      className='w-auto'
+                      className='w-full sm:w-auto'
                       excel={false}
+                      filter={true}
                       // onDeleteAll={
                       //   canDelete ? () => console.log('asdasd') : undefined
                       // }

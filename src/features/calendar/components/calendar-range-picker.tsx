@@ -146,8 +146,8 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
-          className,
-          'border-input bg-muted dark:bg-gray-5 text-muted-foreground flex h-[31px] w-[260px] cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs opacity-50'
+          'border-input bg-muted dark:bg-gray-5 text-muted-foreground flex h-[31px] w-full cursor-not-allowed items-center justify-between rounded-[6px] border px-2 text-xs opacity-50',
+          className
         )}
       >
         {mode === 'single' ? (
@@ -171,10 +171,8 @@ export function CalendarRangePicker({
     return (
       <div
         className={cn(
-          className,
-          'border-input dark:bg-input/30 flex h-[31px] items-center rounded-[6px] border bg-transparent px-2 text-xs',
-          'justify-center lg:w-full lg:justify-between',
-          'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
+          'border-input dark:bg-input/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-[31px] items-center justify-center rounded-[6px] border bg-transparent px-2 text-xs lg:w-full lg:justify-between',
+          className
         )}
         onClick={() => setOpenFrom(true)}
         {...props}
@@ -204,14 +202,14 @@ export function CalendarRangePicker({
         </Popover>
 
         {!formattedSingle ? (
-          <CalendarIcon className='text-muted-foreground h-4 w-4 cursor-pointer dark:brightness-0 dark:invert' />
+          <CalendarIcon className='text-muted-foreground h-4 w-4 cursor-pointer opacity-50 dark:brightness-0 dark:invert' />
         ) : (
           <>
-            <div className='flex items-center justify-between'>
+            <div className='flex items-center justify-between gap-2'>
               <span className='text-xs font-medium lg:hidden'>
                 {formattedSingle}
               </span>
-              <CalendarIcon className='text-muted-foreground mb-0.5 h-4 w-4 cursor-pointer dark:brightness-0 dark:invert' />
+              <CalendarIcon className='text-muted-foreground mb-0.5 h-4 w-4 cursor-pointer opacity-50 dark:brightness-0 dark:invert' />
             </div>
           </>
         )}
@@ -222,9 +220,8 @@ export function CalendarRangePicker({
   return (
     <div
       className={cn(
-        className,
-        'border-input dark:bg-input/30 flex h-[31px] items-center justify-between rounded-[6px] border bg-transparent px-2 text-xs',
-        'aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive'
+        'border-input dark:bg-input/30 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive flex h-[31px] items-center justify-between rounded-[6px] border bg-transparent px-2 text-xs',
+        className
       )}
       {...props}
     >
@@ -282,7 +279,7 @@ export function CalendarRangePicker({
         </PopoverContent>
       </Popover>
 
-      <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4 dark:brightness-0 dark:invert' />
+      <CalendarIcon className='text-muted-foreground ml-2 h-4 w-4 opacity-50 dark:brightness-0 dark:invert' />
     </div>
   );
 }

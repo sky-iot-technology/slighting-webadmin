@@ -112,8 +112,8 @@ export default function GoongMap({
   }, []);
 
   const fitBoundsToDevices = useCallback(
-    (devices: Device[], options: FitBoundsOptions = {}) => {
-      if (!devices.length) return;
+    (devices: Device[], options: FitBoundsOptions = {}): boolean => {
+      if (!devices.length) return false;
 
       const devicesWithCoords = devices.filter((d) => {
         const lon = d.device_info?.lon;
@@ -130,19 +130,19 @@ export default function GoongMap({
           lat <= 90
         );
       });
-      if (!devicesWithCoords.length) return;
+      if (!devicesWithCoords.length) return false;
 
       const longs = devicesWithCoords.map((d) => d.device_info.lon);
       const lats = devicesWithCoords.map((d) => d.device_info.lat);
 
       const container = mapContainerRef.current;
-      if (!container) return;
+      if (!container) return false;
 
       const width = container.clientWidth || window.innerWidth;
       const height = container.clientHeight || window.innerHeight;
 
       if (!width || !height) {
-        return;
+        return false;
       }
       const { longitude, latitude, zoom } = new WebMercatorViewport({
         width,
@@ -177,6 +177,7 @@ export default function GoongMap({
         }));
         setTransitionDuration(600);
       }
+      return true;
     },
     [setViewport, setTransitionDuration]
   );
@@ -259,13 +260,15 @@ export default function GoongMap({
         setNeedsInitialization(false);
         return;
       }
-      fitBoundsToDevices(devicesWithCoords, {
+      const success = fitBoundsToDevices(devicesWithCoords, {
         zoom: devicesWithCoords.length === 1 ? 14 : undefined,
         saveLastViewport: true
       });
-      setTransitionDuration(1000);
-      setNeedsInitialization(false);
-      setPopupInfo(null);
+      if (success) {
+        setTransitionDuration(1000);
+        setNeedsInitialization(false);
+        setPopupInfo(null);
+      }
     } else if (
       needsInitialization &&
       !isLoading &&
@@ -274,11 +277,11 @@ export default function GoongMap({
     ) {
       setNeedsInitialization(false);
     }
-  }, [devices, needsInitialization, isLoading, isFetching]);
+  }, [devices, needsInitialization, isLoading, isFetching, fitBoundsToDevices]);
 
   useEffect(() => {
     setNeedsInitialization(true);
-  }, [selectedRegion?.id]);
+  }, [selectedRegion?.id, devices]);
 
   useEffect(() => {
     if (selectedDevice?.device) {

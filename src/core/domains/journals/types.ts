@@ -39,20 +39,20 @@ export interface GetJournalsParamsDto {
 
 // Operation name mapping to Vietnamese descriptions
 export const OPERATION_LABELS: Record<string, string> = {
-  'client.sync': 'Đồng bộ với thiết bị',
-  'client.query': 'Query xuống thiết bị',
-  'client.execute': 'Điều khiển xuống thiết bị',
-  'client.schedule.sync': 'Đồng bộ lịch với thiết bị',
-  'client.schedule.sync_all':
-    'Gửi lại toàn bộ lịch đang có trên server cho thiết bị',
-  'client.schedule.clean': 'Xoá toàn bộ lịch xuống thiết bị',
-  'client.schedule.add': 'Thêm lịch xuống thiết bị',
-  'client.schedule.update': 'Cập nhật lịch xuống thiết bị',
-  'client.schedule.remove': 'Xoá lịch xuống thiết bị'
+  'client.sync': 'journals.operation.client_sync',
+  'client.query': 'journals.operation.client_query',
+  'client.execute': 'journals.operation.client_execute',
+  'client.schedule.sync': 'journals.operation.client_schedule_sync',
+  'client.schedule.sync_all': 'journals.operation.client_schedule_sync_all',
+  'client.schedule.clean': 'journals.operation.client_schedule_clean',
+  'client.schedule.add': 'journals.operation.client_schedule_add',
+  'client.schedule.update': 'journals.operation.client_schedule_update',
+  'client.schedule.remove': 'journals.operation.client_schedule_remove'
 };
 
 // Command name mapping to Vietnamese descriptions
 export const COMMAND_LABELS: Record<string, string> = {
-  'lms.devices.commands.OnOff': 'Bật/Tắt',
-  'lms.devices.commands.BrightnessAbsolute': 'Độ sáng'
+  'lms.devices.commands.OnOff': 'journals.command.on_off',
+  'lms.devices.commands.BrightnessAbsolute': 'journals.command.brightness',
+  'lms.devices.commands.Ota': 'journals.command.ota'
 };

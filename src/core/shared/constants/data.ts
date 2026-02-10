@@ -104,16 +104,16 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: []
   },
-  {
-    title: 'navbar.organization_management',
-    url: '/dashboard/organization',
-    icon: 'organization',
-    shortcut: ['m', 'm'],
-    resourceId: 'department',
-    requiredActions: ['view'],
-    isActive: false,
-    items: []
-  },
+  // {
+  //   title: 'navbar.organization_management',
+  //   url: '/dashboard/organization',
+  //   icon: 'organization',
+  //   shortcut: ['m', 'm'],
+  //   resourceId: 'department',
+  //   requiredActions: ['view'],
+  //   isActive: false,
+  //   items: []
+  // },
   {
     title: 'navbar.firmware_management',
     url: '/dashboard/ota',

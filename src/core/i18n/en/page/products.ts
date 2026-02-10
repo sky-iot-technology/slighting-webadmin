@@ -218,5 +218,19 @@ export const products = {
         export: 'Export Report'
       }
     }
+  },
+  sensor: {
+    active_e: 'Energy Consumption',
+    active_p: 'Active Power',
+    battery: 'Battery Voltage',
+    frequency: 'Frequency',
+    humidity: 'Humidity',
+    input: 'Input Status',
+    irms: 'RMS Current',
+    power_factor: 'Power Factor',
+    temperature: 'Temperature',
+    thdi: 'Total Harmonic Distortion of Current (THDi)',
+    thdv: 'Total Harmonic Distortion of Voltage (THDv)',
+    vrms: 'RMS Voltage'
   }
 };

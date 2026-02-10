@@ -35,6 +35,7 @@ export default function UserDialog({
       <DialogContent
         className='!w-[90vw] !max-w-[1001px] overflow-hidden rounded-xl p-0'
         hideCloseButton
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {!isLoading && (
           <UserForm

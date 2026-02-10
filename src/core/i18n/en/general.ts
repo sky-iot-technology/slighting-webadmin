@@ -58,5 +58,9 @@ export const general = {
   uploading_avatar: 'Uploading avatar...',
   avatar_updated: 'Avatar updated',
   upload_failed_avatar: 'Failed to upload avatar',
-  program_title: 'Slighting Webadmin'
+  program_title: 'Slighting Webadmin',
+  return: 'Back',
+  data_error: 'Failed to load data',
+  error: 'Something went wrong while loading data',
+  empty: 'No results'
 } as const;

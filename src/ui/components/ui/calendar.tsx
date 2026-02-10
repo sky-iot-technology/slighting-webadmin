@@ -23,7 +23,41 @@ function Calendar({
   ...props
 }: CalendarProps) {
   const { t, language } = useTranslation();
-  const [month, setMonth] = React.useState(new Date());
+
+  // Helper to determine initial month from props
+  const initialMonth = React.useMemo(() => {
+    const selectedProp = (props as any).selected;
+    if (selectedProp instanceof Date) return selectedProp;
+    if (Array.isArray(selectedProp) && selectedProp.length > 0)
+      return selectedProp[0];
+    if (
+      selectedProp &&
+      typeof selectedProp === 'object' &&
+      'from' in selectedProp &&
+      selectedProp.from
+    )
+      return selectedProp.from;
+    return (props as any).defaultMonth || new Date();
+  }, [(props as any).selected, (props as any).defaultMonth]);
+
+  const [month, setMonth] = React.useState<Date>(initialMonth);
+
+  // Sync month when selected date changes externally
+  React.useEffect(() => {
+    const selectedProp = (props as any).selected;
+    if (selectedProp instanceof Date) {
+      setMonth(selectedProp);
+    } else if (Array.isArray(selectedProp) && selectedProp.length > 0) {
+      setMonth(selectedProp[0]);
+    } else if (
+      selectedProp &&
+      typeof selectedProp === 'object' &&
+      'from' in selectedProp &&
+      selectedProp.from
+    ) {
+      setMonth(selectedProp.from);
+    }
+  }, [(props as any).selected]);
 
   const [internalSelected, setInternalSelected] = React.useState<
     Date | undefined
@@ -99,6 +133,7 @@ function Calendar({
       </div>
 
       <DayPicker
+        mode='single'
         month={month}
         onMonthChange={setMonth}
         showOutsideDays
@@ -112,7 +147,15 @@ function Calendar({
             'rdp-day font-normal',
             disablePastDate &&
               '[&[data-past="true"]]:opacity-40 [&[data-past="true"]]:cursor-not-allowed'
-          )
+          ),
+          today: '!text-primary font-bold',
+          selected:
+            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary ring-offset-2'
+        }}
+        modifiersClassNames={{
+          today: '!text-primary font-bold',
+          selected:
+            'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary rounded-full'
         }}
         modifiers={modifiers}
         footer={
@@ -129,7 +172,7 @@ function Calendar({
                 setMonth(today);
                 onSelect(today);
               }}
-              className='text-primary cursor-pointer text-xs font-medium'
+              className='text-primary-text cursor-pointer text-xs font-medium'
             >
               {t('general.today')}
             </button>
@@ -137,6 +180,8 @@ function Calendar({
         }
         disabled={disablePastDate ? { before: new Date() } : undefined}
         {...props}
+        selected={selected}
+        onSelect={onSelect}
       />
     </div>
   );

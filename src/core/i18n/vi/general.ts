@@ -59,5 +59,9 @@ export const general = {
   uploading_avatar: 'Đang tải lên ảnh đại diện...',
   avatar_updated: 'Cập nhật ảnh đại diện thành công',
   upload_failed_avatar: 'Tải lên ảnh đại diện thất bại',
-  program_title: 'Quản trị Web Slighting'
+  program_title: 'Quản trị Web Slighting',
+  return: 'Quay lại',
+  data_error: 'Lỗi tải dữ liệu',
+  error: 'Đã xảy ra lỗi khi tải dữ liệu',
+  empty: 'Không có dữ liệu'
 } as const;

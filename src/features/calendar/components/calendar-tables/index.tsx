@@ -96,7 +96,7 @@ export function CalendarTable<TData, TValue>({
       error={error}
       loadingRowCount={pageSize}
     >
-      <div className='bg-card flex flex-col gap-2 py-3 md:flex-row md:items-center md:gap-2'>
+      <div className='bg-card flex flex-col gap-2 py-3 pl-1.5 md:flex-row md:items-center md:gap-2'>
         <div className='flex gap-2'>
           {onToggleSidebar && (
             <button

@@ -204,7 +204,7 @@ export default function BranchPage() {
                     if (activeTab === 'devices' && deviceTable) {
                       return (
                         <>
-                          <div className='flex w-full items-center gap-2 sm:w-auto sm:justify-end'>
+                          <div className='flex w-full items-center justify-end gap-2 sm:w-auto'>
                             <DataTableToolbar
                               table={deviceTable}
                               className='w-auto'

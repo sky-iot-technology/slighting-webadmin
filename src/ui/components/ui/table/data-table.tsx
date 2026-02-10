@@ -14,6 +14,12 @@ import { getCommonPinningStyles } from '@/lib/data-table';
 import { ScrollArea, ScrollBar } from '@/ui/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/ui/components/ui/skeleton';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/ui/components/ui/tooltip';
+import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   table: TanstackTable<TData>;
@@ -31,7 +37,6 @@ interface DataTableProps<TData> extends React.ComponentProps<'div'> {
   isLoading?: boolean;
   error?: Error | null;
   loadingRowCount?: number;
-  fillAvailableSpace?: boolean;
 }
 
 export function DataTable<TData>({
@@ -51,37 +56,32 @@ export function DataTable<TData>({
   getRowClassName,
   isLoading = false,
   error = null,
-  loadingRowCount = 10,
-  fillAvailableSpace = false
+  loadingRowCount = 10
 }: DataTableProps<TData>) {
-  const pageSize = table.getState().pagination.pageSize;
-  const isCompact = pageSize <= 10;
-  const totalpage = table.getPageCount();
+  const { t } = useTranslation();
 
   return (
-    <div className={cn('flex flex-1 flex-col', className)}>
+    <div className={cn('flex w-full min-w-0 flex-1 flex-col', className)}>
       {children}
       {/* Wrapper for table + pagination */}
-      <div className={cn('flex flex-1 flex-col rounded-lg', wrapperClassName)}>
-        <div
-          className={cn(
-            (isCompact || (!isCompact && totalpage <= 1)) && !fillAvailableSpace
-              ? 'relative flex min-h-0 flex-initial flex-col'
-              : 'relative flex flex-1'
-          )}
-        >
+      <div
+        className={cn(
+          'flex w-full min-w-0 flex-1 flex-col rounded-lg',
+          wrapperClassName
+        )}
+      >
+        <div className={cn('relative flex flex-1')}>
           {/* Table container */}
           <div
             className={cn(
-              (isCompact || (!isCompact && totalpage <= 1)) &&
-                !fillAvailableSpace
-                ? 'flex w-full overflow-hidden rounded-lg border'
-                : 'absolute inset-0 flex overflow-hidden rounded-lg border',
+              'absolute inset-0 flex overflow-hidden rounded-lg border',
               tableContainerClassName
             )}
           >
             <ScrollArea className='h-full w-full'>
-              <Table className={cn('', tableClassName)}>
+              <table
+                className={cn('w-full caption-bottom text-sm', tableClassName)}
+              >
                 <TableHeader
                   className={cn(
                     'bg-muted dark:bg-blue-4 sticky top-0 z-10',
@@ -134,10 +134,10 @@ export function DataTable<TData>({
                       >
                         <div className='flex flex-col items-center justify-center gap-2'>
                           <h3 className='text-destructive text-lg font-semibold'>
-                            Lỗi tải dữ liệu
+                            {t('general.data_error')}
                           </h3>
                           <p className='text-muted-foreground text-sm'>
-                            {error.message || 'Đã xảy ra lỗi khi tải dữ liệu'}
+                            {error.message || t('general.error')}
                           </p>
                         </div>
                       </TableCell>
@@ -189,25 +189,57 @@ export function DataTable<TData>({
                             'data-[state=selected]:!bg-calendar-table-select'
                           )}
                         >
-                          {row.getVisibleCells().map((cell, cellIndex) => (
-                            <TableCell
-                              key={cell.id}
-                              style={{
-                                ...getCommonPinningStyles({
-                                  column: cell.column
-                                }),
-                                ...(cellIndex === 0 && row.depth > 0
-                                  ? { paddingLeft: `${row.depth * 20 + 8}px` }
-                                  : {})
-                              }}
-                              className={cn(cellClassName)}
-                            >
-                              {flexRender(
-                                cell.column.columnDef.cell,
-                                cell.getContext()
-                              )}
-                            </TableCell>
-                          ))}
+                          {row.getVisibleCells().map((cell, cellIndex) => {
+                            const enableTooltip = ['name', 'id'].includes(
+                              cell.column.id
+                            );
+                            return (
+                              <TableCell
+                                key={cell.id}
+                                style={{
+                                  ...getCommonPinningStyles({
+                                    column: cell.column
+                                  }),
+                                  ...(cellIndex === 0 && row.depth > 0
+                                    ? { paddingLeft: `${row.depth * 20 + 8}px` }
+                                    : {})
+                                }}
+                                className={cn(cellClassName)}
+                              >
+                                {enableTooltip ? (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div
+                                        className='truncate'
+                                        style={{
+                                          maxWidth: cell.column.getSize()
+                                        }}
+                                      >
+                                        {flexRender(
+                                          cell.column.columnDef.cell,
+                                          cell.getContext()
+                                        )}
+                                      </div>
+                                    </TooltipTrigger>
+
+                                    <TooltipContent>
+                                      <p>{String(cell.getValue())}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ) : (
+                                  <div
+                                    className='truncate'
+                                    style={{ maxWidth: cell.column.getSize() }}
+                                  >
+                                    {flexRender(
+                                      cell.column.columnDef.cell,
+                                      cell.getContext()
+                                    )}
+                                  </div>
+                                )}
+                              </TableCell>
+                            );
+                          })}
                         </TableRow>
                       );
                     })
@@ -218,12 +250,12 @@ export function DataTable<TData>({
                         colSpan={table.getAllColumns().length}
                         className='h-24 text-center'
                       >
-                        No results.
+                        {t('general.empty' as any)}
                       </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
-              </Table>
+              </table>
               <ScrollBar orientation='horizontal' />
             </ScrollArea>
           </div>

@@ -195,7 +195,7 @@ export function FileUpload({
     //   </div>
     // </div>
 
-    <div className={cn(`flex flex-col gap-1 ${className}`)}>
+    <div className={cn('flex w-full max-w-full flex-col gap-1', className)}>
       <input
         id='file-upload'
         type='file'
@@ -238,7 +238,7 @@ export function FileUpload({
           className='overflow-y-auto'
           style={{ maxHeight: maxHeight ? `${maxHeight}px` : 120 }}
         >
-          <div className='grid gap-2 p-1 md:grid-cols-2'>
+          <div className='grid w-full grid-cols-1 gap-2 p-1 md:grid-cols-2'>
             {existingFiles?.map((file) => (
               <div
                 key={file.file_url}

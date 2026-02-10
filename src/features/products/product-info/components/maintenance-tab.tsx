@@ -126,7 +126,6 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
           onSelectionChange={(data) => setSelectedIds(data)}
           isLoading={loadingAll}
           error={errorAll}
-          fillAvailableSpace={true}
         />
       </PermissionGuard>
     );
@@ -155,7 +154,6 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
           onTableReady={setWorkoderTable}
           isLoading={workorderLoading}
           error={workorderError}
-          fillAvailableSpace={true}
         />
       </PermissionGuard>
     );
@@ -235,11 +233,11 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 onValueChange={handleTabChange}
                 className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
               >
-                <TabsList className='flex !bg-transparent text-[12px]'>
+                <TabsList className='flex !h-[30px] !bg-transparent pt-0 text-[12px]'>
                   <PermissionGuard module='maintenance.alarm' action='view'>
                     <TabsTrigger
                       value='alert'
-                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
+                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                     >
                       {t('products.detail.maintenance.tabs.alert' as any)}
                     </TabsTrigger>
@@ -248,7 +246,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                   <PermissionGuard module='maintenance.workorder' action='view'>
                     <TabsTrigger
                       value='workorder'
-                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
+                      className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
                     >
                       {t('products.detail.maintenance.tabs.workorder' as any)}
                     </TabsTrigger>
@@ -259,7 +257,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 {activeTab === 'alert' && maintenanceTable && (
                   <DataTableCustomToolbar
                     table={maintenanceTable}
-                    className='w-auto flex-1 py-3'
+                    className='w-auto flex-1 py-0'
                     actions={
                       <PermissionGuard
                         module='maintenance.workorder'
@@ -295,7 +293,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 {activeTab === 'workorder' && workoderTable && (
                   <DataTableCustomToolbar
                     table={workoderTable}
-                    className='w-auto flex-1 py-3'
+                    className='w-auto flex-1 py-0'
                     excel={false}
                     onDeleteAll={
                       canDeleteWorkOrders

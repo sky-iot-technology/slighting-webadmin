@@ -33,6 +33,8 @@ import {
   getFirstAccessibleRoute,
   usePermissionStore
 } from '@/core/domains/permissions';
+import { cn } from '@/lib/utils';
+import { useTheme } from 'next-themes';
 
 // Reusable component for the active state SVG background
 export function ActiveStateIcon({ children }: { children: React.ReactNode }) {
@@ -81,14 +83,7 @@ function NavIcon({
   size?: number;
 }) {
   if (isActive) {
-    return (
-      <Icon
-        color='white'
-        className='brightness-0 invert'
-        width={size}
-        height={size}
-      />
-    );
+    return <Icon className='brightness-0 invert' width={size} height={size} />;
   }
   return <Icon className='text-muted-foreground' width={size} height={size} />;
 }
@@ -97,6 +92,10 @@ function NavIcon({
 function SidebarLogo({ isOpen }: { isOpen: boolean }) {
   const router = useRouter();
   const { ui } = usePermissionStore();
+  const { theme } = useTheme();
+
+  const isDark = theme === 'dark';
+
   const onClickLogo = () => {
     const nextRoute = getFirstAccessibleRoute(ui);
 
@@ -114,7 +113,7 @@ function SidebarLogo({ isOpen }: { isOpen: boolean }) {
           onClick={onClickLogo}
         >
           <Image
-            src='/assets/images/logo2.png'
+            src={`${isDark ? '/assets/images/logo1.png' : '/assets/images/logo2.png'}`}
             alt='logo'
             width={130}
             height={130}
@@ -164,7 +163,7 @@ function MenuItemIcon({
     );
   }
 
-  return <Icon />;
+  return <Icon className='dark:opacity-70' />;
 }
 
 // Component for sub-menu item
@@ -190,7 +189,7 @@ function SubMenuItem({
             prefetch={true}
             className='flex items-center gap-2'
           >
-            <span>{t(subItem.title as any)}</span>
+            <span className='dark:text-gray-7'>{t(subItem.title as any)}</span>
           </Link>
         </SidebarMenuSubButton>
       </SidebarMenuSubItem>
@@ -210,7 +209,9 @@ function SubMenuItem({
             isActive={isActive}
             showActiveState={isActive}
           />
-          <span>{t(subItem.title as any)}</span>
+          <span className={cn(`${!isActive ? 'dark:text-gray-7' : ''}`)}>
+            {t(subItem.title as any)}
+          </span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuSubItem>
@@ -246,7 +247,9 @@ function MainMenuItem({
             showActiveState={isActive && open}
             size={20}
           />
-          <span>{t(item.title as any)}</span>
+          <span className={cn(`${!isActive ? 'dark:text-gray-7' : ''}`)}>
+            {t(item.title as any)}
+          </span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -274,7 +277,7 @@ function MainMenuItemModal({
         asChild={false}
       >
         <MenuItemIcon icon={Icon} isActive={isActive} showActiveState={false} />
-        <span>{t(item.title as any)}</span>
+        <span className='dark:text-gray-7'>{t(item.title as any)}</span>
       </SidebarMenuButton>
     </SidebarMenuItem>
   );
@@ -339,10 +342,10 @@ export default function AppSidebar() {
                               isActive={!!isActive}
                               showActiveState={false}
                             />
-                            <span className='group-data-[collapsible=icon]:hidden'>
+                            <span className='dark:text-gray-7 group-data-[collapsible=icon]:hidden'>
                               {t(item.title as any)}
                             </span>
-                            <IconChevronRight className='ml-auto !size-[18px] transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90' />
+                            <IconChevronRight className='ml-auto !size-[18px] transition-transform duration-200 group-data-[collapsible=icon]:hidden group-data-[state=open]/collapsible:rotate-90 dark:opacity-70' />
                           </SidebarMenuButton>
                         </CollapsibleTrigger>
                         <CollapsibleContent>

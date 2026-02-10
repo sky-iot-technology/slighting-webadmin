@@ -57,7 +57,7 @@ export default function ProfilePage() {
 
   return (
     <Card className='bg-background dark:bg-background-all mx-auto flex w-full gap-1.5 border-0 py-0 shadow-none'>
-      <CardHeader className='px-0'>
+      <CardHeader className='hidden px-0'>
         <CardTitle className='text-primary text-left text-[16px] font-bold'></CardTitle>
       </CardHeader>
       <CardContent className='flex flex-col gap-4 px-0 md:flex-row md:gap-1.5'>

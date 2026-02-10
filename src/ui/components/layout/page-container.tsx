@@ -17,10 +17,10 @@ export default function PageContainer({
           className={'h-[calc(100dvh-52px)]'}
           classPrimitiveName={classname}
         >
-          <div className='flex flex-1 p-4 md:px-4'>{children}</div>
+          <div className='flex flex-1 p-2 md:p-4'>{children}</div>
         </ScrollArea>
       ) : (
-        <div className='flex flex-1 p-4 md:px-4'>{children}</div>
+        <div className='flex flex-1 p-2 md:p-4'>{children}</div>
       )}
     </>
   );

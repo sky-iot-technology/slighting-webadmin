@@ -17,6 +17,7 @@ import { products } from './page/products';
 import { role } from './page/role';
 import { user } from './page/user';
 import { auth } from './page/auth';
+import { journals } from './page/journals';
 
 export const vi = {
   navbar,
@@ -36,5 +37,6 @@ export const vi = {
   products,
   role,
   user,
-  auth
+  auth,
+  journals
 } as const;

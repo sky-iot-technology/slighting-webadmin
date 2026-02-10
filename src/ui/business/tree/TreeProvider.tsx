@@ -57,7 +57,7 @@ export function TreeProvider({
   useEffect(() => {
     if (!open || !closeOnClickOutside) return;
 
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (event: PointerEvent) => {
       if (
         containerRef.current &&
         !containerRef.current.contains(event.target as Node)
@@ -66,10 +66,10 @@ export function TreeProvider({
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside, true);
+    document.addEventListener('pointerdown', handleClickOutside, true);
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside, true);
+      document.removeEventListener('pointerdown', handleClickOutside, true);
     };
   }, [open, closeOnClickOutside]);
 
@@ -85,7 +85,10 @@ export function TreeProvider({
       <button
         disabled={disabled}
         type='button'
-        onClick={() => setOpen(!open)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen(!open);
+        }}
         className={cn(
           buttonClassName,
           'border-input dark:bg-input/30 flex h-full w-full items-center justify-between rounded-md border bg-transparent px-3 py-[2px] text-left focus:outline-none sm:py-[4px] md:py-[6px]',
@@ -114,7 +117,10 @@ export function TreeProvider({
           className='h-3 w-3 dark:brightness-0 dark:invert'
         /> */}
         <ChevronDown
-          className={cn('text-muted-foreground h-4', open && '-rotate-90')}
+          className={cn(
+            'text-muted-foreground h-4 opacity-50',
+            open && '-rotate-90'
+          )}
         />
       </button>
       <div

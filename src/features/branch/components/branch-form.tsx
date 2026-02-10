@@ -137,7 +137,10 @@ export default function BranchForm({
                     name='parent_id'
                     render={({ field }) => (
                       <FormItem className='col-span-2'>
-                        <FormLabel className='text-xs font-bold'>
+                        <FormLabel
+                          className='text-xs font-bold'
+                          onClick={(e) => e.preventDefault()}
+                        >
                           {t('branch.parent_branch')}
                         </FormLabel>
                         <FormControl>

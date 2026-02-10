@@ -217,5 +217,19 @@ export const products = {
         export: 'Xuất báo cáo'
       }
     }
+  },
+  sensor: {
+    active_e: 'Điện năng tiêu thụ',
+    active_p: 'Công suất',
+    battery: 'Điện áp battery',
+    frequency: 'Tần số',
+    humidity: 'Độ ẩm',
+    input: 'Trạng thái',
+    irms: 'Dòng điện',
+    power_factor: 'Hệ số công suất',
+    temperature: 'Nhiệt độ',
+    thdi: 'Tổng méo hài dòng',
+    thdv: 'Tổng méo hài áp',
+    vrms: 'Điện áp'
   }
 };

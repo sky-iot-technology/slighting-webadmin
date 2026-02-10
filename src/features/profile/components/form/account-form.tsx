@@ -132,7 +132,8 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                       </FormItem>
                     )}
                   />
-                  <FormField
+
+                  {/* <FormField
                     name='no'
                     render={({ field }) => (
                       <FormItem>
@@ -140,15 +141,16 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                           {t('profile.branch')}
                         </FormLabel>
                         <FormControl>
-                          {/* <TreeMultiSelect
-                                                    value={field.value ?? []}
-                                                    onChange={field.onChange}
-                                                /> */}
+                          <TreeMultiSelect
+                            value={field.value ?? []}
+                            onChange={field.onChange}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
-                  />
+                  /> */}
+
                   <FormField
                     name='no'
                     render={({ field }) => (
@@ -203,7 +205,9 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                             value={field.value}
                           >
                             <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                              <SelectValue placeholder='Chọn đơn vị' />
+                              <SelectValue
+                                placeholder={t('profile.unit_placeholder')}
+                              />
                             </SelectTrigger>
                             <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                               <SelectItem value='test'>test</SelectItem>
@@ -228,7 +232,11 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                             value={field.value}
                           >
                             <SelectTrigger className='!h-[31px] w-full !rounded-[4px] px-2 text-xs leading-[15px] shadow-none'>
-                              <SelectValue placeholder='Chọn bộ phận' />
+                              <SelectValue
+                                placeholder={t(
+                                  'profile.department_placeholder'
+                                )}
+                              />
                             </SelectTrigger>
                             <SelectContent className='max-h-[240px] [&_[data-slot=select-item]]:text-xs'>
                               <SelectItem value='test'>test</SelectItem>
@@ -283,7 +291,7 @@ export default function AccountForm({ initialData }: RoleFormProps) {
                 <div className='mt-auto flex items-center justify-end'>
                   <Button
                     type='submit'
-                    className='h-[40px] w-[130px] rounded-[8px] text-lg'
+                    className='h-[40px] w-[120px] rounded-[8px] text-lg'
                   >
                     {t('general.edit')}
                   </Button>

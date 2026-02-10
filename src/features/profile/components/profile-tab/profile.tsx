@@ -188,13 +188,13 @@ export default function Profile({ user }: ProfileProps) {
           </Tabs>
 
           {/* Table container */}
-          <div className='h-[calc(100vh-400px)] min-h-[300px] w-full md:h-[500px] md:min-h-0 md:flex-1'>
+          {/* <div className='h-[calc(100vh-400px)] min-h-[300px] w-full md:h-[500px] md:min-h-0 md:flex-1'>
             {tab === 'user' ? (
               <div className='flex h-full w-full md:pl-6'>{userTableMemo}</div>
             ) : (
               <div className='flex h-full w-full md:pl-6'>{workTableMemo}</div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

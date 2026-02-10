@@ -162,7 +162,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
     return journalsData.journals.map((journal: Journal) => {
       // Get operation label
       const operationLabel =
-        OPERATION_LABELS[journal.operation] || journal.operation;
+        t(OPERATION_LABELS[journal.operation] as any) || journal.operation;
 
       // Get execution commands (only for operations that have execution)
       const executions = journal.attributes?.execution || [];
@@ -171,14 +171,18 @@ export function ActivityTab({ device }: ActivityTabProps) {
           ? executions
               .map((exec) => {
                 const commandLabel =
-                  COMMAND_LABELS[exec.command] || exec.command;
+                  t(COMMAND_LABELS[exec.command] as any) || exec.command;
                 const params = exec.params || {};
 
                 // Format params based on command
                 let paramText = '';
                 if (exec.command === 'lms.devices.commands.OnOff') {
                   paramText =
-                    params.on !== undefined ? (params.on ? 'Bật' : 'Tắt') : '';
+                    params.on !== undefined
+                      ? params.on
+                        ? t('journals.on')
+                        : t('journals.off')
+                      : '';
                 } else if (
                   exec.command === 'lms.devices.commands.BrightnessAbsolute'
                 ) {
@@ -186,6 +190,8 @@ export function ActivityTab({ device }: ActivityTabProps) {
                     params.brightness !== undefined
                       ? `${params.brightness}%`
                       : '';
+                } else if (exec.command === 'lms.devices.commands.Ota') {
+                  paramText = '';
                 } else if (Object.keys(params).length > 0) {
                   paramText = Object.entries(params)
                     .map(([key, value]) => {
@@ -234,7 +240,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
         timestamp
       };
     });
-  }, [journalsData, subDevices]);
+  }, [journalsData, subDevices, t]);
 
   // Get icon for operation type based on operation label
   const getOperationIcon = (operationLabel: string) => {
@@ -427,7 +433,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
               );
             }}
           >
-            <SelectTrigger className='w-full'>
+            <SelectTrigger className='!h-[30px] w-full'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -446,10 +452,10 @@ export function ActivityTab({ device }: ActivityTabProps) {
           </Select>
         </div>
         <Button
-          className='bg-[#0859AA] hover:bg-[#064488]'
+          className='!h-[30px] bg-[#0859AA] hover:bg-[#064488]'
           onClick={handleSyncDevices}
         >
-          <RefreshCw className='mr-2 h-4 w-4' />
+          <RefreshCw className='mr-1 h-4 w-4' />
           {t('products.detail.activity.sync' as any)}
         </Button>
       </div>
@@ -623,7 +629,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
           </div>
 
           {/* Pagination */}
-          <div className='flex items-center justify-between pt-6'>
+          {/* <div className='flex items-center justify-between pt-6'>
             <div className='text-muted-foreground text-sm'>
               {startIndex} - {endIndex} {t('general.start_end')} {totalDevices}
             </div>
@@ -665,18 +671,18 @@ export function ActivityTab({ device }: ActivityTabProps) {
                       className={cn(
                         'cursor-pointer',
                         currentPage === totalPages &&
-                          'pointer-events-none opacity-50'
+                        'pointer-events-none opacity-50'
                       )}
                     />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Right Section - Activity History (1/3 width) */}
-        <div className='flex-1 space-y-4 sm:rounded-bl-lg sm:border-b sm:border-l'>
+        <div className='min-w-0 flex-1 space-y-4 sm:max-w-full sm:rounded-bl-lg sm:border-b sm:border-l'>
           <div className='bg-card h-auto p-3'>
             <h3 className='mb-4 text-lg font-bold'>
               {t('products.detail.activity.history.title' as any)}
@@ -704,8 +710,8 @@ export function ActivityTab({ device }: ActivityTabProps) {
                         <div className='flex items-center gap-2'>
                           <IconComponent className='h-3.5 w-3.5 shrink-0 text-orange-500' />
                           <div className='min-w-0 flex-1 space-y-0.5'>
-                            <div className='flex items-center gap-2 text-sm'>
-                              <span className='truncate font-medium'>
+                            <div className='flex flex-col items-start gap-2 text-sm sm:flex-row sm:items-center'>
+                              <span className='block truncate font-medium'>
                                 {activity.devices}
                               </span>
                               {activity.operation && (
@@ -717,7 +723,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
                             <div className='flex items-center justify-between'>
                               <div className='flex items-center gap-2 text-xs'>
                                 {activity.execution && (
-                                  <span className='truncate'>
+                                  <span className='block truncate'>
                                     {activity.execution}
                                   </span>
                                 )}

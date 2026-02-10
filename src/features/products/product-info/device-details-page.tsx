@@ -74,7 +74,9 @@ export default function DeviceDetailsPage() {
       <div className='flex items-center'>
         <span className='text-lg font-bold'>
           {t('navbar.deviceInfo')}:{' '}
-          <span className='text-primary'>{device?.name || 'Loading...'}</span>
+          <span className='text-primary-text'>
+            {device?.name || 'Loading...'}
+          </span>
         </span>
       </div>
     ),
@@ -148,9 +150,9 @@ export default function DeviceDetailsPage() {
           <TabsTrigger value='activity' className={tabClassName}>
             {t('products.detail.tabs.activity' as any)}
           </TabsTrigger>
-          <TabsTrigger value='analytics' className={tabClassName}>
+          {/* <TabsTrigger value='analytics' className={tabClassName}>
             {t('products.detail.tabs.analytics' as any)}
-          </TabsTrigger>
+          </TabsTrigger> */}
           <TabsTrigger value='schedule' className={tabClassName}>
             {t('products.detail.tabs.schedule' as any)}
           </TabsTrigger>
@@ -176,7 +178,7 @@ export default function DeviceDetailsPage() {
 
         {/* Schedule Tab */}
         <TabsContent value='schedule' className='mt-6 flex flex-col'>
-          <div className='flex min-h-[500px] w-full flex-col'>
+          <div className='flex min-h-[600px] !w-full min-w-0 flex-col'>
             <CalendarContent deviceId={deviceId} filters={calendarFilters} />
           </div>
         </TabsContent>

@@ -125,7 +125,7 @@ export function DataTableActionsPopover<TData>({
           variant='outline'
           size='sm'
           aria-label='Actions menu'
-          className='!bg-gray-2 ml-auto hidden h-7.5 w-7.5 p-0 lg:flex'
+          className='!bg-gray-2 ml-auto flex h-7.5 w-7.5 p-0'
         >
           <Image
             src={'/assets/icons/options.svg'}

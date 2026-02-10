@@ -64,17 +64,39 @@ export default function ProductListingPage({}: ProductListingPage) {
     ...filtersExcludePagination
   } as const;
 
+  function parseStatus(status?: string) {
+    if (!status) return undefined;
+
+    try {
+      const decoded = decodeURIComponent(status).replace(/\+/g, ' ');
+      return JSON.parse(decoded)?.device_info?.online;
+    } catch (e) {
+      console.error('Parse status failed:', status);
+      return undefined;
+    }
+  }
+
+  const statusFilter = useMemo(() => {
+    return parseStatus(status);
+  }, [status]);
+
   const { data, isLoading, error, refetch } = useGetDevices(filters, {
     enabled: isReady
   });
 
   const { data: onlineData, refetch: refetchOnline } = useGetDeviceCount(
     true,
-    filtersExcludePagination
+    filtersExcludePagination,
+    {
+      enabled: isReady && (statusFilter === undefined || statusFilter === true)
+    }
   );
   const { data: offlineData, refetch: refetchOffline } = useGetDeviceCount(
     false,
-    filtersExcludePagination
+    filtersExcludePagination,
+    {
+      enabled: isReady && (statusFilter === undefined || statusFilter === false)
+    }
   );
 
   const { catalogues } = useCatalogueStore();
@@ -158,9 +180,8 @@ export default function ProductListingPage({}: ProductListingPage) {
 
       {/* Total Status */}
       <div className='flex items-center gap-2'>
-        <div className='relative h-3 w-3'>
-          <div className='absolute h-3 w-3 rounded-full border-2 border-green-300' />
-          <div className='absolute top-1/2 left-1/2 h-1.5 w-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-red-500' />
+        <div className='flex h-3 w-3 items-center justify-center rounded-full border-2 border-green-300'>
+          <div className='h-1 w-1 rounded-full bg-red-500' />
         </div>
         <span className='text-sm font-medium'>
           {t('products.status.total' as any)}:{' '}
@@ -172,7 +193,17 @@ export default function ProductListingPage({}: ProductListingPage) {
 
   const handleRefetch = async () => {
     toast.success(t('products.message.sync_initiated' as any));
-    await Promise.all([refetch(), refetchOnline(), refetchOffline()]);
+    const promises = [refetch()];
+
+    if (statusFilter === undefined || statusFilter === true) {
+      promises.push(refetchOnline());
+    }
+
+    if (statusFilter === undefined || statusFilter === false) {
+      promises.push(refetchOffline());
+    }
+
+    await Promise.all(promises);
   };
 
   if (!isReady) {

@@ -66,7 +66,7 @@ export function OtaTable<TData, TValue>({
           error={error}
           loadingRowCount={pageSize}
         >
-          <div className='flex items-center gap-2 py-3'>
+          <div className='flex items-center gap-2 py-2'>
             <DataTableCustomToolbar
               table={table}
               className='flex-1'

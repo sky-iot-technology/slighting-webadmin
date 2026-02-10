@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export const UserColumns = (): ColumnDef<any>[] => [
   {
-    // id: 'title',
+    id: 'title',
     accessorKey: 'title',
     cell: ({ row }) => {
       const title = row.getValue('title') as string;
@@ -34,6 +34,7 @@ export const UserColumns = (): ColumnDef<any>[] => [
     //   placeholder: 'Tìm kiếm',
     //   variant: 'text'
     // },
-    enableColumnFilter: true
+    enableColumnFilter: true,
+    size: 4000
   }
 ];

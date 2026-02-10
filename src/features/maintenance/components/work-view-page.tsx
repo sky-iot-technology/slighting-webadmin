@@ -59,7 +59,7 @@ export default function WorkOrderViewPage({
             Error loading work order
           </h3>
           <p className='text-muted-foreground text-sm'>
-            {error?.message || 'Device not found'}
+            {error?.message || 'Work Order not found'}
           </p>
           <Button
             variant='outline'
@@ -67,7 +67,7 @@ export default function WorkOrderViewPage({
             onClick={() => router.push('/dashboard/maintenance')}
           >
             <ArrowLeft className='mr-2 h-4 w-4' />
-            Quay lại
+            {t('general.return')}
           </Button>
         </div>
       </div>

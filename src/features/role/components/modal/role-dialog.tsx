@@ -34,6 +34,7 @@ export default function RoleDialog({
       <DialogContent
         className='!h-[80vh] !w-[90vw] !max-w-[600px] overflow-hidden rounded-xl p-0'
         hideCloseButton
+        onOpenAutoFocus={(e) => e.preventDefault()}
       >
         {!isLoading && (
           <RoleForm

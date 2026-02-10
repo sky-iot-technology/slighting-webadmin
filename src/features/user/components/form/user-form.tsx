@@ -371,7 +371,8 @@ export default function UserForm({
                                 onValueChange={field.onChange}
                                 placeholder={t('user.select_unit' as any)}
                                 resetOnDefaultValueChange
-                                className='dark:bg-input/30 dark:disabled:bg-gray-5 flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 flex-wrap gap-1 !rounded-[4px]'
+                                singleLine
+                                className='dark:bg-input/30 dark:disabled:bg-gray-5 flex h-auto !min-h-[31px] !w-full !max-w-full !min-w-0 gap-1 !rounded-[4px]'
                                 popoverClassName='
                                 w-[var(--radix-popover-trigger-width)]
                                 max-w-[95vw]
@@ -380,6 +381,7 @@ export default function UserForm({
                                 autoSize
                                 textSize='!text-xs'
                                 hideSelectAll
+                                hideXIcon={true}
                                 disabled={isView}
                               />
                             </FormControl>

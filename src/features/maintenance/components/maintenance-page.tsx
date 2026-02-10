@@ -257,7 +257,9 @@ export default function MaintenancePage() {
           </PermissionGuard>
         </div>
 
-        {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
+        <div className='flex h-full w-full flex-col'>
+          {activeTab === 'alert' ? maintenanceTableMemo : workorderTableMemo}
+        </div>
         <MaintenanceDialog
           alarmId={selectedAlarm?.id ?? ''}
           pageTitle={

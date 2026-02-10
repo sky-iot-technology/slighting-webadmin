@@ -27,6 +27,7 @@ import {
 import { CircleAlert } from 'lucide-react';
 import { IconAlertCircleFilled } from '@tabler/icons-react';
 import Image from 'next/image';
+import { useIsMobile } from '@/core/shared/hooks/use-mobile';
 
 const Form = FormProvider;
 
@@ -126,6 +127,9 @@ function FormLabel({
   className,
   ...props
 }: React.ComponentProps<typeof LabelPrimitive.Root>) {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
+
   const { error, formItemId } = useFormField();
   const fieldContext = React.useContext(FormFieldContext);
   const schema = useSchema();
@@ -154,13 +158,22 @@ function FormLabel({
       </span>
       {error && (
         <TooltipProvider>
-          <Tooltip delayDuration={0}>
+          <Tooltip
+            delayDuration={0}
+            open={isMobile ? open : undefined}
+            onOpenChange={isMobile ? setOpen : undefined}
+          >
             <TooltipTrigger asChild>
               <Image
                 alt='Error icon'
                 src='/assets/icons/alert-circle.svg'
                 width={16}
                 height={16}
+                onClick={() => {
+                  if (isMobile) {
+                    setOpen((prev) => !prev);
+                  }
+                }}
               />
             </TooltipTrigger>
             <TooltipContent

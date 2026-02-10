@@ -20,7 +20,9 @@ export function diffTimeHMS(
 ): string {
   const end = Date.now();
   const start = new Date(updatedAt).getTime();
-  const diffMs = end - start;
+  let diffMs = end - start;
+
+  if (diffMs < 0) diffMs = 0;
 
   const seconds = Math.floor(diffMs / 1000);
   const minutes = Math.floor(seconds / 60);
