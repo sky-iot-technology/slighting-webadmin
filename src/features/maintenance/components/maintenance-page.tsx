@@ -211,7 +211,7 @@ export default function MaintenancePage() {
             {activeTab === 'alert' && maintenanceTable && (
               <DataTableCustomToolbar
                 table={maintenanceTable}
-                className='w-auto flex-1 py-3'
+                className='w-auto flex-1 py-2'
                 actions={
                   <PermissionGuard
                     module='maintenance.workorder'
@@ -245,7 +245,7 @@ export default function MaintenancePage() {
             {activeTab === 'workorder' && workoderTable && (
               <DataTableCustomToolbar
                 table={workoderTable}
-                className='w-auto flex-1 py-3'
+                className='w-auto flex-1 py-2'
                 excel={false}
                 onDeleteAll={
                   canDeleteWorkOrders

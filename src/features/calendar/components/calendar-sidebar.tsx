@@ -20,7 +20,7 @@ export const CalendarSidebar = memo(function CalendarSidebar({
 }: CalendarSidebarProps) {
   const { t } = useTranslation();
   return (
-    <div className='flex h-full flex-col pt-1.5 pr-[9px] pl-2'>
+    <div className='flex h-full flex-col pt-1 pr-[9px] pl-2'>
       <div className='bg-background dark:bg-gray-2 mb-2 flex h-[31px] items-center rounded-[6px] px-2'>
         <Image
           src={'/assets/icons/search.svg'}

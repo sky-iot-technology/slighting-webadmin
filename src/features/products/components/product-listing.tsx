@@ -211,7 +211,7 @@ export default function ProductListingPage({}: ProductListingPage) {
   }
 
   return (
-    <div className='flex h-full w-full flex-col'>
+    <div className='mt-1 flex h-full w-full flex-col'>
       <ProductTable
         data={(data?.devices as Device[]) || []}
         totalItems={data?.total || 0}
@@ -225,7 +225,7 @@ export default function ProductListingPage({}: ProductListingPage) {
             <Button
               variant='default'
               size='sm'
-              className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+              className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[6px] text-white'
               onClick={handleRefetch}
             >
               <RefreshCw className='h-4 w-4' />

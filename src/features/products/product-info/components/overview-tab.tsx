@@ -1,6 +1,10 @@
 'use client';
 
-import { Device, useSyncDevices } from '@/core/domains/devices';
+import {
+  Device,
+  SENSOR_SUB_LABELS,
+  useSyncDevices
+} from '@/core/domains/devices';
 import { Card, CardContent, CardTitle } from '@/ui/components/ui/card';
 import { Input } from '@/ui/components/ui/input';
 import { Label } from '@/ui/components/ui/label';
@@ -1427,7 +1431,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
 
                   <AccordionContent>
                     <CardContent className='grid grid-cols-1 gap-4 px-0 md:grid-cols-3'>
-                      {Object.entries(sensorInfo.attributes || {}).map(
+                      {/* {Object.entries(sensorInfo.attributes || {}).map(
                         ([key, value]) => {
                           const valueType = sensorInfo.attributes?.[key]?.t;
                           let _value = '';
@@ -1450,7 +1454,89 @@ export function OverviewTab({ device }: OverviewTabProps) {
                             </div>
                           );
                         }
-                      )}
+                      )} */}
+
+                      {Object.entries(sensorInfo.attributes || {})
+                        .sort(([keyA, a], [keyB, b]) => {
+                          const lastA = sensorInfo.last_state?.[keyA];
+                          const lastB = sensorInfo.last_state?.[keyB];
+
+                          const getPriority = (t: number, v: any) => {
+                            // last
+                            if (t === 1) return 100;
+
+                            // t === 3
+                            if (t === 3 && Array.isArray(v)) {
+                              //length === 4 lên đầu
+                              if (v.length === 4) return 1;
+
+                              //length === 3 đi sau
+                              if (v.length === 3) return 2;
+                            }
+
+                            // default
+                            return 50;
+                          };
+
+                          const pA = getPriority(a.t, lastA);
+                          const pB = getPriority(b.t, lastB);
+
+                          return pA - pB;
+                        })
+                        .map(([key, value]) => {
+                          const valueType = value.t;
+                          const lastValue = sensorInfo.last_state?.[key];
+
+                          const values =
+                            valueType === 1 || valueType === 2
+                              ? [lastValue]
+                              : Array.isArray(lastValue)
+                                ? lastValue
+                                : [lastValue];
+
+                          const isMulti = valueType > 2;
+                          const subLabels = SENSOR_SUB_LABELS[key];
+
+                          return (
+                            <div key={key} className='space-y-2'>
+                              <Label>
+                                {`${t(`products.sensor.${key}` as any)} (${value.u})`}
+                              </Label>
+
+                              {isMulti ? (
+                                <div
+                                  className='grid gap-2'
+                                  style={{
+                                    gridTemplateColumns: `repeat(${values.length}, 1fr)`
+                                  }}
+                                >
+                                  {values.map((v, i) => (
+                                    <Input
+                                      key={`i-${i}`}
+                                      value={String(v ?? '')}
+                                      disabled
+                                      className='text-center !text-sm disabled:opacity-90'
+                                    />
+                                  ))}
+                                  {subLabels.map((label, i) => (
+                                    <Label
+                                      key={`l-${i}`}
+                                      className='text-muted-foreground flex items-center justify-center text-center text-xs'
+                                    >
+                                      {label}
+                                    </Label>
+                                  ))}
+                                </div>
+                              ) : (
+                                <Input
+                                  value={String(values[0] ?? '')}
+                                  disabled
+                                  className='text-center !text-sm disabled:opacity-90'
+                                />
+                              )}
+                            </div>
+                          );
+                        })}
                     </CardContent>
                   </AccordionContent>
                 </AccordionItem>

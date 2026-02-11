@@ -53,7 +53,7 @@ export function ProductTable<TData, TValue>({
         <DataTable
           table={table}
           totalRows={totalItems}
-          // wrapperClassName='mx-1 mt-1 rounded-none'
+          wrapperClassName='mt-1'
           tableContainerClassName='border-none rounded-none'
           paginationClassName='py-3'
           headerClassName='border-t-1 border-none shadow-none'
@@ -63,10 +63,10 @@ export function ProductTable<TData, TValue>({
           loadingRowCount={pageSize}
         >
           {/* <DataTableToolbar table={table} /> */}
-          <div className='flex items-center gap-2 py-3'>
+          <div className='flex items-center gap-2'>
             <DataTableCustomToolbar
               table={table}
-              className='flex-1'
+              className='flex-1 py-2'
               actions={
                 <>
                   {action}
@@ -74,7 +74,7 @@ export function ProductTable<TData, TValue>({
                     <Button
                       variant='default'
                       size='sm'
-                      className='bg-primary hover:bg-primary/90 flex items-center rounded-[6px] text-white'
+                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[6px] text-white'
                       onClick={() => {
                         router.push('/dashboard/product/new');
                       }}

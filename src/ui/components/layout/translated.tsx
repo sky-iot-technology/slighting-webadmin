@@ -19,7 +19,6 @@ import { Separator } from '@radix-ui/react-dropdown-menu';
 export function Translated() {
   const { t } = useTranslation();
   const { language, setLanguage } = useLanguageStore();
-  console.log(language);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

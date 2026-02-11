@@ -228,3 +228,16 @@ export interface DeviceQueryResponse {
 }
 
 export type DeviceStatusFilter = 'all' | 'online' | 'offline';
+
+export const SENSOR_SUB_LABELS: Record<string, string[]> = {
+  active_e: ['A', 'B', 'C'],
+  active_p: ['A', 'B', 'C'],
+  battery: ['Vin', 'Vbat', 'VADC', 'Ir'],
+
+  input: ['', '', ''],
+  irms: ['A', 'B', 'C'],
+  power_factor: ['A', 'B', 'C'],
+  thdi: ['A', 'B', 'C'],
+  thdv: ['A', 'B', 'C'],
+  vrms: ['A', 'B', 'C']
+};

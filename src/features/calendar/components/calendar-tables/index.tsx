@@ -83,8 +83,8 @@ export function CalendarTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className='bg-background'
-      wrapperClassName='rounded-[8px] bg-card'
+      className='mt-1'
+      wrapperClassName='rounded-[8px] bg-card mt-1'
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
       headerClassName='border-t-1 border-none shadow-none'
@@ -96,7 +96,7 @@ export function CalendarTable<TData, TValue>({
       error={error}
       loadingRowCount={pageSize}
     >
-      <div className='bg-card flex flex-col gap-2 py-3 pl-1.5 md:flex-row md:items-center md:gap-2'>
+      <div className='bg-card flex flex-col gap-2 pl-1.5 md:flex-row md:items-center md:gap-2'>
         <div className='flex gap-2'>
           {onToggleSidebar && (
             <button
@@ -141,7 +141,7 @@ export function CalendarTable<TData, TValue>({
 
         <DataTableCustomToolbar
           table={table}
-          className='w-auto flex-1'
+          className='w-auto flex-1 py-2'
           actions={
             <PermissionGuard module='calendar' action='create' fallback={null}>
               <Button

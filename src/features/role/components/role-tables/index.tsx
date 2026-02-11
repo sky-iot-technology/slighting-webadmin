@@ -56,7 +56,7 @@ export function RoleTable<TData, TValue>({
     <DataTable
       table={table}
       totalRows={totalItems}
-      className=''
+      className='mt-1'
       wrapperClassName='mx-1 mt-1 rounded-[4px]'
       tableContainerClassName='border-none rounded-none'
       paginationClassName='py-3'
@@ -69,7 +69,7 @@ export function RoleTable<TData, TValue>({
     >
       <DataTableCustomToolbar
         table={table}
-        className='w-auto py-3'
+        className='w-auto py-2'
         actions={
           <PermissionGuard module='role' action='create' fallback={null}>
             <Button

@@ -90,7 +90,7 @@ export default function TagPage() {
 
   const canDelete = useCan('device', 'update');
   return (
-    <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px] pb-3'>
+    <div className='h-[calc(100dvh-52px)] w-full p-3'>
       <div className='h-full w-full rounded-[4px]'>
         <div className='flex h-full w-full'>
           <div
@@ -115,9 +115,9 @@ export default function TagPage() {
             />
           )}
 
-          <div className='flex w-full flex-col'>
-            <div className='bg-card py-3'>
-              <div className='flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
+          <div className='bg-card flex w-full flex-col'>
+            <div className='bg-card mt-1'>
+              <div className='flex w-full flex-col gap-3 pl-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-2'>
                 <div className='flex items-center gap-2'>
                   <button
                     onClick={handleToggleSidebar}
@@ -149,7 +149,7 @@ export default function TagPage() {
                   <div className='flex w-full flex-wrap items-start gap-2 sm:w-auto sm:justify-end'>
                     <DataTableCustomToolbar
                       table={deviceTable}
-                      className='w-full sm:w-auto'
+                      className='w-full py-2 sm:w-auto'
                       excel={false}
                       filter={true}
                       // onDeleteAll={
@@ -162,7 +162,7 @@ export default function TagPage() {
             </div>
 
             <div
-              className='flex w-full flex-1 flex-col overflow-hidden border-l-1'
+              className='bg-card flex w-full flex-1 flex-col overflow-hidden border-l-1'
               ref={containerRef}
             >
               <TagContent

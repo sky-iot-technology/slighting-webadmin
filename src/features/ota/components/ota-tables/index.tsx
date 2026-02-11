@@ -57,7 +57,7 @@ export function OtaTable<TData, TValue>({
           table={table}
           totalRows={totalItems}
           className='mt-1'
-          wrapperClassName='rounded-[8px]'
+          wrapperClassName='rounded-[8px] mt-1'
           tableContainerClassName='border-none rounded-none'
           paginationClassName='py-3'
           headerClassName='border-t-1 border-none shadow-none'
@@ -66,17 +66,17 @@ export function OtaTable<TData, TValue>({
           error={error}
           loadingRowCount={pageSize}
         >
-          <div className='flex items-center gap-2 py-2'>
+          <div className='flex items-center gap-2'>
             <DataTableCustomToolbar
               table={table}
-              className='flex-1'
+              className='flex-1 py-2'
               actions={
                 <>
                   <PermissionGuard module='ota' action='create'>
                     <Button
                       variant='default'
                       size='sm'
-                      className='bg-primary hover:bg-primary/90 flex items-center rounded-[4px] text-white'
+                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
                       onClick={() => setOpen(true)}
                     >
                       <IconPlus className='h-3 w-3' />

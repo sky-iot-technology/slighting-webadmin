@@ -82,14 +82,14 @@ export default function CalendarPage() {
   }, [treeData, selectedRegion]);
 
   return (
-    <div className='h-[calc(100dvh-52px)] w-full px-2.5 pt-[13px]'>
-      <div className='bg-calender-gray h-full w-full rounded-[4px] pb-[7px]'>
+    <div className='h-[calc(100dvh-52px)] w-full'>
+      <div className='h-full w-full rounded-[4px] p-3'>
         <div className='flex h-full w-full'>
           <div
             className={cn(
               'bg-card transition-all duration-300 ease-in-out',
               'overflow-hidden rounded-[1px_1px_4px_4px]',
-              'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full pt-2.5 md:static md:z-auto md:translate-x-0',
+              'fixed inset-y-0 left-0 z-50 w-64 -translate-x-full pt-1.5 md:static md:z-auto md:translate-x-0',
               'md:w-64 md:overflow-visible',
               treeOpen && 'translate-x-0 md:w-64',
               !treeOpen && 'md:w-0'
@@ -113,7 +113,7 @@ export default function CalendarPage() {
           )}
 
           <div
-            className='flex min-w-0 flex-1 flex-col overflow-hidden'
+            className='bg-card flex min-w-0 flex-1 flex-col overflow-hidden'
             ref={containerRef}
           >
             <CalendarContent
