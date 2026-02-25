@@ -62,7 +62,6 @@ export const useCreateCalendars = (
     ...options,
     mutationFn: (data) => calendarApi.createCalendar(data),
     onSuccess: (data, variables, context) => {
-      console.log('✅ onSuccess in useCreateProduct');
       queryClient.invalidateQueries({ queryKey: [CALENDARS_QUERY_KEY] });
       queryClient.invalidateQueries({ queryKey: [DEVICE_CALENDARS_QUERY_KEY] });
 

@@ -200,7 +200,6 @@ export default function SyncDeviceDialog({
             }));
           }}
           onDone={(status) => {
-            console.log('OTA done', id, requestId, status);
             setProgressMap((prev) => {
               const next = { ...prev };
               delete next[id];

@@ -56,7 +56,6 @@ export function useLogin() {
         let uiPermission: PermissionMap = {};
         //setPermission
         const roleId = user.metadata?.roleId;
-        console.log(roleId);
         if (roleId) {
           const res = await rolesApi.getById(roleId);
           uiPermission = normalizeUIPermission(res.permission.ui);

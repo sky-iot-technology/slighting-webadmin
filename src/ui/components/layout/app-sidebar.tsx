@@ -319,7 +319,6 @@ export default function AppSidebar() {
                       isActive={isActive ?? false}
                       onClick={() => {
                         setOpenSettingModal(true);
-                        console.log('open');
                       }}
                     />
                   );

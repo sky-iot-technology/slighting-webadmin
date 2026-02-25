@@ -44,7 +44,7 @@ export abstract class BaseApiClient {
     this.setupInterceptors();
   }
 
-  private setupInterceptors(): void {
+  protected setupInterceptors(): void {
     // Request interceptor
     this.client.interceptors.request.use(
       (config) => {

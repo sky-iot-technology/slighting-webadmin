@@ -43,7 +43,6 @@ export default function DeviceDetailsPage() {
     setActiveTab(value);
     const { pathname } = window.location;
     const newUrl = new URL(pathname, window.location.origin);
-    console.log(newUrl.toString());
     router.replace(newUrl.toString());
   };
 
