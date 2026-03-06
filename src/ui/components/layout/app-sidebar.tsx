@@ -117,6 +117,7 @@ function SidebarLogo({ isOpen }: { isOpen: boolean }) {
             alt='logo'
             width={130}
             height={130}
+            className='h-[40px] w-[130px] object-contain'
           />
         </div>
       ) : (
@@ -129,6 +130,7 @@ function SidebarLogo({ isOpen }: { isOpen: boolean }) {
             alt='logo'
             width={35}
             height={35}
+            className='h-[35px] w-[35px] object-contain'
           />
         </div>
       )}
@@ -292,6 +294,14 @@ export default function AppSidebar() {
   React.useEffect(() => {
     // Side effects based on sidebar state changes
   }, [open]);
+
+  React.useEffect(() => {
+    if (pathname && !pathname.startsWith('/dashboard/product')) {
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('productParams');
+      }
+    }
+  }, [pathname]);
 
   return (
     <>

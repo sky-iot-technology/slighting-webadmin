@@ -17,9 +17,15 @@ type Props = {
   data: z.infer<typeof calendarFormSchema>;
   onBack: () => void;
   onConfirm: () => void;
+  loading?: boolean;
 };
 
-export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
+export default function CalendarConfirm({
+  data,
+  onBack,
+  onConfirm,
+  loading
+}: Props) {
   const { catalogues } = useCatalogueStore();
   const allDeviceIds = data.ids;
   const { t } = useTranslation();
@@ -132,7 +138,11 @@ export default function CalendarConfirm({ data, onBack, onConfirm }: Props) {
         <Button variant='outline' onClick={onBack}>
           {t('calendar.back')}
         </Button>
-        <Button onClick={onConfirm} className='bg-primary text-white'>
+        <Button
+          onClick={onConfirm}
+          disabled={loading}
+          className='bg-primary text-white'
+        >
           {t('calendar.confirm')}
         </Button>
       </div>

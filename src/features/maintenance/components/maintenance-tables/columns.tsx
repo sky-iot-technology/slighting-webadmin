@@ -256,7 +256,7 @@ export const maintenanceColumns = (
           {!isSubRow && (
             <CellAction
               active={!['open', 'ignored'].includes(status)}
-              imei={metadata.imei}
+              imei={metadata?.imei}
               alertName={measurement + ' ' + cause}
               id={String(row.original.id)}
               lat={device?.device_info.lat || 0}

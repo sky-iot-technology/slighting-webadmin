@@ -12,7 +12,7 @@ export const OtaColumns = (t: any): ColumnDef<OtaItem>[] => [
     id: 'select',
     header: ({ table }) => {
       return (
-        <div className='flex items-center justify-center'>
+        <div className='flex w-[50px] items-center justify-center'>
           <Checkbox
             checked={table.getIsAllPageRowsSelected()}
             onCheckedChange={(value) =>

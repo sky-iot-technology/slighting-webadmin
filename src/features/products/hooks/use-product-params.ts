@@ -1,56 +1,53 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useRef } from 'react';
-import { STORAGE_KEYS } from '../../../core/shared/utils/localStorage';
+
+function filterParams(searchParams: URLSearchParams, allowed: string[]) {
+  const filtered = new URLSearchParams();
+
+  allowed.forEach((key) => {
+    const value = searchParams.get(key);
+    if (value) filtered.set(key, value);
+  });
+
+  return filtered.toString();
+}
 
 export function useProductParams() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [params, setParams] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
-  const initialized = useRef(false);
+  const ALLOWED_PARAMS = ['status', 'type', 'parent_group_id'];
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
+    const saved =
+      typeof window !== 'undefined'
+        ? sessionStorage.getItem('productParams')
+        : null;
+    const filteredString = filterParams(searchParams, ALLOWED_PARAMS);
 
-    const currentString = searchParams.toString();
-    const storedString = localStorage.getItem(
-      STORAGE_KEYS.PRODUCT_LISTING_PARAMS
-    );
-
-    // If we have no params in URL, try to restore
-    if (!currentString && storedString) {
-      router.replace(`?${storedString}`);
-      // We are not ready yet, waiting for router replace to trigger update
+    if (!isReady) {
+      if (filteredString) {
+        setParams(filteredString);
+        if (typeof window !== 'undefined')
+          sessionStorage.setItem('productParams', filteredString);
+        setIsReady(true);
+      } else if (saved) {
+        router.replace(`?${saved}`);
+      } else {
+        setIsReady(true);
+      }
     } else {
-      // Either we have params, or no stored params. We are ready.
-      setIsReady(true);
+      setParams(filteredString || null);
+      if (filteredString) {
+        if (typeof window !== 'undefined')
+          sessionStorage.setItem('productParams', filteredString);
+      } else {
+        if (typeof window !== 'undefined')
+          sessionStorage.removeItem('productParams');
+      }
     }
-  }, []); // Run only once on mount
-
-  // Sync to local storage
-  useEffect(() => {
-    // Only sync if we are "ready" (meaning initial restore logic is done)
-    if (!isReady) return;
-
-    const currentString = searchParams.toString();
-    if (currentString) {
-      localStorage.setItem(STORAGE_KEYS.PRODUCT_LISTING_PARAMS, currentString);
-    } else {
-      // If empty, we should probably clear storage so "Clear Filters" works.
-      // However, if we clear storage, next visit gets no defaults.
-      // But that is expected behavior if I left the page with no filters.
-      localStorage.removeItem(STORAGE_KEYS.PRODUCT_LISTING_PARAMS);
-    }
-  }, [searchParams, isReady]);
-
-  // If we just triggered a replace, we wait for the next render with new params.
-  // However, next/navigation router.replace might not trigger a full remount,
-  // but it will trigger a searchParams update.
-  useEffect(() => {
-    if (!isReady && searchParams.toString()) {
-      setIsReady(true);
-    }
-  }, [searchParams, isReady]);
+  }, [searchParams, isReady, router]);
 
   return { isReady };
 }

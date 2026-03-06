@@ -74,6 +74,8 @@ export default function CalendarDialog({
     }
   });
 
+  const isSubmitting = createCalendar.isPending || updateCalendar.isPending;
+
   const { data: calendarData, isLoading } = useGetCalendarById(
     calendarId ?? '',
     {
@@ -121,6 +123,7 @@ export default function CalendarDialog({
             <CalendarConfirm
               data={formData}
               onBack={handleBack}
+              loading={isSubmitting}
               onConfirm={() => {
                 const dto = mapFormToCreateCalendarDto(formData);
                 if (isEditMode && calendarId) {

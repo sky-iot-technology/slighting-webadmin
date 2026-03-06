@@ -37,11 +37,11 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 interface CellActionProps {
   active: boolean;
-  imei: string;
   alertName: string;
   id: string;
   lat: number;
   lng: number;
+  imei?: string;
   disabled?: boolean;
   onViewAction?: (workOrderId: string) => void;
 }
@@ -117,7 +117,7 @@ export const CellAction: React.FC<CellActionProps> = ({
         title={t('maintenance.modal.delete.title' as any)}
         description={tTime('maintenance.modal.delete.description' as any, {
           name: alertName,
-          device: imei
+          device: imei ?? '-'
         })}
       />
 

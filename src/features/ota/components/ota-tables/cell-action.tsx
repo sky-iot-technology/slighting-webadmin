@@ -53,18 +53,21 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
         })}
       />
 
-      <SyncDeviceDialog
-        data={data}
-        open={openSync}
-        onOpenChange={setOpenSync}
-      />
-
-      <OtaDialog
-        pageTitle={t('ota.title.edit' as any)}
-        open={openEdit}
-        onOpenChange={setOpenEdit}
-        id={data.id}
-      />
+      {openSync && (
+        <SyncDeviceDialog
+          data={data}
+          open={openSync}
+          onOpenChange={setOpenSync}
+        />
+      )}
+      {openEdit && (
+        <OtaDialog
+          pageTitle={t('ota.title.edit' as any)}
+          open={openEdit}
+          onOpenChange={setOpenEdit}
+          id={data.id}
+        />
+      )}
 
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>

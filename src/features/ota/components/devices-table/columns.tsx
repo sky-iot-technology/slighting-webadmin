@@ -22,7 +22,7 @@ export const DeviceColumns = (t: any): ColumnDef<Device>[] => {
           selectableRows.every((row) => row.getIsSelected());
 
         return (
-          <div className='flex items-center justify-center'>
+          <div className='flex w-[50px] items-center justify-center'>
             <Checkbox
               disabled={selectableRows.length === 0}
               checked={isAllSelected}

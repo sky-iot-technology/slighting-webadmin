@@ -11,7 +11,7 @@ export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
   {
     id: 'select',
     header: ({ table }) => (
-      <div className='flex items-center justify-center'>
+      <div className='flex w-[50px] items-center justify-center'>
         <Checkbox
           checked={table.getIsAllPageRowsSelected()}
           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
@@ -87,7 +87,7 @@ export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
     id: 'actions',
     header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
       <DataTableColumnHeader
-        className='flex w-full items-center justify-center'
+        className='flex w-[50px] items-center justify-center'
         column={column}
         title={t('role.table.action' as any)}
       />

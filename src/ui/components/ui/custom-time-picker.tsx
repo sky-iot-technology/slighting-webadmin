@@ -63,13 +63,29 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
       const timer = setTimeout(() => {
         const hourEl = hourListRef.current?.querySelector(
           `[data-hour="${hour}"]`
-        );
+        ) as HTMLElement;
         const minuteEl = minuteListRef.current?.querySelector(
           `[data-minute="${minute}"]`
-        );
+        ) as HTMLElement;
 
-        hourEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-        minuteEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        if (hourEl && hourListRef.current) {
+          hourListRef.current.scrollTo({
+            top:
+              hourEl.offsetTop -
+              hourListRef.current.clientHeight / 2 +
+              hourEl.clientHeight / 2,
+            behavior: 'smooth'
+          });
+        }
+        if (minuteEl && minuteListRef.current) {
+          minuteListRef.current.scrollTo({
+            top:
+              minuteEl.offsetTop -
+              minuteListRef.current.clientHeight / 2 +
+              minuteEl.clientHeight / 2,
+            behavior: 'smooth'
+          });
+        }
       }, 100);
 
       return () => clearTimeout(timer);
@@ -143,19 +159,6 @@ export const CustomTimePicker = React.memo(function CustomTimePicker({
     onChange?.(`${h}:${m}`);
     setOpen(false);
   };
-
-  useEffect(() => {
-    if (open) {
-      const hourEl = hourListRef.current?.querySelector(
-        `[data-hour="${hour}"]`
-      );
-      const minuteEl = minuteListRef.current?.querySelector(
-        `[data-minute="${minute}"]`
-      );
-      hourEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      minuteEl?.scrollIntoView({ block: 'center', behavior: 'smooth' });
-    }
-  }, [hour, minute]);
 
   return (
     <div

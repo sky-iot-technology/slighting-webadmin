@@ -23,6 +23,7 @@ import {
 import { Device } from '@/core/domains/devices';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import Image from 'next/image';
+import { AlertModal } from '@/ui/components/modal/alert-modal';
 
 interface ReminderManagementModalProps {
   isOpen: boolean;
@@ -57,6 +58,8 @@ export function ReminderManagementModal({
     before: number;
     after: number;
   } | null>(null);
+
+  const [reminderToDelete, setReminderToDelete] = useState<string | null>(null);
 
   const [reminderMap, setReminderMap] = useState<Record<string, string[]>>(
     () => {
@@ -161,8 +164,15 @@ export function ReminderManagementModal({
   };
 
   const handleDeleteReminder = (id: string) => {
-    if (confirm(t('products.detail.reminders.confirm_delete' as any))) {
-      deleteReminderMutation.mutate(id);
+    setReminderToDelete(id);
+  };
+
+  const confirmDelete = () => {
+    if (reminderToDelete) {
+      deleteReminderMutation.mutate(reminderToDelete, {
+        onSuccess: () => setReminderToDelete(null),
+        onError: () => setReminderToDelete(null)
+      });
     }
   };
 
@@ -483,6 +493,15 @@ export function ReminderManagementModal({
             {t('products.detail.overview.button.save' as any)}
           </Button>
         </div>
+
+        <AlertModal
+          isOpen={!!reminderToDelete}
+          onClose={() => setReminderToDelete(null)}
+          onConfirm={confirmDelete}
+          loading={deleteReminderMutation.isPending}
+          title={t('products.modal.delete.title' as any) || 'Delete Reminder'}
+          description={t('products.detail.reminders.confirm_delete' as any)}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -105,10 +105,6 @@ export function DataTableActionsPopover<TData>({
 
   const handleDelete = async () => {
     if (!onDeleteAll) return;
-    if (selectedRows.length === 0) {
-      toast.warning(t('general.delete_warning'));
-      return;
-    }
     await onDeleteAll(selectedRows);
     setAlertOpen(false);
     setOpen(false);
@@ -155,6 +151,11 @@ export function DataTableActionsPopover<TData>({
               size='sm'
               className='text-destructive hover:!text-destructive w-full justify-start text-xs'
               onClick={() => {
+                const count = table.getSelectedRowModel().rows.length;
+                if (count === 0) {
+                  toast.warning(t('general.delete_warning'));
+                  return;
+                }
                 setAlertOpen(true);
               }}
             >

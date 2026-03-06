@@ -148,14 +148,14 @@ function Calendar({
             disablePastDate &&
               '[&[data-past="true"]]:opacity-40 [&[data-past="true"]]:cursor-not-allowed'
           ),
-          today: '!text-primary font-bold',
+          today: '[&:not([aria-selected="true"])]:!text-primary font-bold',
           selected:
             'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary ring-offset-2'
         }}
         modifiersClassNames={{
-          today: '!text-primary font-bold',
+          today: '[&:not([aria-selected="true"])]:!text-primary font-bold',
           selected:
-            'hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary rounded-full'
+            'focus:bg-primary focus:text-primary-foreground ring-2 ring-primary bg-primary rounded-full'
         }}
         modifiers={modifiers}
         footer={

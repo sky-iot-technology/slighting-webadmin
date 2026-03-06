@@ -12,7 +12,6 @@ import {
   ProfileUpdateData,
   DomainsResponse
 } from './types';
-import { localUtils } from '@/core/shared/utils/localStorage';
 
 export const authApi = {
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
@@ -76,7 +75,6 @@ export const authApi = {
     } finally {
       // Always clear cookies
       cookieUtils.clearAuthCookies();
-      localUtils.clearLocalStorage();
     }
   },
 
