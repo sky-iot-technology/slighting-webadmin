@@ -52,6 +52,9 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
     };
   }, []);
 
+  const normalizeMac = (mac: string) =>
+    mac.toLowerCase().replace(/[^a-f0-9]/g, '');
+
   useEffect(() => {
     const handler = setTimeout(() => {
       if (!query.trim()) {
@@ -63,7 +66,8 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
         if (searchType === 'deviceName') {
           return d.name.toLowerCase().includes(value);
         } else if (searchType === 'macAddress') {
-          return d.device_info.imei.toLowerCase().includes(value);
+          const mac = normalizeMac(d.device_info.imei);
+          return mac.includes(value);
         }
       });
       setResults(result);
