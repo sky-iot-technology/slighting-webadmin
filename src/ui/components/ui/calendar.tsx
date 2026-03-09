@@ -150,12 +150,12 @@ function Calendar({
           ),
           today: '[&:not([aria-selected="true"])]:!text-primary font-bold',
           selected:
-            'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary ring-offset-2'
+            'bg-primary dark:text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground ring-2 ring-primary ring-offset-2'
         }}
         modifiersClassNames={{
-          today: '[&:not([aria-selected="true"])]:!text-primary font-bold',
+          today: '[&:not([aria-selected="true"])]:!text-primary-text font-bold',
           selected:
-            'focus:bg-primary focus:text-primary-foreground ring-2 ring-primary bg-primary rounded-full'
+            'focus:bg-primary-text focus:text-primary-foreground ring-2 ring-primary-text bg-primary-text rounded-full !text-white'
         }}
         modifiers={modifiers}
         footer={
