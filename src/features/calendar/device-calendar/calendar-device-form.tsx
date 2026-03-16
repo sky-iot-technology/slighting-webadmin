@@ -156,10 +156,14 @@ export default function CalendarDeviceForm({
                         <FormControl>
                           <MultiSelect
                             options={
-                              data?.devices?.map((b) => ({
-                                value: b.device_id,
-                                label: b.name
-                              })) ?? []
+                              data?.devices
+                                ?.filter(
+                                  (x) => x.type !== 'lms.devices.types.SENSOR'
+                                )
+                                .map((b) => ({
+                                  value: b.device_id,
+                                  label: b.name
+                                })) ?? []
                             }
                             defaultValue={field.value ?? []}
                             onValueChange={(val) => field.onChange(val)}
