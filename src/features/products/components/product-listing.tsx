@@ -22,6 +22,8 @@ import { findNodeById, findNodeId } from '@/features/calendar/helper';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useProductParams } from '../hooks/use-product-params';
 import { DataTableSkeleton } from '@/ui/components/ui/table/data-table-skeleton';
+import { MultiDeviceActions } from './multi-device-actions';
+import { Table } from '@tanstack/react-table';
 
 type ProductListingPage = {};
 
@@ -220,8 +222,9 @@ export default function ProductListingPage({}: ProductListingPage) {
         isLoading={isLoading}
         error={error}
         isFilterReady={isFilterReady}
-        action={
-          <>
+        action={(table: Table<Device>) => (
+          <div className='flex items-center gap-2'>
+            <MultiDeviceActions table={table} />
             <Button
               variant='default'
               size='sm'
@@ -230,8 +233,8 @@ export default function ProductListingPage({}: ProductListingPage) {
             >
               <RefreshCw className='h-4 w-4' />
             </Button>
-          </>
-        }
+          </div>
+        )}
       />
     </div>
   );

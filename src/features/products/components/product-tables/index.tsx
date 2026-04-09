@@ -16,7 +16,7 @@ interface ProductTableParams<TData, TValue> {
   data: TData[];
   totalItems: number;
   columns: ColumnDef<TData, TValue>[];
-  action?: React.ReactNode;
+  action?: React.ReactNode | ((table: any) => React.ReactNode);
   actionBar?: React.ReactNode;
   isLoading?: boolean;
   error?: Error | null;
@@ -69,7 +69,7 @@ export function ProductTable<TData, TValue>({
               className='flex-1 py-2'
               actions={
                 <>
-                  {action}
+                  {typeof action === 'function' ? action(table) : action}
                   <PermissionGuard module='device' action='create'>
                     <Button
                       variant='default'

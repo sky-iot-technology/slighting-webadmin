@@ -7,7 +7,7 @@ export const cookieUtils = {
       'strict';
 
     // Access token - short lived (15 minutes)
-    document.cookie = `access_token=${accessToken}; path=/; max-age=30000; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
+    document.cookie = `access_token=${accessToken}; path=/; max-age=900; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
 
     // Refresh token - longer lived (7 days)
     document.cookie = `refresh_token=${refreshToken}; path=/; max-age=604800; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
@@ -17,23 +17,23 @@ export const cookieUtils = {
   getAccessToken: (): string | null => {
     if (typeof document === 'undefined') return null;
 
-    return (
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('access_token='))
-        ?.split('=')[1] || null
-    );
+    const row = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('access_token='));
+    return row
+      ? decodeURIComponent(row.substring('access_token='.length))
+      : null;
   },
 
   getRefreshToken: (): string | null => {
     if (typeof document === 'undefined') return null;
 
-    return (
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('refresh_token='))
-        ?.split('=')[1] || null
-    );
+    const row = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('refresh_token='));
+    return row
+      ? decodeURIComponent(row.substring('refresh_token='.length))
+      : null;
   },
 
   // Clear auth cookies

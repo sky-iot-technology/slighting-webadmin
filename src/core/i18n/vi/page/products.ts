@@ -231,5 +231,30 @@ export const products = {
     thdi: 'Tổng méo hài dòng',
     thdv: 'Tổng méo hài áp',
     vrms: 'Điện áp'
+  },
+  multi_actions: {
+    actions: 'Hành động ({{count}})',
+    turn_on_off: 'Bật/Tắt thiết bị',
+    set_brightness: 'Cài đặt độ sáng',
+    turn_on_cabinet: 'Bật tủ',
+    turn_off_cabinet: 'Tắt tủ',
+    turn_on_light: 'Bật đèn',
+    turn_off_light: 'Tắt đèn',
+    confirm_toggle: 'Bạn muốn bật hay tắt {{count}} thiết bị đã chọn?',
+    confirm_brightness: 'Kiểm soát độ sáng cho {{count}} đèn được chọn.',
+    confirm: 'Xác nhận',
+    result: {
+      title: 'Kết quả thực thi',
+      total: 'Tổng',
+      success: 'Thành công',
+      failed: 'Thất bại',
+      device: 'Thiết bị',
+      status: 'Trạng thái',
+      error_detail: 'Chi tiết lỗi',
+      no_record: 'Không có bản ghi thiết bị nào được trả về.',
+      success_status: 'Thành công',
+      error_status: 'Lỗi',
+      close: 'Đóng'
+    }
   }
 };

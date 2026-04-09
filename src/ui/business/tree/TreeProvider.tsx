@@ -53,7 +53,6 @@ export function TreeProvider({
     onOpenChange?.(value);
   };
   const { treeData } = useRegionTreeStore();
-
   useEffect(() => {
     if (!open || !closeOnClickOutside) return;
 

@@ -15,7 +15,10 @@ import {
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
   GetDevicesParamsDto,
-  SetDevicesParentGroup
+  SetDevicesParentGroup,
+  MultiDeviceTurnOnOffRequest,
+  MultiDeviceSetBrightnessRequest,
+  MultiDeviceExecuteResponse
 } from './types';
 import { devicesApi } from './api';
 import { toast } from 'sonner';
@@ -126,6 +129,62 @@ export const useSetBrightnessLight = (
     },
     onError: (error, variables, context) => {
       console.error('Failed to set brightness light: ', error);
+      toast.error(error.message || t('toast.set_brightness_failed'));
+      options?.onError?.(error, variables, context);
+    },
+    ...options
+  });
+};
+
+export const useMultiTurnOnOffLight = (
+  options?: UseMutationOptions<
+    MultiDeviceExecuteResponse,
+    Error,
+    MultiDeviceTurnOnOffRequest
+  >
+) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  return useMutation<
+    MultiDeviceExecuteResponse,
+    Error,
+    MultiDeviceTurnOnOffRequest
+  >({
+    mutationFn: (data) => devicesApi.multiTurnOnOffLight(data),
+    onSuccess: (data, variables, context) => {
+      toast.success(t('toast.request_sent_success'));
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to set multi state light: ', error);
+      toast.error(error.message || t('toast.set_light_failed'));
+      options?.onError?.(error, variables, context);
+    },
+    ...options
+  });
+};
+
+export const useMultiSetBrightnessLight = (
+  options?: UseMutationOptions<
+    MultiDeviceExecuteResponse,
+    Error,
+    MultiDeviceSetBrightnessRequest
+  >
+) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  return useMutation<
+    MultiDeviceExecuteResponse,
+    Error,
+    MultiDeviceSetBrightnessRequest
+  >({
+    mutationFn: (data) => devicesApi.multiSetBrightness(data),
+    onSuccess: (data, variables, context) => {
+      toast.success(t('toast.request_sent_success'));
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to set multi brightness light: ', error);
       toast.error(error.message || t('toast.set_brightness_failed'));
       options?.onError?.(error, variables, context);
     },

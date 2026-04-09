@@ -141,6 +141,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
   );
   const { mutate: syncDevices } = useSyncDevices();
   const { data: groupsData } = useGetGroups({
+    limit: 30,
     status: 'enabled'
   });
 

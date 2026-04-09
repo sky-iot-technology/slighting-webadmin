@@ -187,6 +187,25 @@ export interface DeviceSetBrightnessRequest
   brightness: number;
 }
 
+export interface MultiDeviceCommandRequest {
+  device_ids: string[];
+  command: {
+    devices: string[];
+    execution: Execution[];
+  };
+}
+
+export interface MultiDeviceTurnOnOffRequest {
+  device_ids: string[];
+  devices: string[];
+  status: boolean;
+}
+
+export interface MultiDeviceSetBrightnessRequest
+  extends Omit<MultiDeviceTurnOnOffRequest, 'status'> {
+  brightness: number;
+}
+
 export type DeviceCommandResult = {
   device_id: string;
   state: SubDeviceLastState;
@@ -209,6 +228,18 @@ export type DeviceRequestResponse = {
 export type DeviceExecuteResponse = {
   request_id: string;
   poll_interval: number;
+};
+
+export type CommandError = {
+  device_id: string;
+  status: 'SUCCESS' | 'ERROR';
+  error_code?: string;
+};
+
+export type MultiDeviceExecuteResponse = {
+  request_id?: string;
+  poll_interval: number;
+  command_errors?: CommandError[];
 };
 
 export type SetDevicesParentGroup = {

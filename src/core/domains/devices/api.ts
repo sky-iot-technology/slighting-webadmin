@@ -9,6 +9,10 @@ import {
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
+  MultiDeviceCommandRequest,
+  MultiDeviceSetBrightnessRequest,
+  MultiDeviceTurnOnOffRequest,
+  MultiDeviceExecuteResponse,
   GetDevicesParamsDto,
   SetDevicesParentGroup
 } from './types';
@@ -52,12 +56,25 @@ export const devicesApi = {
     }
   },
 
-  async sendCommands(
+  async sendCommand(
     body: DeviceCommandRequest
   ): Promise<DeviceExecuteResponse> {
     try {
       return await authenticatedApi.post<DeviceExecuteResponse>(
         `/devices/things/execute`,
+        body
+      );
+    } catch (error) {
+      throw new Error(`Something wrong`);
+    }
+  },
+
+  async sendCommands(
+    body: DeviceCommandRequest
+  ): Promise<DeviceExecuteResponse> {
+    try {
+      return await authenticatedApi.post<DeviceExecuteResponse>(
+        `/devices/things/executes`,
         body
       );
     } catch (error) {
@@ -86,7 +103,7 @@ export const devicesApi = {
         ]
       }
     };
-    return this.sendCommands(body);
+    return this.sendCommand(body);
   },
 
   async setBrightness({
@@ -110,7 +127,51 @@ export const devicesApi = {
         ]
       }
     };
-    return this.sendCommands(body);
+    return this.sendCommand(body);
+  },
+
+  async multiTurnOnOffLight({
+    device_ids,
+    devices,
+    status
+  }: MultiDeviceTurnOnOffRequest) {
+    const body: MultiDeviceCommandRequest = {
+      device_ids,
+      command: {
+        devices,
+        execution: [
+          {
+            command: 'lms.devices.commands.OnOff',
+            params: {
+              on: status
+            }
+          }
+        ]
+      }
+    };
+    return this.sendCommands(body as unknown as DeviceCommandRequest);
+  },
+
+  async multiSetBrightness({
+    device_ids,
+    devices,
+    brightness
+  }: MultiDeviceSetBrightnessRequest) {
+    const body: MultiDeviceCommandRequest = {
+      device_ids,
+      command: {
+        devices,
+        execution: [
+          {
+            command: 'lms.devices.commands.BrightnessAbsolute',
+            params: {
+              brightness
+            }
+          }
+        ]
+      }
+    };
+    return this.sendCommands(body as unknown as DeviceCommandRequest);
   },
 
   async getRequestById(requestId: string): Promise<DeviceRequestResponse> {

@@ -232,5 +232,31 @@ export const products = {
     thdi: 'Total Harmonic Distortion of Current (THDi)',
     thdv: 'Total Harmonic Distortion of Voltage (THDv)',
     vrms: 'RMS Voltage'
+  },
+  multi_actions: {
+    actions: 'Actions ({{count}})',
+    turn_on_off: 'Turn on/off device',
+    set_brightness: 'Set brightness',
+    turn_on_cabinet: 'Turn on cabinet',
+    turn_off_cabinet: 'Turn off cabinet',
+    turn_on_light: 'Turn on light',
+    turn_off_light: 'Turn off light',
+    confirm_toggle:
+      'Do you want to turn on or turn off {{count}} selected devices?',
+    confirm_brightness: 'Control brightness for {{count}} selected lights.',
+    confirm: 'Confirm',
+    result: {
+      title: 'Execution result',
+      total: 'Total',
+      success: 'Success',
+      failed: 'Failed',
+      device: 'Device',
+      status: 'Status',
+      error_detail: 'Error details',
+      no_record: 'No device record returned.',
+      success_status: 'Success',
+      error_status: 'Error',
+      close: 'Close'
+    }
   }
 };

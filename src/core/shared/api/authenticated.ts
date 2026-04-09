@@ -142,12 +142,12 @@ export class AuthenticatedApiClient extends BaseApiClient {
     if (typeof window !== 'undefined') {
       try {
         // Read token from cookies instead of localStorage
-        return (
-          document.cookie
-            .split('; ')
-            .find((row) => row.startsWith('access_token='))
-            ?.split('=')[1] || null
-        );
+        const row = document.cookie
+          .split('; ')
+          .find((row) => row.startsWith('access_token='));
+        return row
+          ? decodeURIComponent(row.substring('access_token='.length))
+          : null;
       } catch {
         return null;
       }
