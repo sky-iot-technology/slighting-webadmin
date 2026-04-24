@@ -12,15 +12,17 @@ import { IconDotsVertical } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
-import { useDeleteCalendars } from '@/core/domains/calendars';
+import { useDeleteCalendars, useSyncSchedule } from '@/core/domains/calendars';
 import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { CalendarDeviceViewDialog } from '../modal/calendar-device-view-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { IconRefresh } from '@tabler/icons-react';
 
 interface CellActionProps {
   id: string;
   name: string;
+  clientId: string;
   disabled?: boolean;
   hideDelete?: boolean;
 }
@@ -28,6 +30,7 @@ interface CellActionProps {
 export const CellAction: React.FC<CellActionProps> = ({
   id,
   name,
+  clientId,
   disabled,
   hideDelete
 }) => {
@@ -42,6 +45,8 @@ export const CellAction: React.FC<CellActionProps> = ({
       setOpen(false);
     }
   });
+
+  const { mutate: syncSchedule, isPending: isSyncing } = useSyncSchedule();
 
   const handleConfirmDelete = () => {
     if (!id) return;
@@ -109,6 +114,23 @@ export const CellAction: React.FC<CellActionProps> = ({
             </div>
             <span>{t('calendar.view_detail' as any)}</span>
           </DropdownMenuItem>
+
+          <PermissionGuard module='device' action='update'>
+            <DropdownMenuItem
+              onClick={() =>
+                syncSchedule({ deviceId: clientId, scheduleId: id })
+              }
+              disabled={isSyncing}
+              className='flex w-full items-center text-xs'
+            >
+              <div className='mx-2 flex w-4 justify-center'>
+                <IconRefresh
+                  className={`text-calendar-radio-green h-3 w-3 ${isSyncing ? 'animate-spin' : ''}`}
+                />
+              </div>
+              <span>{t('calendar.sync_schedule_action' as any)}</span>
+            </DropdownMenuItem>
+          </PermissionGuard>
 
           {/* <DropdownMenuItem
             onClick={() => setOpenEdit(true)}

@@ -25,7 +25,9 @@ export const products = {
     },
     status_val: {
       online: 'Online',
-      offline: 'Offline'
+      offline: 'Offline',
+      enabled: 'Kích hoạt',
+      disabled: 'Chưa kích hoạt'
     }
   },
   placeholder: {
@@ -228,6 +230,7 @@ export const products = {
     irms: 'Dòng điện',
     power_factor: 'Hệ số công suất',
     temperature: 'Nhiệt độ',
+    temperature_chip: 'Nhiệt độ chip',
     thdi: 'Tổng méo hài dòng',
     thdv: 'Tổng méo hài áp',
     vrms: 'Điện áp'

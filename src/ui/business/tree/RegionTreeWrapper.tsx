@@ -13,6 +13,7 @@ type RegionTreeProps = {
   classname?: string;
   showSelectAll?: boolean;
   onSelectAll?: () => void;
+  height?: number;
 };
 
 export function RegionTreeWrapper({
@@ -22,7 +23,8 @@ export function RegionTreeWrapper({
   filter,
   classname,
   showSelectAll,
-  onSelectAll
+  onSelectAll,
+  height
 }: RegionTreeProps) {
   const { t } = useTranslation();
 
@@ -41,7 +43,7 @@ export function RegionTreeWrapper({
       onSelect={handleSelect}
       selectedId={selectedId}
       width={'100%'}
-      height={171}
+      height={height ?? 171}
       indent={30}
       rowHeight={36}
       overscanCount={1}

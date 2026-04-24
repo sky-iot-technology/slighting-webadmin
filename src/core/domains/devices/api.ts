@@ -9,6 +9,7 @@ import {
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
+  DeviceSyncSTLSmartRequest,
   MultiDeviceCommandRequest,
   MultiDeviceSetBrightnessRequest,
   MultiDeviceTurnOnOffRequest,
@@ -118,6 +119,37 @@ export const devicesApi = {
       command: {
         devices,
         execution: [
+          {
+            command: 'lms.devices.commands.BrightnessAbsolute',
+            params: {
+              brightness
+            }
+          }
+        ]
+      }
+    };
+    return this.sendCommand(body);
+  },
+
+  async syncSTLSmartState({
+    device_id,
+    channel_route,
+    devices,
+    status,
+    brightness
+  }: DeviceSyncSTLSmartRequest) {
+    const body: DeviceCommandRequest = {
+      device_id,
+      channel_route,
+      command: {
+        devices,
+        execution: [
+          {
+            command: 'lms.devices.commands.OnOff',
+            params: {
+              on: status
+            }
+          },
           {
             command: 'lms.devices.commands.BrightnessAbsolute',
             params: {

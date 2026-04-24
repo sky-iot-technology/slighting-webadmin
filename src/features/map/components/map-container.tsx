@@ -3,12 +3,16 @@
 import { Skeleton } from '@/ui/components/ui/skeleton';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import MapFilter from './map-filter';
+import { Button } from '@/ui/components/ui/button';
+import { RotateCcw } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Device,
   DeviceStatusFilter,
   GetDevicesParamsDto,
   useGetDeviceCount,
-  useGetDevices
+  useGetDevices,
+  DEVICES_QUERY_KEY
 } from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
@@ -20,6 +24,7 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 
 export default function MapContainer() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
 
   const canViewDevices = useCan('device', 'view');
   const breadcrumbContent = useMemo(
@@ -54,6 +59,12 @@ export default function MapContainer() {
       });
     }
 
+    if (statusFilter === 'online') {
+      baseParams.metadata = JSON.stringify({
+        device_info: { online: true }
+      });
+    }
+
     if (statusFilter === 'offline') {
       baseParams.metadata = JSON.stringify({
         device_info: { online: false }
@@ -63,7 +74,7 @@ export default function MapContainer() {
     return baseParams;
   }, [selectedRegion?.id, statusFilter]);
 
-  const { data, isLoading, isFetching, error } = useGetDevices(
+  const { data, isLoading, isFetching, refetch, error } = useGetDevices(
     deviceQueryParams,
     { enabled: !!selectedRegion && canViewDevices }
   );
@@ -96,36 +107,6 @@ export default function MapContainer() {
     setStatusFilter('all');
   }, [selectedRegion?.id]);
 
-  // useEffect(() => {
-  //   if (!selectedRegion) return;
-
-  //   setDevices([]);
-
-  //   const offDevice = deviceDataLayer.onDevice((device) => {
-  //     setDevices((prev) => [...prev, device]);
-  //   });
-
-  //   const offDone = deviceDataLayer.onDone(() => {
-  //     console.log('Load devices xong');
-  //   });
-
-  //   const offError = deviceDataLayer.onError((err) => {
-  //     console.error('Load device error', err);
-  //   });
-
-  //   deviceDataLayer.load({
-  //     group: selectedRegion.id,
-  //     limit: 10
-  //   });
-
-  //   return () => {
-  //     offDevice();
-  //     offDone();
-  //     offError();
-  //     deviceDataLayer.stop();
-  //   };
-  // }, [selectedRegion]);
-
   return (
     <div className='relative h-[calc(100dvh-52px)] w-full'>
       <GoongMap
@@ -154,7 +135,11 @@ export default function MapContainer() {
               setSelectedDevice({ device: d, ts: Date.now() })
             }
             statusFilter={statusFilter}
-            onStatusChange={(status) => setStatusFilter(status)}
+            onStatusChange={setStatusFilter}
+            onRefresh={() =>
+              queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] })
+            }
+            isRefreshing={isFetching}
           />
         )}
       </div>

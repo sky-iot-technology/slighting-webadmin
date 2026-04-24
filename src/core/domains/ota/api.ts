@@ -85,6 +85,7 @@ export const otaApi = {
       return response;
     } catch (error: any) {
       console.error('❌ execute ota error:', error.message);
+      console.log(error);
       throw new Error(error.message);
     }
   },

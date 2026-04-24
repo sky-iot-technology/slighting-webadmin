@@ -25,7 +25,9 @@ export const products = {
     },
     status_val: {
       online: 'Online',
-      offline: 'Offline'
+      offline: 'Offline',
+      enabled: 'Enabled',
+      disabled: 'Disabled'
     }
   },
   placeholder: {
@@ -229,6 +231,7 @@ export const products = {
     irms: 'RMS Current',
     power_factor: 'Power Factor',
     temperature: 'Temperature',
+    temperature_chip: 'Chip Temperature',
     thdi: 'Total Harmonic Distortion of Current (THDi)',
     thdv: 'Total Harmonic Distortion of Voltage (THDv)',
     vrms: 'RMS Voltage'

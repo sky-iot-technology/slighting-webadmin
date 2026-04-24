@@ -7,6 +7,7 @@ export const maintenance = {
   work_order_history: 'Lịch sử giao việc',
 
   // Table Headers & Content
+  device_name: 'Tên thiết bị',
   device_id: 'Mã thiết bị',
   warning_name: 'Tên cảnh báo',
   priority: 'Ưu tiên',

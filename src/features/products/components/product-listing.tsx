@@ -43,6 +43,7 @@ export default function ProductListingPage({}: ProductListingPage) {
   const type = searchParams.get('type') ?? undefined;
   const serial_number = searchParams.get('serial_number') ?? undefined;
   const parent_group_id = searchParams.get('parent_group_id') ?? undefined;
+  const asset_status = searchParams.get('asset_status') ?? undefined;
 
   const { treeData } = useRegionTreeStore();
 
@@ -52,6 +53,7 @@ export default function ProductListingPage({}: ProductListingPage) {
   const filtersExcludePagination = {
     ...(search && { name: search }),
     ...(status && { metadata: status as any }),
+    ...(asset_status && { status: asset_status as any }),
     ...(type && { type }),
     ...(serial_number && { serial_number }),
     ...(parent_group_id && {

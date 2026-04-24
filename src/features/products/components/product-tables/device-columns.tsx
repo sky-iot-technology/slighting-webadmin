@@ -144,7 +144,7 @@ export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
   },
   {
     id: 'asset_status',
-    accessorKey: 'device_asset.asset_status',
+    accessorKey: 'status',
     header: ({ column }: { column: Column<Device, unknown> }) => (
       <DataTableColumnHeader
         column={column}
@@ -152,12 +152,30 @@ export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
       />
     ),
     meta: {
-      label: t('products.table.condition' as any)
+      label: t('products.table.condition' as any),
+      variant: 'select',
+      options: [
+        {
+          label: t('products.table.status_val.enabled' as any),
+          value: 'enabled'
+        },
+        {
+          label: t('products.table.status_val.disabled' as any),
+          value: 'disabled'
+        }
+      ]
     },
     cell: ({ cell }) => {
-      const deviceAsset = cell.row.original.device_asset;
-      return <div>{deviceAsset?.asset_status}</div>;
+      const status = cell.getValue() as string;
+      const label =
+        status === 'enabled'
+          ? t('products.table.status_val.enabled' as any)
+          : status === 'disabled'
+            ? t('products.table.status_val.disabled' as any)
+            : status;
+      return <div className='capitalize'>{label}</div>;
     },
+    enableColumnFilter: true,
     enableSorting: false,
     enableHiding: false
   },

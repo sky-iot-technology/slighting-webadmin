@@ -4,6 +4,7 @@ import { Device, DeviceStatusFilter } from '@/core/domains/devices';
 import { Button } from '@/ui/components/ui/button';
 import { Separator } from '@/ui/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { RotateCcw } from 'lucide-react';
 
 type SelectedRegion = { id: string; name: string } | null;
 
@@ -16,6 +17,8 @@ type MapFilterProps = {
   onSelectDevice?: (device: Device | null) => void;
   statusFilter: DeviceStatusFilter;
   onStatusChange?: (status: DeviceStatusFilter) => void;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
 };
 
 export default function MapFilter({
@@ -26,13 +29,16 @@ export default function MapFilter({
   onRegionChange,
   onSelectDevice,
   statusFilter,
-  onStatusChange
+  onStatusChange,
+  onRefresh,
+  isRefreshing
 }: MapFilterProps) {
   return (
     <>
       <div className='absolute top-[15px] left-[9px] flex gap-2'>
         <div className='bg-map-filter flex rounded-lg px-1 py-1'>
           <TreeProvider
+            height={400}
             onRegionChange={onRegionChange}
             selectedRegion={selectedRegion}
             buttonClassName={'dark:!bg-background !bg-background'}
@@ -85,6 +91,17 @@ export default function MapFilter({
             <span className='h-2 w-2 rounded-full bg-red-500'></span>
           </span>
           offline ({offline})
+        </Button>
+        <Separator orientation='vertical' className='!h-5' />
+        <Button
+          variant={'outline'}
+          className='hover:text-primary cursor-pointer !rounded-md border-white bg-white shadow-none hover:bg-slate-50 sm:h-[28px] md:h-[30px]'
+          onClick={() => onRefresh?.()}
+          disabled={isRefreshing}
+        >
+          <RotateCcw
+            className={cn('h-3.5 w-3.5', isRefreshing && 'animate-spin')}
+          />
         </Button>
       </div>
     </>

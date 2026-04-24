@@ -347,16 +347,40 @@ function CabinetInfoPanel(props: InfoModalProps) {
             <CardContent className='flex flex-col p-0 px-[15px] pb-[4px] text-xs leading-[22px]'>
               <div className='text-foreground pr-[5px]'>
                 <div className='flex items-center justify-between'>
-                  <span>{t('map.voltage')} (kWh):</span>
+                  <span>{t('map.temperature')} (°C):</span>
                   <span className='font-medium'>
-                    {Number(sensorAttrs?.electric).toFixed(2)}
+                    {sensorAttrs?.temperature}
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between'>
-                  <span>{t('map.temperature')} (°C):</span>
+                  <span>{t('map.humidity')} (%):</span>
+                  <span className='font-medium'>{sensorAttrs?.humidity}</span>
+                </div>
+
+                <div className='flex items-center justify-between'>
+                  <span>{t('map.voltage')} (kWh):</span>
                   <span className='font-medium'>
-                    {sensorAttrs?.temperature}
+                    {Number(sensorAttrs?.current).toFixed(2)}
+                  </span>
+                </div>
+
+                <div className='flex items-center justify-between'>
+                  <span>{t('map.vrms')} (V):</span>
+                  <span className='font-medium'>{sensorAttrs?.voltage}</span>
+                </div>
+
+                <div className='flex items-center justify-between'>
+                  <span>{t('map.active_p')} (KW):</span>
+                  <span className='font-medium'>
+                    {sensorAttrs?.activePower}
+                  </span>
+                </div>
+
+                <div className='flex items-center justify-between'>
+                  <span>{t('map.power_factor')} (PF):</span>
+                  <span className='font-medium'>
+                    {sensorAttrs?.powerFactor}
                   </span>
                 </div>
               </div>

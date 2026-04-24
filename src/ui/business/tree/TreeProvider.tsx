@@ -1,13 +1,11 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
-import Image from 'next/image';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { cn } from '@/lib/utils';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { RegionTreeWrapper } from './RegionTreeWrapper';
-import { RegionNode } from '@/core/domains/groups';
 import { useTranslation } from '@/core/domains/language/useTranslation';
-import { ChevronDown } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 
 type TreeProviderProps = {
   selectedRegion?: SelectedRegion;
@@ -22,6 +20,7 @@ type TreeProviderProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   closeOnClickOutside?: boolean;
+  height?: number;
 } & React.ComponentProps<'button'>;
 
 export function TreeProvider({
@@ -38,6 +37,7 @@ export function TreeProvider({
   onOpenChange,
   showSelectAll,
   closeOnClickOutside = true,
+  height,
   ...props
 }: TreeProviderProps & { showSelectAll?: boolean }) {
   const { t } = useTranslation();
@@ -115,10 +115,10 @@ export function TreeProvider({
           height={12}
           className='h-3 w-3 dark:brightness-0 dark:invert'
         /> */}
-        <ChevronDown
+        <ChevronRight
           className={cn(
             'text-muted-foreground h-4 opacity-50',
-            open && '-rotate-90'
+            open && 'rotate-90'
           )}
         />
       </button>
@@ -143,6 +143,7 @@ export function TreeProvider({
             onRegionChange({ id: '', name: '' } as any);
             setOpen(false);
           }}
+          height={height}
         />
       </div>
     </div>

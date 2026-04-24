@@ -442,6 +442,7 @@ export const columns = (t: any): ColumnDef<Calendar>[] => [
             <CellAction
               id={row.original.id}
               name={row.getValue('name')}
+              clientId={row.original.client_id}
               disabled={isDeleted}
               hideDelete={hasGroup}
             />

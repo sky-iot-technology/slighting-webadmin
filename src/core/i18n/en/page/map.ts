@@ -26,7 +26,10 @@ export const map = {
   parameter: 'Current parameters',
   voltage: 'Power consumption',
   temperature: 'Temperature',
-
+  humidity: 'Humidity',
+  vrms: 'RMS Voltage',
+  active_p: 'Active Power',
+  power_factor: 'Power Factor',
   // chart
   chart_title: 'Lighting activity chart',
   chart_day: 'Today',

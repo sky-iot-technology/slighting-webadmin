@@ -106,5 +106,33 @@ export const calendarApi = {
       }
     );
     return response;
+  },
+
+  async syncSchedules(deviceId: string): Promise<void> {
+    try {
+      await authenticatedApi.patch(`/devices/${deviceId}/schedules/syncs`);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Không thể đồng bộ lịch. Vui lòng thử lại.';
+      console.error('❌ syncSchedules error:', message);
+      throw new Error(message);
+    }
+  },
+
+  async syncSchedule(deviceId: string, scheduleId: string): Promise<void> {
+    try {
+      await authenticatedApi.patch(
+        `/devices/${deviceId}/schedules/sync/${scheduleId}`
+      );
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Không thể đồng bộ lịch. Vui lòng thử lại.';
+      console.error('❌ syncSchedule error:', message);
+      throw new Error(message);
+    }
   }
 };

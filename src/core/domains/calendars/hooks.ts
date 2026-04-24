@@ -245,3 +245,58 @@ export const useGetCalendarsByDevice = (
     ...options
   });
 };
+
+export const useSyncSchedules = (
+  options?: UseMutationOptions<void, Error, string>
+) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation<void, Error, string>({
+    ...options,
+    mutationFn: (deviceId) => calendarApi.syncSchedules(deviceId),
+    onSuccess: (data, deviceId, context) => {
+      queryClient.invalidateQueries({
+        queryKey: [DEVICE_CALENDARS_QUERY_KEY, deviceId]
+      });
+
+      toast.success(t('products.message.sync_initiated' as any));
+      options?.onSuccess?.(data, deviceId, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('❌ Sync schedules failed:', error);
+      toast.error(error.message || t('calendar.sync_failed' as any));
+      options?.onError?.(error, variables, context);
+    }
+  });
+};
+
+export const useSyncSchedule = (
+  options?: UseMutationOptions<
+    void,
+    Error,
+    { deviceId: string; scheduleId: string }
+  >
+) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+
+  return useMutation<void, Error, { deviceId: string; scheduleId: string }>({
+    ...options,
+    mutationFn: ({ deviceId, scheduleId }) =>
+      calendarApi.syncSchedule(deviceId, scheduleId),
+    onSuccess: (data, { deviceId, scheduleId }, context) => {
+      queryClient.invalidateQueries({
+        queryKey: [DEVICE_CALENDARS_QUERY_KEY, deviceId]
+      });
+
+      toast.success(t('products.message.sync_initiated' as any));
+      options?.onSuccess?.(data, { deviceId, scheduleId }, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('❌ Sync schedule failed:', error);
+      toast.error(error.message || t('calendar.sync_failed' as any));
+      options?.onError?.(error, variables, context);
+    }
+  });
+};

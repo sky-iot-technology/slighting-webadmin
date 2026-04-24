@@ -11,7 +11,8 @@ import ReactMapGL, {
   WebMercatorViewport
 } from '@goongmaps/goong-map-react';
 import { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Device } from '@/core/domains/devices';
+import { Device, DEVICES_QUERY_KEY } from '@/core/domains/devices';
+import { useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { useMapLayers } from '@/features/map/hooks/useMapLayers';
 import { useMapResize } from '@/features/map/hooks/useMapResize';
@@ -59,6 +60,7 @@ export default function GoongMap({
   hover = false
 }: GoongMapProps) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { theme, resolvedTheme } = useTheme();
 
   const [isMapLoading, setIsMapLoading] = useState(true);
@@ -219,6 +221,11 @@ export default function GoongMap({
     if (feature.layer.id === 'devices-unclustered') {
       const { id, lon, lat } = feature.properties;
       flyToDevice(id, lon, lat);
+
+      // Ép tải lại dữ liệu chi tiết mỗi khi click
+      queryClient.invalidateQueries({
+        queryKey: [DEVICES_QUERY_KEY, 'detail', id]
+      });
     } else if (feature.layer.id === 'devices-clusters') {
       const clusterId = feature.properties.cluster_id;
       const source = map.getSource('devices-source') as any;
@@ -323,6 +330,11 @@ export default function GoongMap({
         onViewportChange={handleViewportChange}
         scrollZoom={true}
         transitionDuration={transitionDuration}
+        transitionEasing={
+          typeof viewport.transitionEasing === 'function'
+            ? viewport.transitionEasing
+            : (t: number) => t
+        }
         onClick={(e) => {
           setPopupInfo(null);
           onClick(e);

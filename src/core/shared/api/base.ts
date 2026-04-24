@@ -17,6 +17,7 @@ export interface ApiRequestConfig extends AxiosRequestConfig {
 export abstract class BaseApiClient {
   protected client: AxiosInstance;
   protected admin: AxiosInstance;
+  protected requireAuth: boolean = false; // Default to false
 
   constructor(config?: AxiosRequestConfig) {
     this.client = axios.create({
@@ -48,9 +49,9 @@ export abstract class BaseApiClient {
     // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
-        // Add auth token if available and not an external API call
+        // Only add auth token if required and available
         const apiConfig = config as any;
-        if (!apiConfig.externalApi) {
+        if (this.requireAuth && !apiConfig.externalApi) {
           const token = this.getAuthToken();
           if (token) {
             config.headers.Authorization = `Bearer ${token}`;

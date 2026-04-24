@@ -44,7 +44,7 @@ export function useAuthInit() {
             }
           } catch (error: any) {
             // If access token is expired, try to refresh
-            if (error.status === 401 || error.status === 404) {
+            if (error.status === 401) {
               try {
                 const newTokens = await authApi.refreshToken(refreshToken);
                 setTokens(newTokens.access_token, newTokens.refresh_token);

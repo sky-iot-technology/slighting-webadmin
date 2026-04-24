@@ -6,11 +6,14 @@ import { useDataTable } from '@/core/shared/hooks/use-data-table';
 import { ColumnDef, getExpandedRowModel } from '@tanstack/react-table';
 import { parseAsInteger, useQueryState } from 'nuqs';
 import { Button } from '@/ui/components/ui/button';
-import { IconPlus } from '@tabler/icons-react';
+import { IconPlus, IconRefresh } from '@tabler/icons-react';
 import { useState } from 'react';
 import CalendarDeviceDialog from '../modal/calendar-device-dialog';
 import { DataTableCustomToolbar } from '@/ui/components/ui/table/data-table-toolbar';
-import { useDeleteMultiCalendars } from '@/core/domains/calendars';
+import {
+  useDeleteMultiCalendars,
+  useSyncSchedules
+} from '@/core/domains/calendars';
 import { PermissionGuard, useCan } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
@@ -38,7 +41,9 @@ export function CalendarTable<TData, TValue>({
 
   const pageCount = Math.ceil(totalItems / pageSize);
 
-  const { mutate: deleteCalendars, isPending } = useDeleteMultiCalendars();
+  const { mutate: deleteCalendars, isPending: isDeleting } =
+    useDeleteMultiCalendars();
+  const { mutate: syncSchedules, isPending: isSyncing } = useSyncSchedules();
 
   const handleDelete = async (selectedRows: any[]) => {
     if (!selectedRows.length) return;
@@ -91,17 +96,33 @@ export function CalendarTable<TData, TValue>({
           table={table}
           className='w-auto flex-1 pt-0'
           actions={
-            <PermissionGuard module='device' action='update'>
-              <Button
-                variant='default'
-                size='sm'
-                className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[4px] text-white'
-                onClick={() => setOpen(true)}
-              >
-                <IconPlus className='h-3 w-3' />
-                {t('calendar.add' as any)}
-              </Button>
-            </PermissionGuard>
+            <>
+              <PermissionGuard module='device' action='update'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='flex !h-7.5 items-center rounded-[4px]'
+                  onClick={() => syncSchedules(clientId)}
+                  disabled={isSyncing}
+                >
+                  <IconRefresh
+                    className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`}
+                  />
+                  {t('calendar.sync_schedule' as any)}
+                </Button>
+              </PermissionGuard>
+              <PermissionGuard module='device' action='update'>
+                <Button
+                  variant='default'
+                  size='sm'
+                  className='bg-primary hover:bg-primary/90 flex !h-7.5 items-center rounded-[4px] text-white'
+                  onClick={() => setOpen(true)}
+                >
+                  <IconPlus className='h-3 w-3' />
+                  {t('calendar.add' as any)}
+                </Button>
+              </PermissionGuard>
+            </>
           }
           filter={true}
           excel={false}

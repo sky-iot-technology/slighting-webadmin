@@ -157,6 +157,9 @@ export interface DeviceFeatureProps {
   lon: number;
   lat: number;
   online: string;
+  light_state?: 'on' | 'off';
+  active_ratio?: number;
+  status_dots?: string;
 }
 
 type Execution =
@@ -184,6 +187,10 @@ export interface DeviceTurnOnOffRequest {
 
 export interface DeviceSetBrightnessRequest
   extends Omit<DeviceTurnOnOffRequest, 'status'> {
+  brightness: number;
+}
+
+export interface DeviceSyncSTLSmartRequest extends DeviceTurnOnOffRequest {
   brightness: number;
 }
 

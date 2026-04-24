@@ -5,7 +5,8 @@ import {
   SubDevice,
   useSyncDevices,
   useTurnOnOffLight,
-  useSetBrightnessLight
+  useSetBrightnessLight,
+  useSyncSTLSmartState
 } from '@/core/domains/devices';
 import {
   useGetJournalsByEntityId,
@@ -76,6 +77,7 @@ export function ActivityTab({ device }: ActivityTabProps) {
   );
   const { mutate: toggleDevice } = useTurnOnOffLight();
   const { mutate: setBrightness } = useSetBrightnessLight();
+  const { mutate: syncSTLSmartState } = useSyncSTLSmartState();
   const { mutate: syncDevices } = useSyncDevices();
 
   // Fetch activity history (journals) - fetch all operations
@@ -270,6 +272,42 @@ export function ActivityTab({ device }: ActivityTabProps) {
     (deviceId: string, status: boolean) => {
       setPending((p) => ({ ...p, [deviceId]: true }));
 
+      const isSTLSmart = device.type === 'lms.devices.types.STL_SMART';
+
+      if (isSTLSmart) {
+        const brightness = status ? 100 : 0;
+        setBrightnessMap((prev) => ({
+          ...prev,
+          [deviceId]: brightness
+        }));
+
+        syncSTLSmartState(
+          {
+            device_id: String(device.id),
+            channel_route: device.ctrl_channel_id,
+            devices: [deviceId],
+            status,
+            brightness
+          },
+          {
+            onSuccess: (data) => {
+              setRequests((prev) => ({
+                ...prev,
+                [deviceId]: data.request_id
+              }));
+              setSwitchState((prev) => ({
+                ...prev,
+                [deviceId]: status
+              }));
+            },
+            onError: () => {
+              setPending((p) => ({ ...p, [deviceId]: false }));
+            }
+          }
+        );
+        return;
+      }
+
       toggleDevice(
         {
           device_id: String(device.id),
@@ -295,7 +333,13 @@ export function ActivityTab({ device }: ActivityTabProps) {
         }
       );
     },
-    [toggleDevice, device.id, device.ctrl_channel_id]
+    [
+      syncSTLSmartState,
+      toggleDevice,
+      device.id,
+      device.ctrl_channel_id,
+      device.type
+    ]
   );
 
   const handleBrightnessChange = useCallback(

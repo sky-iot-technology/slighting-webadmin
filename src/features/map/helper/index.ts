@@ -1,5 +1,12 @@
 import { Device } from '@/core/domains/devices';
 import { LanguageKey } from '@/core/i18n/locales';
+function normalizeValue(value: any): number | string {
+  if (Array.isArray(value)) {
+    return value.join('_');
+  }
+  return value ?? 0;
+}
+
 export function getSensorAttributes(data: Device) {
   if (!data || !Array.isArray(data.devices)) {
     return null;
@@ -7,10 +14,18 @@ export function getSensorAttributes(data: Device) {
   const sensor = data.devices.find(
     (d) => d.type === 'lms.devices.types.SENSOR'
   );
-  if (!sensor?.last_state) return null;
+  const state = sensor?.last_state;
+  if (!state) return null;
   return {
-    electric: sensor.last_state.active_e,
-    temperature: sensor.last_state.temperature
+    electric: normalizeValue(state.active_e),
+    temperature: normalizeValue(state.temperature),
+    activePower: normalizeValue(state.active_p),
+    voltage: normalizeValue(state.vrms),
+    current: normalizeValue(state.irms),
+    frequency: normalizeValue(state.frequency),
+    powerFactor: normalizeValue(state.power_factor),
+    chipTemperature: normalizeValue(state.temperature_chip),
+    humidity: normalizeValue(state.humidity)
   };
 }
 

@@ -3,135 +3,72 @@ import { BaseApiClient } from '@/core/shared/api/base';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { useAuthStore } from '@/core/domains/auth';
 
-// Queue to hold requests while refreshing token
-let isRefreshing = false;
-let failedQueue: Array<{
-  resolve: (value?: unknown) => void;
-  reject: (reason?: any) => void;
-}> = [];
-
-const processQueue = (error: any, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
-    }
-  });
-
-  failedQueue = [];
-};
-
 export class AuthenticatedApiClient extends BaseApiClient {
   constructor(config?: AxiosRequestConfig) {
     super(config);
+    this.requireAuth = true; // Enable token injection for this client
   }
 
   protected setupInterceptors(): void {
-    // 1. Setup Auth Refresh Interceptor FIRST
+    // 1. Setup Auth Refresh Interceptor (Runs FIRST on response)
     this.client.interceptors.response.use(
       (response) => response,
       async (error) => {
         const originalRequest = error.config;
-
-        // If error.config is missing, it means something transformed it or it's not a standard error.
-        // run through generic error handler if we can't retry.
-        if (!originalRequest) {
-          return Promise.reject(error);
-        }
+        if (!originalRequest) return Promise.reject(error);
 
         const status = error.response?.status ?? error.status;
 
-        // Handle 401 (Unauthorized) or 404 (as per original code preference)
+        // ONLY refresh on 401. 404 should not trigger refresh.
         if (
-          (status === 401 || status === 404) &&
+          status === 401 &&
           !originalRequest._retry &&
           !originalRequest.externalApi
         ) {
-          if (isRefreshing) {
-            return new Promise(function (resolve, reject) {
-              failedQueue.push({ resolve, reject });
-            })
-              .then((token) => {
-                if (originalRequest.headers) {
-                  originalRequest.headers.Authorization = 'Bearer ' + token;
-                }
-                return this.client(originalRequest);
-              })
-              .catch((err) => {
-                return Promise.reject(err);
-              });
-          }
-
+          console.log('[Auth] 401 detected, attempt refresh...');
           originalRequest._retry = true;
-          isRefreshing = true;
 
           try {
             const refreshToken = cookieUtils.getRefreshToken();
-            if (!refreshToken) {
-              throw new Error('No refresh token available');
-            }
+            if (refreshToken) {
+              const { authApi } = await import('@/core/domains/auth/api');
+              const newTokens = await authApi.refreshToken(refreshToken);
 
-            // Import authApi here to avoid circular dependency
-            const { authApi } = await import('@/core/domains/auth/api');
-            const newTokens = await authApi.refreshToken(refreshToken);
-
-            // Update cookies with new tokens
-            if (newTokens?.access_token) {
-              const refreshTokenToSet = newTokens.refresh_token || refreshToken;
-              const { cookieUtils: utils } = await import(
-                '@/core/shared/utils/cookies'
-              );
-              utils.setAuthCookies(newTokens.access_token, refreshTokenToSet);
-
-              // processQueue with new token
-              processQueue(null, newTokens.access_token);
-
-              if (originalRequest.headers) {
+              if (newTokens?.access_token) {
                 originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
+                return this.client(originalRequest);
               }
-              return this.client(originalRequest);
             }
           } catch (refreshError) {
-            processQueue(refreshError, null);
-            // Refresh failed, clear cookies
             cookieUtils.clearAuthCookies();
-            // Redirect if needed
             if (typeof window !== 'undefined') {
               window.location.href = '/auth/sign-in';
             }
             return Promise.reject(refreshError);
-          } finally {
-            isRefreshing = false;
           }
         }
         return Promise.reject(error);
       }
     );
 
-    // 2. Setup Base Interceptors (Auth Header Injection + Error Transformation)
-    // Runs AFTER refresh logic for responses.
+    // 2. Setup Base Interceptors (Error Transformation)
     super.setupInterceptors();
 
-    // 3. Domain Prefix Logic (Request Interceptor)
-    // Added LAST, so it runs FIRST in request chain (Reverse order)
+    // 3. Domain Prefix Logic (Runs FIRST on request)
     this.client.interceptors.request.use(async (config) => {
       const apiConfig = config as any;
       if (!apiConfig.externalApi) {
-        // We can check token existence using our overridden method or just properties
-        const token = this.getAuthToken();
-        if (token) {
-          // We don't strictly need to set Authorization here because super.setupInterceptors() does it.
-          // However, to mimic original logic of only adding domain prefix if authenticated:
-          const { domainId } = useAuthStore.getState();
-          const NO_DOMAIN_PREFIX = ['/users', '/d/'];
-          if (
-            domainId &&
-            config.url &&
-            !NO_DOMAIN_PREFIX.some((prefix) => config.url!.startsWith(prefix))
-          ) {
-            config.url = `${domainId}${config.url}`;
-          }
+        const { domainId } = useAuthStore.getState();
+        const NO_DOMAIN_PREFIX = ['/users', '/d/'];
+
+        // Prefix with domainId if available, REGARDLESS of token
+        // This ensures correct routing so we get 401 instead of 404
+        if (
+          domainId &&
+          config.url &&
+          !NO_DOMAIN_PREFIX.some((prefix) => config.url!.startsWith(prefix))
+        ) {
+          config.url = `${domainId}${config.url}`;
         }
       }
       return config;
@@ -142,12 +79,12 @@ export class AuthenticatedApiClient extends BaseApiClient {
     if (typeof window !== 'undefined') {
       try {
         // Read token from cookies instead of localStorage
-        const row = document.cookie
-          .split('; ')
-          .find((row) => row.startsWith('access_token='));
-        return row
-          ? decodeURIComponent(row.substring('access_token='.length))
-          : null;
+        return (
+          document.cookie
+            .split('; ')
+            .find((row) => row.startsWith('access_token='))
+            ?.split('=')[1] || null
+        );
       } catch {
         return null;
       }

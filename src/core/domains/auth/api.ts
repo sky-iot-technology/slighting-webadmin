@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   publicApi,
   authenticatedApi,
@@ -33,7 +34,7 @@ export const authApi = {
   },
 
   async getDomain(): Promise<string> {
-    const response = await publicApi.get<DomainsResponse>(`/domains`);
+    const response = await authenticatedApi.get<DomainsResponse>(`/domains`);
 
     const domains = response.domains ?? [];
     if (domains.length === 0) return '';
@@ -79,20 +80,29 @@ export const authApi = {
   },
 
   async refreshToken(refreshToken: string): Promise<AuthResponse> {
-    const response = await publicApi.post<AuthResponse>(
-      `/users/tokens/refresh`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${refreshToken}`
+    try {
+      const response = await publicApi.post<AuthResponse>(
+        `/users/tokens/refresh`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${refreshToken}`
+          }
         }
-      }
-    );
+      );
 
-    // Update cookies with new tokens
-    cookieUtils.setAuthCookies(response.access_token, response.refresh_token);
+      // Update cookies with new tokens
+      cookieUtils.setAuthCookies(response.access_token, response.refresh_token);
 
-    return response;
+      return response;
+    } catch (err: any) {
+      // Re-throw as ApiError format for the interceptor to catch
+      throw {
+        message: err?.response?.data?.message || err.message,
+        status: err?.response?.status,
+        code: err?.response?.data?.code
+      };
+    }
   },
 
   async updateAvatar(id: string, picture: string): Promise<void> {

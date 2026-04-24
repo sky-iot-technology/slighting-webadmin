@@ -194,11 +194,11 @@ export function CalendarViewDialog({
                   {allDeviceIds.map((name, i) => (
                     <div
                       key={i}
-                      className='grid h-6 w-full grid-cols-3 items-center rounded-[4px] border px-2 text-[10px] font-normal'
+                      className='flex h-6 w-full items-center justify-between rounded-[4px] border px-2 text-[10px] font-normal'
                     >
                       <span className='truncate'>{name}</span>
                       <span className='text-center text-green-600'>Online</span>
-                      <span
+                      {/* <span
                         className='cursor-pointer text-right text-blue-500 italic'
                         onClick={() =>
                           router.push(
@@ -207,7 +207,7 @@ export function CalendarViewDialog({
                         }
                       >
                         {t('calendar.view_detail')}
-                      </span>
+                      </span> */}
                     </div>
                   ))}
                 </div>

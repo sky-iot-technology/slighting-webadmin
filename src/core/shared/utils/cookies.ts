@@ -6,11 +6,11 @@ export const cookieUtils = {
       (process.env.NEXT_PUBLIC_COOKIE_SAMESITE as 'strict' | 'lax' | 'none') ||
       'strict';
 
-    // Access token - short lived (15 minutes)
-    document.cookie = `access_token=${accessToken}; path=/; max-age=900; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
+    // Access token - match refresh token lifetime or let backend JWT control it
+    document.cookie = `access_token=${accessToken}; path=/; max-age=2592000; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
 
-    // Refresh token - longer lived (7 days)
-    document.cookie = `refresh_token=${refreshToken}; path=/; max-age=604800; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
+    // Refresh token - longer lived (30 days)
+    document.cookie = `refresh_token=${refreshToken}; path=/; max-age=2592000; ${isSecure ? 'secure;' : ''} samesite=${sameSite}`;
   },
 
   // Get tokens from cookies

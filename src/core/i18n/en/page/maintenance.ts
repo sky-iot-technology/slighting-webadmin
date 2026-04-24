@@ -7,6 +7,7 @@ export const maintenance = {
   work_order_history: 'Work Order History',
 
   // Table Headers & Content
+  device_name: 'Device Name',
   device_id: 'Device ID',
   warning_name: 'Alert Name',
   priority: 'Priority',

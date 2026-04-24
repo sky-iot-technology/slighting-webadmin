@@ -2,7 +2,7 @@ import { RegionNode } from '@/core/domains/groups';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { NodeRendererProps, Tree } from 'react-arborist';
 
 export type SelectedRegion = { id: string; name: string; icon?: string } | null;
@@ -75,14 +75,52 @@ export function RegionTree({
   const renderFn =
     typeof renderNode === 'string' ? nodeRenderers[renderNode] : renderNode;
 
+  const treeRef = useRef<any>(null);
+  const [_visibleCount, setVisibleCount] = useState(0);
+
+  useEffect(() => {
+    const updateCount = () => {
+      if (treeRef.current?.visibleNodes) {
+        setVisibleCount(treeRef.current.visibleNodes.length);
+      }
+    };
+
+    updateCount();
+    const t = setTimeout(updateCount, 10);
+    return () => clearTimeout(t);
+  }, [enhancedData, searchTerm]);
+
+  // Handle toggle to re-measure visible nodes
+  const handleToggle = () => {
+    setTimeout(() => {
+      if (treeRef.current?.visibleNodes) {
+        setVisibleCount(treeRef.current.visibleNodes.length);
+      }
+    }, 10);
+  };
+
+  const dynamicHeight =
+    typeof height === 'number'
+      ? Math.min(
+          _visibleCount === 0
+            ? 36
+            : _visibleCount * (rowHeight || 36) +
+                (paddingTop || 0) +
+                (padding || 0),
+          height
+        )
+      : height;
+
   return (
     <Tree
+      ref={treeRef}
+      onToggle={handleToggle}
       data={enhancedData}
       searchTerm={searchTerm}
       searchMatch={searchMatch}
       openByDefault={false}
       width={width}
-      height={height}
+      height={dynamicHeight || 280}
       indent={indent}
       rowHeight={rowHeight}
       overscanCount={overscanCount}
@@ -127,8 +165,9 @@ function DefaultNode({
     >
       {hasChildren ? (
         <span
-          className='w-[12px] cursor-pointer select-none'
-          onClick={() => {
+          className='flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded select-none hover:bg-black/10 dark:hover:bg-white/10'
+          onClick={(e) => {
+            e.stopPropagation();
             node.toggle();
           }}
         >
@@ -151,7 +190,7 @@ function DefaultNode({
           )}
         </span>
       ) : (
-        <span className='inline-block h-[9px] w-3' />
+        <span className='inline-block h-6 w-6 shrink-0' />
       )}
       <button
         type='button'
@@ -202,8 +241,9 @@ function IconNode({
     >
       {hasChildren ? (
         <span
-          className='w-[12px] cursor-pointer select-none'
-          onClick={() => {
+          className='flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded select-none hover:bg-black/10 dark:hover:bg-white/10'
+          onClick={(e) => {
+            e.stopPropagation();
             node.toggle();
           }}
         >
@@ -226,7 +266,7 @@ function IconNode({
           )}
         </span>
       ) : (
-        <span className='inline-block h-[9px] w-3' />
+        <span className='inline-block h-6 w-6 shrink-0' />
       )}
       <button
         type='button'

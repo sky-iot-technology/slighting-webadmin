@@ -27,6 +27,7 @@ import {
   DialogDescription
 } from '@/ui/components/ui/dialog';
 import { Slider } from '@/ui/components/ui/slider';
+import { useCan } from '@/core/domains/permissions';
 
 interface Props {
   table: TanstackTable<Device>;
@@ -34,6 +35,7 @@ interface Props {
 
 export function MultiDeviceActions({ table }: Props) {
   const { t, tTime } = useTranslation();
+  const canControl = useCan('device', 'control');
   const selectedRows = table.getSelectedRowModel().flatRows;
   const selectedDevices = selectedRows.map((row) => row.original);
 
@@ -250,7 +252,12 @@ export function MultiDeviceActions({ table }: Props) {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant='outline' size='sm' disabled={isDisabled}>
+          <Button
+            variant='outline'
+            size='sm'
+            disabled={isDisabled || !canControl}
+            className='rounded-[6px]'
+          >
             <Settings2 className='mr-0.5 h-4 w-4' />
             {selectedDevices.length > 0 ? (
               <span>{selectedDevices.length}</span>

@@ -46,6 +46,24 @@ export const maintenanceColumns = (
     maxSize: 50
   },
   {
+    id: 'name',
+    accessorKey: 'name',
+    header: ({ column }: { column: Column<Alarm, unknown> }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('maintenance.device_name')}
+      />
+    ),
+    cell: ({ row }) => {
+      const metadata = row.getValue('metadata') as
+        | Alarm['metadata']
+        | undefined;
+      return <div>{metadata?.client_name || '-'}</div>;
+    },
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
     id: 'metadata',
     accessorKey: 'metadata',
     header: ({ column }: { column: Column<Alarm, unknown> }) => (

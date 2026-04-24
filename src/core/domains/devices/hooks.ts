@@ -14,6 +14,7 @@ import {
   DeviceRequestResponse,
   DeviceSetBrightnessRequest,
   DeviceTurnOnOffRequest,
+  DeviceSyncSTLSmartRequest,
   GetDevicesParamsDto,
   SetDevicesParentGroup,
   MultiDeviceTurnOnOffRequest,
@@ -130,6 +131,33 @@ export const useSetBrightnessLight = (
     onError: (error, variables, context) => {
       console.error('Failed to set brightness light: ', error);
       toast.error(error.message || t('toast.set_brightness_failed'));
+      options?.onError?.(error, variables, context);
+    },
+    ...options
+  });
+};
+
+export const useSyncSTLSmartState = (
+  options?: UseMutationOptions<
+    DeviceExecuteResponse,
+    Error,
+    DeviceSyncSTLSmartRequest
+  >
+) => {
+  const queryClient = useQueryClient();
+  const { t } = useTranslation();
+  return useMutation<DeviceExecuteResponse, Error, DeviceSyncSTLSmartRequest>({
+    mutationFn: (data) => devicesApi.syncSTLSmartState(data),
+    onSuccess: (data, variables, context) => {
+      toast.success(t('toast.request_sent_success'));
+      queryClient.invalidateQueries({
+        queryKey: [JOURNALS_QUERY_KEY, String(variables.device_id)]
+      });
+      options?.onSuccess?.(data, variables, context);
+    },
+    onError: (error, variables, context) => {
+      console.error('Failed to sync STL Smart state: ', error);
+      toast.error(error.message || t('toast.set_light_failed'));
       options?.onError?.(error, variables, context);
     },
     ...options

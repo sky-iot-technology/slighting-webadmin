@@ -750,7 +750,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                           {t('products.detail.overview.label.id' as any)}:
                         </span>
                         <span className='ml-2 font-medium'>
-                          {device.device_info?.imei}aaa
+                          {device.device_info?.imei}
                         </span>
                       </div>
                       <div>
@@ -1068,7 +1068,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         <FormItem className=''>
                           <FormControl>
                             <Sheet>
-                              <SheetTrigger asChild disabled={!isEditMode}>
+                              <SheetTrigger asChild>
                                 <Button
                                   type='button'
                                   className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
@@ -1097,15 +1097,18 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                         : undefined
                                     }
                                     onSelectLocation={({ lat, long }) => {
-                                      form.setValue(
-                                        'lat',
-                                        String(Number(lat.toFixed(6)))
-                                      );
-                                      form.setValue(
-                                        'lon',
-                                        String(Number(long.toFixed(6)))
-                                      );
+                                      if (isEditMode) {
+                                        form.setValue(
+                                          'lat',
+                                          String(Number(lat.toFixed(6)))
+                                        );
+                                        form.setValue(
+                                          'lon',
+                                          String(Number(long.toFixed(6)))
+                                        );
+                                      }
                                     }}
+                                    disabled={!isEditMode}
                                   />
                                 </div>
                               </SheetContent>

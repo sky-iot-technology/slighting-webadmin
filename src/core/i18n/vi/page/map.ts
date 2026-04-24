@@ -26,6 +26,10 @@ export const map = {
   parameter: 'Thông số hiện tại',
   voltage: 'Điện áp tiêu thụ',
   temperature: 'Nhiệt độ',
+  humidity: 'Độ ẩm',
+  vrms: 'Điện áp',
+  active_p: 'Công suất',
+  power_factor: 'Hệ số công suất',
   //chart
   chart_title: 'Biểu đồ hoạt động đèn',
   chart_day: 'Hôm nay',
