@@ -82,6 +82,7 @@ export const toast = {
   update_ota_failed: 'Cập nhật OTA thất bại',
   send_ota_request_success: 'Gửi yêu cầu OTA thành công!',
   send_ota_request_failed: 'Gửi yêu cầu OTA thất bại',
+  ota_failed: 'Cập nhật OTA thất bại',
 
   // alarm
   acknowledge_alarm_success: 'Xác nhận cảnh báo thành công!',

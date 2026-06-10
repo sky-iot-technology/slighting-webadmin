@@ -37,7 +37,13 @@ export default function DeviceDetailsPage() {
 
   const deviceId = params?.id as string;
 
-  const { data: device, isLoading, error } = useGetDeviceById(deviceId);
+  const {
+    data: device,
+    isLoading,
+    error
+  } = useGetDeviceById(deviceId, {
+    staleTime: 0
+  });
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);

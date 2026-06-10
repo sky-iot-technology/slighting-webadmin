@@ -79,6 +79,7 @@ export const useGetDeviceById = (
     queryKey: [DEVICES_QUERY_KEY, 'detail', id],
     queryFn: () => devicesApi.getById(id),
     enabled: !!id,
+    staleTime: 0,
     ...options
   });
 };

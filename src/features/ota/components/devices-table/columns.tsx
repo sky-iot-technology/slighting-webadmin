@@ -64,16 +64,32 @@ export const DeviceColumns = (t: any): ColumnDef<Device>[] => {
         const original = row.original as any;
 
         if (original.isProgress) {
+          const isFailed =
+            original.status === 'failed' || original.status === 'timeout';
           return (
             <div className='relative w-full py-3'>
               <div className='absolute inset-x-0 px-4'>
-                <div className='text-muted-foreground mb-1 text-xs'>
-                  {t('ota.sync.table.updating' as any)} ({original.progress}%)
+                <div
+                  className={cn(
+                    'mb-1 flex items-center justify-between text-xs',
+                    isFailed
+                      ? 'font-medium text-red-500'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  <span>
+                    {isFailed
+                      ? `${t('ota.sync.table.failed' as any)}: ${original.error || original.status}`
+                      : `${t('ota.sync.table.updating' as any)} (${original.progress}%)`}
+                  </span>
                 </div>
 
                 <div className='h-2 w-full overflow-hidden rounded bg-gray-200'>
                   <div
-                    className='bg-primary h-2 transition-all'
+                    className={cn(
+                      'h-2 transition-all',
+                      isFailed ? 'bg-red-500' : 'bg-primary'
+                    )}
                     style={{ width: `${original.progress}%` }}
                   />
                 </div>

@@ -81,6 +81,7 @@ export const toast = {
   update_ota_failed: 'Failed to update Ota',
   send_ota_request_success: 'Send ota request successfully!',
   send_ota_request_failed: 'Failed to send OTA request',
+  ota_failed: 'OTA update failed',
 
   // alarm
   acknowledge_alarm_success: 'Acknowleged alarm successfully!',

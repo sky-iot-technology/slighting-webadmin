@@ -53,7 +53,8 @@ export const ota = {
       name: 'Tên thiết bị',
       version: 'Phiên bản',
       status: 'Trạng thái',
-      updating: 'Đang cập nhật firmware'
+      updating: 'Đang cập nhật firmware',
+      failed: 'Cập nhật firmware thất bại'
     }
   },
   validation: {

@@ -40,7 +40,16 @@ export default function SyncDeviceDialog({
 
   const [pending, setPending] = useState(false);
 
-  const [progressMap, setProgressMap] = useState<Record<string, number>>({});
+  const [progressMap, setProgressMap] = useState<
+    Record<
+      string,
+      {
+        progress: number;
+        status: 'updating' | 'completed' | 'failed' | 'timeout';
+        error?: string;
+      }
+    >
+  >({});
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -95,6 +104,8 @@ export default function SyncDeviceDialog({
       },
       {
         onSuccess: (data: ExecuteOtaResponse) => {
+          setProgressMap({});
+          setDoneRequestIds(new Set());
           setSyncListRequestId(
             data.request_ids.map((item) => {
               return { id: item.id, requestId: item.request_id };
@@ -196,15 +207,32 @@ export default function SyncDeviceDialog({
           onProgress={(progress) => {
             setProgressMap((prev) => ({
               ...prev,
-              [id]: progress
+              [id]: {
+                progress,
+                status: 'updating'
+              }
             }));
           }}
-          onDone={(status) => {
-            setProgressMap((prev) => {
-              const next = { ...prev };
-              delete next[id];
-              return next;
-            });
+          onDone={(status, error) => {
+            if (status === 'completed') {
+              setProgressMap((prev) => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+              });
+            } else {
+              setProgressMap((prev) => ({
+                ...prev,
+                [id]: {
+                  progress: prev[id]?.progress ?? 0,
+                  status,
+                  error
+                }
+              }));
+              toast.error(
+                `${t('toast.ota_failed' as any)}: ${error || status}`
+              );
+            }
             setDoneRequestIds((prev) => {
               const next = new Set(prev);
               next.add(requestId);

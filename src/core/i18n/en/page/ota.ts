@@ -53,7 +53,8 @@ export const ota = {
       name: 'Device Name',
       version: 'Version',
       status: 'Status',
-      updating: 'Updating firmware'
+      updating: 'Updating firmware',
+      failed: 'Firmware update failed'
     }
   },
   validation: {

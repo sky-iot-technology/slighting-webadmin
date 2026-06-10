@@ -13,7 +13,14 @@ import { useCan } from '@/core/domains/permissions';
 type DeviceTabProps = {
   id: string;
   onSelectionChange?: (ids: string[]) => void;
-  progressMap?: Record<string, number>;
+  progressMap?: Record<
+    string,
+    {
+      progress: number;
+      status: 'updating' | 'completed' | 'failed' | 'timeout';
+      error?: string;
+    }
+  >;
 };
 
 import { useTranslation } from '@/core/domains/language/useTranslation';
@@ -70,12 +77,14 @@ export default function DeviceRegionTab({
     for (const device of devices) {
       result.push(device);
 
-      const progress = progressMap?.[device.id];
-      if (typeof progress === 'number' && progress < 100) {
+      const progressInfo = progressMap?.[device.id];
+      if (progressInfo) {
         result.push({
           id: `${device.id}-progress`,
           isProgress: true,
-          progress,
+          progress: progressInfo.progress,
+          status: progressInfo.status,
+          error: progressInfo.error,
           parentId: device.id
         });
       }

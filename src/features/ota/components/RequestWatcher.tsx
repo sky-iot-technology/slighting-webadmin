@@ -5,7 +5,7 @@ type RequestWatcherProps = {
   requestId: string;
   pollInterval?: number;
   onProgress?: (progress: number) => void;
-  onDone?: (status: 'completed' | 'failed' | 'timeout') => void;
+  onDone?: (status: 'completed' | 'failed' | 'timeout', error?: string) => void;
 };
 
 export function RequestWatcher({
@@ -16,8 +16,8 @@ export function RequestWatcher({
 }: RequestWatcherProps) {
   const { data } = useQueryStatus(
     requestId,
-    (reason) => {
-      onDone?.(reason as 'completed' | 'failed' | 'timeout');
+    (reason, error) => {
+      onDone?.(reason as 'completed' | 'failed' | 'timeout', error);
     },
     pollInterval
   );

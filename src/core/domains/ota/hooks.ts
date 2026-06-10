@@ -255,7 +255,7 @@ export const useExcuteOta = (
 
 export const useQueryStatus = (
   requestId: string,
-  onStopped?: (reason: string) => void,
+  onStopped?: (reason: string, error?: string) => void,
   pollInterval?: number,
   options?: Omit<
     UseQueryOptions<
@@ -270,7 +270,7 @@ export const useQueryStatus = (
   const queryClient = useQueryClient();
   const attempt = useRef(0);
   const hasStopped = useRef(false);
-  const MAX_ATTEMPTS = 10; // Increased for longer polling
+  const MAX_ATTEMPTS = 100; // Increased for longer polling
   const pollIntervalRef = useRef(pollInterval || 3000);
   const onStoppedRef = useRef(onStopped);
 
@@ -346,14 +346,14 @@ export const useQueryStatus = (
 
       if (data.status === 'failed') {
         hasStopped.current = true;
-        onStoppedRef.current?.('failed');
+        onStoppedRef.current?.('failed', data.error || undefined);
         return false;
       }
 
       if (attempt.current >= MAX_ATTEMPTS) {
         if (!hasStopped.current) {
           hasStopped.current = true;
-          onStoppedRef.current?.('timeout');
+          onStoppedRef.current?.('timeout', 'Request timeout');
         }
         return false;
       }
