@@ -39,7 +39,7 @@ export function RBACGuard({ children }: RBACGuardProps) {
 
       // Determine where to redirect
       const nextRoute = getFirstAccessibleRoute(ui);
-
+      console.log(nextRoute);
       if (nextRoute && nextRoute !== pathname) {
         router.replace(nextRoute);
       } else {

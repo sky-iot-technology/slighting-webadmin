@@ -20,6 +20,7 @@ import BranchAddDevice from './modal/branch-add-device';
 import GoongMap from '@/ui/business/map/goong-map';
 import { useDeviceFiltersFromParams } from '../hook/device-filter';
 import { usePathname, useRouter } from 'next/navigation';
+import { DeviceDataLayer } from '@/features/map/layer/device-data-layer';
 import Image from 'next/image';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { cn } from '@/lib/utils';
@@ -76,9 +77,20 @@ export default function BranchPage() {
 
   const viewDevice = useCan('device', 'view');
 
-  const { data, isLoading, isFetching, error } = useGetDevices(
+  const [allDevices, setAllDevices] = useState<Device[]>([]);
+  const [isAllDevicesLoading, setIsAllDevicesLoading] = useState(false);
+  const [isAllDevicesFetching, setIsAllDevicesFetching] = useState(false);
+
+  const dataLayer = useMemo(() => new DeviceDataLayer(), []);
+
+  // Query for paginated devices (used for the Devices Table tab)
+  const {
+    data: paginatedDevicesData,
+    isLoading: isPaginatedDevicesLoading,
+    error: paginatedDevicesError
+  } = useGetDevices(
     { group: selectedRegion?.id, ...filters },
-    { enabled: !!selectedRegion && !!viewDevice }
+    { enabled: !!selectedRegion && !!viewDevice && activeTab === 'devices' }
   );
 
   const { data: group, isFetching: groupFetching } = useGetGroup(
@@ -86,31 +98,70 @@ export default function BranchPage() {
     { enabled: !!selectedRegion }
   );
 
-  const devices = useMemo(() => data?.devices ?? [], [data?.devices]);
+  useEffect(() => {
+    if (!selectedRegion || !viewDevice) return;
+
+    let accumulated: Device[] = [];
+
+    const unsubscribeDevice = dataLayer.onDevice((device) => {
+      accumulated.push(device);
+      setAllDevices([...accumulated]);
+    });
+
+    const unsubscribeDone = dataLayer.onDone(() => {
+      setIsAllDevicesLoading(false);
+      setIsAllDevicesFetching(false);
+    });
+
+    const unsubscribeError = dataLayer.onError(() => {
+      setIsAllDevicesLoading(false);
+      setIsAllDevicesFetching(false);
+    });
+
+    setIsAllDevicesLoading(true);
+    setIsAllDevicesFetching(true);
+    setAllDevices([]);
+
+    dataLayer.load({ group: selectedRegion.id, limit: 100 });
+
+    return () => {
+      unsubscribeDevice();
+      unsubscribeDone();
+      unsubscribeError();
+      dataLayer.stop();
+    };
+  }, [dataLayer, selectedRegion?.id, viewDevice]);
+
+  const paginatedDevices = useMemo(
+    () => paginatedDevicesData?.devices ?? [],
+    [paginatedDevicesData?.devices]
+  );
 
   const devicesTableMemo = useMemo(() => {
     if (!selectedRegion) return null;
     return (
       <BranchTable
         key={language}
-        data={devices}
-        totalItems={Number(data?.total)}
+        data={paginatedDevices}
+        totalItems={Number(paginatedDevicesData?.total ?? 0)}
         columns={
           branchColumns(catalogues, treeData, t) as ColumnDef<Device, any>[]
         }
         onTableReady={setDeviceTable}
-        isLoading={isLoading}
-        error={error}
+        isLoading={isPaginatedDevicesLoading}
+        error={paginatedDevicesError}
       />
     );
   }, [
     selectedRegion?.id,
-    data?.total,
-    devices,
+    paginatedDevicesData?.total,
+    paginatedDevices,
     catalogues,
     treeData,
     t,
-    language
+    language,
+    isPaginatedDevicesLoading,
+    paginatedDevicesError
   ]);
 
   useEffect(() => {
@@ -251,9 +302,9 @@ export default function BranchPage() {
                   selectedRegion={selectedRegion}
                   treeData={treeData}
                   group={group}
-                  devices={devices ?? []}
-                  isLoading={isLoading}
-                  isFetching={isFetching}
+                  devices={allDevices}
+                  isLoading={isAllDevicesLoading}
+                  isFetching={isAllDevicesFetching}
                   selectedDevice={selectedDevice}
                   onDeleteSuccess={() => setSelectedRegion(null)}
                 />
@@ -267,9 +318,9 @@ export default function BranchPage() {
                 <div className='relative mt-3 h-full w-full min-w-0 overflow-hidden rounded-[8px]'>
                   <GoongMap
                     selectedRegion={selectedRegion}
-                    devices={devices}
-                    isLoading={isLoading}
-                    isFetching={isFetching}
+                    devices={allDevices}
+                    isLoading={isAllDevicesLoading}
+                    isFetching={isAllDevicesFetching}
                     selectedDevice={selectedDevice}
                   />
                 </div>

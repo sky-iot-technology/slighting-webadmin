@@ -11,14 +11,13 @@ import {
   DeviceStatusFilter,
   GetDevicesParamsDto,
   useGetDeviceCount,
-  useGetDevices,
   DEVICES_QUERY_KEY
 } from '@/core/domains/devices';
 import { SelectedRegion } from '@/ui/components/tree-group';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
 import GoongMap from '@/ui/business/map/goong-map';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
-import { deviceDataLayer } from '../layer/device-data-layer';
+import { DeviceDataLayer } from '../layer/device-data-layer';
 import { useCan } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
@@ -74,11 +73,13 @@ export default function MapContainer() {
     return baseParams;
   }, [selectedRegion?.id, statusFilter]);
 
-  const { data, isLoading, isFetching, refetch, error } = useGetDevices(
-    deviceQueryParams,
-    { enabled: !!selectedRegion && canViewDevices }
-  );
-  const devices = data?.devices ?? [];
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+  const [, setError] = useState<Error | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const dataLayer = useMemo(() => new DeviceDataLayer(), []);
 
   const { data: onlineData, refetch: refetchOnline } = useGetDeviceCount(true, {
     group: selectedRegion?.id
@@ -87,6 +88,55 @@ export default function MapContainer() {
     false,
     { group: selectedRegion?.id }
   );
+
+  useEffect(() => {
+    if (!selectedRegion || !canViewDevices) return;
+
+    let accumulated: Device[] = [];
+
+    const unsubscribeDevice = dataLayer.onDevice((device) => {
+      accumulated.push(device);
+      setDevices([...accumulated]);
+    });
+
+    const unsubscribeDone = dataLayer.onDone(() => {
+      setIsLoading(false);
+      setIsFetching(false);
+    });
+
+    const unsubscribeError = dataLayer.onError((err) => {
+      setError(err as Error);
+      setIsLoading(false);
+      setIsFetching(false);
+    });
+
+    setIsLoading(true);
+    setIsFetching(true);
+    setError(null);
+    setDevices([]);
+
+    dataLayer.load(deviceQueryParams);
+
+    return () => {
+      unsubscribeDevice();
+      unsubscribeDone();
+      unsubscribeError();
+      dataLayer.stop();
+    };
+  }, [
+    dataLayer,
+    selectedRegion?.id,
+    deviceQueryParams,
+    canViewDevices,
+    refreshKey
+  ]);
+
+  const handleRefresh = useCallback(() => {
+    setRefreshKey((prev) => prev + 1);
+    refetchOnline();
+    refetchOffline();
+    queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] });
+  }, [refetchOnline, refetchOffline, queryClient]);
 
   useEffect(() => {
     if (treeData?.length && !selectedRegion) {
@@ -136,9 +186,7 @@ export default function MapContainer() {
             }
             statusFilter={statusFilter}
             onStatusChange={setStatusFilter}
-            onRefresh={() =>
-              queryClient.invalidateQueries({ queryKey: [DEVICES_QUERY_KEY] })
-            }
+            onRefresh={handleRefresh}
             isRefreshing={isFetching}
           />
         )}

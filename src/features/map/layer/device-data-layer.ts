@@ -1,16 +1,21 @@
-import { Device, DeviceListResponseDto } from '@/core/domains/devices';
+import {
+  Device,
+  DeviceListResponseDto,
+  GetDevicesParamsDto
+} from '@/core/domains/devices';
 import { authenticatedApi } from '@/core/shared/api';
+import axios from 'axios';
 
 type DeviceListener = (device: Device) => void;
 type DoneListener = () => void;
 type ErrorListener = (error: unknown) => void;
 
-class DeviceDataLayer {
+export class DeviceDataLayer {
   private deviceListeners = new Set<DeviceListener>();
   private doneListeners = new Set<DoneListener>();
   private errorListeners = new Set<ErrorListener>();
 
-  private aborted = false;
+  private abortController: AbortController | null = null;
 
   onDevice(cb: DeviceListener) {
     this.deviceListeners.add(cb);
@@ -27,47 +32,71 @@ class DeviceDataLayer {
     return () => this.errorListeners.delete(cb);
   }
 
-  async load(params: { group?: string; limit?: number }) {
-    this.aborted = false;
+  async load(params?: GetDevicesParamsDto) {
+    // Abort any active loading session first
+    this.stop();
 
-    const limit = params.limit ?? 10;
+    // Create a new AbortController for the current load session
+    const controller = new AbortController();
+    this.abortController = controller;
+
+    const { limit = 100, ...restParams } = params ?? {};
     let offset = 0;
     let total = Infinity;
 
     try {
-      while (!this.aborted && offset < total) {
+      while (!controller.signal.aborted && offset < total) {
         const res = await authenticatedApi.get<DeviceListResponseDto>(
           '/devices/things',
           {
             params: {
               offset,
               limit,
-              group: params.group
-            }
+              ...restParams
+            },
+            signal: controller.signal
           }
         );
+
+        if (controller.signal.aborted) return;
 
         const devices = res.devices ?? [];
         total = res.total ?? 0;
 
         for (const device of devices) {
-          if (this.aborted) return;
+          if (controller.signal.aborted) return;
           this.deviceListeners.forEach((cb) => cb(device));
         }
 
         offset += devices.length;
 
-        // Nếu API trả ít hơn limit → hết data
-        if (devices.length < limit) break;
+        // If the API returns fewer devices than the limit, or no devices, we've loaded all of them
+        if (devices.length < limit || devices.length === 0) break;
       }
-      this.doneListeners.forEach((cb) => cb());
+
+      if (!controller.signal.aborted) {
+        this.doneListeners.forEach((cb) => cb());
+      }
     } catch (err) {
-      this.errorListeners.forEach((cb) => cb(err));
+      if (axios.isCancel(err) || (err as any)?.name === 'CanceledError') {
+        // Request was cancelled, ignore
+        return;
+      }
+      if (!controller.signal.aborted) {
+        this.errorListeners.forEach((cb) => cb(err));
+      }
+    } finally {
+      if (this.abortController === controller) {
+        this.abortController = null;
+      }
     }
   }
 
   stop() {
-    this.aborted = true;
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
   }
 }
 

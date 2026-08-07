@@ -21,10 +21,13 @@ import { useMemo, useState } from 'react';
 import { OverviewTab } from './components/overview-tab';
 import { ActivityTab } from './components/activity-tab';
 import { AnalysisTab } from './components/analysis-tab';
+import { AnalysisTabV2 } from './components/analysis-tab-v2';
 import { CalendarContent } from '@/features/calendar/device-calendar/calendar-content';
 import { GetCalendarsParamsDto } from '@/core/domains/calendars';
 import MaintenanceTab from './components/maintenance-tab';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { SlaveConnectionTab } from './components/slave-connection-tab';
+import { CalibrationTab } from './components/calibration-tab';
 
 export default function DeviceDetailsPage() {
   const { t } = useTranslation();
@@ -44,6 +47,16 @@ export default function DeviceDetailsPage() {
   } = useGetDeviceById(deviceId, {
     staleTime: 0
   });
+
+  const isCB = useMemo(
+    () => device?.type === 'lms.devices.types.CB',
+    [device?.type]
+  );
+
+  const isFireAlarm = useMemo(
+    () => device?.type === 'lms.devices.types.FIRE_ALARM',
+    [device?.type]
+  );
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -155,15 +168,33 @@ export default function DeviceDetailsPage() {
           <TabsTrigger value='activity' className={tabClassName}>
             {t('products.detail.tabs.activity' as any)}
           </TabsTrigger>
-          {/* <TabsTrigger value='analytics' className={tabClassName}>
-            {t('products.detail.tabs.analytics' as any)}
-          </TabsTrigger> */}
+          {isCB && (
+            <TabsTrigger value='analytics' className={tabClassName}>
+              {t('products.detail.tabs.analytics' as any) || 'Thống kê'}
+            </TabsTrigger>
+          )}
+          {isCB && (
+            <TabsTrigger value='analytics-v2' className={tabClassName}>
+              ✦ Thống kê V2
+            </TabsTrigger>
+          )}
+          {isCB && (
+            <TabsTrigger value='calibration' className={tabClassName}>
+              Hiệu chuẩn ADE
+            </TabsTrigger>
+          )}
           <TabsTrigger value='schedule' className={tabClassName}>
             {t('products.detail.tabs.schedule' as any)}
           </TabsTrigger>
           <TabsTrigger value='maintenance' className={tabClassName}>
             {t('products.detail.tabs.maintenance' as any)}
           </TabsTrigger>
+          {isFireAlarm && (
+            <TabsTrigger value='slaves' className={tabClassName}>
+              {/* {t('products.detail.tabs.slaves' as any) || 'Thiết bị con (Slave)'} */}
+              Thiết bị con (Slave)
+            </TabsTrigger>
+          )}
         </TabsList>
 
         {/* Overview Tab */}
@@ -176,10 +207,26 @@ export default function DeviceDetailsPage() {
           <ActivityTab device={device} />
         </TabsContent>
 
-        {/* Analytics Tab */}
-        <TabsContent value='analytics' className='mt-6'>
-          <AnalysisTab device={device} />
-        </TabsContent>
+        {/* Analytics Tab (Original) */}
+        {isCB && (
+          <TabsContent value='analytics' className='mt-6'>
+            <AnalysisTab device={device} />
+          </TabsContent>
+        )}
+
+        {/* Analytics Tab V2 (Premium Redesign) */}
+        {isCB && (
+          <TabsContent value='analytics-v2' className='mt-6'>
+            <AnalysisTabV2 device={device} />
+          </TabsContent>
+        )}
+
+        {/* Calibration Tab (CB only) */}
+        {isCB && (
+          <TabsContent value='calibration' className='mt-6'>
+            <CalibrationTab device={device} />
+          </TabsContent>
+        )}
 
         {/* Schedule Tab */}
         <TabsContent value='schedule' className='mt-6 flex flex-col'>
@@ -192,6 +239,13 @@ export default function DeviceDetailsPage() {
         <TabsContent value='maintenance' className='mt-6 flex flex-col'>
           <MaintenanceTab deviceId={deviceId} />
         </TabsContent>
+
+        {/* Slaves Tab */}
+        {isFireAlarm && (
+          <TabsContent value='slaves' className='mt-6'>
+            <SlaveConnectionTab device={device} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
