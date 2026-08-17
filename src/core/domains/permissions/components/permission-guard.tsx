@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import { useCan } from '../store'; // Assuming useCan is exported from store or we need to import it from where it's defined
 
 interface PermissionGuardProps {
   module: string;
@@ -42,13 +41,10 @@ import { usePermissionStore } from '../store';
 
 function useCanCheck(module: string, actions: string[], requireAll: boolean) {
   return usePermissionStore((state) => {
-    const modulePermissions = state.ui[module];
-    if (!modulePermissions) return false;
-
     if (requireAll) {
-      return actions.every((act) => modulePermissions.has(act));
+      return actions.every((act) => state.can(module, act));
     } else {
-      return actions.some((act) => modulePermissions.has(act));
+      return actions.some((act) => state.can(module, act));
     }
   });
 }

@@ -17,6 +17,7 @@ import {
   UserListResponseDto
 } from './types';
 import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useAuthStore } from '../auth';
 
 export const USERS_QUERY_KEY = 'users';
 
@@ -32,6 +33,7 @@ export const useGetUsers = (
     'queryKey' | 'queryFn'
   >
 ) => {
+  const orgId = useAuthStore((state) => state.orgId);
   return useQuery<
     UserListResponseDto,
     Error,
@@ -39,7 +41,7 @@ export const useGetUsers = (
     readonly [string, GetUsersParamsDto?]
   >({
     queryKey: [USERS_QUERY_KEY, params],
-    queryFn: () => usersApi.getAll(params),
+    queryFn: () => usersApi.getAll(orgId!, params),
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
     ...options
@@ -146,10 +148,14 @@ export const useCreateUser = (
 ) => {
   const queryClient = useQueryClient();
   const { t } = useTranslation();
+  const { orgId } = useAuthStore();
 
   return useMutation<User, Error, CreateUserDto>({
     ...options,
-    mutationFn: (data) => usersApi.createUser(data),
+    mutationFn: async (data) => {
+      if (!orgId) throw new Error('Failed to create user');
+      return await usersApi.createUser({ ...data, org_id: orgId });
+    },
     onSuccess: (data, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [USERS_QUERY_KEY] });
       // queryClient.setQueryData({

@@ -1,7 +1,11 @@
 import { Group, RegionNode } from '../groups';
 import slugify from 'slugify';
 
-export function buildRegionTree(groups: Group[]): RegionNode[] {
+export function buildRegionTree(groups: Group[] = []): RegionNode[] {
+  if (!Array.isArray(groups) || groups.length === 0) {
+    return [];
+  }
+
   const map = new Map<string, RegionNode>();
   const roots: RegionNode[] = [];
 

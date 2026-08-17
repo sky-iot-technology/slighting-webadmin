@@ -47,8 +47,8 @@ export function BranchActionMenu({
     deleteGroup.mutate(id);
   };
 
-  const canUpdate = useCan('branch', 'update');
-  const canDelete = useCan('branch', 'delete');
+  const canUpdate = useCan('group', 'update');
+  const canDelete = useCan('group', 'delete');
 
   const hasActions = canUpdate || canDelete;
 

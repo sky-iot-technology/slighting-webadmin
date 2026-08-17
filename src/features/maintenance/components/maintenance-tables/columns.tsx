@@ -226,11 +226,11 @@ export const maintenanceColumns = (
       if (!assigneeId) {
         return <div>-</div>;
       }
-      const user = users.find((u) => u.id === assigneeId);
+      const user = Array.isArray(users)
+        ? users.find((u) => u.id === assigneeId)
+        : undefined;
       return (
-        <div>
-          {user?.last_name} {user?.first_name}
-        </div>
+        <div>{user ? `${user.last_name} ${user.first_name}` : assigneeId}</div>
       );
     },
     enableSorting: false,
@@ -264,7 +264,9 @@ export const maintenanceColumns = (
     size: 57,
     cell: ({ row }) => {
       const isSubRow = row.depth > 0;
-      const device = devices.find((d) => d.id === row.original.client_id);
+      const device = Array.isArray(devices)
+        ? devices.find((d) => d.id === row.original.client_id)
+        : undefined;
       const status = row.getValue('status') as AlarmStatus;
       const metadata = row.getValue('metadata') as Alarm['metadata'];
       const measurement = row.getValue('measurement') as string;

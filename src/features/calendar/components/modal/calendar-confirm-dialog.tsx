@@ -6,7 +6,7 @@ import { DateRange } from 'react-day-picker';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { CalendarRangePicker } from '../calendar-range-picker';
 import { getTraitUiMap } from '@/ui/business/trait/trait';
-import { SubCatalogueDevice, TRAIT_LABELS } from '@/core/domains/catalogues';
+import { DeviceAlias, TRAIT_LABELS } from '@/core/domains/catalogues';
 import { Switch } from '@/ui/components/ui/switch';
 import { Slider } from '@/ui/components/ui/slider';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
@@ -27,18 +27,14 @@ export default function CalendarConfirm({
   loading
 }: Props) {
   const { catalogues } = useCatalogueStore();
-  const allDeviceIds = data.ids;
   const { t } = useTranslation();
 
   const selectedDevice = catalogues.find((d) => d.type === data.device_type);
 
-  const nameLine = allDeviceIds.map((id) => {
-    const attr = selectedDevice?.attributes[id];
-    if (typeof attr === 'object' && attr !== null && 'name' in attr) {
-      return (attr as SubCatalogueDevice).name;
-    }
-    return null;
-  });
+  const nameLine =
+    selectedDevice?.attributes.device_aliases
+      ?.filter((a) => data.ids.includes(a.alias))
+      .map((a) => a.name) ?? [];
   return (
     <div className='bg-card space-y-3.5 p-5.5 text-xs font-bold'>
       <h3 className='text-primary-text text-left text-base font-bold'>

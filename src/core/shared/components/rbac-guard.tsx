@@ -17,7 +17,8 @@ interface RBACGuardProps {
 export function RBACGuard({ children }: RBACGuardProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { can, ui } = usePermissionStore();
+  const ui = usePermissionStore((state) => state.ui);
+  const can = usePermissionStore((state) => state.can);
 
   const isAllowed = useMemo(() => {
     const matchingRoute = ROUTE_PERMISSION_MAP.filter(
@@ -31,25 +32,21 @@ export function RBACGuard({ children }: RBACGuardProps) {
 
     const { module, action } = matchingRoute.permission;
     return can(module, action);
-  }, [pathname, can]);
+  }, [pathname, can, ui]);
 
   useEffect(() => {
     if (!isAllowed) {
-      toast.error('Bạn không có quyền truy cập trang này');
-
       // Determine where to redirect
       const nextRoute = getFirstAccessibleRoute(ui);
       console.log(nextRoute);
       if (nextRoute && nextRoute !== pathname) {
         router.replace(nextRoute);
-      } else {
-        router.replace('/not-found');
       }
     }
   }, [isAllowed, router, ui, pathname]);
 
   if (!isAllowed) {
-    return <NotFound />;
+    return null; // Render blank page
   }
 
   return <>{children}</>;

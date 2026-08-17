@@ -51,5 +51,28 @@ export const cookieUtils = {
     const accessToken = cookieUtils.getAccessToken();
     const refreshToken = cookieUtils.getRefreshToken();
     return !!(accessToken && refreshToken);
+  },
+
+  // Persist chosen domain ID in cookies
+  setSelectedDomainId: (domainId: string) => {
+    document.cookie = `selected_domain_id=${domainId}; path=/; max-age=2592000; samesite=strict`;
+  },
+
+  getSelectedDomainId: (): string | null => {
+    if (typeof document === 'undefined') return null;
+
+    const row = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('selected_domain_id='));
+    return row
+      ? decodeURIComponent(row.substring('selected_domain_id='.length))
+      : null;
+  },
+
+  clearSelectedDomainId: () => {
+    if (typeof document === 'undefined') return;
+
+    document.cookie =
+      'selected_domain_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 };

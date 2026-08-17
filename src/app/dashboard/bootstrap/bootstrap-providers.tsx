@@ -5,13 +5,14 @@ import { useRegionTreeStore } from '@/core/domains/tree/store';
 import { useEffect } from 'react';
 
 export function BootstrapProviders() {
-  const { fetchCatalogues } = useCatalogueStore();
+  const { fetchCatalogues, fetchDescriptors } = useCatalogueStore();
   const { fetchTree } = useRegionTreeStore();
 
   useEffect(() => {
     fetchCatalogues();
+    fetchDescriptors();
     fetchTree();
-  }, [fetchCatalogues, fetchTree]);
+  }, [fetchCatalogues, fetchDescriptors, fetchTree]);
 
   return null;
 }

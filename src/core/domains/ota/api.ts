@@ -13,7 +13,7 @@ import {
 export const otaApi = {
   async getAll(params?: GetOtasParamsDto): Promise<OtaListResponseDto> {
     const response = await authenticatedApi.get<OtaListResponseDto>(
-      `/devices/otas`,
+      `/devices/firmwares`,
       {
         params: {
           ...params
@@ -32,7 +32,7 @@ export const otaApi = {
     //   throw new Error(`Can't get Ota by Id`)
     // }
     const response = await authenticatedApi.get<OtaItem>(
-      `/devices/otas/${otaId}`
+      `/devices/firmwares/${otaId}`
     );
     return response;
   },
@@ -40,7 +40,7 @@ export const otaApi = {
   async createOta(data: CreateOtaDTO): Promise<OtaItem> {
     try {
       const response = await authenticatedApi.post<OtaItem>(
-        '/devices/otas',
+        '/devices/firmwares',
         data
       );
       return response;
@@ -56,7 +56,7 @@ export const otaApi = {
 
   async deleteOta(id: string): Promise<void> {
     try {
-      await authenticatedApi.delete<void>(`/devices/otas/${id}`);
+      await authenticatedApi.delete<void>(`/devices/firmwares/${id}`);
     } catch (error: any) {
       console.error('❌ deleteOta error:', error.message);
       throw new Error(error.message);
@@ -66,7 +66,7 @@ export const otaApi = {
   async updateOta(id: string, data: UpdateOtaDto): Promise<OtaItem> {
     try {
       const response = await authenticatedApi.patch<OtaItem>(
-        `/devices/otas/${id}`,
+        `/devices/firmwares/${id}`,
         data
       );
       return response;
@@ -79,7 +79,7 @@ export const otaApi = {
   async executesManyOta(data: ExecuteOtaRequest): Promise<ExecuteOtaResponse> {
     try {
       const response = await authenticatedApi.post<ExecuteOtaResponse>(
-        `/devices/things/executes`,
+        `/devices/clients/executes`,
         data
       );
       return response;
@@ -93,7 +93,7 @@ export const otaApi = {
   async getRequestById(requestId: string): Promise<OtaProgressResponse> {
     try {
       return await authenticatedApi.get<OtaProgressResponse>(
-        `/devices/things/request/${requestId}`
+        `/devices/clients/request/${requestId}`
       );
     } catch (error) {
       throw new Error(`Request id: ${requestId} not found`);

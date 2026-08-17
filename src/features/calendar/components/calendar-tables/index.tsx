@@ -76,7 +76,7 @@ export function CalendarTable<TData, TValue>({
     deleteCalendars(ids);
   };
 
-  const canDelete = useCan('calendar', 'delete');
+  const canDelete = useCan('schedule', 'delete');
   const { t } = useTranslation();
 
   return (
@@ -143,7 +143,7 @@ export function CalendarTable<TData, TValue>({
           table={table}
           className='w-auto flex-1 py-2'
           actions={
-            <PermissionGuard module='calendar' action='create' fallback={null}>
+            <PermissionGuard module='schedule' action='create' fallback={null}>
               <Button
                 variant='default'
                 size='sm'

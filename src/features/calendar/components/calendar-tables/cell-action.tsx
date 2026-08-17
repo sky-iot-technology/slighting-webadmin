@@ -123,7 +123,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             </div>
             <span>Sửa</span>
           </DropdownMenuItem> */}
-          <PermissionGuard module='calendar' action='delete' fallback={null}>
+          <PermissionGuard module='schedule' action='delete' fallback={null}>
             <DropdownMenuItem
               variant='default'
               onClick={() => setOpen(true)}

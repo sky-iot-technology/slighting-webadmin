@@ -82,7 +82,7 @@ export const TagSidebar = memo(function TagSidebar({
         onOpenChange={setOpenNew}
         roleId={null}
       />
-      <PermissionGuard module='tag' action='create' fallback={null}>
+      <PermissionGuard module='group' action='create' fallback={null}>
         <div
           className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
         >
@@ -179,7 +179,7 @@ export const TagSidebar = memo(function TagSidebar({
                   ) : (
                     <>
                       <PermissionGuard
-                        module='tag'
+                        module='group'
                         action='update'
                         fallback={null}
                       >

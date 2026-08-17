@@ -11,13 +11,17 @@ import {
 } from './types';
 
 export const usersApi = {
-  async getAll(params?: GetUsersParamsDto): Promise<UserListResponseDto> {
+  async getAll(
+    orgId: string,
+    params?: GetUsersParamsDto
+  ): Promise<UserListResponseDto> {
     const { page = 1, limit = 20, ...rest } = params ?? {};
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<UserListResponseDto>(`/users`, {
       params: {
         offset,
         limit,
+        org_id: orgId,
         ...rest
       }
     });
@@ -48,12 +52,12 @@ export const usersApi = {
       secret
     });
   },
-  async createUser(data: CreateUserDto): Promise<User> {
+  async createUser(data: CreateUserDto & { org_id: string }): Promise<User> {
     try {
       const response = await authenticatedApi.post<User>(`/users`, data);
       return response;
     } catch (error) {
-      throw new Error('Failed to create user');
+      throw error;
     }
   },
   async deleteUser(id: string): Promise<void> {

@@ -33,10 +33,10 @@ import { useTranslation } from '@/core/domains/language/useTranslation';
 export default function MaintenancePage() {
   const { t } = useTranslation();
 
-  const canViewAlarms = useCan('maintenance.alarm', 'view');
-  const canViewWorkOrders = useCan('maintenance.workorder', 'view');
-  const canDeleteAlarms = useCan('maintenance.alarm', 'delete');
-  const canDeleteWorkOrders = useCan('maintenance.workorder', 'delete');
+  const canViewAlarms = useCan('alarm', 'view');
+  const canViewWorkOrders = useCan('alarm', 'view');
+  const canDeleteAlarms = useCan('alarm', 'delete');
+  const canDeleteWorkOrders = useCan('alarm', 'delete');
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -101,7 +101,7 @@ export default function MaintenancePage() {
     const alarms = data?.alarms ?? [];
     const totalItems = data?.total ?? 0;
     return (
-      <PermissionGuard module='maintenance.alarm' action='view'>
+      <PermissionGuard module='alarm' action='view'>
         <MaintenanceTable
           data={alarms}
           totalItems={totalItems}
@@ -123,7 +123,7 @@ export default function MaintenancePage() {
     const workorders = workorderData?.woker_orders ?? [];
     const totalItems = workorderData?.total ?? 0;
     return (
-      <PermissionGuard module='maintenance.workorder' action='view'>
+      <PermissionGuard module='alarm' action='view'>
         <WorkorderTable
           data={workorders}
           totalItems={totalItems}
@@ -188,7 +188,7 @@ export default function MaintenancePage() {
             className='!bg-card w-full flex-shrink-0 sm:w-auto'
           >
             <TabsList className='!bg-card flex text-[12px]'>
-              <PermissionGuard module='maintenance.alarm' action='view'>
+              <PermissionGuard module='alarm' action='view'>
                 <TabsTrigger
                   value='alert'
                   className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
@@ -197,7 +197,7 @@ export default function MaintenancePage() {
                 </TabsTrigger>
               </PermissionGuard>
 
-              <PermissionGuard module='maintenance.workorder' action='view'>
+              <PermissionGuard module='alarm' action='view'>
                 <TabsTrigger
                   value='workorder'
                   className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[38px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
@@ -207,16 +207,13 @@ export default function MaintenancePage() {
               </PermissionGuard>
             </TabsList>
           </Tabs>
-          <PermissionGuard module='maintenance.alarm' action='view'>
+          <PermissionGuard module='alarm' action='view'>
             {activeTab === 'alert' && maintenanceTable && (
               <DataTableCustomToolbar
                 table={maintenanceTable}
                 className='w-auto flex-1 py-2'
                 actions={
-                  <PermissionGuard
-                    module='maintenance.workorder'
-                    action='create'
-                  >
+                  <PermissionGuard module='alarm' action='create'>
                     <Button
                       variant='default'
                       size='sm'
@@ -241,7 +238,7 @@ export default function MaintenancePage() {
             )}
           </PermissionGuard>
 
-          <PermissionGuard module='maintenance.workorder' action='view'>
+          <PermissionGuard module='alarm' action='view'>
             {activeTab === 'workorder' && workoderTable && (
               <DataTableCustomToolbar
                 table={workoderTable}

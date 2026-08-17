@@ -17,7 +17,7 @@ import {
   scaleControlProps
 } from '@/features/map/config/map-controls';
 
-const mapStyleDefault = 'https://tiles.goong.io/assets/goong_light_v2.json';
+import mapStyleDefault from '@/core/shared/constants/map-styles/marker_light.json';
 
 type GoongMapProps = {
   lat?: number;
@@ -64,7 +64,7 @@ export default function GoongMapMarker({
         ...prev,
         latitude: lat,
         longitude: long,
-        zoom: 14,
+        zoom: prev.zoom && prev.zoom > 5 ? prev.zoom : 14,
         transitionInterpolator: new FlyToInterpolator({ speed: 1.2 })
       }));
       setSelectedMarker({ lat, long });
@@ -106,13 +106,21 @@ export default function GoongMapMarker({
         transitionDuration={transitionDuration}
         onClick={handleClick}
         getCursor={handleGetCursor}
+        onLoad={(evt: any) => {
+          const map = evt.target;
+          map.on('style.load', () => {
+            if (map.getLayer('poi-tree')) {
+              map.removeLayer('poi-tree');
+            }
+          });
+        }}
       >
         {selectedMarker && (
           <Marker
             latitude={selectedMarker.lat}
             longitude={selectedMarker.long}
-            offsetLeft={0}
-            offsetTop={0}
+            offsetLeft={-12}
+            offsetTop={-24}
           >
             <MapPin className='h-6 w-6 text-red-500 drop-shadow-md' />
           </Marker>

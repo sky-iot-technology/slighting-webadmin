@@ -11,14 +11,20 @@ export function useTranslation() {
   const { language } = useLanguageStore();
 
   const t = useCallback(
-    (key: LanguageKey): string =>
-      getTranslationValue(translations[language], key) ?? key ?? '',
+    (key: LanguageKey): string => {
+      const val = getTranslationValue(translations[language], key);
+      if (typeof val === 'object' && val !== null) {
+        return key;
+      }
+      return (val as string) ?? key ?? '';
+    },
     [language]
   );
 
   const tTime = useCallback(
     (key: LanguageKey, params?: Record<string, string | number>) => {
-      let text = getTranslationValue(translations[language], key) ?? key;
+      const val = getTranslationValue(translations[language], key);
+      let text = typeof val === 'string' ? val : key;
 
       if (params) {
         Object.entries(params).forEach(([k, v]) => {

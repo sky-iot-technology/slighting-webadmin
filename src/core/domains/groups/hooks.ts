@@ -135,7 +135,7 @@ export const useDeleteGroup = (
   return useMutation<void, Error, string>({
     ...options,
     mutationFn: (id) => groupsApi.deleteGroup(id),
-    onSuccess: (data, deleteId, context) => {
+    onSuccess: async (data, deleteId, context) => {
       //Remove calendar from cache
       queryClient.removeQueries({
         queryKey: [GROUPS_QUERY_KEY, deleteId]
@@ -145,7 +145,7 @@ export const useDeleteGroup = (
         queryKey: [GROUPS_QUERY_KEY]
       });
 
-      useRegionTreeStore.getState().fetchTree();
+      await useRegionTreeStore.getState().fetchTree();
 
       toast.success(t('toast.delete_group_success'));
       options?.onSuccess?.(data, deleteId, context);

@@ -11,7 +11,8 @@ import {
 } from '../permissions';
 
 export function useAuthInit() {
-  const { setLoading, setUser, setTokens, setDomainId } = useAuthStore();
+  const { setLoading, setUser, setTokens, setDomainId, setOrgId } =
+    useAuthStore();
   const setPermissions = usePermissionStore((s) => s.setPermissions);
   useEffect(() => {
     const initAuth = async () => {
@@ -33,14 +34,26 @@ export function useAuthInit() {
             setTokens(accessToken, refreshToken);
 
             //Set DomainId for request
-            const domainId = await authApi.getDomain();
-            setDomainId(domainId);
+            const orgId = await authApi.getOrg();
+            setOrgId(orgId);
+            const domains = await authApi.getDomains(orgId);
+            const savedDomainId = cookieUtils.getSelectedDomainId();
+            if (savedDomainId && domains.some((d) => d.id === savedDomainId)) {
+              setDomainId(savedDomainId);
+            } else if (domains.length === 1) {
+              setDomainId(domains[0].id);
+              cookieUtils.setSelectedDomainId(domains[0].id);
+            }
             //Set role for User
-            const roleId = user.metadata?.roleId;
-            if (roleId) {
-              const res = await rolesApi.getById(roleId);
-              const uiPermission = normalizeUIPermission(res.permission.ui);
-              setPermissions(uiPermission);
+            if (user.role === 'user') {
+              const role = await rolesApi.getUserRoles(user.id);
+              if (role && role.roles && role.roles.length > 0) {
+                const res = await rolesApi.getById(role.roles[0].id);
+                if (res && res.permission && res.permission.ui) {
+                  const uiPermission = normalizeUIPermission(res.permission.ui);
+                  setPermissions(uiPermission);
+                }
+              }
             }
           } catch (error: any) {
             // If access token is expired, try to refresh
@@ -56,14 +69,31 @@ export function useAuthInit() {
                 setUser(user);
 
                 //Set DomainId for request
-                const domainId = await authApi.getDomain();
-                setDomainId(domainId);
+                const orgId = await authApi.getOrg();
+                setOrgId(orgId);
+                const domains = await authApi.getDomains(orgId);
+                const savedDomainId = cookieUtils.getSelectedDomainId();
+                if (
+                  savedDomainId &&
+                  domains.some((d) => d.id === savedDomainId)
+                ) {
+                  setDomainId(savedDomainId);
+                } else if (domains.length === 1) {
+                  setDomainId(domains[0].id);
+                  cookieUtils.setSelectedDomainId(domains[0].id);
+                }
                 //Set role for User (Need to set this again after refresh to ensure consistent state)
-                const roleId = user.metadata?.roleId;
-                if (roleId) {
-                  const res = await rolesApi.getById(roleId);
-                  const uiPermission = normalizeUIPermission(res.permission.ui);
-                  setPermissions(uiPermission);
+                if (user.role === 'user') {
+                  const role = await rolesApi.getUserRoles(user.id);
+                  if (role && role.roles && role.roles.length > 0) {
+                    const res = await rolesApi.getById(role.roles[0].id);
+                    if (res && res.permission && res.permission.ui) {
+                      const uiPermission = normalizeUIPermission(
+                        res.permission.ui
+                      );
+                      setPermissions(uiPermission);
+                    }
+                  }
                 }
               } catch (refreshError) {
                 // Refresh failed, clear everything

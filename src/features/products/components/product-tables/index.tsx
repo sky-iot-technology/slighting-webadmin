@@ -49,48 +49,46 @@ export function ProductTable<TData, TValue>({
 
   return (
     <>
-      {isFilterReady && (
-        <DataTable
-          table={table}
-          totalRows={totalItems}
-          wrapperClassName='mt-1'
-          tableContainerClassName='border-none rounded-none'
-          paginationClassName='py-3'
-          headerClassName='border-t-1 border-none shadow-none'
-          actionBar={actionBar}
-          isLoading={isLoading}
-          error={error}
-          loadingRowCount={pageSize}
-        >
-          {/* <DataTableToolbar table={table} /> */}
-          <div className='flex items-center gap-2'>
-            <DataTableCustomToolbar
-              table={table}
-              className='flex-1 py-2'
-              actions={
-                <>
-                  {typeof action === 'function' ? action(table) : action}
-                  <PermissionGuard module='device' action='create'>
-                    <Button
-                      variant='default'
-                      size='sm'
-                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[6px] text-white'
-                      onClick={() => {
-                        router.push('/dashboard/product/new');
-                      }}
-                    >
-                      <IconPlus className='h-3 w-3' />
-                      {t('products.button.add' as any)}
-                    </Button>
-                  </PermissionGuard>
-                </>
-              }
-              onDeleteAll={() => console.log('delete product')}
-              filter
-            />
-          </div>
-        </DataTable>
-      )}
+      <DataTable
+        table={table}
+        totalRows={totalItems}
+        wrapperClassName='mt-1'
+        tableContainerClassName='border-none rounded-none'
+        paginationClassName='py-3'
+        headerClassName='border-t-1 border-none shadow-none'
+        actionBar={actionBar}
+        isLoading={isLoading}
+        error={error}
+        loadingRowCount={pageSize}
+      >
+        {/* <DataTableToolbar table={table} /> */}
+        <div className='flex items-center gap-2'>
+          <DataTableCustomToolbar
+            table={table}
+            className='flex-1 py-2'
+            actions={
+              <>
+                {typeof action === 'function' ? action(table) : action}
+                <PermissionGuard module='device' action='create'>
+                  <Button
+                    variant='default'
+                    size='sm'
+                    className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[6px] text-white'
+                    onClick={() => {
+                      router.push('/dashboard/product/new');
+                    }}
+                  >
+                    <IconPlus className='h-3 w-3' />
+                    {t('products.button.add' as any)}
+                  </Button>
+                </PermissionGuard>
+              </>
+            }
+            onDeleteAll={() => console.log('delete product')}
+            filter
+          />
+        </div>
+      </DataTable>
     </>
   );
 }

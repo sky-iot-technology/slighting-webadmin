@@ -136,7 +136,7 @@ export const CellAction: React.FC<CellActionProps> = ({
           align='end'
           className='bg-action flex flex-col gap-2 p-2'
         >
-          <PermissionGuard module='maintenance.workorder' action='view'>
+          <PermissionGuard module='alarm' action='view'>
             {active && (
               <DropdownMenuItem
                 onClick={handleView}
@@ -170,7 +170,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             <span>{t('maintenance.actions.view_location' as any)}</span>
           </DropdownMenuItem>
 
-          <PermissionGuard module='maintenance.alarm' action='update'>
+          <PermissionGuard module='alarm' action='update'>
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className='flex w-full items-center gap-2 text-xs'>
                 <div className='flex w-4 justify-center'>
@@ -219,7 +219,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             </DropdownMenuSub>
           </PermissionGuard>
 
-          <PermissionGuard module='maintenance.alarm' action='delete'>
+          <PermissionGuard module='alarm' action='delete'>
             <DropdownMenuItem
               variant='default'
               onClick={() => setOpen(true)}

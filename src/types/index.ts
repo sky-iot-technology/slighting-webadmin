@@ -16,6 +16,7 @@ export interface NavItem {
   modal?: boolean;
 
   resourceId?: string;
+  featureId?: string;
   requiredActions?: UIAction[];
 }
 

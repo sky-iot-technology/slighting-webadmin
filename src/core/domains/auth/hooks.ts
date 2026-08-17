@@ -31,7 +31,7 @@ export const authKeys = {
 export function useLogin() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { setUser, setTokens, setLoading, setError, setDomainId } =
+  const { setUser, setTokens, setLoading, setError, setDomainId, setOrgId } =
     useAuthStore();
   useAuthStore();
   const setPermissions = usePermissionStore((s) => s.setPermissions);
@@ -50,22 +50,42 @@ export function useLogin() {
         setUser(user);
         setTokens(data.access_token, data.refresh_token);
         //Set DomainId for request
-        const domainId = await authApi.getDomain();
-        setDomainId(domainId);
+        const orgId = await authApi.getOrg();
+        setOrgId(orgId);
+
+        const domains = await authApi.getDomains(orgId);
+        let hasSingleDomain = false;
+        if (domains.length === 1) {
+          const singleDomainId = domains[0].id;
+          setDomainId(singleDomainId);
+          cookieUtils.setSelectedDomainId(singleDomainId);
+          hasSingleDomain = true;
+        } else {
+          cookieUtils.clearSelectedDomainId();
+        }
 
         let uiPermission: PermissionMap = {};
         //setPermission
-        const roleId = user.metadata?.roleId;
-        if (roleId) {
-          const res = await rolesApi.getById(roleId);
-          uiPermission = normalizeUIPermission(res.permission.ui);
-          setPermissions(uiPermission);
+        if (user.role === 'user') {
+          const role = await rolesApi.getUserRoles(user.id);
+          if (role && role.roles && role.roles.length > 0) {
+            const res = await rolesApi.getById(role.roles[0].id);
+            if (res && res.permission && res.permission.ui) {
+              uiPermission = normalizeUIPermission(res.permission.ui);
+              setPermissions(uiPermission);
+            }
+          }
         }
 
         queryClient.setQueryData(authKeys.user(), user);
         toast.success(t('toast.login_success'));
-        const nextRoute = getFirstAccessibleRoute(uiPermission);
-        router.push(nextRoute ?? '/404');
+
+        if (hasSingleDomain) {
+          const nextRoute = getFirstAccessibleRoute(uiPermission);
+          router.push(nextRoute ?? '/404');
+        } else {
+          router.push('/auth/select-domain');
+        }
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -114,13 +134,18 @@ export function useSignup() {
 export function useLogout() {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const { clearAuth, setLoading } = useAuthStore();
+  const { clearAuth, setLoading, refreshToken } = useAuthStore();
 
   const { clearPermissions } = usePermissionStore();
   const { t } = useTranslation();
 
   return useMutation({
-    mutationFn: authApi.logout,
+    mutationFn: () => {
+      if (!refreshToken) {
+        throw new Error('Logout failed, please try again');
+      }
+      return authApi.logout(refreshToken);
+    },
     onMutate: () => {
       setLoading(true);
     },
@@ -305,4 +330,38 @@ export function useAuth() {
     isLoading: state.isLoading,
     error: state.error
   }));
+}
+
+export function useGetDomains() {
+  const { orgId, accessToken } = useAuthStore();
+  return useQuery({
+    queryKey: ['auth', 'domains', orgId],
+    queryFn: () => authApi.getDomains(orgId || ''),
+    enabled: !!orgId && !!accessToken,
+    staleTime: 1000 * 60 * 5 // 5 minutes
+  });
+}
+
+export function useCreateDomain() {
+  const queryClient = useQueryClient();
+  const { orgId } = useAuthStore();
+  return useMutation({
+    mutationFn: (data: { name: string; route: string }) =>
+      authApi.createDomain(orgId || '', data.name, data.route),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', 'domains', orgId] });
+    }
+  });
+}
+
+export function useUpdateDomain() {
+  const queryClient = useQueryClient();
+  const { orgId } = useAuthStore();
+  return useMutation({
+    mutationFn: (data: { domainId: string; name: string; route: string }) =>
+      authApi.updateDomain(data.domainId, data.name, data.route),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['auth', 'domains', orgId] });
+    }
+  });
 }

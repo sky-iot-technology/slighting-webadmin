@@ -1,7 +1,11 @@
 'use client';
 
-import { useAuthLoading, useIsAuthenticated } from '@/core/domains/auth';
-import { useRouter } from 'next/navigation';
+import {
+  useAuthLoading,
+  useIsAuthenticated,
+  useAuthStore
+} from '@/core/domains/auth';
+import { useRouter, usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
 interface ProtectedRouteProps {
@@ -15,13 +19,22 @@ export function ProtectedRoute({
 }: ProtectedRouteProps) {
   const isAuthenticated = useIsAuthenticated();
   const isLoading = useAuthLoading();
+  const domainId = useAuthStore((s) => s.domainId);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.push(redirectTo);
+    } else if (
+      !isLoading &&
+      isAuthenticated &&
+      !domainId &&
+      !pathname.startsWith('/auth/')
+    ) {
+      router.push('/auth/select-domain');
     }
-  }, [isAuthenticated, isLoading, router, redirectTo]);
+  }, [isAuthenticated, isLoading, domainId, router, redirectTo, pathname]);
 
   if (isLoading) {
     return (
@@ -35,6 +48,10 @@ export function ProtectedRoute({
   }
 
   if (!isAuthenticated) {
+    return null;
+  }
+
+  if (isAuthenticated && !domainId && !pathname.startsWith('/auth/')) {
     return null;
   }
 

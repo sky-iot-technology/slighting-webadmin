@@ -158,3 +158,103 @@ export const useDeleteRole = (
     }
   });
 };
+
+export const useGetUserRoles = (
+  userId: string,
+  options?: Omit<
+    UseQueryOptions<
+      { roles: any[]; total: number },
+      Error,
+      { roles: any[]; total: number },
+      readonly [string, string, string]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery<
+    { roles: any[]; total: number },
+    Error,
+    { roles: any[]; total: number },
+    readonly [string, string, string]
+  >({
+    queryKey: [ROLES_QUERY_KEY, 'user', userId],
+    queryFn: () => rolesApi.getUserRoles(userId),
+    enabled: !!userId,
+    gcTime: 30 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
+    ...options
+  });
+};
+
+export const useAddUserToRole = (
+  options?: UseMutationOptions<
+    void,
+    Error,
+    {
+      roleId: string;
+      userId: string;
+      scopeEntityType?: string;
+      scopeEntityId?: string;
+    }
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    void,
+    Error,
+    {
+      roleId: string;
+      userId: string;
+      scopeEntityType?: string;
+      scopeEntityId?: string;
+    }
+  >({
+    mutationFn: ({ roleId, userId, scopeEntityType, scopeEntityId }) =>
+      rolesApi.addUserToRole(roleId, userId, scopeEntityType, scopeEntityId),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [ROLES_QUERY_KEY, 'user', variables.userId]
+      });
+    },
+    ...options
+  });
+};
+
+export const useRemoveUserFromRole = (
+  options?: UseMutationOptions<
+    void,
+    Error,
+    {
+      roleId: string;
+      userId: string;
+      scopeEntityType?: string;
+      scopeEntityId?: string;
+    }
+  >
+) => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    void,
+    Error,
+    {
+      roleId: string;
+      userId: string;
+      scopeEntityType?: string;
+      scopeEntityId?: string;
+    }
+  >({
+    mutationFn: ({ roleId, userId, scopeEntityType, scopeEntityId }) =>
+      rolesApi.removeUserFromRole(
+        roleId,
+        userId,
+        scopeEntityType,
+        scopeEntityId
+      ),
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [ROLES_QUERY_KEY, 'user', variables.userId]
+      });
+    },
+    ...options
+  });
+};

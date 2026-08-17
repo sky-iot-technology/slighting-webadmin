@@ -30,7 +30,7 @@ import {
   SelectValue
 } from '@/ui/components/ui/select';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
+import { DeviceAlias, TraitKey } from '@/core/domains/catalogues';
 import { MultiSelect } from '@/ui/components/ui/multi-select';
 import { calendarFormSchema } from '@/core/domains/calendars';
 import { useEffect } from 'react';
@@ -119,12 +119,12 @@ export default function CalendarForm({
   const selectedDevice = catalogues.find(
     (d) => d.type === form.watch('device_type')
   );
-  const branches = Object.entries(selectedDevice?.attributes ?? {})
-    .filter(
-      ([key, value]) =>
-        key !== 'icon' && typeof value === 'object' && value !== null
-    )
-    .map(([_, value]) => value as SubCatalogueDevice);
+
+  const branches = selectedDevice?.attributes.device_aliases ?? [];
+
+  useEffect(() => {
+    form.resetField('ids');
+  }, [selectedDevice]);
 
   return (
     <CustomScrollbar className='bg-card h-full flex-1 overflow-y-auto p-5.5 sm:p-6'>
@@ -220,7 +220,7 @@ export default function CalendarForm({
                       <MultiSelect
                         options={
                           branches?.map((b) => ({
-                            value: b.device_id,
+                            value: b.alias,
                             label: b.name
                           })) ?? []
                         }

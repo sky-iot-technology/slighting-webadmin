@@ -181,7 +181,7 @@ function SubMenuItem({
     subItem.icon && subItem.icon in Icons
       ? Icons[subItem.icon as keyof typeof Icons]
       : null;
-
+  console.log(subItem);
   if (!SubIcon) {
     return (
       <SidebarMenuSubItem key={subItem.title}>

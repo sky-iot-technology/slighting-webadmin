@@ -7,6 +7,7 @@ import { cookies } from 'next/headers';
 import { BootstrapProviders } from './bootstrap/bootstrap-providers';
 import { BreadcrumbsProvider } from '@/core/shared/context/breadcrumbs-context';
 import { RBACGuard } from '@/core/shared/components/rbac-guard';
+import { UIPreferencesInitializer } from '@/core/domains/ui-preferences/components/preferences-initializer';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
       <BreadcrumbsProvider>
         <RBACGuard>
           <SidebarProvider defaultOpen={defaultOpen}>
+            <UIPreferencesInitializer />
             <BootstrapProviders />
             <AppSidebar />
             <SidebarInset>

@@ -36,10 +36,10 @@ type MaintenanceTabProps = {
 
 export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
   const { t } = useTranslation();
-  const canViewAlarms = useCan('maintenance.alarm', 'view');
-  const canViewWorkOrders = useCan('maintenance.workorder', 'view');
-  const canDeleteAlarms = useCan('maintenance.alarm', 'delete');
-  const canDeleteWorkOrders = useCan('maintenance.workorder', 'delete');
+  const canViewAlarms = useCan('alarm', 'view');
+  const canViewWorkOrders = useCan('alarm', 'view');
+  const canDeleteAlarms = useCan('alarm', 'delete');
+  const canDeleteWorkOrders = useCan('alarm', 'delete');
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
@@ -107,7 +107,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
     const alarms = data?.alarms ?? [];
     const totalItems = data?.total ?? 0;
     return (
-      <PermissionGuard module='maintenance.alarm' action='view'>
+      <PermissionGuard module='alarm' action='view'>
         <MaintenanceTable
           data={alarms}
           totalItems={totalItems}
@@ -143,7 +143,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
       setSelectedWorkOrderId(id);
     };
     return (
-      <PermissionGuard module='maintenance.workorder' action='view'>
+      <PermissionGuard module='alarm' action='view'>
         <WorkorderTable
           data={workorders}
           totalItems={totalItems}
@@ -234,7 +234,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 className='w-full flex-shrink-0 !bg-transparent sm:w-auto'
               >
                 <TabsList className='flex !h-[30px] !bg-transparent pt-0 text-[12px]'>
-                  <PermissionGuard module='maintenance.alarm' action='view'>
+                  <PermissionGuard module='alarm' action='view'>
                     <TabsTrigger
                       value='alert'
                       className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
@@ -243,7 +243,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                     </TabsTrigger>
                   </PermissionGuard>
 
-                  <PermissionGuard module='maintenance.workorder' action='view'>
+                  <PermissionGuard module='alarm' action='view'>
                     <TabsTrigger
                       value='workorder'
                       className='group data-[state=active]:bg-primary dark:data-[state=active]:bg-primary !h-[30px] !w-[106px] cursor-pointer rounded-[8px] font-bold data-[state=active]:text-white data-[state=active]:shadow-none data-[state=inactive]:bg-white dark:data-[state=inactive]:bg-transparent'
@@ -253,16 +253,13 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                   </PermissionGuard>
                 </TabsList>
               </Tabs>
-              <PermissionGuard module='maintenance.alarm' action='view'>
+              <PermissionGuard module='alarm' action='view'>
                 {activeTab === 'alert' && maintenanceTable && (
                   <DataTableCustomToolbar
                     table={maintenanceTable}
                     className='w-auto flex-1 py-0'
                     actions={
-                      <PermissionGuard
-                        module='maintenance.workorder'
-                        action='create'
-                      >
+                      <PermissionGuard module='alarm' action='create'>
                         <Button
                           variant='default'
                           size='sm'
@@ -289,7 +286,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
                 )}
               </PermissionGuard>
 
-              <PermissionGuard module='maintenance.workorder' action='view'>
+              <PermissionGuard module='alarm' action='view'>
                 {activeTab === 'workorder' && workoderTable && (
                   <DataTableCustomToolbar
                     table={workoderTable}

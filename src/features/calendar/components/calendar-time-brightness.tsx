@@ -18,7 +18,11 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/ui/components/ui/select';
-import { COMMAND_TO_TRAIT, TraitKey } from '@/core/domains/catalogues';
+import {
+  getTraitByCommand,
+  getDynamicValueFromParams,
+  TraitKey
+} from '@/core/domains/catalogues';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
 import { getTraitUiMap } from '@/ui/business/trait/trait';
 import { useTranslation } from '@/core/domains/language/useTranslation';
@@ -44,12 +48,18 @@ type TimeBrightnessFormProps = {
 };
 
 export function TimeBrightnessForm({
-  deviceTraits,
+  deviceTraits = [],
   schedules = [],
   disabled = false
 }: TimeBrightnessFormProps) {
   const { t } = useTranslation();
   const TRAIT_UI_MAP = getTraitUiMap(t);
+
+  const cleanedDeviceTraits = (deviceTraits || []).filter((trait) =>
+    ['lms.devices.traits.OnOff', 'lms.devices.traits.Brightness'].includes(
+      trait
+    )
+  ) as TraitKey[];
 
   if (disabled && schedules)
     return <TimeBrightnessView schedules={schedules} />;
@@ -62,7 +72,7 @@ export function TimeBrightnessForm({
   });
   const count = form.watch('schedules')?.length ?? 0;
 
-  if (!deviceTraits.length && !disabled) {
+  if (!cleanedDeviceTraits.length && !disabled) {
     return (
       <div className='text-muted-foreground text-xs italic'>
         {t('calendar.device_not_support_schedule')}
@@ -116,7 +126,7 @@ export function TimeBrightnessForm({
                           />
                         </SelectTrigger>
                         <SelectContent>
-                          {deviceTraits.map((t) => (
+                          {cleanedDeviceTraits.map((t) => (
                             <SelectItem key={t} value={t} className='!text-xs'>
                               {TRAIT_UI_MAP[t].label}
                             </SelectItem>
@@ -209,7 +219,9 @@ function TimeBrightnessView({ schedules = [] }: { schedules?: SubSchedule[] }) {
           const command = s.payload?.command;
           const params = s.payload?.params ?? {};
 
-          const trait = command ? COMMAND_TO_TRAIT[command] : undefined;
+          const trait = command
+            ? (getTraitByCommand(command) as TraitKey)
+            : undefined;
 
           if (!trait || !TRAIT_UI_MAP[trait]) {
             return (
@@ -222,20 +234,7 @@ function TimeBrightnessView({ schedules = [] }: { schedules?: SubSchedule[] }) {
             );
           }
 
-          // map params → value theo trait
-          let value: unknown;
-          switch (trait) {
-            case 'lms.devices.traits.OnOff':
-              value = Boolean(params.on);
-              break;
-
-            case 'lms.devices.traits.Brightness':
-              value = Number(params.brightness ?? 0);
-              break;
-
-            default:
-              value = undefined;
-          }
+          const value = getDynamicValueFromParams(trait, params);
 
           return (
             <React.Fragment key={idx}>

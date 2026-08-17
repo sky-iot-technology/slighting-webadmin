@@ -27,6 +27,8 @@ export const useGetOverView = (
     queryFn: () => OverViewApi.getAll(),
     gcTime: 30 * 60 * 1000,
     staleTime: 5 * 60 * 1000,
+    retry: false,
+    refetchOnMount: false,
     ...options
   });
 };

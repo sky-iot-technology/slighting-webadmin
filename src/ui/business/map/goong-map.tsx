@@ -27,9 +27,8 @@ import { DeviceHoverCard } from '@/features/map/components/device-hover-card';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useTheme } from 'next-themes';
 
-const MAP_STYLE_LIGHT = 'https://tiles.goong.io/assets/goong_map_web.json';
-
-const MAP_STYLE_DARK = 'https://tiles.goong.io/assets/goong_map_dark.json';
+import MAP_STYLE_LIGHT from '@/core/shared/constants/map-styles/light.json';
+import MAP_STYLE_DARK from '@/core/shared/constants/map-styles/dark.json';
 
 type SelectedRegion = { id: string; name: string } | null;
 
@@ -64,7 +63,8 @@ export default function GoongMap({
   const { theme, resolvedTheme } = useTheme();
 
   const [isMapLoading, setIsMapLoading] = useState(true);
-  const [mapStyle, setMapStyle] = useState(MAP_STYLE_LIGHT);
+  const [mapStyle, setMapStyle] = useState<any>(MAP_STYLE_LIGHT);
+  const [currentTheme, setCurrentTheme] = useState<string>('light');
   const [transitionDuration, setTransitionDuration] = useState(1000);
   const [viewport, setViewport] = useState<ViewportProps>({
     longitude: 106.700981,
@@ -83,13 +83,14 @@ export default function GoongMap({
   useEffect(() => {
     if (!mapRef.current) return;
 
-    const nextStyle =
-      resolvedTheme === 'dark' ? MAP_STYLE_DARK : MAP_STYLE_LIGHT;
+    const nextTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
+    const nextStyle = nextTheme === 'dark' ? MAP_STYLE_DARK : MAP_STYLE_LIGHT;
 
-    if (nextStyle !== mapStyle) {
+    if (nextTheme !== currentTheme) {
       setMapStyle(nextStyle);
+      setCurrentTheme(nextTheme);
     }
-  }, [resolvedTheme, mapStyle]);
+  }, [resolvedTheme, currentTheme]);
 
   useMapLayers(mapRef, devices, selectedRegion?.id, mapStyle);
 
@@ -368,6 +369,11 @@ export default function GoongMap({
         }}
         onLoad={(evt: any) => {
           const map = evt.target;
+          map.on('style.load', () => {
+            if (map.getLayer('poi-tree')) {
+              map.removeLayer('poi-tree');
+            }
+          });
           map.on('idle', () => {
             setIsMapLoading(false);
           });

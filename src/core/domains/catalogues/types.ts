@@ -35,21 +35,16 @@ export type CatalogueDeviceType =
   | 'lms.devices.types.DIGITAL_SIGNATURE'
   | string;
 
-export const COMMAND_TO_TRAIT: Record<string, TraitKey> = {
-  'lms.devices.commands.OnOff': 'lms.devices.traits.OnOff',
-  'lms.devices.commands.BrightnessAbsolute': 'lms.devices.traits.Brightness'
-};
-
-export interface SubCatalogueDevice {
-  device_id: string;
+export interface DeviceAlias {
+  alias: string;
   name: string;
-  traits: string[];
   type: CatalogueDeviceType;
 }
 
 export interface CatalogueAttributes {
   icon?: string;
-  [key: string]: string | SubCatalogueDevice | undefined;
+  device_aliases?: DeviceAlias[];
+  [key: string]: unknown;
 }
 
 export interface Catalogue {
@@ -63,9 +58,59 @@ export interface Catalogue {
   updated_at: string;
 }
 
+export interface DescriptorAttributes {
+  name: string;
+  type: string;
+  writable: boolean;
+  reportable: boolean;
+  unit: string;
+  min: number | null;
+  max: number | null;
+  enum: string[] | null;
+}
+
+export interface Command {
+  name: string;
+  internal_cmd: string;
+  trait: string;
+  kind: string;
+  required_traits?: string[];
+  attr_triggers?: string[];
+}
+
+export interface Event {
+  name: string;
+  cluster: string;
+  matter_cluster_id: number;
+  priority: number;
+}
+
+export interface Descriptor {
+  name: string;
+  trait: string;
+  full_name: string;
+  matter_cluster_id: number;
+  matter_cluster_name: string;
+  attributes: DescriptorAttributes[];
+  commands: Command[];
+  events?: Event[];
+}
+
+export interface DescriptorListResponseDto {
+  descriptors: Descriptor[];
+}
+
 export interface CatalogueListResponseDto {
   limit: number;
   offset: number;
   total: number;
   devices: Catalogue[];
 }
+
+export const normalizeTraitKey = (trait: string): string => {
+  if (!trait) return '';
+  if (trait.startsWith('lms.devices.traits.')) {
+    return trait;
+  }
+  return `lms.devices.traits.${trait}`;
+};

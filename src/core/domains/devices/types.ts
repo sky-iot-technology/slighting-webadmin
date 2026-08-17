@@ -244,7 +244,7 @@ export type CommandError = {
 };
 
 export type MultiDeviceExecuteResponse = {
-  request_id?: string;
+  request_ids: { id: string; request_id: string }[];
   poll_interval: number;
   command_errors?: CommandError[];
 };

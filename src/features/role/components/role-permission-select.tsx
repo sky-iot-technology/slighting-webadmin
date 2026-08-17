@@ -17,17 +17,19 @@ type RolePermissionSectionProps = {
 };
 
 const UI_MODULE_LABEL_MAP: Record<string, string> = {
+  domain: 'navbar.domain',
   dashboard: 'navbar.dashboard',
   map: 'navbar.map',
   device: 'navbar.device_management',
-  calendar: 'navbar.calendar_management',
-  maintenance: 'navbar.maintenance_management',
+  schedule: 'navbar.calendar_management',
+  alarm: 'navbar.maintenance_management',
   'maintenance.alarm': 'maintenance.alert',
   'maintenance.workorder': 'maintenance.work_order',
   department: 'navbar.organization_management',
-  ota: 'navbar.firmware_management',
+  firmware: 'navbar.firmware_management',
   tag: 'navbar.favorite_groups',
   branch: 'navbar.branches',
+  group: 'navbar.groups',
   role: 'navbar.roles',
   users: 'navbar.users'
 };

@@ -1,4 +1,5 @@
 import { authenticatedApi } from '@/core/shared/api';
+import { normalizeTraitKey } from '../catalogues/types';
 import {
   Device,
   DeviceCommandRequest,
@@ -15,15 +16,28 @@ import {
   MultiDeviceTurnOnOffRequest,
   MultiDeviceExecuteResponse,
   GetDevicesParamsDto,
-  SetDevicesParentGroup
+  SetDevicesParentGroup,
+  CommandError
 } from './types';
+
+// Helper to normalize traits on device object
+const normalizeDeviceTraits = (device: Device): Device => {
+  if (!device) return device;
+  return {
+    ...device,
+    devices: (device.devices || []).map((subDevice) => ({
+      ...subDevice,
+      traits: (subDevice.traits || []).map(normalizeTraitKey)
+    }))
+  };
+};
 
 export const devicesApi = {
   async getAll(params?: GetDevicesParamsDto): Promise<DeviceListResponseDto> {
     const { page = 1, limit = 20 } = params ?? {};
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<DeviceListResponseDto>(
-      `/devices/things`,
+      `/devices/clients`,
       {
         params: {
           offset,
@@ -33,12 +47,16 @@ export const devicesApi = {
       }
     );
 
+    if (response && Array.isArray(response.devices)) {
+      response.devices = response.devices.map(normalizeDeviceTraits);
+    }
+
     return response;
   },
 
   async getByRegion(group: string): Promise<DeviceListResponseDto> {
     const response = await authenticatedApi.get<DeviceListResponseDto>(
-      `/devices/things`,
+      `/devices/clients`,
       {
         params: {
           group
@@ -46,12 +64,19 @@ export const devicesApi = {
       }
     );
 
+    if (response && Array.isArray(response.devices)) {
+      response.devices = response.devices.map(normalizeDeviceTraits);
+    }
+
     return response;
   },
 
   async getById(id: string | number): Promise<Device> {
     try {
-      return await authenticatedApi.get<Device>(`/devices/things/${id}`);
+      const response = await authenticatedApi.get<Device>(
+        `/devices/clients/${id}`
+      );
+      return normalizeDeviceTraits(response);
     } catch (error) {
       throw new Error(`Product with id ${id} not found`);
     }
@@ -62,7 +87,7 @@ export const devicesApi = {
   ): Promise<DeviceExecuteResponse> {
     try {
       return await authenticatedApi.post<DeviceExecuteResponse>(
-        `/devices/things/execute`,
+        `/devices/clients/execute`,
         body
       );
     } catch (error) {
@@ -75,7 +100,7 @@ export const devicesApi = {
   ): Promise<DeviceExecuteResponse> {
     try {
       return await authenticatedApi.post<DeviceExecuteResponse>(
-        `/devices/things/executes`,
+        `/devices/clients/executes`,
         body
       );
     } catch (error) {
@@ -162,11 +187,77 @@ export const devicesApi = {
     return this.sendCommand(body);
   },
 
+  async pollMultiDeviceExecution(
+    rawResponse: MultiDeviceExecuteResponse
+  ): Promise<MultiDeviceExecuteResponse> {
+    const { request_ids = [], poll_interval = 2 } = rawResponse;
+    if (request_ids.length === 0) return rawResponse;
+
+    const pollIntervalMs = poll_interval * 1000;
+    const maxAttempts = 10;
+    let attempts = 0;
+    const finalErrors: CommandError[] = [];
+    const pendingRequests = [...request_ids];
+
+    while (pendingRequests.length > 0 && attempts < maxAttempts) {
+      await new Promise((resolve) => setTimeout(resolve, pollIntervalMs));
+      attempts++;
+
+      const checks = pendingRequests.map(async (req) => {
+        try {
+          const res = await this.getRequestById(req.request_id);
+          if (res.status === 'completed') {
+            const deviceStatus = res.result?.devices?.[0]?.status || 'SUCCESS';
+            return {
+              deviceId: req.id,
+              completed: true,
+              status: deviceStatus === 'SUCCESS' ? 'SUCCESS' : 'ERROR'
+            };
+          } else if (res.status === 'failed') {
+            return {
+              deviceId: req.id,
+              completed: true,
+              status: 'ERROR'
+            };
+          }
+        } catch (error) {
+          console.error(`Error polling request ${req.request_id}:`, error);
+        }
+        return { deviceId: req.id, completed: false };
+      });
+
+      const checkResults = await Promise.all(checks);
+
+      checkResults.forEach((c) => {
+        if (c && c.completed) {
+          finalErrors.push({
+            device_id: c.deviceId,
+            status: c.status as 'SUCCESS' | 'ERROR'
+          });
+          const idx = pendingRequests.findIndex((p) => p.id === c.deviceId);
+          if (idx > -1) pendingRequests.splice(idx, 1);
+        }
+      });
+    }
+
+    pendingRequests.forEach((req) => {
+      finalErrors.push({
+        device_id: req.id,
+        status: 'ERROR'
+      });
+    });
+
+    return {
+      ...rawResponse,
+      command_errors: finalErrors
+    };
+  },
+
   async multiTurnOnOffLight({
     device_ids,
     devices,
     status
-  }: MultiDeviceTurnOnOffRequest) {
+  }: MultiDeviceTurnOnOffRequest): Promise<MultiDeviceExecuteResponse> {
     const body: MultiDeviceCommandRequest = {
       device_ids,
       command: {
@@ -181,14 +272,17 @@ export const devicesApi = {
         ]
       }
     };
-    return this.sendCommands(body as unknown as DeviceCommandRequest);
+    const rawRes = (await this.sendCommands(
+      body as unknown as DeviceCommandRequest
+    )) as unknown as MultiDeviceExecuteResponse;
+    return this.pollMultiDeviceExecution(rawRes);
   },
 
   async multiSetBrightness({
     device_ids,
     devices,
     brightness
-  }: MultiDeviceSetBrightnessRequest) {
+  }: MultiDeviceSetBrightnessRequest): Promise<MultiDeviceExecuteResponse> {
     const body: MultiDeviceCommandRequest = {
       device_ids,
       command: {
@@ -203,13 +297,16 @@ export const devicesApi = {
         ]
       }
     };
-    return this.sendCommands(body as unknown as DeviceCommandRequest);
+    const rawRes = (await this.sendCommands(
+      body as unknown as DeviceCommandRequest
+    )) as unknown as MultiDeviceExecuteResponse;
+    return this.pollMultiDeviceExecution(rawRes);
   },
 
   async getRequestById(requestId: string): Promise<DeviceRequestResponse> {
     try {
       return await authenticatedApi.get<DeviceRequestResponse>(
-        `/devices/things/request/${requestId}`
+        `/devices/clients/request/${requestId}`
       );
     } catch (error) {
       throw new Error(`Request id: ${requestId} not found`);
@@ -219,7 +316,7 @@ export const devicesApi = {
   async setDevicesParentGroup(data: SetDevicesParentGroup): Promise<void> {
     try {
       await authenticatedApi.post<DeviceRequestResponse>(
-        `/devices/things/parent`,
+        `/devices/clients/parent`,
         data
       );
     } catch (error: any) {
@@ -239,7 +336,7 @@ export const devicesApi = {
   async createDevice(deviceData: any): Promise<Device> {
     try {
       return await authenticatedApi.post<Device>(
-        `/devices/things/object`,
+        `/devices/clients`,
         deviceData
       );
     } catch (error) {
@@ -250,7 +347,7 @@ export const devicesApi = {
   async queryDevices(data: DeviceQueryRequest): Promise<DeviceQueryResponse> {
     try {
       return await authenticatedApi.post<DeviceQueryResponse>(
-        `/devices/things/query`,
+        `/devices/clients/query`,
         data
       );
     } catch (error) {
@@ -264,7 +361,7 @@ export const devicesApi = {
   ): Promise<Device> {
     try {
       return await authenticatedApi.patch<Device>(
-        `/devices/things/${deviceId}`,
+        `/devices/clients/${deviceId}`,
         data
       );
     } catch (error) {
@@ -288,7 +385,7 @@ export const devicesApi = {
 
   async deleteDevice(deviceId: string | number): Promise<void> {
     try {
-      await authenticatedApi.delete<void>(`/devices/things/${deviceId}`);
+      await authenticatedApi.delete<void>(`/devices/clients/${deviceId}`);
     } catch (error) {
       throw new Error('Failed to delete device');
     }

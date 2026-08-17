@@ -13,6 +13,7 @@ import {
   PRIORITY_LABELS_STRINGS
 } from '@/core/domains/calendars/constant';
 import { RegionNode } from '@/core/domains/groups';
+import { buildDynamicPayload } from '@/core/domains/catalogues';
 import { z } from 'zod';
 
 export function utcToLocal(dateStr?: string | Date): Date | undefined {
@@ -96,27 +97,10 @@ export function mapFormToCreateCalendarDto(
     schedules: formData.schedules.map((s) => {
       let payload: { command: string; params: Record<string, any> };
 
-      if (!s.action) {
+      if (!s.action || !s.action.trait) {
         payload = { command: '', params: {} };
       } else {
-        switch (s.action.trait) {
-          case 'lms.devices.traits.OnOff':
-            payload = {
-              command: 'lms.devices.commands.OnOff',
-              params: { on: Boolean(s.action.value) }
-            };
-            break;
-
-          case 'lms.devices.traits.Brightness':
-            payload = {
-              command: 'lms.devices.commands.BrightnessAbsolute',
-              params: { brightness: Number(s.action.value) }
-            };
-            break;
-
-          default:
-            payload = { command: '', params: {} };
-        }
+        payload = buildDynamicPayload(s.action.trait, s.action.value);
       }
 
       let day = {};

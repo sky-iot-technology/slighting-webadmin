@@ -1,7 +1,9 @@
 export const navbar = {
+  domain: 'Domain',
   dashboard: 'Dashboard',
   map: 'Map',
   management: 'Management',
+  group: 'Group',
   favorite_groups: 'Favorite Groups',
   branches: 'Branches',
   roles: 'Roles',
@@ -11,6 +13,7 @@ export const navbar = {
   maintenance_management: 'Maintenance Management',
   organization_management: 'Organization Management',
   firmware_management: 'Firmware Management',
+  groups: 'Groups Management',
   settings: 'Settings',
   sign_out: 'Sign Out',
   profile: 'Profile',

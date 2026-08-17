@@ -8,6 +8,7 @@ import {
 } from '@/ui/components/ui/dialog';
 import UserForm from '../form/user-form';
 import { useGetUserById } from '@/core/domains/users';
+import { useGetUserRoles } from '@/core/domains/permissions';
 
 type UserDialogProps = {
   pageTitle: string;
@@ -28,6 +29,9 @@ export default function UserDialog({
     enabled: !!userId && open
   });
 
+  const { data: userRolesData, isLoading: isLoadingUserRoles } =
+    useGetUserRoles(userId ?? '', { enabled: !!userId && open });
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle className='hidden'>{pageTitle}</DialogTitle>
@@ -37,9 +41,10 @@ export default function UserDialog({
         hideCloseButton
         onOpenAutoFocus={(e) => e.preventDefault()}
       >
-        {!isLoading && (
+        {!isLoading && !isLoadingUserRoles && (
           <UserForm
             initialData={data}
+            initialRoles={userRolesData?.roles}
             pageTitle={pageTitle}
             onClose={() => onOpenChange && onOpenChange(false)}
             isView={isView}

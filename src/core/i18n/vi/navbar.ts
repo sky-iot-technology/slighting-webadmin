@@ -1,7 +1,9 @@
 export const navbar = {
+  domain: 'Domain',
   dashboard: 'Trang chủ',
   map: 'Bản đồ',
   management: 'Quản lý',
+  group: 'Nhóm',
   favorite_groups: 'Nhóm yêu thích',
   branches: 'Chi nhánh',
   roles: 'Vai trò',
@@ -11,6 +13,7 @@ export const navbar = {
   maintenance_management: 'Quản lý bảo trì',
   organization_management: 'Quản lý tổ chức',
   firmware_management: 'Quản lý Firmware',
+  groups: 'Quản lý nhóm',
   settings: 'Cài đặt',
   sign_out: 'Đăng xuất',
   profile: 'Hồ sơ',

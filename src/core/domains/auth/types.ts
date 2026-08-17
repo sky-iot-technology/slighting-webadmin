@@ -62,3 +62,19 @@ export interface DomainsResponse {
   limit: number;
   domains: Domain[];
 }
+
+export interface Organization {
+  id: string;
+  name: string;
+  metadata: any;
+  status: 'enabled' | 'disabled';
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrgResponse {
+  total: number;
+  limit: number;
+  orgs: Organization[];
+}

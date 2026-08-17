@@ -47,7 +47,7 @@ export class DeviceDataLayer {
     try {
       while (!controller.signal.aborted && offset < total) {
         const res = await authenticatedApi.get<DeviceListResponseDto>(
-          '/devices/things',
+          '/devices/clients',
           {
             params: {
               offset,

@@ -9,30 +9,6 @@ import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-colum
 
 export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
   {
-    id: 'select',
-    header: ({ table }) => (
-      <div className='flex w-[50px] items-center justify-center'>
-        <Checkbox
-          checked={table.getIsAllPageRowsSelected()}
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label='Select all'
-        />
-      </div>
-    ),
-    cell: ({ row }) => (
-      <div className='flex items-center justify-center'>
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label='Select row'
-        />
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-    maxSize: 50
-  },
-  {
     id: 'name',
     accessorKey: 'name',
     header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
@@ -64,21 +40,6 @@ export const roleColumns = (t: any): ColumnDef<UIRoleResponse>[] => [
     ),
     cell: ({ row }) => {
       return <div>{formatDateString(row.getValue('created_at'))}</div>;
-    },
-    enableSorting: false,
-    enableHiding: false
-  },
-  {
-    id: 'description',
-    accessorKey: 'description',
-    header: ({ column }: { column: Column<UIRoleResponse, unknown> }) => (
-      <DataTableColumnHeader
-        column={column}
-        title={t('role.table.description' as any)}
-      />
-    ),
-    cell: ({ row }) => {
-      return <div>{row.getValue('description')}</div>;
     },
     enableSorting: false,
     enableHiding: false

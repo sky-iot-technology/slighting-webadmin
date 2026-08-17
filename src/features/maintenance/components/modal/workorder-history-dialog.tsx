@@ -30,7 +30,7 @@ export default function WorkorderHistory({
   open,
   onOpenChange
 }: WorkorderHistoryProps) {
-  const canViewAlarm = useCan('maintenance.alarm', 'view');
+  const canViewAlarm = useCan('alarm', 'view');
   const { treeData } = useRegionTreeStore();
   const { t } = useTranslation();
 

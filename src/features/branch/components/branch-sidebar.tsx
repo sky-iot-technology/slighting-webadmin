@@ -21,7 +21,7 @@ export const BranchSidebar = memo(function BranchSidebar({
   const [openNew, setOpenNew] = useState(false);
   return (
     <div className={`mt-1.5 flex h-full flex-col pt-[9px] pr-[10px] pl-2`}>
-      <PermissionGuard module='branch' action='create' fallback={null}>
+      <PermissionGuard module='group' action='create' fallback={null}>
         <div
           className={`mb-2 flex h-[31px] items-center justify-end rounded-[6px] px-1`}
         >

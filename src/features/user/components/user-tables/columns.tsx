@@ -6,6 +6,15 @@ import { CellAction } from './cell-action';
 import { User } from '@/core/domains/users/types';
 import StatusCell from './statusCell';
 import { DataTableColumnHeader } from '@/ui/components/ui/table/data-table-column-header';
+import { useGetUserRoles } from '@/core/domains/permissions';
+
+const UserRoleCell = ({ userId }: { userId: string }) => {
+  const { data, isLoading } = useGetUserRoles(userId);
+  if (isLoading)
+    return <div className='bg-muted h-4 w-12 animate-pulse rounded' />;
+  const roleName = data?.roles?.[0]?.name ?? '-';
+  return <div>{roleName}</div>;
+};
 
 export const userColumns = (t: any): ColumnDef<User>[] => [
   {
@@ -81,7 +90,8 @@ export const userColumns = (t: any): ColumnDef<User>[] => [
       <DataTableColumnHeader column={column} title={t('user.role')} />
     ),
     cell: ({ row }) => {
-      return <div>{row.getValue('role')}</div>;
+      const user = row.original as User;
+      return <UserRoleCell userId={user.id} />;
     },
     enableSorting: false,
     enableHiding: false

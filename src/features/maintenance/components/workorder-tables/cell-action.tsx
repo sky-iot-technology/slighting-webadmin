@@ -102,7 +102,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             <span>{t('maintenance.actions.detail' as any)}</span>
           </DropdownMenuItem>
 
-          <PermissionGuard module='maintenance.workorder' action='update'>
+          <PermissionGuard module='alarm' action='update'>
             <DropdownMenuItem
               onClick={() =>
                 onEditAction
@@ -137,7 +137,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             </div>
             <span>{t('maintenance.actions.history' as any)}</span>
           </DropdownMenuItem>
-          <PermissionGuard module='maintenance.workorder' action='delete'>
+          <PermissionGuard module='alarm' action='delete'>
             <DropdownMenuItem
               variant='default'
               onClick={() => setOpen(true)}

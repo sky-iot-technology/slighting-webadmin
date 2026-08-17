@@ -9,49 +9,10 @@ import {
 } from '@/ui/components/ui/select';
 import { StatCard } from '../../../features/overview/components/stat-card';
 import { useGetOverView } from '@/core/domains/overview/hooks';
-import { useRouter } from 'next/navigation';
 import { useCan } from '@/core/domains/permissions';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
-
-const stats = [
-  {
-    icon: '/assets/icons/total-device.svg',
-    label: 'Tổng thiết bị',
-    value: '1.247',
-    trend: 5.2,
-    shadow: '!shadow-primary',
-    trendType: 'up' as const,
-    bgColor: 'bg-card-primary'
-  },
-  {
-    icon: '/assets/icons/online.svg',
-    label: 'Thiết bị Online',
-    value: '1.089',
-    trend: 5.2,
-    shadow: '!shadow-success',
-    trendType: 'up' as const,
-    bgColor: 'bg-card-success'
-  },
-  {
-    icon: '/assets/icons/offline.svg',
-    label: 'Thiết bị Offline',
-    value: '1.221',
-    trend: 1.8,
-    shadow: '!shadow-default',
-    trendType: 'down' as const
-  },
-  {
-    icon: '/assets/icons/alert.svg',
-    label: 'Cảnh báo lỗi',
-    value: '23',
-    trend: 5.2,
-    shadow: '!shadow-danger',
-    trendType: 'down' as const,
-    bgColor: 'bg-card-danger'
-  }
-];
 
 export default function Overview2({
   simple_stats,
@@ -80,50 +41,58 @@ export default function Overview2({
     enabled: canViewDashboard
   });
 
-  if (isLoading) return <div>{t('general.loading')}</div>;
-  const mappedStats = data
-    ? [
-        {
-          icon: '/assets/icons/total-device.svg',
-          label: t('dashboard.allDevice'),
-          value: data.device_summary.total_devices.toLocaleString(),
-          trend: 5.2,
-          trendType: 'up' as const,
-          shadow: '!shadow-primary dark:!shadow-none',
-          bgColor: 'bg-card-primary dark:!bg-card-primary'
-        },
-        {
-          icon: '/assets/icons/online.svg',
-          label: t('dashboard.onlineDevice'),
-          value: data.device_summary.online_devices.toLocaleString(),
-          trend: 5.2,
-          trendType: 'up' as const,
-          shadow: '!shadow-success dark:!shadow-none',
-          bgColor: 'bg-card-success dark:!bg-card-primary'
-        },
-        {
-          icon: '/assets/icons/offline.svg',
-          label: t('dashboard.offlineDevice'),
-          value: data.device_summary.offline_devices.toLocaleString(),
-          trend: 1.8,
-          trendType: 'down' as const,
-          shadow: '!shadow-default dark:!shadow-none',
-          bgColor: 'dark:!bg-card-primary'
-        },
-        {
-          icon: '/assets/icons/alert.svg',
-          label: t('dashboard.failedDevice'),
-          value: data.device_summary.error_devices.toLocaleString(),
-          trend: 5.2,
-          trendType: 'down' as const,
-          shadow: '!shadow-danger dark:!shadow-none',
-          bgColor: 'bg-card-danger dark:!bg-card-primary'
-        }
-      ]
-    : stats;
+  const getValue = (val: number | undefined) => {
+    if (isLoading) return '...';
+    if (val !== undefined && val !== null) return val.toLocaleString();
+    return '-';
+  };
+
+  const mappedStats = [
+    {
+      icon: '/assets/icons/total-device.svg',
+      label: t('dashboard.allDevice'),
+      value: getValue(data?.device_summary?.total_devices),
+      trend: 5.2,
+      trendType: 'up' as const,
+      shadow: '!shadow-primary dark:!shadow-none',
+      bgColor: 'bg-card-primary dark:!bg-card-primary'
+    },
+    {
+      icon: '/assets/icons/online.svg',
+      label: t('dashboard.onlineDevice'),
+      value: getValue(data?.device_summary?.online_devices),
+      trend: 5.2,
+      trendType: 'up' as const,
+      shadow: '!shadow-success dark:!shadow-none',
+      bgColor: 'bg-card-success dark:!bg-card-primary'
+    },
+    {
+      icon: '/assets/icons/offline.svg',
+      label: t('dashboard.offlineDevice'),
+      value: getValue(data?.device_summary?.offline_devices),
+      trend: 1.8,
+      trendType: 'down' as const,
+      shadow: '!shadow-default dark:!shadow-none',
+      bgColor: 'dark:!bg-card-primary'
+    },
+    {
+      icon: '/assets/icons/alert.svg',
+      label: t('dashboard.failedDevice'),
+      value: getValue(data?.device_summary?.error_devices),
+      trend: 5.2,
+      trendType: 'down' as const,
+      shadow: '!shadow-danger dark:!shadow-none',
+      bgColor: 'bg-card-danger dark:!bg-card-primary'
+    }
+  ];
   return (
     <PageContainer>
       <div className='bg-card flex flex-1 flex-col space-y-2'>
+        {isLoading && (
+          <div className='text-muted-foreground animate-pulse pt-2 pl-7 text-sm'>
+            {t('general.loading')}...
+          </div>
+        )}
         <div className='my-[9px] mr-[22px] flex items-center justify-end space-y-2'>
           <Select defaultValue='All'>
             <SelectTrigger className='h-[30px] rounded-sm px-2 text-sm leading-[15px] shadow-none'>

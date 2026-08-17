@@ -84,7 +84,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
           align='end'
           className='bg-action flex w-30 flex-col gap-2 p-2'
         >
-          <PermissionGuard module='ota' action='update'>
+          <PermissionGuard module='firmware' action='update'>
             <DropdownMenuItem
               onClick={() => setOpenEdit(true)}
               className='flex w-full items-center text-xs'
@@ -101,7 +101,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
             </DropdownMenuItem>
           </PermissionGuard>
 
-          <PermissionGuard module='ota' action='delete'>
+          <PermissionGuard module='firmware' action='delete'>
             <DropdownMenuItem
               variant='default'
               onClick={() => setOpen(true)}
@@ -121,7 +121,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, disabled }) => {
             </DropdownMenuItem>
           </PermissionGuard>
 
-          <PermissionGuard module='ota' action='sync'>
+          <PermissionGuard module='firmware' action='sync'>
             <DropdownMenuItem
               className='flex w-full items-center text-xs'
               onClick={() => setOpenSync(true)}

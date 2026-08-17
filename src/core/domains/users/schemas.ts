@@ -6,8 +6,8 @@ export const userFormSchema = z
     firstName: z.string().min(1, 'user.validation.first_name_required'),
     lastName: z.string().min(1, 'user.validation.last_name_required'),
     email: z.string().email('user.validation.email_invalid'),
-    role: z.string().min(1, 'user.validation.role_required'),
-    group: z.string().min(1, 'user.validation.group_required'),
+    role: z.string().optional(),
+    group: z.string().optional(),
     username: z.string().min(1, 'user.validation.username_required'),
 
     password: z.string().min(6, 'user.validation.password_min'),
@@ -60,7 +60,7 @@ export const updateUserSchema = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   email: z.string().email().optional(),
-  role: z.string().min(1),
+  role: z.string().optional(),
   group: z.string().optional(),
   username: z.string().optional(),
   phone: z.string().optional(),
@@ -89,8 +89,7 @@ export function convertUserFormToApiPayload(
       address: formValues.address,
       phone: formValues.phone,
       // unit: formValues.unit,
-      department: formValues.department,
-      roleId: formValues.role
+      department: formValues.department
     }
   };
 

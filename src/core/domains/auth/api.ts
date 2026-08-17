@@ -11,7 +11,9 @@ import {
   AuthResponse,
   User,
   ProfileUpdateData,
-  DomainsResponse
+  DomainsResponse,
+  OrgResponse,
+  Domain
 } from './types';
 
 export const authApi = {
@@ -33,14 +35,34 @@ export const authApi = {
     throw new Error('Signup endpoint not available in current API');
   },
 
-  async getDomain(): Promise<string> {
-    const response = await authenticatedApi.get<DomainsResponse>(`/domains`);
+  async getOrg(): Promise<string> {
+    const response = await authenticatedApi.get<OrgResponse>(`/orgs`);
+
+    const orgs = response.orgs ?? [];
+    if (orgs.length === 0) return '';
+
+    const orgName = process.env.NEXT_PUBLIC_ORGANIZATION_NAME_DEFAULT || 'skt';
+
+    if (orgName) {
+      const matched = orgs.find((org) => org.name === orgName);
+
+      if (matched) {
+        return matched.id;
+      }
+    }
+    return orgs[0].id;
+  },
+
+  async getDomain(orgId: string): Promise<string> {
+    const response = await authenticatedApi.get<DomainsResponse>(`/domains`, {
+      params: { org_id: orgId }
+    });
 
     const domains = response.domains ?? [];
     if (domains.length === 0) return '';
 
     const domainRoute =
-      process.env.NEXT_PUBLIC_DOMAIN_ROUTE_DEFAULT || 'develop';
+      process.env.NEXT_PUBLIC_DOMAIN_ROUTE_DEFAULT || 'admin12333';
 
     if (domainRoute) {
       const matched = domains.find((domain) => domain.route === domainRoute);
@@ -50,6 +72,43 @@ export const authApi = {
       }
     }
     return domains[0].id;
+  },
+
+  async getDomains(orgId: string): Promise<Domain[]> {
+    const response = await authenticatedApi.get<DomainsResponse>(`/domains`, {
+      params: { org_id: orgId }
+    });
+    return response.domains ?? [];
+  },
+
+  async createDomain(
+    orgId: string,
+    name: string,
+    route: string
+  ): Promise<Domain> {
+    const response = await authenticatedApi.post<Domain>(`/domains`, {
+      org_id: orgId,
+      name,
+      route,
+      tags: [],
+      status: 'enabled'
+    });
+    return response;
+  },
+
+  async updateDomain(
+    domainId: string,
+    name: string,
+    route: string
+  ): Promise<Domain> {
+    const response = await authenticatedApi.patch<Domain>(
+      `/domains/${domainId}`,
+      {
+        name,
+        route
+      }
+    );
+    return response;
   },
 
   async getCurrentUser(token: string): Promise<User> {
@@ -67,10 +126,12 @@ export const authApi = {
   //   throw new Error('Profile update endpoint not available in current API');
   // },
 
-  async logout(): Promise<void> {
+  async logout(refreshToken: string): Promise<void> {
     try {
       // Call logout endpoint if available
-      await authenticatedApi.post(`/api/auth/logout`);
+      await authenticatedApi.post(`/users/logout`, {
+        refresh_token: refreshToken
+      });
     } catch (error) {
       console.error('Logout API call failed:', error);
     } finally {

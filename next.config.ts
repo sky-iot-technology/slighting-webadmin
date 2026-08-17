@@ -3,7 +3,7 @@ import { withSentryConfig } from '@sentry/nextjs';
 
 // Define the base Next.js configuration
 const baseConfig: NextConfig = {
-  output: 'standalone',
+  output: process.env.CF_PAGES === '1' ? undefined : 'standalone',
   images: {
     remotePatterns: [
       {

@@ -48,56 +48,54 @@ export function OtaTable<TData, TValue>({
     }
   });
 
-  const canDelete = useCan('ota', 'delete');
+  const canDelete = useCan('firmware', 'delete');
 
   return (
     <>
-      {isFilterReady && (
-        <DataTable
-          table={table}
-          totalRows={totalItems}
-          className='mt-1'
-          wrapperClassName='rounded-[8px] mt-1'
-          tableContainerClassName='border-none rounded-none'
-          paginationClassName='py-3'
-          headerClassName='border-t-1 border-none shadow-none'
-          rowClassName='text-xs font-normal'
-          isLoading={isLoading}
-          error={error}
-          loadingRowCount={pageSize}
-        >
-          <div className='flex items-center gap-2'>
-            <DataTableCustomToolbar
-              table={table}
-              className='flex-1 py-2'
-              actions={
-                <>
-                  <PermissionGuard module='ota' action='create'>
-                    <Button
-                      variant='default'
-                      size='sm'
-                      className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
-                      onClick={() => setOpen(true)}
-                    >
-                      <IconPlus className='h-3 w-3' />
-                      {t('ota.button.add' as any)}
-                    </Button>
-                  </PermissionGuard>
-                </>
-              }
-              onDeleteAll={
-                canDelete ? () => console.log('delete product') : undefined
-              }
-              filter
-            />
-          </div>
-          <OtaDialog
-            pageTitle={t('ota.title.add' as any)}
-            open={open}
-            onOpenChange={setOpen}
+      <DataTable
+        table={table}
+        totalRows={totalItems}
+        className='mt-1'
+        wrapperClassName='rounded-[8px] mt-1'
+        tableContainerClassName='border-none rounded-none'
+        paginationClassName='py-3'
+        headerClassName='border-t-1 border-none shadow-none'
+        rowClassName='text-xs font-normal'
+        isLoading={isLoading}
+        error={error}
+        loadingRowCount={pageSize}
+      >
+        <div className='flex items-center gap-2'>
+          <DataTableCustomToolbar
+            table={table}
+            className='flex-1 py-2'
+            actions={
+              <>
+                <PermissionGuard module='firmware' action='create'>
+                  <Button
+                    variant='default'
+                    size='sm'
+                    className='bg-primary hover:bg-primary/90 flex h-7.5 items-center rounded-[4px] text-white'
+                    onClick={() => setOpen(true)}
+                  >
+                    <IconPlus className='h-3 w-3' />
+                    {t('ota.button.add' as any)}
+                  </Button>
+                </PermissionGuard>
+              </>
+            }
+            onDeleteAll={
+              canDelete ? () => console.log('delete product') : undefined
+            }
+            filter
           />
-        </DataTable>
-      )}
+        </div>
+        <OtaDialog
+          pageTitle={t('ota.title.add' as any)}
+          open={open}
+          onOpenChange={setOpen}
+        />
+      </DataTable>
     </>
   );
 }

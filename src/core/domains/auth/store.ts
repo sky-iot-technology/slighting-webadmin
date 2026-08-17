@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { User } from './types';
+import { cookieUtils } from '@/core/shared/utils/cookies';
 
 interface AuthState {
   user: User | null;
@@ -9,6 +10,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
   domainId: string | null;
+  orgId: string | null;
 
   // Actions
   setUser: (user: User | null) => void;
@@ -20,6 +22,7 @@ interface AuthState {
   clearAuth: () => void;
   updateUser: (updates: Partial<User>) => void;
   setDomainId: (domainId: string) => void;
+  setOrgId: (orgId: string) => void;
   // Computed
   get isAuthenticated(): boolean;
 }
@@ -33,6 +36,7 @@ export const useAuthStore = create<AuthState>()(
       isLoading: true,
       error: null,
       domainId: null,
+      orgId: null,
 
       setUser: (user) => set({ user }),
       setTokens: (accessToken, refreshToken) =>
@@ -41,14 +45,16 @@ export const useAuthStore = create<AuthState>()(
       setRefreshToken: (refreshToken) => set({ refreshToken }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
-      clearAuth: () =>
+      clearAuth: () => {
+        cookieUtils.clearSelectedDomainId();
         set({
           user: null,
           accessToken: null,
           refreshToken: null,
           error: null,
           domainId: null
-        }),
+        });
+      },
 
       updateUser: (updates) =>
         set((state) => {
@@ -66,8 +72,8 @@ export const useAuthStore = create<AuthState>()(
             }
           };
         }),
-
       setDomainId: (domainId) => set({ domainId }),
+      setOrgId: (orgId) => set({ orgId }),
 
       get isAuthenticated() {
         return get()?.user !== null && get()?.accessToken !== null;

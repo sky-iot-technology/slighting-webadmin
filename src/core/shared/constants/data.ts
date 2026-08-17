@@ -20,6 +20,7 @@ export const navItems: NavItem[] = [
     isActive: false,
     shortcut: ['d', 'd'],
     resourceId: 'dashboard',
+    featureId: 'dashboard',
     requiredActions: ['view'],
     items: [] // Empty array as there are no child items for Dashboard
   },
@@ -44,7 +45,8 @@ export const navItems: NavItem[] = [
         title: 'navbar.favorite_groups',
         url: '/dashboard/tag',
         icon: 'love',
-        resourceId: 'tag',
+        resourceId: 'group',
+        featureId: 'group',
         requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
@@ -52,7 +54,8 @@ export const navItems: NavItem[] = [
         title: 'navbar.branches',
         url: '/dashboard/branch',
         icon: 'branch',
-        resourceId: 'branch',
+        resourceId: 'group',
+        featureId: 'group',
         requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
@@ -61,6 +64,7 @@ export const navItems: NavItem[] = [
         url: '/dashboard/role',
         icon: 'role',
         resourceId: 'role',
+        featureId: 'management',
         requiredActions: ['view'],
         shortcut: ['m', 'm']
       },
@@ -69,6 +73,7 @@ export const navItems: NavItem[] = [
         url: '/dashboard/user',
         icon: 'userAgent',
         resourceId: 'users',
+        featureId: 'management',
         requiredActions: ['view'],
         shortcut: ['m', 'm']
       }
@@ -80,6 +85,7 @@ export const navItems: NavItem[] = [
     icon: 'deviceMenu',
     shortcut: ['r', 'r'],
     resourceId: 'device',
+    featureId: 'device',
     requiredActions: ['view'],
     isActive: false,
     items: [] // No child items
@@ -89,7 +95,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/calendar',
     icon: 'calendar',
     shortcut: ['p', 'p'],
-    resourceId: 'calendar',
+    resourceId: 'schedule',
+    featureId: 'schedule',
     requiredActions: ['view'],
     isActive: false,
     items: []
@@ -99,7 +106,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/maintenance',
     icon: 'maintenance',
     shortcut: ['m', 'm'],
-    resourceId: 'maintenance',
+    resourceId: 'alarm',
+    featureId: 'alarm',
     requiredActions: ['view'],
     isActive: false,
     items: []
@@ -119,7 +127,8 @@ export const navItems: NavItem[] = [
     url: '/dashboard/ota',
     icon: 'firmware',
     shortcut: ['m', 'm'],
-    resourceId: 'ota',
+    resourceId: 'firmware',
+    featureId: 'firmware',
     requiredActions: ['view'],
     isActive: false,
     items: []
@@ -129,6 +138,7 @@ export const navItems: NavItem[] = [
     url: '/dashboard/setting',
     icon: 'setting',
     shortcut: ['m', 'm'],
+    featureId: 'setting',
     isActive: false,
     modal: true,
     items: []

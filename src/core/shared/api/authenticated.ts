@@ -3,6 +3,20 @@ import { BaseApiClient } from '@/core/shared/api/base';
 import { cookieUtils } from '@/core/shared/utils/cookies';
 import { useAuthStore } from '@/core/domains/auth';
 
+let isRefreshing = false;
+let failedQueue: any[] = [];
+
+const processQueue = (error: any, token: string | null = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+  failedQueue = [];
+};
+
 export class AuthenticatedApiClient extends BaseApiClient {
   constructor(config?: AxiosRequestConfig) {
     super(config);
@@ -25,21 +39,45 @@ export class AuthenticatedApiClient extends BaseApiClient {
           !originalRequest._retry &&
           !originalRequest.externalApi
         ) {
+          if (isRefreshing) {
+            // Queue this request and wait for the refresh to finish
+            return new Promise((resolve, reject) => {
+              failedQueue.push({
+                resolve: (token: string) => {
+                  originalRequest.headers.Authorization = `Bearer ${token}`;
+                  resolve(this.client(originalRequest));
+                },
+                reject: (err: any) => {
+                  reject(err);
+                }
+              });
+            });
+          }
+
           console.log('[Auth] 401 detected, attempt refresh...');
           originalRequest._retry = true;
+          isRefreshing = true;
 
           try {
             const refreshToken = cookieUtils.getRefreshToken();
-            if (refreshToken) {
-              const { authApi } = await import('@/core/domains/auth/api');
-              const newTokens = await authApi.refreshToken(refreshToken);
+            if (!refreshToken) {
+              throw new Error('No refresh token available');
+            }
 
-              if (newTokens?.access_token) {
-                originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
-                return this.client(originalRequest);
-              }
+            const { authApi } = await import('@/core/domains/auth/api');
+            const newTokens = await authApi.refreshToken(refreshToken);
+
+            if (newTokens?.access_token) {
+              isRefreshing = false;
+              processQueue(null, newTokens.access_token);
+              originalRequest.headers.Authorization = `Bearer ${newTokens.access_token}`;
+              return this.client(originalRequest);
+            } else {
+              throw new Error('Refresh failed to return new tokens');
             }
           } catch (refreshError) {
+            isRefreshing = false;
+            processQueue(refreshError, null);
             cookieUtils.clearAuthCookies();
             if (typeof window !== 'undefined') {
               window.location.href = '/auth/sign-in';
@@ -59,7 +97,15 @@ export class AuthenticatedApiClient extends BaseApiClient {
       const apiConfig = config as any;
       if (!apiConfig.externalApi) {
         const { domainId } = useAuthStore.getState();
-        const NO_DOMAIN_PREFIX = ['/users', '/d/'];
+        const NO_DOMAIN_PREFIX = [
+          '/users',
+          '/d/',
+          '/management-roles',
+          '/ui/',
+          '/orgs',
+          '/domains',
+          '/traits'
+        ];
 
         // Prefix with domainId if available, REGARDLESS of token
         // This ensures correct routing so we get 401 instead of 404

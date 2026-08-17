@@ -255,7 +255,10 @@ export const useSyncSchedules = (
   return useMutation<void, Error, string>({
     ...options,
     mutationFn: (deviceId) => calendarApi.syncSchedules(deviceId),
-    onSuccess: (data, deviceId, context) => {
+    onSuccess: async (data, deviceId, context) => {
+      // Delay to let the device update its status in the database
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
       queryClient.invalidateQueries({
         queryKey: [DEVICE_CALENDARS_QUERY_KEY, deviceId]
       });
