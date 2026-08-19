@@ -266,7 +266,10 @@ export function ActivityTab({ device }: ActivityTabProps) {
 
       if (pending[id]) return;
 
-      newSwitchState[id] = !!device.last_state?.on;
+      const isOn =
+        (device.last_state as any)?.['lms.devices.traits.OnOff']?.on ??
+        device.last_state?.on;
+      newSwitchState[id] = !!isOn;
 
       if (device.type === 'lms.devices.types.LIGHT') {
         const rawBrightness = device.last_state?.brightness;

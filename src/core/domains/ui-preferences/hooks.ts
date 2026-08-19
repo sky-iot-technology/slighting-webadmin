@@ -75,17 +75,15 @@ class FatalError extends Error {}
  * Subscribes to SSE endpoint using fetch and ReadableStream
  * to allow passing custom headers like Authorization.
  */
-export function subscribeToSSE(
-  domainId: string,
-  onEvent: (event: string, data: any) => void
-) {
-  const controller = new AbortController();
-  const token = cookieUtils.getAccessToken();
+// Shared Promise lock to prevent concurrent refresh token requests across multiple SSE streams
+let refreshTokenPromise: Promise<string | null> | null = null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-  const url = `${baseUrl}/ui/events?domain_id=${domainId}`;
+async function handleRefreshTokenShared(): Promise<string | null> {
+  if (refreshTokenPromise) {
+    return refreshTokenPromise;
+  }
 
-  async function handleRefreshToken(): Promise<string | null> {
+  refreshTokenPromise = (async () => {
     try {
       const refreshToken = cookieUtils.getRefreshToken();
       if (!refreshToken) return null;
@@ -98,13 +96,36 @@ export function subscribeToSSE(
       }
     } catch (error) {
       console.error('❌ Failed to refresh token during SSE connection:', error);
+    } finally {
+      refreshTokenPromise = null;
     }
     return null;
+  })();
+
+  return refreshTokenPromise;
+}
+
+export function subscribeToSSE(
+  domainId: string,
+  onEvent: (event: string, data: any) => void,
+  deviceId?: string,
+  groupId?: string
+) {
+  if (typeof window === 'undefined') {
+    return () => {};
   }
+
+  const controller = new AbortController();
+
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+  const url = `${baseUrl}/ui/events?domain_id=${domainId}${
+    groupId ? `&group_id=${groupId}` : ''
+  }${deviceId ? `&device_id=${deviceId}` : ''}`;
 
   fetchEventSource(url, {
     method: 'GET',
     signal: controller.signal,
+    openWhenHidden: true,
     fetch: (input, init) => {
       const token = cookieUtils.getAccessToken();
       const headers = new Headers(init?.headers);
@@ -125,7 +146,7 @@ export function subscribeToSSE(
         console.warn(
           '⚠️ SSE Received 401 (Unauthorized). Attempting token refresh...'
         );
-        const newToken = await handleRefreshToken();
+        const newToken = await handleRefreshTokenShared();
         if (newToken) {
           console.log(
             '🔄 Token refreshed successfully! Retrying SSE connection...'
@@ -163,6 +184,7 @@ export function subscribeToSSE(
     },
     onerror(err) {
       console.error('❌ SSE Connection error:', err);
+      return 5000; // Retry after 5 seconds
     }
   }).catch((err) => {
     if (err.name !== 'AbortError') {

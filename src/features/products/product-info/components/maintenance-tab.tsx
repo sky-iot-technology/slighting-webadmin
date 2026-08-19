@@ -76,7 +76,7 @@ export default function MaintenanceTab({ deviceId }: MaintenanceTabProps) {
     isLoading: usersLoad,
     error: usersErr
   } = useSearchUsers(
-    { tag: 'team:' },
+    { tags: 'team:' },
     { enabled: canViewAlarms || canViewWorkOrders }
   );
   const {

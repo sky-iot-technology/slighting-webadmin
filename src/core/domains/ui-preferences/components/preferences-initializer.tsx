@@ -127,7 +127,7 @@ export function UIPreferencesInitializer() {
     return () => {
       unsubscribe();
     };
-  }, [domainId, accessToken, queryClient]);
+  }, [domainId, queryClient]);
 
   return null;
 }

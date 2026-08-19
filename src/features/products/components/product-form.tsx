@@ -57,6 +57,10 @@ interface Device {
   type?: string;
   parent_group_id?: string;
   tags?: string[];
+  location?: {
+    lat?: number;
+    lon?: number;
+  };
   device_info?: {
     lat?: number;
     lon?: number;
@@ -137,8 +141,16 @@ export default function ProductForm({
     type: initialData?.type || '',
     parent_group_id: initialData?.parent_group_id || '',
     tags: initialData?.tags || [],
-    lat: initialData?.device_info?.lat?.toString() || '0',
-    lon: initialData?.device_info?.lon?.toString() || '0',
+    lat: (
+      initialData?.location?.lat ??
+      initialData?.device_info?.lat ??
+      0
+    ).toString(),
+    lon: (
+      initialData?.location?.lon ??
+      initialData?.device_info?.lon ??
+      0
+    ).toString(),
     address: '',
     note: '',
     serial: '',

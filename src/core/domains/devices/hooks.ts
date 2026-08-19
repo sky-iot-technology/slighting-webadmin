@@ -28,6 +28,7 @@ import { useEffect, useRef } from 'react';
 import { JOURNALS_QUERY_KEY } from '../journals';
 import { useAuthStore } from '../auth';
 import { storageApi } from '../storage';
+import { subscribeToSSE } from '../ui-preferences/hooks';
 
 //Query keys
 export const DEVICES_QUERY_KEY = 'devices';
@@ -662,3 +663,99 @@ export const useDeleteDevice = (
     }
   });
 };
+
+export function useDeviceSSE(deviceId?: string) {
+  const queryClient = useQueryClient();
+  const domainId = useAuthStore((state) => state.domainId);
+
+  useEffect(() => {
+    if (!domainId) return;
+    console.log(
+      `📡 [Device SSE] Đã bật lắng nghe thiết bị real-time ${
+        deviceId ? `(Device ID: ${deviceId})` : ''
+      }...`
+    );
+    const unsubscribe = subscribeToSSE(
+      domainId,
+      (event, data) => {
+        // Ignore ping/heartbeat events
+        if (event === 'ping' || event === 'heartbeat') return;
+
+        // Extract device object from event data
+        const updatedDevice = data?.data ?? data;
+
+        // Ignore unhandled generic message events that contain no device info
+        if (
+          event === 'message' &&
+          (!updatedDevice ||
+            typeof updatedDevice !== 'object' ||
+            !updatedDevice.id) &&
+          !data?.operation
+        ) {
+          return;
+        }
+
+        console.log('📡 [Device SSE Event Received]:', event, data);
+
+        if (
+          updatedDevice &&
+          typeof updatedDevice === 'object' &&
+          updatedDevice.id
+        ) {
+          const deviceIdStr = String(updatedDevice.id);
+
+          // 1. Direct update detail cache (instant UI update without extra GET request)
+          queryClient.setQueryData(
+            [DEVICES_QUERY_KEY, 'detail', deviceIdStr],
+            (old: any) => (!old ? updatedDevice : { ...old, ...updatedDevice })
+          );
+          if (updatedDevice.id !== deviceIdStr) {
+            queryClient.setQueryData(
+              [DEVICES_QUERY_KEY, 'detail', updatedDevice.id],
+              (old: any) =>
+                !old ? updatedDevice : { ...old, ...updatedDevice }
+            );
+          }
+
+          // 2. Direct update list cache
+          queryClient.setQueriesData(
+            { queryKey: [DEVICES_QUERY_KEY] },
+            (old: any) => {
+              if (!old) return old;
+              if (old.devices && Array.isArray(old.devices)) {
+                return {
+                  ...old,
+                  devices: old.devices.map((d: any) =>
+                    String(d.id) === deviceIdStr
+                      ? { ...d, ...updatedDevice }
+                      : d
+                  )
+                };
+              }
+              if (Array.isArray(old)) {
+                return old.map((d: any) =>
+                  String(d.id) === deviceIdStr ? { ...d, ...updatedDevice } : d
+                );
+              }
+              return old;
+            }
+          );
+        } else {
+          // Only invalidate if payload is not complete device object
+          const targetId = deviceId || data?.id;
+          if (targetId) {
+            queryClient.invalidateQueries({
+              queryKey: [DEVICES_QUERY_KEY, 'detail', String(targetId)]
+            });
+          }
+        }
+      },
+      deviceId
+    );
+
+    return () => {
+      console.log('🔌 [Device SSE] Đã ngắt lắng nghe thiết bị.');
+      unsubscribe();
+    };
+  }, [domainId, deviceId, queryClient]);
+}

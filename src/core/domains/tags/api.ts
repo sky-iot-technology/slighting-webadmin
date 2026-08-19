@@ -8,17 +8,14 @@ import {
 
 export const tagsApi = {
   async getAll(params?: GetTagsParamsDto): Promise<TagListResponseDto> {
-    const response = await authenticatedApi.get<TagListResponseDto>(
-      '/system/tags',
-      {
-        params
-      }
-    );
+    const response = await authenticatedApi.get<TagListResponseDto>('/tags', {
+      params
+    });
     return response;
   },
   async createTag(data: CreateTagRequest): Promise<Tag> {
     try {
-      const response = await authenticatedApi.post<Tag>('/system/tags', data);
+      const response = await authenticatedApi.post<Tag>('/tags', data);
       return response;
     } catch (error) {
       throw new Error('Failed to create tag');
@@ -26,12 +23,9 @@ export const tagsApi = {
   },
   async updateTag(tagId: string, name: string): Promise<Tag> {
     try {
-      const response = await authenticatedApi.patch<Tag>(
-        `/system/tags/${tagId}`,
-        {
-          name
-        }
-      );
+      const response = await authenticatedApi.patch<Tag>(`/tags/${tagId}`, {
+        name
+      });
       return response;
     } catch (error) {
       console.log(error);

@@ -279,8 +279,8 @@ export const maintenanceColumns = (
               imei={metadata?.imei}
               alertName={measurement + ' ' + cause}
               id={String(row.original.id)}
-              lat={device?.device_info.lat || 0}
-              lng={device?.device_info.lon || 0}
+              lat={device?.location?.lat || device?.device_info.lat || 0}
+              lng={device?.location?.lon || device?.device_info.lon || 0}
               onViewAction={
                 options?.onViewAction
                   ? (workOrderId) => options.onViewAction!(workOrderId)

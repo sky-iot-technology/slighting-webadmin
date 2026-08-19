@@ -19,18 +19,21 @@ export const createDeivcesGeoJSON = (
       const total = controllable.length;
       const statusDots = `${activeCount}/${total}`;
 
+      const lat = device.location?.lat ?? device.device_info?.lat ?? 0;
+      const lon = device.location?.lon ?? device.device_info?.lon ?? 0;
+
       return {
         type: 'Feature',
         geometry: {
           type: 'Point',
-          coordinates: [device.device_info.lon, device.device_info.lat]
+          coordinates: [lon, lat]
         },
         properties: {
           id: device.id,
           type: device.type,
           name: device.name,
-          lon: device.device_info.lon,
-          lat: device.device_info.lat,
+          lon: lon,
+          lat: lat,
           online: device.device_info.online ? 'online' : 'offline',
           light_state: activeCount > 0 ? 'on' : 'off',
           status_dots: statusDots

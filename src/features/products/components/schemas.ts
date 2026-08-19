@@ -251,9 +251,11 @@ export function convertFormToApiPayload(
     tags: Array.isArray(formValues.tags) ? formValues.tags : [],
     parent_group_id: formValues.parent_group_id,
     name: formValues.name,
-    device_info: {
+    location: {
       lat: Number(formValues.lat) || 0,
-      lon: Number(formValues.lon) || 0,
+      lon: Number(formValues.lon) || 0
+    },
+    device_info: {
       online: false,
       serial_number: formValues.serial,
       region: formValues.address,

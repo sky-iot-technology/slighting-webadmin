@@ -93,7 +93,7 @@ export const otaApi = {
   async getRequestById(requestId: string): Promise<OtaProgressResponse> {
     try {
       return await authenticatedApi.get<OtaProgressResponse>(
-        `/devices/clients/request/${requestId}`
+        `/devices/clients/requests/${requestId}`
       );
     } catch (error) {
       throw new Error(`Request id: ${requestId} not found`);

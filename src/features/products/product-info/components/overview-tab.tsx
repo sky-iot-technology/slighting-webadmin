@@ -45,7 +45,7 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { ReminderManagementModal } from './reminder-management-modal';
+// import { ReminderManagementModal } from './reminder-management-modal';
 import {
   Sheet,
   SheetContent,
@@ -367,8 +367,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
       imei: device.device_info?.imei || '',
       type: device.type || '',
       parent_group_id: device.parent_group_id || '',
-      lat: device.device_info?.lat?.toString() || '0',
-      lon: device.device_info?.lon?.toString() || '0',
+      lat: (device.location?.lat ?? device.device_info?.lat ?? 0).toString(),
+      lon: (device.location?.lon ?? device.device_info?.lon ?? 0).toString(),
       address: device.device_info?.region || '',
       note: note,
       serial: serial,
@@ -523,12 +523,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
     const latValue =
       values.lat !== undefined && values.lat !== ''
         ? Number(values.lat)
-        : (device.device_info?.lat ?? 0);
+        : (device.location?.lat ?? device.device_info?.lat ?? 0);
 
     const lonValue =
       values.lon !== undefined && values.lon !== ''
         ? Number(values.lon)
-        : (device.device_info?.lon ?? 0);
+        : (device.location?.lon ?? device.device_info?.lon ?? 0);
 
     const updateData: Partial<Device> & {
       avatar?: File;
@@ -537,11 +537,13 @@ export function OverviewTab({ device }: OverviewTabProps) {
       name: values.name,
       type: values.type,
       parent_group_id: values.parent_group_id,
+      location: {
+        lat: latValue,
+        lon: lonValue
+      },
       device_info: {
         ...device.device_info,
         imei: values.imei || device.device_info?.imei || '',
-        lat: latValue,
-        lon: lonValue,
         region: values.address || device.device_info?.region || '',
         serial_number: values.serial || device.device_info?.serial_number || '',
         manufacturer:
@@ -582,8 +584,8 @@ export function OverviewTab({ device }: OverviewTabProps) {
       imei: device.device_info?.imei || '',
       type: device.type || '',
       parent_group_id: device.parent_group_id || '',
-      lat: device.device_info?.lat?.toString() || '0',
-      lon: device.device_info?.lon?.toString() || '0',
+      lat: (device.location?.lat ?? device.device_info?.lat ?? 0).toString(),
+      lon: (device.location?.lon ?? device.device_info?.lon ?? 0).toString(),
       address: device.device_info?.region || '',
       note: note,
       serial: serial,
@@ -605,21 +607,25 @@ export function OverviewTab({ device }: OverviewTabProps) {
     const asset_attribute = buildAssetAttributes(currentValues, reminderMap);
 
     const latValue = currentValues.lat
-      ? parseFloat(currentValues.lat) || (device.device_info?.lat ?? 0)
-      : (device.device_info?.lat ?? 0);
+      ? parseFloat(currentValues.lat) ||
+        (device.location?.lat ?? device.device_info?.lat ?? 0)
+      : (device.location?.lat ?? device.device_info?.lat ?? 0);
     const lonValue = currentValues.lon
-      ? parseFloat(currentValues.lon) || (device.device_info?.lon ?? 0)
-      : (device.device_info?.lon ?? 0);
+      ? parseFloat(currentValues.lon) ||
+        (device.location?.lon ?? device.device_info?.lon ?? 0)
+      : (device.location?.lon ?? device.device_info?.lon ?? 0);
 
     const updateData: Partial<Device> = {
       name: currentValues.name,
       type: currentValues.type,
       parent_group_id: currentValues.parent_group_id,
+      location: {
+        lat: latValue,
+        lon: lonValue
+      },
       device_info: {
         ...device.device_info,
         imei: currentValues.imei || device.device_info?.imei || '',
-        lat: latValue,
-        lon: lonValue,
         region: currentValues.address || device.device_info?.region || '',
         serial_number:
           currentValues.serial || device.device_info?.serial_number || '',
@@ -658,6 +664,38 @@ export function OverviewTab({ device }: OverviewTabProps) {
   const previewAvatarUrl = watchedImage
     ? URL.createObjectURL(watchedImage)
     : avatarUrl;
+
+  const parseAttribute = (rawAttr: any) => {
+    if (typeof rawAttr === 'string') {
+      try {
+        return JSON.parse(rawAttr);
+      } catch {
+        return {};
+      }
+    }
+    return rawAttr || {};
+  };
+
+  const getSensorValues = (
+    sensorInfo: any,
+    key: string
+  ): (string | number)[] => {
+    // 1. Kiểm tra theo API Mới (lms.devices.traits.SensorReading)
+    const readings =
+      sensorInfo?.last_state?.['lms.devices.traits.SensorReading']?.readings;
+    if (Array.isArray(readings)) {
+      const found = readings.find((r: any) => r.sensor_type === key);
+      if (found?.values !== undefined) {
+        return Array.isArray(found.values) ? found.values : [found.values];
+      }
+    }
+    // 2. Dự phòng theo API Cũ
+    const lastVal = sensorInfo?.last_state?.[key];
+    if (lastVal !== undefined && lastVal !== null) {
+      return Array.isArray(lastVal) ? lastVal : [lastVal];
+    }
+    return [];
+  };
 
   return (
     <FormSchemaProvider schema={overviewFormSchema}>
@@ -947,179 +985,213 @@ export function OverviewTab({ device }: OverviewTabProps) {
             <CardContent className='space-y-2 px-0'>
               {/* Row 1 */}
               <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-                <div className='w-full space-y-2'>
-                  <FormField
-                    control={form.control}
-                    name='tags'
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          {t('products.form.label.favorite_group' as any)}
-                        </FormLabel>
-                        <FormControl>
-                          <MultiSelect
-                            options={tagOptions}
-                            defaultValue={field.value ?? []}
-                            onValueChange={(val) => field.onChange(val)}
+                <FormField
+                  control={form.control}
+                  name='tags'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        {t('products.form.label.favorite_group' as any)}
+                      </FormLabel>
+                      <FormControl>
+                        <MultiSelect
+                          options={tagOptions}
+                          defaultValue={field.value ?? []}
+                          onValueChange={(val) => field.onChange(val)}
+                          placeholder={t(
+                            'products.form.placeholder.favorite_group' as any
+                          )}
+                          disabled={!isEditMode}
+                          resetOnDefaultValueChange={true}
+                          className='disabled:bg-muted dark:disabled:!bg-gray-5 dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
+                          popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
+                          textSize='!text-sm'
+                          autoSize={true}
+                          // singleLine={true}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormItem>
+                  <FormLabel>
+                    {t('products.form.label.coordinates' as any)}
+                  </FormLabel>
+                  <FormControl>
+                    <div className='flex gap-2'>
+                      <FormField
+                        control={form.control}
+                        name='lon'
+                        render={({ field }) => (
+                          <Input
+                            type='number'
                             placeholder={t(
-                              'products.form.placeholder.favorite_group' as any
+                              'products.form.placeholder.lon' as any
                             )}
                             disabled={!isEditMode}
-                            resetOnDefaultValueChange={true}
-                            className='disabled:bg-muted dark:disabled:!bg-gray-5 dark:!bg-input/30 !min-h-9 w-full rounded-sm text-sm disabled:opacity-90'
-                            popoverClassName='w-[var(--radix-popover-trigger-width)] !overscroll-contain'
-                            textSize='!text-sm'
-                            autoSize={true}
-                            // singleLine={true}
+                            {...field}
+                            className={cn(
+                              'flex-1 text-sm',
+                              !isEditMode && 'disabled:opacity-90'
+                            )}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^0-9.-]/g,
+                                ''
+                              );
+                              field.onChange(value);
+                            }}
+                            onBlur={() => {
+                              const num = Number(field.value);
+                              if (!isNaN(num)) {
+                                const limited = Math.max(
+                                  -180,
+                                  Math.min(180, num)
+                                );
+                                field.onChange(limited.toFixed(6));
+                              }
+                            }}
                           />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className='space-y-2 md:col-span-2'>
-                  <Label>{t('products.form.label.coordinates' as any)}</Label>
-                  <div className='flex gap-2'>
-                    <FormField
-                      control={form.control}
-                      name='lon'
-                      render={({ field }) => (
-                        <FormItem className='flex-1'>
-                          <FormControl>
-                            <Input
-                              type='number'
-                              placeholder={t(
-                                'products.form.placeholder.lon' as any
-                              )}
-                              disabled={!isEditMode}
-                              {...field}
-                              className={cn(
-                                'flex-1 text-sm',
-                                !isEditMode && 'disabled:opacity-90'
-                              )}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(
-                                  /[^0-9.-]/g,
-                                  ''
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name='lat'
+                        render={({ field }) => (
+                          <Input
+                            type='number'
+                            placeholder={t(
+                              'products.form.placeholder.lat' as any
+                            )}
+                            disabled={!isEditMode}
+                            {...field}
+                            className={cn(
+                              'flex-1 text-sm',
+                              !isEditMode && 'disabled:opacity-90'
+                            )}
+                            onChange={(e) => {
+                              const value = e.target.value.replace(
+                                /[^0-9.-]/g,
+                                ''
+                              );
+                              field.onChange(value);
+                            }}
+                            onBlur={() => {
+                              const num = Number(field.value);
+                              if (!isNaN(num)) {
+                                const limited = Math.max(
+                                  -90,
+                                  Math.min(90, num)
                                 );
-                                field.onChange(value);
-                              }}
-                              onBlur={() => {
-                                const num = Number(field.value);
-                                if (!isNaN(num)) {
-                                  const limited = Math.max(
-                                    -180,
-                                    Math.min(180, num)
+                                field.onChange(limited.toFixed(6));
+                              }
+                            }}
+                          />
+                        )}
+                      />
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <Button
+                            type='button'
+                            className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
+                          >
+                            {t('products.form.button.map_location' as any)}
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side='right' className='gap-0'>
+                          <SheetHeader>
+                            <SheetTitle className='mx-auto'>
+                              {t('products.form.sheet.title' as any)}
+                            </SheetTitle>
+                          </SheetHeader>
+                          <div className='relative h-full w-full overflow-hidden'>
+                            <GoongMapMarker
+                              lat={
+                                isValidLat(form.watch('lat') ?? '')
+                                  ? Number(form.watch('lat'))
+                                  : undefined
+                              }
+                              long={
+                                isValidLon(form.watch('lon') ?? '')
+                                  ? Number(form.watch('lon'))
+                                  : undefined
+                              }
+                              onSelectLocation={({ lat, long }) => {
+                                if (isEditMode) {
+                                  form.setValue(
+                                    'lat',
+                                    String(Number(lat.toFixed(6)))
                                   );
-                                  field.onChange(limited.toFixed(6));
+                                  form.setValue(
+                                    'lon',
+                                    String(Number(long.toFixed(6)))
+                                  );
                                 }
                               }}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='lat'
-                      render={({ field }) => (
-                        <FormItem className='flex-1'>
-                          <FormControl>
-                            <Input
-                              type='number'
-                              placeholder={t(
-                                'products.form.placeholder.lat' as any
-                              )}
                               disabled={!isEditMode}
-                              {...field}
-                              className={cn(
-                                'flex-1 text-sm',
-                                !isEditMode && 'disabled:opacity-90'
-                              )}
-                              onChange={(e) => {
-                                const value = e.target.value.replace(
-                                  /[^0-9.-]/g,
-                                  ''
-                                );
-                                field.onChange(value);
-                              }}
-                              onBlur={() => {
-                                const num = Number(field.value);
-                                if (!isNaN(num)) {
-                                  const limited = Math.max(
-                                    -90,
-                                    Math.min(90, num)
-                                  );
-                                  field.onChange(limited.toFixed(6));
-                                }
-                              }}
                             />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name='lon'
-                      render={({ field }) => (
-                        <FormItem className=''>
-                          <FormControl>
-                            <Sheet>
-                              <SheetTrigger asChild>
-                                <Button
-                                  type='button'
-                                  className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
-                                >
-                                  {t(
-                                    'products.form.button.map_location' as any
-                                  )}
-                                </Button>
-                              </SheetTrigger>
-                              <SheetContent side='right' className='gap-0'>
-                                <SheetHeader>
-                                  <SheetTitle className='mx-auto'>
-                                    {t('products.form.sheet.title' as any)}
-                                  </SheetTitle>
-                                </SheetHeader>
-                                <div className='relative h-full w-full overflow-hidden'>
-                                  <GoongMapMarker
-                                    lat={
-                                      isValidLat(form.watch('lat') ?? '')
-                                        ? Number(form.watch('lat'))
-                                        : undefined
-                                    }
-                                    long={
-                                      isValidLon(form.watch('lon') ?? '')
-                                        ? Number(form.watch('lon'))
-                                        : undefined
-                                    }
-                                    onSelectLocation={({ lat, long }) => {
-                                      if (isEditMode) {
-                                        form.setValue(
-                                          'lat',
-                                          String(Number(lat.toFixed(6)))
-                                        );
-                                        form.setValue(
-                                          'lon',
-                                          String(Number(long.toFixed(6)))
-                                        );
-                                      }
-                                    }}
-                                    disabled={!isEditMode}
-                                  />
-                                </div>
-                              </SheetContent>
-                            </Sheet>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
+                  </FormControl>
+                </FormItem>
+                <FormItem>
+                  <FormLabel>GPS thiết bị (Phần cứng)</FormLabel>
+                  <FormControl>
+                    <div className='flex gap-2'>
+                      <Input
+                        disabled
+                        value={device.device_info?.lon?.toString() || '0'}
+                        placeholder='Long'
+                        className='flex-1 text-sm disabled:opacity-90'
+                      />
+                      <Input
+                        disabled
+                        value={device.device_info?.lat?.toString() || '0'}
+                        placeholder='Lat'
+                        className='flex-1 text-sm disabled:opacity-90'
+                      />
+                      <Sheet>
+                        <SheetTrigger asChild>
+                          <Button
+                            type='button'
+                            className='bg-cyan-1 rounded-sm hover:!bg-cyan-600'
+                          >
+                            {t('products.form.button.map_location' as any)}
+                          </Button>
+                        </SheetTrigger>
+                        <SheetContent side='right' className='gap-0'>
+                          <SheetHeader>
+                            <SheetTitle className='mx-auto'>
+                              Vị trí GPS phần cứng
+                            </SheetTitle>
+                          </SheetHeader>
+                          <div className='relative h-full w-full overflow-hidden'>
+                            <GoongMapMarker
+                              lat={
+                                isValidLat(
+                                  device.device_info?.lat?.toString() ?? ''
+                                )
+                                  ? Number(device.device_info?.lat)
+                                  : undefined
+                              }
+                              long={
+                                isValidLon(
+                                  device.device_info?.lon?.toString() ?? ''
+                                )
+                                  ? Number(device.device_info?.lon)
+                                  : undefined
+                              }
+                              disabled={true}
+                            />
+                          </div>
+                        </SheetContent>
+                      </Sheet>
+                    </div>
+                  </FormControl>
+                </FormItem>
               </div>
 
               {/* Row 2 */}
@@ -1348,7 +1420,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                               className='dark:disabled:!bg-gray-5 !w-full !text-sm'
                             />
                           </FormControl>
-                          {!isEditMode && (
+                          {/* {!isEditMode && (
                             <Button
                               type='button'
                               variant='link'
@@ -1362,7 +1434,7 @@ export function OverviewTab({ device }: OverviewTabProps) {
                                 'products.detail.overview.button.view_reminders' as any
                               )}
                             </Button>
-                          )}
+                          )} */}
                         </div>
                         <FormMessage />
                       </FormItem>
@@ -1461,79 +1533,86 @@ export function OverviewTab({ device }: OverviewTabProps) {
                       )} */}
 
                       {Object.entries(sensorInfo.attributes || {})
-                        .sort(([keyA, a], [keyB, b]) => {
-                          const lastA = sensorInfo.last_state?.[keyA];
-                          const lastB = sensorInfo.last_state?.[keyB];
+                        .sort(([keyA, rawA], [keyB, rawB]) => {
+                          const a = parseAttribute(rawA);
+                          const b = parseAttribute(rawB);
+                          const lastA = getSensorValues(sensorInfo, keyA);
+                          const lastB = getSensorValues(sensorInfo, keyB);
 
-                          const getPriority = (t: number, v: any) => {
-                            // last
+                          const getPriority = (
+                            t: number,
+                            v: (string | number)[]
+                          ) => {
                             if (t === 1) return 100;
-
-                            // t === 3
                             if (t === 3 && Array.isArray(v)) {
-                              //length === 4 lên đầu
                               if (v.length === 4) return 1;
-
-                              //length === 3 đi sau
                               if (v.length === 3) return 2;
                             }
-
-                            // default
                             return 50;
                           };
 
-                          const pA = getPriority(a.t, lastA);
-                          const pB = getPriority(b.t, lastB);
+                          const pA = getPriority(a.t ?? 0, lastA);
+                          const pB = getPriority(b.t ?? 0, lastB);
 
                           return pA - pB;
                         })
-                        .map(([key, value]) => {
-                          const valueType = value.t;
-                          const lastValue = sensorInfo.last_state?.[key];
+                        .map(([key, rawValue]) => {
+                          const attr = parseAttribute(rawValue);
+                          const valueType = attr.t;
+                          const values = getSensorValues(sensorInfo, key);
 
-                          const values =
-                            valueType === 1 || valueType === 2
-                              ? [lastValue]
-                              : Array.isArray(lastValue)
-                                ? lastValue
-                                : [lastValue];
-
-                          const isMulti = valueType > 2;
-                          const subLabels = SENSOR_SUB_LABELS[key];
+                          const isMulti = valueType > 2 || values.length > 1;
+                          const subLabels = SENSOR_SUB_LABELS[key] || [];
 
                           return (
                             <div key={key} className='space-y-2'>
                               <Label>
-                                {`${t(`products.sensor.${key}` as any)} (${value.u})`}
+                                {`${attr.n || t(`products.sensor.${key}` as any)}${
+                                  attr.u ? ` (${attr.u})` : ''
+                                }`}
                               </Label>
 
                               {isMulti ? (
                                 <div
                                   className='grid gap-2'
                                   style={{
-                                    gridTemplateColumns: `repeat(${values.length}, 1fr)`
+                                    gridTemplateColumns: `repeat(${Math.max(
+                                      values.length,
+                                      1
+                                    )}, 1fr)`
                                   }}
                                 >
                                   {values.map((v, i) => (
                                     <Input
                                       key={`i-${i}`}
-                                      value={String(v ?? '')}
+                                      value={
+                                        v !== undefined && v !== null
+                                          ? String(Number(v).toFixed(2))
+                                          : ''
+                                      }
                                       disabled
                                       className='text-center !text-sm disabled:opacity-90'
                                     />
                                   ))}
-                                  {subLabels.map((label, i) => (
-                                    <Label
-                                      key={`l-${i}`}
-                                      className='text-muted-foreground flex items-center justify-center text-center text-xs'
-                                    >
-                                      {label}
-                                    </Label>
-                                  ))}
+                                  {subLabels
+                                    .slice(0, values.length)
+                                    .map((label: string, i: number) => (
+                                      <Label
+                                        key={`l-${i}`}
+                                        className='text-muted-foreground flex items-center justify-center text-center text-xs'
+                                      >
+                                        {label}
+                                      </Label>
+                                    ))}
                                 </div>
                               ) : (
                                 <Input
-                                  value={String(values[0] ?? '')}
+                                  value={
+                                    values[0] !== undefined &&
+                                    values[0] !== null
+                                      ? String(Number(values[0]).toFixed(2))
+                                      : ''
+                                  }
                                   disabled
                                   className='text-center !text-sm disabled:opacity-90'
                                 />
@@ -1549,12 +1628,12 @@ export function OverviewTab({ device }: OverviewTabProps) {
           )}
         </form>
       </Form>
-      <ReminderManagementModal
+      {/* <ReminderManagementModal
         isOpen={isReminderModalOpen}
         onClose={() => setIsReminderModalOpen(false)}
         device={device}
         onSave={handleSaveReminders}
-      />
+      /> */}
       {syncRequestId && (
         <RequestWatcher
           requestId={syncRequestId}

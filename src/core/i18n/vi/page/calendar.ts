@@ -62,6 +62,7 @@ export const calendar = {
   time_and_brightness: 'Thời gian & Độ sáng',
   control_device: 'Thiết bị điều khiển',
   view_detail: 'Xem',
+  view_history: 'Lịch sử',
   delete: 'Xóa',
   close: 'Đóng',
   type: 'Phân loại',

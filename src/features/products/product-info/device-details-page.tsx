@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetDeviceById } from '@/core/domains/devices';
+import { useDeviceSSE, useGetDeviceById } from '@/core/domains/devices';
 import { useCustomBreadcrumbContent } from '@/core/shared/hooks/use-breadcrumbs';
 import { Button } from '@/ui/components/ui/button';
 import { Skeleton } from '@/ui/components/ui/skeleton';
@@ -17,7 +17,7 @@ import {
   useRouter,
   useSearchParams
 } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { OverviewTab } from './components/overview-tab';
 import { ActivityTab } from './components/activity-tab';
 import { AnalysisTab } from './components/analysis-tab';
@@ -30,15 +30,21 @@ import { SlaveConnectionTab } from './components/slave-connection-tab';
 import { CalibrationTab } from './components/calibration-tab';
 
 export default function DeviceDetailsPage() {
+  const params = useParams();
+  const deviceId = params?.id as string;
+
+  // Connect to SSE specifically for this device
+  useDeviceSSE(deviceId);
+  useEffect(() => {
+    console.log('deviceId', deviceId);
+  }, [deviceId]);
+
   const { t } = useTranslation();
   const router = useRouter();
-  const params = useParams();
   const searchParams = useSearchParams();
 
   const tabFromUrl = searchParams.get('tab') ?? 'overview';
   const [activeTab, setActiveTab] = useState(tabFromUrl);
-
-  const deviceId = params?.id as string;
 
   const {
     data: device,

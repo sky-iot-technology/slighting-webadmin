@@ -18,6 +18,9 @@ import { CalendarViewDialog } from '../modal/calendar-view-dialog';
 import { PermissionGuard } from '@/core/domains/permissions';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
+import { ScheduleHistoryDialog } from '../modal/schedule-history-dialog';
+import { History } from 'lucide-react';
+
 interface CellActionProps {
   id: string;
   name: string;
@@ -34,6 +37,7 @@ export const CellAction: React.FC<CellActionProps> = ({
   const [open, setOpen] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [openView, setOpenView] = useState(false);
+  const [openHistory, setOpenHistory] = useState(false);
   const router = useRouter();
 
   const deleteCalendar = useDeleteCalendars({
@@ -79,6 +83,16 @@ export const CellAction: React.FC<CellActionProps> = ({
         />
       )}
 
+      {/* History */}
+      {openHistory && (
+        <ScheduleHistoryDialog
+          open={openHistory}
+          onOpenChange={setOpenHistory}
+          scheduleId={id}
+          scheduleName={name}
+        />
+      )}
+
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button
@@ -107,6 +121,16 @@ export const CellAction: React.FC<CellActionProps> = ({
               />
             </div>
             <span>{t('calendar.view_detail')}</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            onClick={() => setOpenHistory(true)}
+            className='flex w-full items-center text-xs'
+          >
+            <div className='mx-2 flex w-4 justify-center'>
+              <History className='text-primary h-3.5 w-3.5' />
+            </div>
+            <span>Lịch sử thực thi</span>
           </DropdownMenuItem>
 
           {/* <DropdownMenuItem

@@ -5,7 +5,9 @@ import {
   GetCalendarsParamsDto,
   CreateCalendarDto,
   UpdateCalendarDto,
-  GetDeivceCalendarsParamsDto
+  GetDeivceCalendarsParamsDto,
+  GetScheduleHistoryResponseDto,
+  GetScheduleHistoryParamsDto
 } from './types';
 
 export const calendarApi = {
@@ -96,7 +98,7 @@ export const calendarApi = {
     const limit = Math.max(1, Number(rawLimit) || 20);
     const offset = (page - 1) * limit;
     const response = await authenticatedApi.get<CalendarListResponseDto>(
-      `/devices/clients/schedule/${id}`,
+      `/devices/clients/${id}/schedules`,
       {
         params: {
           offset,
@@ -134,5 +136,23 @@ export const calendarApi = {
       console.error('❌ syncSchedule error:', message);
       throw new Error(message);
     }
+  },
+
+  async getScheduleHistory(
+    scheduleId: string,
+    params?: GetScheduleHistoryParamsDto
+  ): Promise<GetScheduleHistoryResponseDto> {
+    const { page = 1, limit = 100 } = params ?? {};
+    const offset = (page - 1) * limit;
+    const response = await authenticatedApi.get<GetScheduleHistoryResponseDto>(
+      `/schedules/${scheduleId}/history`,
+      {
+        params: {
+          offset,
+          limit
+        }
+      }
+    );
+    return response;
   }
 };

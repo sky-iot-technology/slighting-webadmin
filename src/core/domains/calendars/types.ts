@@ -131,3 +131,24 @@ export interface CreateCalendarDto {
 }
 
 export interface UpdateCalendarDto extends Partial<CreateCalendarDto> {}
+
+export interface ScheduleExecution {
+  schedule_id: string;
+  cron_job_id: number;
+  execution_id: number;
+  status: 'SUCCESS' | 'FAILED' | 'PENDING' | string;
+  executed_at: string;
+}
+
+export interface GetScheduleHistoryResponseDto {
+  limit: number;
+  offset: number;
+  total: number;
+  executions: ScheduleExecution[];
+}
+
+export interface GetScheduleHistoryParamsDto {
+  offset?: number;
+  limit?: number;
+  page?: number;
+}

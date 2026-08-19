@@ -20,7 +20,7 @@ import { CalendarRangePicker } from '../../components/calendar-range-picker';
 import { TimeBrightnessForm } from '../../components/calendar-time-brightness';
 import { useGetDeviceById } from '@/core/domains/devices';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
+import { TraitKey } from '@/core/domains/catalogues';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 
 type CalendarViewDialogProps = {
@@ -54,7 +54,7 @@ export function CalendarDeviceViewDialog({
   const nameLine = allDeviceIds.map((id) => {
     const attr = selectedDevice?.attributes[id];
     if (typeof attr === 'object' && attr !== null && 'name' in attr) {
-      return (attr as SubCatalogueDevice).name;
+      return (attr as { name: string }).name;
     }
     return null;
   });

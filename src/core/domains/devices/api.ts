@@ -306,7 +306,7 @@ export const devicesApi = {
   async getRequestById(requestId: string): Promise<DeviceRequestResponse> {
     try {
       return await authenticatedApi.get<DeviceRequestResponse>(
-        `/devices/clients/request/${requestId}`
+        `/devices/clients/requests/${requestId}`
       );
     } catch (error) {
       throw new Error(`Request id: ${requestId} not found`);

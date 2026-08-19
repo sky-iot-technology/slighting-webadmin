@@ -285,14 +285,21 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
                   <span className='text-foreground'>{t('map.latitude')}:</span>
                   <span className='text-foreground font-medium'>
-                    {data.device_info.lat}
+                    {data.location?.lat ?? data.device_info.lat}
                   </span>
                 </div>
 
                 <div className='flex items-center justify-between text-xs leading-[22px]'>
                   <span className='text-foreground'>{t('map.longitude')}:</span>
                   <span className='text-foreground font-medium'>
-                    {data.device_info.lon}
+                    {data.location?.lon ?? data.device_info.lon}
+                  </span>
+                </div>
+
+                <div className='text-muted-foreground flex items-center justify-between text-xs leading-[22px]'>
+                  <span>GPS phần cứng:</span>
+                  <span className='font-medium'>
+                    {data.device_info.lat}, {data.device_info.lon}
                   </span>
                 </div>
               </div>

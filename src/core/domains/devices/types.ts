@@ -1,5 +1,10 @@
 import type { BaseEntity, QueryParams } from '@/core/shared/types';
 
+export interface DeviceLocation {
+  lat: number;
+  lon: number;
+}
+
 //Device types
 export interface Device extends BaseEntity {
   type: string;
@@ -10,6 +15,7 @@ export interface Device extends BaseEntity {
   credentials: Credentials;
   domain_id: string;
   parent_group_id: string;
+  location?: DeviceLocation;
   device_info: DeviceInfo;
   device_asset?: DeviceAsset;
   tags?: string[];

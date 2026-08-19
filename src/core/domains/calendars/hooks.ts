@@ -13,7 +13,9 @@ import {
   GetCalendarsParamsDto,
   CreateCalendarDto,
   UpdateCalendarDto,
-  GetDeivceCalendarsParamsDto
+  GetDeivceCalendarsParamsDto,
+  GetScheduleHistoryResponseDto,
+  GetScheduleHistoryParamsDto
 } from './types';
 import { useMemo } from 'react';
 
@@ -301,5 +303,26 @@ export const useSyncSchedule = (
       toast.error(error.message || t('calendar.sync_failed' as any));
       options?.onError?.(error, variables, context);
     }
+  });
+};
+
+export const useGetScheduleHistory = (
+  scheduleId: string,
+  params?: GetScheduleHistoryParamsDto,
+  options?: Omit<
+    UseQueryOptions<
+      GetScheduleHistoryResponseDto,
+      Error,
+      GetScheduleHistoryResponseDto,
+      readonly [string, string, string, GetScheduleHistoryParamsDto | undefined]
+    >,
+    'queryKey' | 'queryFn'
+  >
+) => {
+  return useQuery({
+    queryKey: [CALENDARS_QUERY_KEY, 'history', scheduleId, params],
+    queryFn: () => calendarApi.getScheduleHistory(scheduleId, params),
+    enabled: !!scheduleId,
+    ...options
   });
 };

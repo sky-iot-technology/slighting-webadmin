@@ -10,7 +10,7 @@ import { Button } from '@/ui/components/ui/button';
 import { dayofweek } from '@/core/domains/calendars/constant';
 import { useGetCalendarById } from '@/core/domains/calendars';
 import { useCatalogueStore } from '@/core/domains/catalogues/store';
-import { SubCatalogueDevice, TraitKey } from '@/core/domains/catalogues';
+import { TraitKey } from '@/core/domains/catalogues';
 import { useMemo } from 'react';
 import { RegionNode } from '@/core/domains/groups';
 import { useRegionTreeStore } from '@/core/domains/tree/store';
@@ -73,7 +73,7 @@ export function CalendarViewDialog({
   const nameLine = allDeviceIds.map((id) => {
     const attr = selectedDevice?.attributes[id];
     if (typeof attr === 'object' && attr !== null && 'name' in attr) {
-      return (attr as SubCatalogueDevice).name;
+      return (attr as { name: string }).name;
     }
     return null;
   });

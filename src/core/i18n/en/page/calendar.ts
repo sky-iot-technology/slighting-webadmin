@@ -62,6 +62,7 @@ export const calendar = {
   time_and_brightness: 'Time & Brightness',
   control_device: 'Control Device',
   view_detail: 'View',
+  view_history: 'History',
   delete: 'Delete',
   close: 'Close',
   type: 'Category',
