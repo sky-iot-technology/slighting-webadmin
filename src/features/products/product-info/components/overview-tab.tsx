@@ -817,6 +817,14 @@ export function OverviewTab({ device }: OverviewTabProps) {
                         <span className='ml-2 font-medium'>{manufacturer}</span>
                       </div>
                       <div>
+                        <span className='text-muted-foreground'>
+                          {t('products.detail.overview.label.ccid' as any)}:
+                        </span>
+                        <span className='ml-2 font-medium'>
+                          {device.device_info?.optional?.ccid ?? ''}
+                        </span>
+                      </div>
+                      <div>
                         <span className='text-muted-foreground mr-2'>
                           {t('products.detail.overview.label.status' as any)}:
                         </span>

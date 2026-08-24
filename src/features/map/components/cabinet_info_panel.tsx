@@ -325,6 +325,17 @@ function CabinetInfoPanel(props: InfoModalProps) {
                 </div>
 
                 <div className='flex items-center justify-between'>
+                  <span>{t('map.CCID')}:</span>
+                  <div className='flex items-center justify-center gap-1'>
+                    {data.device_info.optional.ccid && (
+                      <span className='font-medium'>
+                        {data.device_info.optional.ccid}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className='flex items-center justify-between'>
                   <span>{t('map.RSSI')}:</span>
                   <div className='flex items-center justify-center gap-1'>
                     <Image

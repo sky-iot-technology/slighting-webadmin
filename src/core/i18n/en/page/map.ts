@@ -7,7 +7,7 @@ export const map = {
   // tab cabinet panel
   info: 'Information',
   maintenance: 'Maintenance & Operation',
-
+  CCID: 'CCID',
   // info
   device_info: 'Device information',
   longitude: 'Longitude',

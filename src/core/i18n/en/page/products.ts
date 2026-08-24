@@ -9,6 +9,7 @@ export const products = {
   },
   table: {
     id: 'ID',
+    ccid: 'CCID',
     name: 'Device Name',
     type: 'Device Type',
     status: 'Status',
@@ -101,6 +102,7 @@ export const products = {
     overview: {
       label: {
         id: 'Device ID',
+        ccid: 'CCID',
         name: 'Device Name',
         type: 'Device Type',
         serial: 'Serial',
