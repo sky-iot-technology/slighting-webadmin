@@ -190,9 +190,11 @@ export function DataTable<TData>({
                           )}
                         >
                           {row.getVisibleCells().map((cell, cellIndex) => {
-                            const enableTooltip = ['name', 'id'].includes(
-                              cell.column.id
-                            );
+                            const enableTooltip = [
+                              'name',
+                              'id',
+                              'ccid'
+                            ].includes(cell.column.id);
                             return (
                               <TableCell
                                 key={cell.id}

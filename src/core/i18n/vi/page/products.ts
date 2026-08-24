@@ -9,6 +9,7 @@ export const products = {
   },
   table: {
     id: 'ID',
+    ccid: 'CCID',
     name: 'Tên thiết bị',
     type: 'Loại thiết bị',
     status: 'Trạng thái',
@@ -101,6 +102,7 @@ export const products = {
     overview: {
       label: {
         id: 'Mã thiết bị',
+        ccid: 'CCID',
         name: 'Tên thiết bị',
         type: 'Loại thiết bị',
         serial: 'Serial',

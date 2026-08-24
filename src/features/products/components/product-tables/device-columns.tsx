@@ -71,6 +71,23 @@ export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
     enableHiding: false
   },
   {
+    id: 'ccid',
+    accessorFn: (row) => row.device_info?.optional?.ccid,
+    header: ({ column }: { column: Column<Device, unknown> }) => (
+      <DataTableColumnHeader
+        column={column}
+        title={t('products.table.ccid' as any)}
+      />
+    ),
+    cell: ({ cell }) => {
+      const ccid = cell.getValue<string>();
+      const formattedId = ccid ? `...${String(ccid).slice(-4)}` : '';
+      return <div>{formattedId}</div>;
+    },
+    enableSorting: false,
+    enableHiding: false
+  },
+  {
     id: 'type',
     accessorKey: 'type',
     header: ({ column }: { column: Column<Device, unknown> }) => (

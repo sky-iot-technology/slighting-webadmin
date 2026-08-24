@@ -21,6 +21,7 @@ export const map = {
   connect: 'Kết nối',
   connect_type: 'Loại kết nối',
   RSSI: 'RSSI',
+  CCID: 'CCID',
   online_time: 'Lần cuối online',
 
   parameter: 'Thông số hiện tại',
