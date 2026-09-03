@@ -6,8 +6,8 @@ WORKDIR /app
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 
-# Enable corepack and install dependencies with pnpm (include devDependencies for build)
-RUN corepack enable && pnpm install
+# Install pnpm@9 and install dependencies (include devDependencies for build)
+RUN npm install -g pnpm@9.15.4 && pnpm install
 
 # Stage 2: Builder
 FROM node:18.20.2-alpine AS builder
@@ -20,7 +20,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 ENV NODE_ENV=production
 
 # Build the application
-RUN corepack enable && pnpm build
+RUN npm install -g pnpm@9.15.4 && pnpm build
 
 # Stage 3: Runner
 FROM node:18.20.2-alpine AS runner
