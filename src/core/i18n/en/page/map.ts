@@ -3,6 +3,8 @@ export const map = {
   macAddress: 'Mac Address',
   inputHolder: 'Enter keyword',
   device_alert: 'No devices found in this area',
+  lights_on: 'Light On',
+  lights_off: 'Light Off',
 
   // tab cabinet panel
   info: 'Information',

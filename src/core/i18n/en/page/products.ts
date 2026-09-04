@@ -2,7 +2,9 @@ export const products = {
   status: {
     online: 'Online',
     offline: 'Offline',
-    total: 'Total'
+    total: 'Total',
+    lights_on: 'Light On',
+    lights_off: 'Light Off'
   },
   message: {
     sync_initiated: 'Device synchronization initiated'
@@ -12,7 +14,8 @@ export const products = {
     ccid: 'CCID',
     name: 'Device Name',
     type: 'Device Type',
-    status: 'Status',
+    status: 'Connection',
+    device_state: 'State',
     branch: 'Branch',
     condition: 'Condition',
     online_time: 'Online Time',
@@ -28,7 +31,10 @@ export const products = {
       online: 'Online',
       offline: 'Offline',
       enabled: 'Enabled',
-      disabled: 'Disabled'
+      disabled: 'Disabled',
+      light_on: 'Light On',
+      light_off: 'Light Off',
+      all_off: 'All Off'
     }
   },
   placeholder: {

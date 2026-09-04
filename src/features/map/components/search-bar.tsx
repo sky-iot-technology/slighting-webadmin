@@ -1,6 +1,7 @@
 import { Device } from '@/core/domains/devices';
 import { useTranslation } from '@/core/domains/language/useTranslation';
 import { LanguageKey } from '@/core/i18n/locales';
+import { removeVietnameseAccents } from '@/lib/utils';
 import CustomScrollbar from '@/ui/components/custom-scrollbar';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -62,9 +63,15 @@ export function SearchBar({ devices, onSelectDevice }: SearchBarProps) {
         return;
       }
       const value = query.toLowerCase();
+      const normalizedValue = removeVietnameseAccents(value);
       const result = devices.filter((d) => {
         if (searchType === 'deviceName') {
-          return d.name.toLowerCase().includes(value);
+          const deviceName = d.name.toLowerCase();
+          const normalizedDeviceName = removeVietnameseAccents(deviceName);
+          return (
+            deviceName.includes(value) ||
+            normalizedDeviceName.includes(normalizedValue)
+          );
         } else if (searchType === 'macAddress') {
           const mac = normalizeMac(d.device_info.imei);
           return mac.includes(value);

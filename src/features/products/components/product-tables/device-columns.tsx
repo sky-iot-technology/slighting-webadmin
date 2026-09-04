@@ -8,6 +8,196 @@ import { CellAction } from './cell-action';
 import { cn } from '@/lib/utils';
 import { formatDateString } from '@/lib/utils';
 import { diffTimeHMS } from '@/features/map/helper';
+import Image from 'next/image';
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger
+} from '@/ui/components/ui/hover-card';
+
+function DeviceStateCell({ device, t }: { device: Device; t: any }) {
+  const isOnline = device.device_info?.online ?? false;
+
+  const lightDevices = (device.devices ?? []).filter(
+    (d) => d.type === 'lms.devices.types.LIGHT'
+  );
+  const switchDevices = (device.devices ?? []).filter(
+    (d) => d.type === 'lms.devices.types.SWITCH'
+  );
+  const controllableDevices = [...switchDevices, ...lightDevices];
+  const activeLights = controllableDevices.filter(
+    (d) => d.last_state?.on
+  ).length;
+  const totalLights = controllableDevices.length;
+  const isCabinet = device.type === 'lms.devices.types.STL_CABINET';
+
+  if (isCabinet) {
+    const badge =
+      activeLights > 0 ? (
+        <span
+          className={cn(
+            'inline-flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold shadow-xs transition-colors',
+            isOnline
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+              : 'border-emerald-300/60 bg-emerald-50/50 text-emerald-700/60 opacity-60 grayscale-[30%] hover:opacity-80 dark:border-emerald-800/50 dark:bg-emerald-950/20 dark:text-emerald-400/60'
+          )}
+        >
+          <span className='relative flex h-2 w-2'>
+            {isOnline && (
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75'></span>
+            )}
+            <span
+              className={cn(
+                'relative inline-flex h-2 w-2 rounded-full',
+                isOnline ? 'bg-emerald-500' : 'bg-emerald-400/60'
+              )}
+            ></span>
+          </span>
+          Mở {activeLights}/{totalLights} line
+        </span>
+      ) : (
+        <span className='inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 transition-colors hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'>
+          <span className='h-2 w-2 rounded-full bg-slate-400'></span>
+          {t('products.table.status_val.all_off' as any)} ({totalLights} line)
+        </span>
+      );
+
+    return (
+      <HoverCard openDelay={100} closeDelay={100}>
+        <HoverCardTrigger asChild>{badge}</HoverCardTrigger>
+        <HoverCardContent
+          side='top'
+          align='start'
+          className='bg-popover border-border z-50 w-64 rounded-xl border p-3 shadow-xl'
+        >
+          <div className='border-border mb-2 flex items-center justify-between border-b pb-2'>
+            <span className='text-xs font-bold text-gray-800 dark:text-white'>
+              {t('map.line_status_hover')}
+            </span>
+            <span className='text-muted-foreground text-[10px]'>
+              {activeLights} / {totalLights} {t('map.line_status' as any)}
+            </span>
+          </div>
+          <div className='max-h-[160px] space-y-1.5 overflow-y-auto pr-1'>
+            {controllableDevices.length > 0 ? (
+              controllableDevices.map((sub, idx) => {
+                const isLight = sub.type === 'lms.devices.types.LIGHT';
+                const isOn = sub.last_state?.on;
+                const brightness = sub.last_state?.brightness;
+
+                return (
+                  <div
+                    key={sub.device_id || idx}
+                    className='hover:bg-accent/50 flex items-center justify-between rounded-md px-1.5 py-1 text-xs'
+                  >
+                    <div className='flex items-center gap-2 truncate pr-1'>
+                      <Image
+                        src={
+                          isOn
+                            ? '/assets/icons/lightOn.svg'
+                            : '/assets/icons/lightOff.svg'
+                        }
+                        alt={isOn ? 'lightOn' : 'lightOff'}
+                        width={14}
+                        height={14}
+                      />
+                      <span className='text-foreground truncate text-xs font-medium'>
+                        {sub.name}
+                      </span>
+                    </div>
+
+                    <div className='flex shrink-0 items-center gap-1.5'>
+                      {isLight && brightness !== undefined && (
+                        <span className='flex items-center gap-0.5 rounded bg-yellow-100 px-1.5 py-0.5 text-[10px] font-semibold text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'>
+                          <Image
+                            src='/assets/icons/brightness-half.svg'
+                            alt='brightness'
+                            width={12}
+                            height={12}
+                          />
+                          {brightness}%
+                        </span>
+                      )}
+                      {isOn ? (
+                        <span className='rounded bg-green-100 px-1.5 py-0.5 text-[10px] font-bold text-green-600 dark:bg-green-900/30 dark:text-green-400'>
+                          {t('map.on' as any)}
+                        </span>
+                      ) : (
+                        <span className='rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-bold text-red-500 dark:bg-red-900/30 dark:text-red-400'>
+                          {t('map.off' as any)}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                );
+              })
+            ) : (
+              <p className='text-muted-foreground py-2 text-center text-xs'>
+                Không có dữ liệu line
+              </p>
+            )}
+          </div>
+        </HoverCardContent>
+      </HoverCard>
+    );
+  }
+
+  const isOn = activeLights > 0;
+  const mainLightSub = lightDevices[0] || controllableDevices[0];
+  const brightness = mainLightSub?.last_state?.brightness;
+
+  return (
+    <div className='flex items-center gap-2'>
+      {isOn ? (
+        <span
+          className={cn(
+            'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors',
+            isOnline
+              ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+              : 'border-emerald-300/60 bg-emerald-50/50 text-emerald-700/60 opacity-60 grayscale-[30%] dark:border-emerald-800/50 dark:bg-emerald-950/20 dark:text-emerald-400/60'
+          )}
+        >
+          <span className='relative flex h-2 w-2'>
+            {isOnline && (
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75'></span>
+            )}
+            <span
+              className={cn(
+                'relative inline-flex h-2 w-2 rounded-full',
+                isOnline ? 'bg-emerald-500' : 'bg-emerald-400/60'
+              )}
+            ></span>
+          </span>
+          {t('products.table.status_val.light_on' as any)}
+          {brightness !== undefined && brightness !== null && (
+            <span
+              className={cn(
+                'flex items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-semibold',
+                isOnline
+                  ? 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400'
+                  : 'bg-yellow-100/60 text-yellow-700/60 dark:bg-yellow-900/20 dark:text-yellow-400/60'
+              )}
+            >
+              <Image
+                src='/assets/icons/brightness-half.svg'
+                alt='brightness'
+                width={12}
+                height={12}
+                className={cn(!isOnline && 'opacity-60')}
+              />
+              {brightness}%
+            </span>
+          )}
+        </span>
+      ) : (
+        <span className='inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400'>
+          <span className='h-2 w-2 rounded-full bg-slate-400'></span>
+          {t('products.table.status_val.light_off' as any)}
+        </span>
+      )}
+    </div>
+  );
+}
 
 export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
   {
@@ -160,41 +350,20 @@ export const deviceColumns = (t: any, tTime: any): ColumnDef<Device>[] => [
     enableHiding: false
   },
   {
-    id: 'asset_status',
-    accessorKey: 'status',
+    id: 'device_state',
     header: ({ column }: { column: Column<Device, unknown> }) => (
       <DataTableColumnHeader
         column={column}
-        title={t('products.table.condition' as any)}
+        title={t('products.table.device_state' as any)}
       />
     ),
     meta: {
-      label: t('products.table.condition' as any),
-      variant: 'select',
-      options: [
-        {
-          label: t('products.table.status_val.enabled' as any),
-          value: 'enabled'
-        },
-        {
-          label: t('products.table.status_val.disabled' as any),
-          value: 'disabled'
-        }
-      ]
+      label: t('products.table.device_state' as any)
     },
-    cell: ({ cell }) => {
-      const status = cell.getValue() as string;
-      const label =
-        status === 'enabled'
-          ? t('products.table.status_val.enabled' as any)
-          : status === 'disabled'
-            ? t('products.table.status_val.disabled' as any)
-            : status;
-      return <div className='capitalize'>{label}</div>;
-    },
-    enableColumnFilter: true,
+    cell: ({ row }) => <DeviceStateCell device={row.original} t={t} />,
     enableSorting: false,
-    enableHiding: false
+    enableHiding: false,
+    size: 200
   },
   {
     id: 'updated_at',
