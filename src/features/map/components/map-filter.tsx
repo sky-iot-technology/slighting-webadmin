@@ -5,6 +5,9 @@ import { Button } from '@/ui/components/ui/button';
 import { Separator } from '@/ui/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { RotateCcw } from 'lucide-react';
+import { useTranslation } from '@/core/domains/language/useTranslation';
+import { useMemo } from 'react';
+import Image from 'next/image';
 
 type SelectedRegion = { id: string; name: string } | null;
 
@@ -33,6 +36,26 @@ export default function MapFilter({
   onRefresh,
   isRefreshing
 }: MapFilterProps) {
+  const { t } = useTranslation();
+
+  const { lightsOn, lightsOff } = useMemo(() => {
+    let on = 0;
+    let off = 0;
+    devices.forEach((device) => {
+      const controllable = (device.devices || []).filter(
+        (d) => d.type === 'lms.devices.types.LIGHT'
+      );
+      controllable.forEach((sub) => {
+        if (sub.last_state?.on === true && device.status === 'online') {
+          on++;
+        } else {
+          off++;
+        }
+      });
+    });
+    return { lightsOn: on, lightsOff: off };
+  }, [devices]);
+
   return (
     <>
       <div className='absolute top-[15px] left-[9px] flex gap-2'>
@@ -48,11 +71,11 @@ export default function MapFilter({
           <SearchBar devices={devices} onSelectDevice={onSelectDevice} />
         </div>
       </div>
-      <div className='bg-card fixed bottom-10 left-1/2 flex -translate-x-1/2 items-center gap-0.5 rounded-lg border border-gray-200 p-1'>
+      <div className='bg-card scrollbar-none fixed bottom-10 left-1/2 flex max-w-[95vw] -translate-x-1/2 items-center gap-0.5 overflow-x-auto rounded-lg border border-gray-200 p-1 whitespace-nowrap shadow-md'>
         <Button
           variant={'outline'}
           className={cn(
-            'hover:text-success cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-green-50 sm:h-[28px] md:h-[30px]',
+            'hover:text-success cursor-pointer !rounded-md border-white bg-white px-2 text-xs shadow-none hover:!bg-green-50 sm:h-[28px] sm:px-3 md:h-[30px]',
             statusFilter === 'online' &&
               'text-success border-green-200 bg-green-50 dark:bg-green-50'
           )}
@@ -68,13 +91,14 @@ export default function MapFilter({
             )}
             <span className='h-2 w-2 rounded-full bg-green-500'></span>
           </span>
-          online ({online})
+          <span className='hidden sm:inline'>online </span>
+          <span>({online})</span>
         </Button>
         <Separator orientation='vertical' className='!h-5' />
         <Button
           variant={'outline'}
           className={cn(
-            'hover:text-destructive cursor-pointer !rounded-md border-white bg-white shadow-none hover:!bg-red-50 sm:h-[28px] md:h-[30px]',
+            'hover:text-destructive cursor-pointer !rounded-md border-white bg-white px-2 text-xs shadow-none hover:!bg-red-50 sm:h-[28px] sm:px-3 md:h-[30px]',
             statusFilter === 'offline' &&
               'text-destructive border-red-200 bg-red-50 dark:bg-red-50'
           )}
@@ -90,12 +114,43 @@ export default function MapFilter({
             )}
             <span className='h-2 w-2 rounded-full bg-red-500'></span>
           </span>
-          offline ({offline})
+          <span className='hidden sm:inline'>offline </span>
+          <span>({offline})</span>
         </Button>
         <Separator orientation='vertical' className='!h-5' />
         <Button
           variant={'outline'}
-          className='hover:text-primary cursor-pointer !rounded-md border-white bg-white shadow-none hover:bg-slate-50 sm:h-[28px] md:h-[30px]'
+          className='dark:bg-card cursor-default !rounded-md border-white bg-white px-2 text-xs text-emerald-600 shadow-none hover:bg-emerald-50 sm:h-[28px] sm:px-3 md:h-[30px] dark:text-emerald-400'
+        >
+          <Image
+            src='/assets/icons/lightOn.svg'
+            alt='lightOn'
+            width={14}
+            height={14}
+          />
+          <span className='hidden sm:inline'>{t('map.lights_on' as any)} </span>
+          <span>({lightsOn})</span>
+        </Button>
+        {/* <Separator orientation='vertical' className='!h-5' />
+        <Button
+          variant={'outline'}
+          className='cursor-default !rounded-md border-white bg-white px-2 text-xs text-slate-500 shadow-none hover:bg-slate-50 dark:bg-card dark:text-slate-400 sm:h-[28px] sm:px-3 md:h-[30px]'
+        >
+          <Image
+            src='/assets/icons/lightOff.svg'
+            alt='lightOff'
+            width={14}
+            height={14}
+          />
+          <span className='hidden sm:inline'>
+            {t('map.lights_off' as any)}{' '}
+          </span>
+          <span>({lightsOff})</span>
+        </Button> */}
+        <Separator orientation='vertical' className='!h-5' />
+        <Button
+          variant={'outline'}
+          className='hover:text-primary cursor-pointer !rounded-md border-white bg-white px-2 shadow-none hover:bg-slate-50 sm:h-[28px] sm:px-3 md:h-[30px]'
           onClick={() => onRefresh?.()}
           disabled={isRefreshing}
         >

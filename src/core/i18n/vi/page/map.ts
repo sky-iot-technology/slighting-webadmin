@@ -3,6 +3,8 @@ export const map = {
   macAddress: 'Địa chỉ Mac',
   inputHolder: 'Nhập từ khóa',
   device_alert: 'Không có thiết bị trong khu vực này',
+  lights_on: 'Đèn mở',
+  lights_off: 'Đèn tắt',
 
   //tab cabinet panel
   info: 'Thông tin',

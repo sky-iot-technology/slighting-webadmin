@@ -2,7 +2,9 @@ export const products = {
   status: {
     online: 'Online',
     offline: 'Offline',
-    total: 'Tổng'
+    total: 'Tổng',
+    lights_on: 'Đèn mở',
+    lights_off: 'Đèn tắt'
   },
   message: {
     sync_initiated: 'Đồng bộ thiết bị đã được khởi tạo'
@@ -12,7 +14,8 @@ export const products = {
     ccid: 'CCID',
     name: 'Tên thiết bị',
     type: 'Loại thiết bị',
-    status: 'Trạng thái',
+    status: 'Kết nối',
+    device_state: 'Trạng thái',
     branch: 'Chi nhánh',
     condition: 'Tình trạng',
     online_time: 'Thời gian online',
@@ -28,7 +31,10 @@ export const products = {
       online: 'Online',
       offline: 'Offline',
       enabled: 'Kích hoạt',
-      disabled: 'Chưa kích hoạt'
+      disabled: 'Chưa kích hoạt',
+      light_on: 'Đèn mở',
+      light_off: 'Đèn tắt',
+      all_off: 'Tắt tất cả'
     }
   },
   placeholder: {

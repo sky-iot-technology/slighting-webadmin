@@ -164,34 +164,69 @@ export default function ProductListingPage({}: ProductListingPage) {
 
   const isFilterReady = typeOptions.length > 0;
 
+  const { lightsOn, lightsOff } = useMemo(() => {
+    let on = 0;
+    let off = 0;
+    const devicesList = (data?.devices as Device[]) || [];
+    devicesList.forEach((device) => {
+      const controllable = (device.devices || []).filter(
+        (d) => d.type === 'lms.devices.types.LIGHT'
+      );
+      controllable.forEach((sub) => {
+        if (sub.last_state?.on === true) {
+          on++;
+        } else {
+          off++;
+        }
+      });
+    });
+    return { lightsOn: on, lightsOff: off };
+  }, [data?.devices]);
+
   const actionBar = (
-    <div className='ml-4 flex items-center gap-6 py-2'>
+    <div className='ml-2 flex flex-wrap items-center gap-3 py-2 sm:gap-4 md:ml-4 md:gap-6'>
       {/* Online Status */}
-      <div className='flex items-center gap-2'>
-        <div className='h-3 w-3 rounded-full bg-green-500' />
-        <span className='text-sm font-medium'>
+      <div className='flex items-center gap-1.5 sm:gap-2'>
+        <div className='h-2.5 w-2.5 rounded-full bg-green-500 sm:h-3 sm:w-3' />
+        <span className='text-xs font-medium sm:text-sm'>
           {t('products.status.online' as any)}: {onlineData?.total ?? 0}
         </span>
       </div>
 
       {/* Offline Status */}
-      <div className='flex items-center gap-2'>
-        <div className='h-3 w-3 rounded-full bg-red-500' />
-        <span className='text-sm font-medium'>
+      <div className='flex items-center gap-1.5 sm:gap-2'>
+        <div className='h-2.5 w-2.5 rounded-full bg-red-500 sm:h-3 sm:w-3' />
+        <span className='text-xs font-medium sm:text-sm'>
           {t('products.status.offline' as any)}: {offlineData?.total ?? 0}
         </span>
       </div>
 
       {/* Total Status */}
-      <div className='flex items-center gap-2'>
-        <div className='flex h-3 w-3 items-center justify-center rounded-full border-2 border-green-300'>
+      <div className='flex items-center gap-1.5 sm:gap-2'>
+        <div className='flex h-2.5 w-2.5 items-center justify-center rounded-full border-2 border-green-300 sm:h-3 sm:w-3'>
           <div className='h-1 w-1 rounded-full bg-red-500' />
         </div>
-        <span className='text-sm font-medium'>
+        <span className='text-xs font-medium sm:text-sm'>
           {t('products.status.total' as any)}:{' '}
           {(onlineData?.total ?? 0) + (offlineData?.total ?? 0)}
         </span>
       </div>
+
+      {/* Lights On */}
+      {/* <div className='flex items-center gap-1.5 sm:gap-2'>
+        <div className='h-2.5 w-2.5 rounded-full bg-emerald-500 sm:h-3 sm:w-3' />
+        <span className='text-xs font-medium sm:text-sm'>
+          {t('products.status.lights_on' as any)}: {lightsOn}
+        </span>
+      </div> */}
+
+      {/* Lights Off */}
+      {/* <div className='flex items-center gap-1.5 sm:gap-2'>
+        <div className='h-2.5 w-2.5 rounded-full bg-amber-500 sm:h-3 sm:w-3' />
+        <span className='text-xs font-medium sm:text-sm'>
+          {t('products.status.lights_off' as any)}: {lightsOff}
+        </span>
+      </div> */}
     </div>
   );
 
